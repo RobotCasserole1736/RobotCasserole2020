@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.ControlPanel;
 
 /*
  *******************************************************************************************
@@ -20,29 +20,36 @@ package frc.robot;
  *   if you would consider donating to our club to help further STEM education.
  */
 
-public class casseroleColorSensor {
-	// You will want to rename all instances of "EmptyClass" with your actual class name and "empty" with a variable name
-	private static casseroleColorSensor empty = null;
+public class CasseroleColorSensor {
+	private static CasseroleColorSensor instance = null;
 
-	public static synchronized casseroleColorSensor getInstance() {
-		if(empty == null)
-			empty = new casseroleColorSensor();
-		return empty;
+	public static synchronized CasseroleColorSensor getInstance() {
+		if(instance == null)
+		instance = new CasseroleColorSensor();
+		return instance;
 	}
 
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
-	private casseroleColorSensor() {
-
+	private CasseroleColorSensor() {
+		//TODO - Put code to init the sensor & its processing
 	}
 
-	//This is a dummy variable that you will probably want to delete
-	private boolean testIsEverythingOK = false;
+	// This method should be called once per loop.
+	// It will sample the values from the sensor, and calculate what color it thinks things are
+	public void update(){
+		//TODO - fill me out	
+	}
 
-	// This is a dummy method that you will probably want to delete
-	// public double TestCommand() {
-	// 	if(testIsEverythingOK)
-	// 		System.out.println("OK");
-	// 	else
-	// 		System.out.println("NOT OK");
-	// }
+
+	//Returns the best-guess color seen by the sensor.
+	public ControlPanelColor getColor(){
+		return ControlPanelColor.kUNKNOWN; //TODO - make this return something useful
+	}
+
+	//Get the confidence percentage as to how certain the sensor is of the color seen.
+	public double getConfidence(){
+		return 0; //TODO - make this return something useful
+	}
+
+
 }
