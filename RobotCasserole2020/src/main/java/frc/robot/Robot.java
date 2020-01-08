@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.WebServer.CasseroleWebServer;
+import frc.robot.Drivetrain.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,6 +37,9 @@ public class Robot extends TimedRobot {
     webserver = new CasseroleWebServer();
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
+
+
+    Drivetrain.getInstance()
 
     dataServer.startServer();
     webserver.startServer();
@@ -76,6 +80,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+    Drivetrain.getInstance().update();
+
   }
 
   /**
@@ -83,6 +89,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+
+    Drivetrain.getInstance().update();
   }
 
   /**
