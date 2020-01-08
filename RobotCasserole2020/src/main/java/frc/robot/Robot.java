@@ -12,6 +12,7 @@ import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.WebServer.CasseroleWebServer;
+import frc.robot.Drivetrain.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -39,6 +40,9 @@ public class Robot extends TimedRobot {
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
     jevois = JeVoisInterface.getInstance();
+
+
+    Drivetrain.getInstance();
 
     dataServer.startServer();
     webserver.startServer();
@@ -78,6 +82,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    Drivetrain.getInstance().update();
     telemetryUpdate();
   }
 
@@ -86,12 +91,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    Drivetrain.getInstance().update();
     telemetryUpdate();
   }
 
   public void telemetryUpdate(){
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
-
   }
 
   /**
