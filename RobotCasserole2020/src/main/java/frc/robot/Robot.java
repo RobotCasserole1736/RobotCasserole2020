@@ -97,7 +97,9 @@ public class Robot extends TimedRobot {
 
   public void telemetryUpdate(){
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
+    CasseroleDriverView.setBoolean("High Ground Aquired" , true());
   }
+
 
   /**
    * This function is called periodically during test mode.
