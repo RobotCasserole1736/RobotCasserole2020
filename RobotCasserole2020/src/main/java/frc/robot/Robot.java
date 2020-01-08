@@ -99,6 +99,11 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
   }
 
+  private void initDriverView(){
+    CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75, 270);
+    
+  }
+
   /**
    * This function is called periodically during test mode.
    */
