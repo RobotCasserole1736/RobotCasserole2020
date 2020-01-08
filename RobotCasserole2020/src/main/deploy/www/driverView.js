@@ -8,6 +8,7 @@ var hostname = window.location.hostname + ":" + port;
 var dataSocket = new WebSocket("ws://" + hostname + "/driverviewstream")
 var numTransmissions = 0;
 var display_objs = {};
+var highGround = new Audio('highground.mp3');
 
 //Class for a dial
 
@@ -467,6 +468,15 @@ dataSocket.onmessage = function (event) {
                 autoSelSetCurrent(arr.obj_array[i].name, arr.obj_array[i].val);
             } else {
                 display_objs[arr.obj_array[i].name].setValue(arr.obj_array[i].value);
+                
+                nameOfSignal = arr.obj_array[i].name;
+                sigVal = arr.obj_array[i].value;
+
+                if(nameOfSignal == "highGroundAcquired" && sigVal == True){
+                    highGround.play();
+                }
+                
+                display_objs[highGroundAcquired].setValue(highground.mp3);
             }
 
         }
