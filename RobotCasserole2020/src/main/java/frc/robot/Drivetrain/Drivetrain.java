@@ -20,9 +20,19 @@ public abstract class Drivetrain {
     }
 
     public abstract void update();
-
-    public abstract void setMotorCommandOpenLoop(double pctVbatLeft, double pctVbatRight);
-
-    public abstract void setClosedLoopSpeedCmd(double leftVel_ftpsec, double rightVel_ftpsec);
+    public abstract void setOpenLoopCmd(double forwardReverseCmd, double rotaionCmd);
+    public abstract void setGyroLockCmd(double forwardReverseCmd);
+    public abstract void setPositionCmd(double forwardReverseCmd, double angleError);
+    public abstract boolean isGyroOnline();
+    public abstract double getLeftWheelSpeedRPM();
+    public abstract double getRightWheelSpeedRPM();
+    public abstract void updateGains(boolean force);
+    public abstract void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM);
+    public abstract void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM, double headingCmdDeg);
+    public abstract double getGyroAngle();
+    public abstract double getLeftNeo1Current();
+    public abstract double getLeftNeo2Current();
+    public abstract double getRightNeo1Current();
+    public abstract double getRightNeo2Current();
 
 }
