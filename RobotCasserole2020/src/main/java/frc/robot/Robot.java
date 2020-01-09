@@ -13,6 +13,9 @@ import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.HumanInterface.DriverController;
+import frc.robot.HumanInterface.OperatorController;
+import sun.tools.jstat.Operator;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,11 +26,14 @@ import frc.robot.Drivetrain.Drivetrain;
  */
 public class Robot extends TimedRobot {
 
-
+  //Website utilities
   CasseroleWebServer webserver;
   CalWrangler wrangler;
   CasseroleDataServer dataServer;
+
+  //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -41,6 +47,8 @@ public class Robot extends TimedRobot {
     dataServer = CasseroleDataServer.getInstance();
     jevois = JeVoisInterface.getInstance();
 
+    OperatorController.getInstance();
+    DriverController.getInstance();
 
     Drivetrain.getInstance();
 
