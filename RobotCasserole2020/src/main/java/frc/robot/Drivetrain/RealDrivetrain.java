@@ -73,8 +73,6 @@ public class RealDrivetrain extends Drivetrain {
         dtNeoR1Current = dtRightMaster.getOutputCurrent();
         dtNeoR2Current = dtRightIntern.getOutputCurrent();
 
-        
-        dtRightMaster.getEncoder();
         leftWheelSpeedRPM = dtLeftMaster.getEncoder().getVelocity();
         rightWheelSpeedRPM = dtRightMaster.getEncoder().getVelocity();
 
@@ -82,7 +80,7 @@ public class RealDrivetrain extends Drivetrain {
 
         
 
-        dtLeftIntern.set(fwdRevCmd);
+        
         
     }
 
