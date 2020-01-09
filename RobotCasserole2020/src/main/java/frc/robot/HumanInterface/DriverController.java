@@ -55,7 +55,7 @@ public class DriverController {
 
     public boolean getAutoHighGoalAlignDesired(){
         return driverController.getXButtonPressed(); 
-
+ 
     }
     
 
