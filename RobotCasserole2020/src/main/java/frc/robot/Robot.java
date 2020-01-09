@@ -9,8 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
+import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.WebServer.CasseroleWebServer;
+import frc.robot.Drivetrain.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,6 +27,7 @@ public class Robot extends TimedRobot {
   CasseroleWebServer webserver;
   CalWrangler wrangler;
   CasseroleDataServer dataServer;
+  JeVoisInterface jevois;
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -36,6 +39,10 @@ public class Robot extends TimedRobot {
     webserver = new CasseroleWebServer();
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
+    jevois = JeVoisInterface.getInstance();
+
+
+    Drivetrain.getInstance();
 
     dataServer.startServer();
     webserver.startServer();
@@ -75,7 +82,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-
+    Drivetrain.getInstance().update();
+    updateDriverView();
   }
 
   /**
@@ -83,6 +91,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    Drivetrain.getInstance().update();
+    updateDriverView();
+  }
+
+  public void updateDriverView(){
+    CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
+    CasseroleDriverView.setBoolean("High Ground Aquired" , true);
+  }
+
+  private void initDriverView(){
+    CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
+    
   }
 
   /**
