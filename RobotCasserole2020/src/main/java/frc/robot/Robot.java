@@ -44,6 +44,10 @@ public class Robot extends TimedRobot {
 
     Drivetrain.getInstance();
 
+    /* Website Setup */
+    initDriverView();
+
+    
     dataServer.startServer();
     webserver.startServer();
 
@@ -102,7 +106,7 @@ public class Robot extends TimedRobot {
 
   private void initDriverView(){
     CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
-    
+    CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
   }
 
   /**
