@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.sql.Driver;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
@@ -57,20 +59,13 @@ public class Robot extends TimedRobot {
     
     dataServer.startServer();
     webserver.startServer();
-
   }
 
-  /**
-   * This function is called every robot packet, no matter the mode. Use
-   * this for items like diagnostics that you want ran during disabled,
-   * autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before
-   * LiveWindow and SmartDashboard integrated updating.
-   */
   @Override
-  public void robotPeriodic() {
+  public void disabledInit() {
+    dataServer.logger.stopLogging();
   }
+
 
   /**
    * This autonomous (along with the chooser code above) shows how to select
@@ -85,25 +80,36 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-
+    dataServer.logger.startLoggingAuto();
   }
 
-  /**
-   * This function is called periodically during autonomous.
-   */
   @Override
   public void autonomousPeriodic() {
     Drivetrain.getInstance().update();
     updateDriverView();
   }
 
-  /**
-   * This function is called periodically during operator control.
-   */
+
+
+  @Override
+  public void teleopInit() {
+    dataServer.logger.startLoggingTeleop();
+  }
+
   @Override
   public void teleopPeriodic() {
     Drivetrain.getInstance().update();
     updateDriverView();
+  }
+
+
+
+  private void initDriverView(){
+    CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
+    CasseroleDriverView.newBoolean("High Ground Aquired", "green");
+    CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
+    CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
+
   }
 
   public void updateDriverView(){
@@ -111,15 +117,13 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("High Ground Aquired" , true);
   }
 
-  private void initDriverView(){
-    CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
-    CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
+  @Override
+  public void testInit() {
+    
   }
 
-  /**
-   * This function is called periodically during test mode.
-   */
   @Override
   public void testPeriodic() {
+
   }
 }

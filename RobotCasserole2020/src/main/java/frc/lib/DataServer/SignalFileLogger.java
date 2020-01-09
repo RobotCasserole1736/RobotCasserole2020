@@ -134,7 +134,7 @@ public class SignalFileLogger {
         fileLoggerStateLock.lock();
         try{
             if(!loggingActive){
-                init("SANDSTORM");
+                init("AUTO");
                 sampleQueue.clear();
                 loggingActive = true;
             }
