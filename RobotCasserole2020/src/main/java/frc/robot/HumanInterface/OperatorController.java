@@ -34,7 +34,27 @@ public class OperatorController {
         //TODO - Open a particular xBOX controller
         
     }
-    
+
+    public boolean getControlPanelThreeRotationsDesired(){
+        return false; //TODO - return a more reasonable value
+    }
+
+    public boolean getControlPanelSeekToColorDesired(){
+        return false; //TODO - return a more reasonable value
+    }
+
+    public double getClimbSpeedCmd(){
+        return 0; //TODO - return a more reasonable value
+    }
+
+    public boolean getIntakeDesired(){
+        return false;  //TODO - return a more reasonable value
+    }
+
+    public boolean getEjectDesired(){
+         return false; //TODO - return a more reasonable value
+    }
+
 
 
 }

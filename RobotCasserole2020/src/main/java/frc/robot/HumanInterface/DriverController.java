@@ -47,7 +47,7 @@ public class DriverController {
         return 0; //TODO - return a more reasonable value
     }
 
-    public boolean autoHighGoalAlignDesired(){
+    public boolean getAutoHighGoalAlignDesired(){
         return false; //TODO - return a more reasonable value
     }
     
