@@ -1,4 +1,3 @@
-
 package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax;
@@ -17,13 +16,14 @@ public class RealDrivetrain extends Drivetrain {
         DrivetrainOpMode opModeCmd; /* The most recently commanded operational mode */
         DrivetrainOpMode prevOpMode; /* the previous operational mode */
     
+        
 
     }
 
     @Override
     public void update() {
         // TODO Auto-generated method stub
-
+        
     }
 
     @Override
