@@ -1,5 +1,7 @@
 package frc.robot.Drivetrain;
 
+import com.analog.adis16448.frc.ADIS16448_IMU;
+
 /*
  *******************************************************************************************
  * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
@@ -30,10 +32,13 @@ public class CasseroleGyro {
     }
     
     private CasseroleGyro(){
-        //TODO - add gyro init code here
+        public static final ADIS16448_IMU imu = new ADIS16448_IMU();
+        //TODO - add gyro init code  
     }
 
     public void update(){
+        
+
         //TODO - add code to read all relevant info from the gyro, and update a Signal so it shows up on the website.
     }
 
