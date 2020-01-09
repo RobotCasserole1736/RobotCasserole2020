@@ -57,6 +57,14 @@ public class DriverController {
         return driverController.getXButtonPressed(); 
 
     }
+    public boolean getDesiredBButtonCommand(){
+        return driverController.getBButtonPressed();
+
+    }
+    public boolean getDesiredAButtonCommand(){
+        return driverController.getAButtonPressed();
+
+    }
     
 
 
