@@ -1,5 +1,9 @@
 package frc.robot.HumanInterface;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID;
+
 /*
  *******************************************************************************************
  * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
@@ -21,6 +25,7 @@ package frc.robot.HumanInterface;
  */
 
 public class DriverController {
+    XboxController driverController;
     private static DriverController instance = null;
     
     public static synchronized DriverController getInstance() {
@@ -32,7 +37,8 @@ public class DriverController {
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private DriverController() {
         //TODO - Open a particular xBOX controller
-        
+        driverController = new XboxController(0);
+
         //TODO - move these to approprate getter functions
         //driverFwdRevCmd = Utils.ctrlAxisScale(-1*frCmd,  joystickExpScaleFactor.get(), joystickDeadzone.get());
         //driverRotateCmd = Utils.ctrlAxisScale(   rCmd, joystickExpScaleFactor.get(), joystickDeadzone.get());
@@ -40,15 +46,16 @@ public class DriverController {
     }
 
     public double getFwdRevCmd(){
-        return 0; //TODO - return a more reasonable value
+        return driverController.getY(GenericHID.Hand.kLeft); 
     }
 
     public double getRotateCmd(){
-        return 0; //TODO - return a more reasonable value
+        return driverController.getX(GenericHID.Hand.kRight); 
     }
 
     public boolean getAutoHighGoalAlignDesired(){
-        return false; //TODO - return a more reasonable value
+        return driverController.getXButtonPressed(); 
+
     }
     
 

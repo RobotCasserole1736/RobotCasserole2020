@@ -1,5 +1,8 @@
 package frc.robot.HumanInterface;
 
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.XboxController;
+
 /*
  *******************************************************************************************
  * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
@@ -21,6 +24,7 @@ package frc.robot.HumanInterface;
  */
 
 public class OperatorController {
+    XboxController operaterController;
     private static OperatorController instance = null;
     
     public static synchronized OperatorController getInstance() {
@@ -31,28 +35,29 @@ public class OperatorController {
 
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private OperatorController() {
-        //TODO - Open a particular xBOX controller
+        operaterController= new XboxController(1);
         
     }
 
     public boolean getControlPanelThreeRotationsDesired(){
-        return false; //TODO - return a more reasonable value
+        return operaterController.getXButtonPressed(); 
     }
 
     public boolean getControlPanelSeekToColorDesired(){
-        return false; //TODO - return a more reasonable value
+        return operaterController.getYButtonPressed(); 
     }
 
     public double getClimbSpeedCmd(){
-        return 0; //TODO - return a more reasonable value
+        return operaterController.getY(GenericHID.Hand.kLeft); 
+
     }
 
     public boolean getIntakeDesired(){
-        return false;  //TODO - return a more reasonable value
+        return operaterController.getAButtonPressed();  
     }
 
     public boolean getEjectDesired(){
-         return false; //TODO - return a more reasonable value
+         return operaterController.getBButtonPressed(); 
     }
 
 
