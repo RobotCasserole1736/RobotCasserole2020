@@ -23,9 +23,9 @@ package frc.robot.Drivetrain;
 public class CasseroleGyro {
 	private static CasseroleGyro instance = null;
 
-	public static synchronized CasseroleCoCasseroleGyrolorSensor getInstance() {
+	public static synchronized CasseroleGyro getInstance() {
 		if(instance == null)
-		instance = new CasseroleGyro();
+		    instance = new CasseroleGyro();
 		return instance;
     }
     
