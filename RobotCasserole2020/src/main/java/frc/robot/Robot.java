@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     Drivetrain.getInstance().update();
-    telemetryUpdate();
+    updateDriverView();
   }
 
   /**
@@ -92,14 +92,18 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Drivetrain.getInstance().update();
-    telemetryUpdate();
+    updateDriverView();
   }
 
-  public void telemetryUpdate(){
+  public void updateDriverView(){
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
-    CasseroleDriverView.setBoolean("High Ground Aquired" , true());
+    CasseroleDriverView.setBoolean("High Ground Aquired" , true);
   }
 
+  private void initDriverView(){
+    CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
+    
+  }
 
   /**
    * This function is called periodically during test mode.
