@@ -10,12 +10,22 @@ public class RealDrivetrain extends Drivetrain {
     CANSparkMax DtLeftIntern;
     CANSparkMax DtRightIntern;
 
+    //State Data
+    
+
+    double fwdRevCmd = 0;
+    double rotCmd = 0;
+
     public RealDrivetrain(){
     
         DrivetrainOpMode opMode; /* The present operational mode */
         DrivetrainOpMode opModeCmd; /* The most recently commanded operational mode */
         DrivetrainOpMode prevOpMode; /* the previous operational mode */
-    
+        
+        for(int i =0; i < 10; i++){
+            DtLeftIntern.follow(DtLeftMaster);
+            DtRightIntern.follow(DtRightMaster);
+        }
         
 
     }
@@ -23,6 +33,7 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public void update() {
         // TODO Auto-generated method stub
+        DtLeftIntern.set(fwdRevCmd);
         
     }
 
