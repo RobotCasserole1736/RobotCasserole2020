@@ -15,7 +15,6 @@ import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
-import sun.tools.jstat.Operator;
 
 /**
  * The VM is configured to automatically run this class, and to call the

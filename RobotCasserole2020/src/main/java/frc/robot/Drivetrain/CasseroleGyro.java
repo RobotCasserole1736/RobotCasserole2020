@@ -30,9 +30,11 @@ public class CasseroleGyro {
 		    instance = new CasseroleGyro();
 		return instance;
     }
+
+    public ADIS16448_IMU imu;
     
     private CasseroleGyro(){
-        public static final ADIS16448_IMU imu = new ADIS16448_IMU();
+        imu = new ADIS16448_IMU();
         //TODO - add gyro init code  
     }
 
