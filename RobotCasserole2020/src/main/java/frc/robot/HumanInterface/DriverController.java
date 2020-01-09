@@ -38,6 +38,18 @@ public class DriverController {
         //driverRotateCmd = Utils.ctrlAxisScale(   rCmd, joystickExpScaleFactor.get(), joystickDeadzone.get());
 
     }
+
+    public double getFwdRevCmd(){
+        return 0; //TODO - return a more reasonable value
+    }
+
+    public double getRotateCmd(){
+        return 0; //TODO - return a more reasonable value
+    }
+
+    public boolean autoHighGoalAlignDesired(){
+        return false; //TODO - return a more reasonable value
+    }
     
 
 
