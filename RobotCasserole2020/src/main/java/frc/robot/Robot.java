@@ -13,7 +13,7 @@ import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
-
+import frc.robot.ControlPanel.CasseroleColorSensor;
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -22,7 +22,7 @@ import frc.robot.Drivetrain.Drivetrain;
  * project.
  */
 public class Robot extends TimedRobot {
-
+  CasseroleColorSensor colorSensor;
 
   CasseroleWebServer webserver;
   CalWrangler wrangler;
@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
     jevois = JeVoisInterface.getInstance();
-
+    colorSensor = CasseroleColorSensor.getInstance();
 
     Drivetrain.getInstance();
 
@@ -59,7 +59,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    colorSensor.update();
+
+    System.out.println(colorSensor.getColor());
+    System.out.println(colorSensor.getConfidence());
+
   }
+
 
   /**
    * This autonomous (along with the chooser code above) shows how to select

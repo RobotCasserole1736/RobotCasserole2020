@@ -19,8 +19,13 @@ package frc.robot.ControlPanel;
  *   Robot Casserole is always looking for more sponsors, so we'd be very appreciative
  *   if you would consider donating to our club to help further STEM education.
  */
-
-public class CasseroleColorSensor {
+import edu.wpi.first.wpilibj.I2C;
+ import edu.wpi.first.wpilibj.util.Color;
+  import com.revrobotics.ColorSensorV3;
+   import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+    import com.revrobotics.ColorMatchResult;
+     import com.revrobotics.ColorMatch;
+ public class CasseroleColorSensor {
 	private static CasseroleColorSensor instance = null;
 
 	public static synchronized CasseroleColorSensor getInstance() {
@@ -29,26 +34,67 @@ public class CasseroleColorSensor {
 		return instance;
 	}
 
+	ColorSensorV3 m_colorSensor;
+	I2C.Port i2cPort;
+	ColorMatch m_colorMatcher;
+	Color kBlueTarget;
+	Color kGreenTarget;
+	Color kRedTarget;
+	Color kYellowTarget;
+
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private CasseroleColorSensor() {
+		i2cPort = I2C.Port.kOnboard;
+		m_colorSensor = new ColorSensorV3(i2cPort);
+		m_colorMatcher = new ColorMatch();
+		kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
+		kGreenTarget = ColorMatch.makeColor(0.197, 0.561, 0.240);
+		kRedTarget = ColorMatch.makeColor(0.561, 0.232, 0.114);
+		kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+		m_colorMatcher.addColorMatch(kBlueTarget);
+		m_colorMatcher.addColorMatch(kGreenTarget);
+	 	m_colorMatcher.addColorMatch(kRedTarget);
+	 	m_colorMatcher.addColorMatch(kYellowTarget);
 		//TODO - Put code to init the sensor & its processing
 	}
+
+	Color detectedColor;
+	double IR;
+	String colorString;
 
 	// This method should be called once per loop.
 	// It will sample the values from the sensor, and calculate what color it thinks things are
 	public void update(){
+		ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+		SmartDashboard.putNumber("Red", detectedColor.red);
+		SmartDashboard.putNumber("Green", detectedColor.green);
+		SmartDashboard.putNumber("Blue", detectedColor.blue);
+		SmartDashboard.putNumber("Confidence", match.confidence);
 		//TODO - fill me out	
 	}
 
 
 	//Returns the best-guess color seen by the sensor.
 	public ControlPanelColor getColor(){
-		return ControlPanelColor.kUNKNOWN; //TODO - make this return something useful
+		ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+		if (match.color == kBlueTarget) {
+		return ControlPanelColor.kBLUE;
+		} else if (match.color == kRedTarget) {
+		return ControlPanelColor.kRED;
+		} else if (match.color == kGreenTarget) {
+		return ControlPanelColor.kGREEN;
+		} else if (match.color == kYellowTarget) {
+		return ControlPanelColor.kYELLOW;
+		} else {
+		return ControlPanelColor.kUNKNOWN;
+		}
+	 //TODO - make this return something useful
 	}
 
 	//Get the confidence percentage as to how certain the sensor is of the color seen.
 	public double getConfidence(){
-		return 0; //TODO - make this return something useful
+		ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
+		return match.confidence; //TODO - make this return something useful
 	}
 
 
