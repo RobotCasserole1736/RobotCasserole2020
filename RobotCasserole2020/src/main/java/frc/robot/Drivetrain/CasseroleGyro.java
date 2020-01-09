@@ -33,7 +33,7 @@ public class CasseroleGyro {
     
     private CasseroleGyro(){
         public static final ADIS16448_IMU imu = new ADIS16448_IMU();
-        //TODO - add gyro init code here
+        //TODO - add gyro init code  
     }
 
     public void update(){
