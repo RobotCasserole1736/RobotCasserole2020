@@ -39,8 +39,8 @@ dataSocket.onmessage = function (event) {
                 var tgt_x_pct = arr.obj_array[i].marker_x;
                 var tgt_y_pct = arr.obj_array[i].marker_y;
                 //Draw webcam plus crosshairs overlaid
-                webcamTexts += "<td><div id=\"outter\" style=\"position:relative;width:100%;height:auto;\">";
-                webcamTexts += "<img src=\"" + arr.obj_array[i].url + "\" style=\"width:100%;height:auto\"/>";
+                webcamTexts += "<td><div id=\"outter\"align=\"center\" style=\"position:relative;width:100%;height:auto;\">";
+                webcamTexts += "<img src=\"" + arr.obj_array[i].url + "\" style=\"width:50%;height:auto\"/>";
                 webcamTexts += "<img id=\"crosshair_" + (arr.obj_array[i].name) + "\" src=\"/crosshair.png\" style=\"width:8%;height:auto;position:absolute;top:" + tgt_y_pct.toString() + "%;left:" + tgt_x_pct.toString() + "%;transform:translate(-50%, -50%)\">";
                 webcamTexts += "</div></td>";
             }

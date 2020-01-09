@@ -44,6 +44,10 @@ public class Robot extends TimedRobot {
 
     Drivetrain.getInstance();
 
+    /* Website Setup */
+    initDriverView();
+
+    
     dataServer.startServer();
     webserver.startServer();
 
