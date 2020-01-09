@@ -10,19 +10,22 @@ public class RealDrivetrain extends Drivetrain {
     CANSparkMax DtLeftIntern;
     CANSparkMax DtRightIntern;
 
+    CasseroleGyro gyro;
+
     public RealDrivetrain(){
     
         DrivetrainOpMode opMode; /* The present operational mode */
         DrivetrainOpMode opModeCmd; /* The most recently commanded operational mode */
         DrivetrainOpMode prevOpMode; /* the previous operational mode */
     
-        
+        gyro = new CasseroleGyro();
 
     }
 
     @Override
     public void update() {
         // TODO Auto-generated method stub
+        gyro.update();
         
     }
 

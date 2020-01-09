@@ -2,6 +2,9 @@ package frc.robot.Drivetrain;
 
 import com.analog.adis16448.frc.ADIS16448_IMU;
 
+import edu.wpi.first.wpilibj.Timer;
+import frc.lib.DataServer.Signal;
+
 /*
  *******************************************************************************************
  * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
@@ -23,35 +26,30 @@ import com.analog.adis16448.frc.ADIS16448_IMU;
  */
 
 public class CasseroleGyro {
-	private static CasseroleGyro instance = null;
 
-	public static synchronized CasseroleGyro getInstance() {
-		if(instance == null)
-		    instance = new CasseroleGyro();
-		return instance;
-    }
+    ADIS16448_IMU imu;
 
-    public ADIS16448_IMU imu;
+    Signal poseAngleSig;
+
+    double angle_deg = 0;
     
-    private CasseroleGyro(){
+    public CasseroleGyro(){
         imu = new ADIS16448_IMU();
-        //TODO - add gyro init code  
+        poseAngleSig = new Signal("DT_Pose_Angle", "deg");
     }
 
     public void update(){
-        
-
-        //TODO - add code to read all relevant info from the gyro, and update a Signal so it shows up on the website.
+        angle_deg = imu.getYaw();
+        poseAngleSig.addSample(Timer.getFPGATimestamp()*1000, angle_deg);
     }
 
     public void calibrate(){
-        //TODO - add code to cause the gyro to calibrate
+        imu.calibrate();
     }
 
 
     public double getAngleDeg(){
-        return 0; 
-        //TODO - Return the present pose angle of the robot in degrees, 
+        return angle_deg; 
         // where "0" pointed toward the right wall of the field, 
         //"90" is pointed straight at the opposing alliance wall, and
         //"180" is pointed at the left wall of the field
