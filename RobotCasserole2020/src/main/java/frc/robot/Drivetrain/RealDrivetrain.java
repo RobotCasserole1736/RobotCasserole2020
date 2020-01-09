@@ -1,6 +1,8 @@
 package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANEncoder;
 import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -12,11 +14,13 @@ public class RealDrivetrain extends Drivetrain {
 
 
     
-    CANSparkMax DtLeftMaster;
-    CANSparkMax DtRightMaster;
+    CANSparkMax dtLeftMaster;
+    CANSparkMax dtRightMaster;
+    CANEncoder leftEncoder;
 
-    CANSparkMax DtLeftIntern;
-    CANSparkMax DtRightIntern;
+    CANSparkMax dtLeftIntern;
+    CANSparkMax dtRightIntern;
+    CANEncoder rightEncoder;
 
     Gyro dtGyro;
     
@@ -31,20 +35,29 @@ public class RealDrivetrain extends Drivetrain {
     DrivetrainOpMode prevOpMode; /* the previous operational mode */
     
     //Sensor Data
+    
     double dtNeoL1Current = 0;
     double dtNeoL2Current = 0;
     double dtNeoR1Current = 0;
     double dtNeoR2Current = 0;
+    double leftWheelSpeedRPM = 0;
+    double rightWheelSpeedRPM = 0;
     double gyroAngle = 0;
+
 
     
 
     public RealDrivetrain(){
-    
+        dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
+        dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);
+        dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+        dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+        
+
 
         for(int i =0; i < 10; i++){
-            DtLeftIntern.follow(DtLeftMaster);
-            DtRightIntern.follow(DtRightMaster);
+            dtLeftIntern.follow(dtLeftMaster);
+            dtRightIntern.follow(dtRightMaster);
         }
         
 
@@ -55,14 +68,21 @@ public class RealDrivetrain extends Drivetrain {
     public void update() {
         // TODO Auto-generated method stub
         //sensors
-        dtNeoL1Current = DtLeftMaster.getOutputCurrent();
-        dtNeoL2Current = DtLeftIntern.getOutputCurrent();
-        dtNeoR1Current = DtRightMaster.getOutputCurrent();
-        dtNeoR2Current = DtRightIntern.getOutputCurrent();
+        dtNeoL1Current = dtLeftMaster.getOutputCurrent();
+        dtNeoL2Current = dtLeftIntern.getOutputCurrent();
+        dtNeoR1Current = dtRightMaster.getOutputCurrent();
+        dtNeoR2Current = dtRightIntern.getOutputCurrent();
+
+        
+        dtRightMaster.getEncoder();
+        leftWheelSpeedRPM = dtLeftMaster.getEncoder().getVelocity();
+        rightWheelSpeedRPM = dtRightMaster.getEncoder().getVelocity();
+
+
 
         
 
-        DtLeftIntern.set(fwdRevCmd);
+        dtLeftIntern.set(fwdRevCmd);
         
     }
 
