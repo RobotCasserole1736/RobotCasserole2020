@@ -1,27 +1,47 @@
 package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax;
+import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
+import edu.wpi.first.wpilibj.CAN;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import frc.robot.RobotConstants;
 
 public class RealDrivetrain extends Drivetrain {
 
+    //TODO Put in Robot Constants
+
+
+    
     CANSparkMax DtLeftMaster;
     CANSparkMax DtRightMaster;
-    
+
     CANSparkMax DtLeftIntern;
     CANSparkMax DtRightIntern;
 
-    //State Data
+    Gyro dtGyro;
     
 
+    
+    //State Data
     double fwdRevCmd = 0;
     double rotCmd = 0;
 
+    DrivetrainOpMode opMode; /* The present operational mode */
+    DrivetrainOpMode opModeCmd; /* The most recently commanded operational mode */
+    DrivetrainOpMode prevOpMode; /* the previous operational mode */
+    
+    //Sensor Data
+    double dtNeoL1Current = 0;
+    double dtNeoL2Current = 0;
+    double dtNeoR1Current = 0;
+    double dtNeoR2Current = 0;
+    double gyroAngle = 0;
+
+    
+
     public RealDrivetrain(){
     
-        DrivetrainOpMode opMode; /* The present operational mode */
-        DrivetrainOpMode opModeCmd; /* The most recently commanded operational mode */
-        DrivetrainOpMode prevOpMode; /* the previous operational mode */
-        
+
         for(int i =0; i < 10; i++){
             DtLeftIntern.follow(DtLeftMaster);
             DtRightIntern.follow(DtRightMaster);
@@ -30,9 +50,18 @@ public class RealDrivetrain extends Drivetrain {
 
     }
 
+   
     @Override
     public void update() {
         // TODO Auto-generated method stub
+        //sensors
+        dtNeoL1Current = DtLeftMaster.getOutputCurrent();
+        dtNeoL2Current = DtLeftIntern.getOutputCurrent();
+        dtNeoR1Current = DtRightMaster.getOutputCurrent();
+        dtNeoR2Current = DtRightIntern.getOutputCurrent();
+
+        
+
         DtLeftIntern.set(fwdRevCmd);
         
     }
@@ -94,31 +123,31 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public double getGyroAngle() {
         // TODO Auto-generated method stub
-        return 0;
+        return gyroAngle;
     }
 
     @Override
     public double getLeftNeo1Current() {
-        // TODO Auto-generated method stub
-        return 0;
+        
+        return dtNeoL1Current;
     }
 
     @Override
     public double getLeftNeo2Current() {
         // TODO Auto-generated method stub
-        return 0;
+        return dtNeoL2Current;
     }
 
     @Override
     public double getRightNeo1Current() {
         // TODO Auto-generated method stub
-        return 0;
+        return dtNeoR1Current;
     }
 
     @Override
     public double getRightNeo2Current() {
         // TODO Auto-generated method stub
-        return 0;
+        return dtNeoR2Current;
     }
 
 }
