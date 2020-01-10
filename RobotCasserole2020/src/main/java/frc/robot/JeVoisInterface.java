@@ -1,8 +1,5 @@
 package frc.robot;
 
-import edu.wpi.cscore.MjpegServer;
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoMode.PixelFormat;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.Timer;
@@ -43,11 +40,7 @@ public class JeVoisInterface {
     
     // Serial port used for getting target data from JeVois 
     private SerialPort visionPort = null;
-    
-    // USBCam and server used for broadcasting a webstream of what is seen 
-    private UsbCamera visionCam = null;
-    private MjpegServer camServer = null;
-    
+
     // Status variables 
     private boolean dataStreamRunning = false;
     private boolean camStreamRunning = false;
@@ -168,23 +161,11 @@ public class JeVoisInterface {
     } 
 
     public void start(){
-        if(broadcastUSBCam){
-            //Start streaming the JeVois via webcam
-            //This auto-starts the serial stream
-            startCameraStream(); 
-        } else {
-            startDataOnlyStream();
-        }
+        startDataOnlyStream();
     }
 
     public void stop(){
-        if(broadcastUSBCam){
-            //Start streaming the JeVois via webcam
-            //This auto-starts the serial stream
-            stopCameraStream(); 
-        } else {
-            stopDataOnlyStream();
-        }
+        stopDataOnlyStream();
     }
     
     /**
@@ -397,24 +378,6 @@ public class JeVoisInterface {
     }
     
 
-    /**
-     * Open an Mjpeg streamer from the JeVois camera
-     */
-    private void startCameraStream(){
-        try{
-            System.out.print("Starting JeVois Cam Stream...");
-            visionCam = new UsbCamera("VisionProcCam", 0);
-            visionCam.setVideoMode(PixelFormat.kBGR, STREAM_WIDTH_PX, STREAM_HEIGHT_PX, STREAM_RATE_FPS);
-            camServer = new MjpegServer("VisionCamServer", MJPG_STREAM_PORT);
-            camServer.setSource(visionCam);
-            camStreamRunning = true;
-            dataStreamRunning = true;
-            CrashTracker.logAndPrint("[JeVois Interface] SUCCESS!!");
-        } catch (Exception e) {
-            DriverStation.reportError("Cannot start camera stream from JeVois", false);
-            e.printStackTrace();
-        }
-    }
     
     /**
      * Cease the operation of the camera stream. Unknown if needed.
