@@ -58,6 +58,29 @@ public class DriverController {
 
     }
     
+    public boolean getDesiredYButtonCommand(){
+        return driverController.getYButtonPressed();
+    }
+
+    public boolean getDesiredBButtonCommand(){
+        return driverController.getBButtonPressed();
+    }
+
+    public boolean getDesiredAButtonCommand(){
+        return driverController.getAButtonPressed();
+
+    }
+
+    public boolean getDesiredLeftJoystickButtonCommand(){
+        return driverController.getStickButtonPressed(Hand.kLeft);
+    }
+    
+    public boolean getDesiredRightJoystickButtonCommand(){
+        return driverController.getStickButtonPressed(Hand.kRight);
+    }
+
+    
+
 
 
 }
