@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.XboxController;
 /**
  * Add your docs here.
  */
-public class DriverController {
+/*public class DriverController {
     double driverFwdRevCmd;
     double driverRotCmd;
 
@@ -27,3 +27,4 @@ public class DriverController {
 
 
 }
+*/
