@@ -2,6 +2,7 @@
 
 #Casserole-specific patters
 crash_tracking.txt
+sim_data_captures/*.csv
 
 ### C++ ###
 # Prerequisites

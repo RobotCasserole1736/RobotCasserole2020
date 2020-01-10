@@ -1,14 +1,11 @@
 
 package frc.robot.Drivetrain;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
 
 
 public class ImaginaryDrivetrain extends Drivetrain{
-
-    public ImaginaryDrivetrain(){
-
-    }
 
     DrivetrainOpMode opModeCmd;
     DrivetrainOpMode opMode;
@@ -32,7 +29,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
     final double DT_MAX_ACCEL_FT_PER_SEC_PER_SEC = 8.0;
 
 
-    public void DrivetrainSim() {
+    public ImaginaryDrivetrain() {
         ActualRightSimRPM = new Signal("Drivetrain Sim Actual Right Speed", "RPM");
         ActualLeftSimRPM = new Signal("Drivetrain Sim Actual Left Speed", "RPM");
         DesiredRightSimRPM = new Signal("Drivetrain Sim Desired Right Speed", "RPM");
@@ -40,7 +37,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
     }
 
     public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
-        opModeCmd = DrivetrainOpMode.OpenLoop;
+        opModeCmd = DrivetrainOpMode.kOpenLoop;
 
         double motorSpeedLeftCMD = Utils.capMotorCmd(forwardReverseCmd + rotationCmd);
         double motorSpeedRightCMD = Utils.capMotorCmd(forwardReverseCmd - rotationCmd);
@@ -53,32 +50,26 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     @Override
     public void update() {
-        // TODO Auto-generated method stub
         prevOpMode = opMode;
         opMode = opModeCmd;
 
-        if(opModeCmd == DrivetrainOpMode.ClosedLoop || opModeCmd == DrivetrainOpMode.ClosedLoopWithGyro){
+        if(opModeCmd == DrivetrainOpMode.kClosedLoopVelocity){
             //Asssume perfect drivetrain closed loop.
             ActLeftRPM = DesLeftRPM;
             ActRightRPM = DesRightRPM;
-            if(opModeCmd == DrivetrainOpMode.ClosedLoopWithGyro){
-                headingAvailable = true;
-                actPoseAngle = desPoseAngle;
-            } else {
-                headingAvailable = false;
-                actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
-            }
-        } else if (opModeCmd == DrivetrainOpMode.OpenLoop){
+            headingAvailable = false;
+            actPoseAngle = desPoseAngle;
 
+        } else if (opModeCmd == DrivetrainOpMode.kOpenLoop){
             ActLeftRPM = simMotor(ActLeftRPM, DesLeftRPM);
             ActRightRPM = simMotor(ActRightRPM, DesRightRPM);
             headingAvailable = false;
             actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
-        } else if(opModeCmd == DrivetrainOpMode.GyroLock) {
-            //TODO
-        }
+        } 
 
-        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
+        RobotPose.getInstance().update();
+
+        double sampleTimeMs = Timer.getFPGATimestamp() * 1000.0;
 
         ActualLeftSimRPM.addSample(sampleTimeMs, ActLeftRPM);
         ActualRightSimRPM.addSample(sampleTimeMs, ActRightRPM);
@@ -127,14 +118,12 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     @Override
     public void setGyroLockCmd(double forwardReverseCmd) {
-        opModeCmd = DrivetrainOpMode.GyroLock;
-
+        //TODO - maybe
     }
 
     @Override
     public void setPositionCmd(double forwardReverseCmd, double angleError) {
-        //not yet implemented
-
+        //TODO - maybe
     }
 
     @Override
@@ -160,7 +149,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     @Override
     public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM, double headingCmdDeg) {
-        opModeCmd = DrivetrainOpMode.ClosedLoopWithGyro;
+        opModeCmd = DrivetrainOpMode.kClosedLoopVelocity;
         DesRightRPM = rightCmdRPM;
         DesLeftRPM = leftCmdRPM;
         desPoseAngle = headingCmdDeg;
@@ -177,6 +166,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
     @Override
     public double getLeftNeo1Current() {
         //TODO
+        return 0;
     }
 
     @Override

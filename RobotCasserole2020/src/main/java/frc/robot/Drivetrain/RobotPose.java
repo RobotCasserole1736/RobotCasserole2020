@@ -1,5 +1,6 @@
 package frc.robot.Drivetrain;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.robot.RobotConstants;
@@ -169,7 +170,7 @@ public class RobotPose {
         updatePoseFromWheelSpeeds();
         handleFieldColission();
 
-        double sample_time_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
+        double sample_time_ms = Timer.getFPGATimestamp()*1000.0;
         DesX.addSample(sample_time_ms,desPoseX);
         DesY.addSample(sample_time_ms,desPoseY);
         DesT.addSample(sample_time_ms,desPoseT);

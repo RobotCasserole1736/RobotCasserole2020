@@ -11,8 +11,10 @@ public class RobotConstants{
     static public final int DT_LEFT_NEO_2_CANID = 2;
     static public final int DT_RIGHT_NEO_1_CANID = 3;
     static public final int DT_RIGHT_NEO_2_CANID = 4;
-	public static final double WHEEL_RADIUS_FT = 0;
-	public static final double ROBOT_TRACK_WIDTH_FT = 0;
-	public static final double MAIN_LOOP_SAMPLE_RATE_S = 0;
+
+    // Robot Physical Parameters
+	public static final double WHEEL_RADIUS_FT = 0.25;
+	public static final double ROBOT_TRACK_WIDTH_FT = 1.75;
+	public static final double MAIN_LOOP_SAMPLE_RATE_S = 0.02;
 
 }
