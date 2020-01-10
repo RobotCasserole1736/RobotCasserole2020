@@ -2,8 +2,8 @@ package frc.robot.Drivetrain;
 
 //import com.analog.adis16448.frc.ADIS16448_IMU;
 
-import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
+import frc.robot.LoopTiming;
 
 /*
  *******************************************************************************************
@@ -40,7 +40,7 @@ public class CasseroleGyro {
 
     public void update(){
         //angle_deg = imu.getYaw();
-        poseAngleSig.addSample(Timer.getFPGATimestamp()*1000, angle_deg);
+        poseAngleSig.addSample(LoopTiming.getInstance().getLoopStartTimeSec()*1000, angle_deg);
     }
 
     public void calibrate(){

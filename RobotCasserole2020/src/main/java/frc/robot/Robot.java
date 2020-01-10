@@ -83,10 +83,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    loopTiming.markLoopStart();
+
     Drivetrain.getInstance().update();
     updateDriverView();
-    loopTiming.markLoopStart();
-    
+
+    loopTiming.markLoopEnd();
   }
 
 
@@ -98,9 +100,11 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    loopTiming.markLoopStart();
     Drivetrain.getInstance().update();
     updateDriverView();
     
+    loopTiming.markLoopEnd();
   }
 
 
@@ -125,6 +129,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+    loopTiming.markLoopStart();
 
+    loopTiming.markLoopEnd();
   }
 }

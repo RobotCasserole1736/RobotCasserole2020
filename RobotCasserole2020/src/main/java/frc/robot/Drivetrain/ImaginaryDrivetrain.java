@@ -1,8 +1,8 @@
 
 package frc.robot.Drivetrain;
 
-import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
+import frc.robot.LoopTiming;
 
 
 public class ImaginaryDrivetrain extends Drivetrain{
@@ -69,7 +69,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
         RobotPose.getInstance().update();
 
-        double sampleTimeMs = Timer.getFPGATimestamp() * 1000.0;
+        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
 
         ActualLeftSimRPM.addSample(sampleTimeMs, ActLeftRPM);
         ActualRightSimRPM.addSample(sampleTimeMs, ActRightRPM);

@@ -28,6 +28,7 @@ import java.io.IOException;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
 import frc.lib.Util.CrashTracker;
+import frc.robot.LoopTiming;
 
 /**
  * DESCRIPTION: <br>
@@ -138,7 +139,7 @@ public class CasseroleRIOLoadMonitor {
 		String CPUTotalLoadRawLine = new String();
 		File file;
 
-		double sample_time_ms = Timer.getFPGATimestamp()*1000;
+		double sample_time_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
 		
 		if(giveUp == false){
 			
