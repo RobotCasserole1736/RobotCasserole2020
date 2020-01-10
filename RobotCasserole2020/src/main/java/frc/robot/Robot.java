@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
   CasseroleWebServer webserver;
   CalWrangler wrangler;
   CasseroleDataServer dataServer;
+  LoopTiming loopTiming;
 
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
@@ -39,6 +40,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    
 
     /* Init website utilties */
     webserver = new CasseroleWebServer();
@@ -51,6 +53,8 @@ public class Robot extends TimedRobot {
 
     Drivetrain.getInstance();
 
+    loopTiming = LoopTiming.getInstance();
+
     /* Website Setup */
     initDriverView();
 
@@ -58,6 +62,9 @@ public class Robot extends TimedRobot {
     dataServer.startServer();
     webserver.startServer();
   }
+  
+    
+  
 
   @Override
   public void disabledInit() {
@@ -78,6 +85,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     Drivetrain.getInstance().update();
     updateDriverView();
+    loopTiming.markLoopStart();
+    
   }
 
 
@@ -91,6 +100,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Drivetrain.getInstance().update();
     updateDriverView();
+    
   }
 
 
