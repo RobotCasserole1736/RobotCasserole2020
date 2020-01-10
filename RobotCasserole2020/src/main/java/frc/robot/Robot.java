@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
 
   private void initDriverView(){
     CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
-    CasseroleDriverView.newBoolean("High Ground Aquired", "green");
+    CasseroleDriverView.newBoolean("highgroundacquired", "green");
     CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
     CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
 
@@ -105,7 +105,7 @@ public class Robot extends TimedRobot {
 
   public void updateDriverView(){
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
-    CasseroleDriverView.setBoolean("High Ground Aquired" , true);
+    CasseroleDriverView.setBoolean("highgroundacquired",OperatorController.getInstance().createSound());
   }
 
   @Override

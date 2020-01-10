@@ -472,11 +472,12 @@ dataSocket.onmessage = function (event) {
                 nameOfSignal = arr.obj_array[i].name;
                 sigVal = arr.obj_array[i].value;
 
-                if(nameOfSignal == "highGroundAcquired" && sigVal == True){
+                if(nameOfSignal == "highgroundacquired" && sigVal == "True"){
+                    //display_objs[highgroundacquired].setValue(highground.mp3);
                     highGround.play();
                 }
                 
-                display_objs[highGroundAcquired].setValue(highground.mp3);
+                
             }
 
         }
