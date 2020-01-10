@@ -150,4 +150,5 @@ public class CrashTracker {
         df.setTimeZone(TimeZone.getTimeZone("US/Central"));
         return df.format(new Date());
     }
+
 }

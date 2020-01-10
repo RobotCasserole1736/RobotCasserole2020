@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
+import frc.lib.Util.CasseroleCrashHandler;
+import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
@@ -41,6 +43,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     
+    CrashTracker.logRobotInit();
 
     /* Init website utilties */
     webserver = new CasseroleWebServer();
@@ -58,9 +61,9 @@ public class Robot extends TimedRobot {
     /* Website Setup */
     initDriverView();
 
-    
     dataServer.startServer();
     webserver.startServer();
+    
   }
   
     
@@ -68,22 +71,26 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    CrashTracker.logDisabledInit();
     dataServer.logger.stopLogging();
   }
 
   @Override
   public void disabledPeriodic() {
+    CrashTracker.logDisabledPeriodic();
     Drivetrain.getInstance().update();
   }
 
   @Override
   public void autonomousInit() {
+    CrashTracker.logAutoInit();
     dataServer.logger.startLoggingAuto();
   }
 
   @Override
   public void autonomousPeriodic() {
     loopTiming.markLoopStart();
+    CrashTracker.logAutoPeriodic();
 
     Drivetrain.getInstance().update();
     updateDriverView();
@@ -95,12 +102,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    CrashTracker.logTeleopInit();
     dataServer.logger.startLoggingTeleop();
   }
 
   @Override
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
+    CrashTracker.logTeleopPeriodic();
     Drivetrain.getInstance().update();
     updateDriverView();
     
