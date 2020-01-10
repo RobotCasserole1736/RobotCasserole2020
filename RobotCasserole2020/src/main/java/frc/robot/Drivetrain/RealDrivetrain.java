@@ -99,7 +99,7 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public void setPositionCmd(double forwardReverseCmd, double angleError) {
         opModeCmd = DrivetrainOpMode.kTargetPosition;
-
+        
     }
 
     @Override
@@ -128,13 +128,18 @@ public class RealDrivetrain extends Drivetrain {
 
     @Override
     public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM) {
-        // TODO Auto-generated method stub
-
+        opModeCmd = DrivetrainOpMode.kClosedLoopVelocity;
+        leftWheelSpeedRPM  = leftCmdRPM;
+        rightWheelSpeedRPM = rightCmdRPM;
     }
 
     @Override
     public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM, double headingCmdDeg) {
-        // TODO Auto-generated method stub
+        opModeCmd = DrivetrainOpMode.kClosedLoopVelocity;
+        leftWheelSpeedRPM  = leftCmdRPM;
+        rightWheelSpeedRPM = rightCmdRPM;
+        headingCmdDeg = headingCmdDeg;
+
 
     }
 
