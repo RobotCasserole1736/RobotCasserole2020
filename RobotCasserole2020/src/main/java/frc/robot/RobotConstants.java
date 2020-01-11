@@ -24,9 +24,9 @@ public class RobotConstants {
     public static final double MAIN_LOOP_SAMPLE_RATE_S = 0.02;
     
     //Color Sensor Configuration
-    public static final Color kBlueTarget   = ColorMatch.makeColor(0.143, 0.427, 0.429);
-	public static final Color kGreenTarget  = ColorMatch.makeColor(0.197, 0.561, 0.240);
-	public static final Color kRedTarget    = ColorMatch.makeColor(0.561, 0.232, 0.114);
-	public static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
+    public static final Color kBlueTarget   = ColorMatch.makeColor(0.150, 0.419, 0.431);
+	public static final Color kGreenTarget  = ColorMatch.makeColor(0.268, 0.498, 0.234);
+	public static final Color kRedTarget    = ColorMatch.makeColor(0.470, 0.368, 0.161);
+	public static final Color kYellowTarget = ColorMatch.makeColor(0.376, 0.423, 0.202);
 
 }
