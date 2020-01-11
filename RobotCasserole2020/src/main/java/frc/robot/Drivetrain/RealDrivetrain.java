@@ -65,10 +65,12 @@ public class RealDrivetrain extends Drivetrain {
     Signal currentR1Sig;
     Signal currentR2Sig;
 
+    CANPIDController dtPID;
+
     Calibration kP;
     Calibration kI;
     Calibration kD;
-    Calibration kF;
+    Calibration kFF;
     double kIz;
     boolean updateCalValues;
 
@@ -80,6 +82,9 @@ public class RealDrivetrain extends Drivetrain {
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
 
+        dtPID = new CANPIDController(dtLeftMaster);
+        dtPID = new CANPIDController(dtRightMaster);
+                
         leftWheelSpeedDesiredSig = new Signal("Drivetrain Left Wheel Desired Speed", "RPM");
         leftWheelSpeedActualSig = new Signal("Drivetrain Left Wheel Actual Speed", "RPM");
         rightWheelSpeedDesiredSig = new Signal("Drivetrain Right Wheel Desired Speed", "RPM");
@@ -91,11 +96,11 @@ public class RealDrivetrain extends Drivetrain {
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
 
         kP = new Calibration("Drivetrain P Value", 0);
-        kP = new Calibration("Drivetrain I Value", 0);
-        kP = new Calibration("Drivetrain D Value", 0);
-        kP = new Calibration("Drivetrain F Value", );
+        kI = new Calibration("Drivetrain I Value", 0);
+        kD = new Calibration("Drivetrain D Value", 0);
+        kFF = new Calibration("Drivetrain F Value", 0);
         kIz = 0;
-        
+
         
 
         
@@ -155,6 +160,7 @@ public class RealDrivetrain extends Drivetrain {
         
         
     }
+    
     @Override
     public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
         opModeCmd = DrivetrainOpMode.kOpenLoop;
@@ -200,7 +206,13 @@ public class RealDrivetrain extends Drivetrain {
 
     @Override
     public void updateGains(boolean force) {
-        //TODO dont want to do this now
+        if(force) {
+            dtPID.setP(kP.get());
+            dtPID.setI(kI.get());
+            dtPID.setD(kD.get());
+            dtPID.setIZone(kIz);
+            dtPID.setFF(kFF.get());
+        }
 
     }
 
