@@ -2,6 +2,7 @@ package frc.robot.HumanInterface;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 
 /*
  *******************************************************************************************
@@ -59,7 +60,9 @@ public class OperatorController {
     public boolean getEjectDesired(){
          return operaterController.getBButtonPressed(); 
     }
-
+    public boolean createSound(){
+        return operaterController.getBumperPressed(Hand.kLeft);
+    }
 
 
 }

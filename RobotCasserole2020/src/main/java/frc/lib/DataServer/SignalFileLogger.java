@@ -13,8 +13,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.Robot;
+
 import java.util.Arrays;
 import java.io.BufferedWriter;
+import java.io.File;
 
 
 /*
@@ -66,8 +71,8 @@ import java.io.BufferedWriter;
 public class SignalFileLogger {
 
     String log_name = null;
-    final String OUTPUT_DIR = "/U/data_captures/"; // USB drive is mounted to /U on roboRIO
-    //final String OUTPUT_DIR = "./";
+    final String OUTPUT_DIR_RIO = "/U/data_captures/"; // USB drive is mounted to /U on roboRIO
+    final String OUTPUT_DIR_LOCAL = "./sim_data_captures/"; //local directory for log files in sim.
 
     //Handle to the actual file being logged to
     BufferedWriter log_file = null;
@@ -81,8 +86,6 @@ public class SignalFileLogger {
     boolean loggingActive = false;
 
     BlockingQueue<DataSample> sampleQueue;
-
-    private Timer updater = null;
 
     ///////////////////////////////////////////////////////////////////
     // Public API
@@ -242,8 +245,18 @@ public class SignalFileLogger {
 
         try {
 
+            String folderName;
             // Determine a unique file name
-            log_name = OUTPUT_DIR + "log_" +  getDateTimeString() + "_" + logPrefix + ".csv";
+            if(Robot.isReal()){
+                log_name = OUTPUT_DIR_RIO + "log_" +  getDateTimeString() + "_" + logPrefix + ".csv";
+                folderName = OUTPUT_DIR_RIO;
+            } else {
+                log_name = OUTPUT_DIR_LOCAL + "log_" +  getDateTimeString() + "_" + logPrefix + ".csv";
+                folderName = OUTPUT_DIR_LOCAL;
+            }
+
+            File dir = new File(folderName);
+            if (!dir.exists()) dir.mkdirs();
 
             System.out.println("Initalizing Log file " + log_name);
 

@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
+import frc.lib.Util.CasseroleCrashHandler;
+import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
@@ -29,6 +31,7 @@ public class Robot extends TimedRobot {
   CasseroleWebServer webserver;
   CalWrangler wrangler;
   CasseroleDataServer dataServer;
+  LoopTiming loopTiming;
 
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
@@ -39,6 +42,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    
+    CrashTracker.logRobotInit();
 
     /* Init website utilties */
     webserver = new CasseroleWebServer();
@@ -51,53 +56,71 @@ public class Robot extends TimedRobot {
 
     Drivetrain.getInstance();
 
+    loopTiming = LoopTiming.getInstance();
+
     /* Website Setup */
     initDriverView();
 
-    
     dataServer.startServer();
     webserver.startServer();
+    
   }
+  
+    
+  
 
   @Override
   public void disabledInit() {
+    CrashTracker.logDisabledInit();
     dataServer.logger.stopLogging();
   }
 
   @Override
   public void disabledPeriodic() {
+    CrashTracker.logDisabledPeriodic();
     Drivetrain.getInstance().update();
   }
 
   @Override
   public void autonomousInit() {
+    CrashTracker.logAutoInit();
     dataServer.logger.startLoggingAuto();
   }
 
   @Override
   public void autonomousPeriodic() {
+    loopTiming.markLoopStart();
+    CrashTracker.logAutoPeriodic();
+
     Drivetrain.getInstance().update();
     updateDriverView();
+
+    loopTiming.markLoopEnd();
   }
 
 
 
   @Override
   public void teleopInit() {
+    CrashTracker.logTeleopInit();
     dataServer.logger.startLoggingTeleop();
   }
 
   @Override
   public void teleopPeriodic() {
+    loopTiming.markLoopStart();
+    CrashTracker.logTeleopPeriodic();
     Drivetrain.getInstance().update();
     updateDriverView();
+    
+    loopTiming.markLoopEnd();
   }
 
 
 
   private void initDriverView(){
     CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
-    CasseroleDriverView.newBoolean("High Ground Aquired", "green");
+    CasseroleDriverView.newBoolean("highgroundacquired", "green");
     CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
     CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
 
@@ -105,7 +128,7 @@ public class Robot extends TimedRobot {
 
   public void updateDriverView(){
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
-    CasseroleDriverView.setBoolean("High Ground Aquired" , true);
+    CasseroleDriverView.setBoolean("highgroundacquired",OperatorController.getInstance().createSound());
   }
 
   @Override
@@ -115,6 +138,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void testPeriodic() {
+    loopTiming.markLoopStart();
 
+    loopTiming.markLoopEnd();
   }
 }
