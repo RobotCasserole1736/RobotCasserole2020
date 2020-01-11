@@ -13,7 +13,10 @@ import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
+import frc.lib.DataServer.Signal;
 import frc.robot.ControlPanel.CasseroleColorSensor;
+import frc.robot.LoopTiming;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -23,17 +26,18 @@ import frc.robot.ControlPanel.CasseroleColorSensor;
  */
 public class Robot extends TimedRobot {
   CasseroleColorSensor colorSensor;
-
   CasseroleWebServer webserver;
   CalWrangler wrangler;
   CasseroleDataServer dataServer;
   JeVoisInterface jevois;
+  LoopTiming loopTiming;
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
    */
   @Override
   public void robotInit() {
+    loopTiming = LoopTiming.getInstance();
 
     /* Init website utilties */
     webserver = new CasseroleWebServer();
@@ -46,6 +50,8 @@ public class Robot extends TimedRobot {
 
     dataServer.startServer();
     webserver.startServer();
+
+    
 
   }
 
@@ -99,6 +105,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Drivetrain.getInstance().update();
     updateDriverView();
+    loopTiming.markLoopStart();
   }
 
   public void updateDriverView(){

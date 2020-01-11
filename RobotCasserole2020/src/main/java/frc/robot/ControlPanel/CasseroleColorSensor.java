@@ -24,7 +24,10 @@ import edu.wpi.first.wpilibj.I2C;
   import com.revrobotics.ColorSensorV3;
    import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
     import com.revrobotics.ColorMatchResult;
-     import com.revrobotics.ColorMatch;
+	 import com.revrobotics.ColorMatch;
+	  import frc.lib.DataServer.Signal;
+	   import edu.wpi.first.wpilibj.Timer;
+	    import frc.robot.LoopTiming;
  public class CasseroleColorSensor {
 	private static CasseroleColorSensor instance = null;
 
@@ -41,6 +44,11 @@ import edu.wpi.first.wpilibj.I2C;
 	Color kGreenTarget;
 	Color kRedTarget;
 	Color kYellowTarget;
+	Signal RedColorValueSig;
+	Signal GreenColorValueSig;
+	Signal BlueColorValueSig;
+	Signal ConfidenceValueSig;
+	double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
 
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private CasseroleColorSensor() {
@@ -54,23 +62,38 @@ import edu.wpi.first.wpilibj.I2C;
 		m_colorMatcher.addColorMatch(kBlueTarget);
 		m_colorMatcher.addColorMatch(kGreenTarget);
 	 	m_colorMatcher.addColorMatch(kRedTarget);
-	 	m_colorMatcher.addColorMatch(kYellowTarget);
+		m_colorMatcher.addColorMatch(kYellowTarget);
+
+		//Signals
+		
+
+		RedColorValueSig = new Signal("ColorSensor", "red");
+		GreenColorValueSig = new Signal("ColorSensor", "green");
+		BlueColorValueSig = new Signal("ColorSensor", "blue");
+		ConfidenceValueSig = new Signal("ColorSensor", "confidence");
 		//TODO - Put code to init the sensor & its processing
 	}
 
-	Color detectedColor;
 	double IR;
 	String colorString;
+	Color detectedColor; 
 
 	// This method should be called once per loop.
 	// It will sample the values from the sensor, and calculate what color it thinks things are
 	public void update(){
+        Timer updateTimer = new Timer();
+        updateTimer.start();
+		detectedColor = m_colorSensor.getColor();
 		ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
 		SmartDashboard.putNumber("Red", detectedColor.red);
 		SmartDashboard.putNumber("Green", detectedColor.green);
 		SmartDashboard.putNumber("Blue", detectedColor.blue);
 		SmartDashboard.putNumber("Confidence", match.confidence);
-		//TODO - fill me out	
+		//TODO - fill me out
+		RedColorValueSig.addSample(sampleTimeMS, detectedColor.red);	
+		GreenColorValueSig.addSample(sampleTimeMS, detectedColor.green);	
+		BlueColorValueSig.addSample(sampleTimeMS, detectedColor.blue);	
+		ConfidenceValueSig.addSample(sampleTimeMS, match.confidence);	
 	}
 
 
@@ -94,7 +117,7 @@ import edu.wpi.first.wpilibj.I2C;
 	//Get the confidence percentage as to how certain the sensor is of the color seen.
 	public double getConfidence(){
 		ColorMatchResult match = m_colorMatcher.matchClosestColor(detectedColor);
-		return match.confidence; //TODO - make this return something useful
+		return match.confidence * 100; //TODO - make this return something useful
 	}
 
 
