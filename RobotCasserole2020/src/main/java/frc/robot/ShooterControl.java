@@ -23,10 +23,10 @@ public class ShooterControl {
 
     Calibration shooterRPMSetpoint;
 
-    Calibration shooterMotorF;
     Calibration shooterMotorP;
     Calibration shooterMotorI;
     Calibration shooterMotorD;
+    Calibration shooterMotorF;
 
     Signal rpmDesiredSig;
     Signal rpmActualSig;
@@ -47,10 +47,10 @@ public class ShooterControl {
 
         shooterRPMSetpoint = new Calibration("Shooter RPM Setpoint", 0);
 
-        shooterMotorF = new Calibration("Shooter Motor F", 0); 
         shooterMotorP = new Calibration("Shooter Motor P", 0);
         shooterMotorI = new Calibration("Shooter Motor I", 0);
         shooterMotorD = new Calibration("Shooter Motor D", 0);
+        shooterMotorF = new Calibration("Shooter Motor F", 0); 
 
         rpmDesiredSig = new Signal("Desired Shooter RPM", "RPM");
         rpmActualSig = new Signal("Actual Shooter RPM", "RPM");
@@ -62,10 +62,10 @@ public class ShooterControl {
 
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
-        shooterPIDCtrl.setFF(shooterMotorF.get());
         shooterPIDCtrl.setP(shooterMotorP.get());
         shooterPIDCtrl.setI(shooterMotorI.get());
         shooterPIDCtrl.setD(shooterMotorD.get());
+        shooterPIDCtrl.setFF(shooterMotorF.get());
 
     }
 
