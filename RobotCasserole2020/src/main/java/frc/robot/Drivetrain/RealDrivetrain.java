@@ -93,6 +93,9 @@ public class RealDrivetrain extends Drivetrain {
         kP = new Calibration("Drivetrain P Value", 0);
         kP = new Calibration("Drivetrain I Value", 0);
         kP = new Calibration("Drivetrain D Value", 0);
+        kP = new Calibration("Drivetrain F Value", );
+        kIz = 0;
+        
         
 
         
