@@ -79,10 +79,10 @@ public class RealDrivetrain extends Drivetrain {
     
 
     public RealDrivetrain(){
-        dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
+        dtLeftMaster = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);
-        dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
-        dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+        dtRightMaster = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_1_CANID, MotorType.kBrushless);
+        dtRightIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
 
         dtLPID = new CANPIDController(dtLeftMaster);
         dtRPID = new CANPIDController(dtRightMaster);
@@ -104,8 +104,8 @@ public class RealDrivetrain extends Drivetrain {
         kIz = 0;
 
         
-            dtLeftIntern.follow(dtLeftMaster);
-            dtRightIntern.follow(dtRightMaster);
+        dtLeftIntern.follow(dtLeftMaster);
+        dtRightIntern.follow(dtRightMaster);
         
 
     }
@@ -148,11 +148,14 @@ public class RealDrivetrain extends Drivetrain {
             dtLeftMaster.setVoltage(fwdRevCmd);
             dtRightMaster.setVoltage(fwdRevCmd);
             //What does this do 
-            dtPID.setReference(0, ControlType.kVoltage);
+            dtLPID.setReference(0, ControlType.kVoltage);
+            dtRPID.setReference(0, ControlType.kVoltage);
             
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
-            dtLeftMaster.setVoltage(dtLPID.);
+            //no errors so it works
+            dtLPID.setReference(1, ControlType.kVoltage);
+            dtLeftMaster.setVoltage(dtLPID.getSmartMotionMinOutputVelocity(0));
         }
 
 
@@ -208,11 +211,18 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public void updateGains(boolean forceChange) {
         if(forceChange || haveCalsChanged()) {
-            dtPID.setP(kP.get());
-            dtPID.setI(kI.get());
-            dtPID.setD(kD.get());
-            dtPID.setIZone(kIz);
-            dtPID.setFF(kFF.get());
+            
+            dtLPID.setP(kP.get());
+            dtLPID.setI(kI.get());
+            dtLPID.setD(kD.get());
+            dtLPID.setIZone(kIz);
+            dtLPID.setFF(kFF.get());
+
+            dtRPID.setP(kP.get());
+            dtRPID.setI(kI.get());
+            dtRPID.setD(kD.get());
+            dtRPID.setIZone(kIz);
+            dtRPID.setFF(kFF.get());
             calsUpdated = true;
         }
 
