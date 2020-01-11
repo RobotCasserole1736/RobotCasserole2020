@@ -1,6 +1,7 @@
 package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
 import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
@@ -65,7 +66,8 @@ public class RealDrivetrain extends Drivetrain {
     Signal currentR1Sig;
     Signal currentR2Sig;
 
-    CANPIDController dtPID;
+    CANPIDController dtLPID;
+    CANPIDController dtRPID;
 
     Calibration kP;
     Calibration kI;
@@ -82,8 +84,8 @@ public class RealDrivetrain extends Drivetrain {
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
 
-        dtPID = new CANPIDController(dtLeftMaster);
-        dtPID = new CANPIDController(dtRightMaster);
+        dtLPID = new CANPIDController(dtLeftMaster);
+        dtRPID = new CANPIDController(dtRightMaster);
                 
         leftWheelSpeedDesiredSig = new Signal("Drivetrain Left Wheel Desired Speed", "RPM");
         leftWheelSpeedActualSig = new Signal("Drivetrain Left Wheel Actual Speed", "RPM");
@@ -123,6 +125,11 @@ public class RealDrivetrain extends Drivetrain {
         rightWheelSpeedDesiredSig.addSample(sampleTimeMS, fwdRevCmd);
         rightWheelSpeedActualSig.addSample(sampleTimeMS, rightWheelSpeedRPM);
 
+        kP.acknowledgeValUpdate();
+        kI.acknowledgeValUpdate();
+        kD.acknowledgeValUpdate();
+        kFF.acknowledgeValUpdate();
+
         currentL1Sig.addSample(sampleTimeMS, dtNeoL1Current);
         currentL2Sig.addSample(sampleTimeMS, dtNeoL2Current);
         currentR1Sig.addSample(sampleTimeMS, dtNeoR1Current);
@@ -138,11 +145,14 @@ public class RealDrivetrain extends Drivetrain {
 
         if(opMode == DrivetrainOpMode.kOpenLoop) {
         
-            dtLeftMaster.set(fwdRevCmd);
-            dtRightMaster.set(fwdRevCmd);
+            dtLeftMaster.setVoltage(fwdRevCmd);
+            dtRightMaster.setVoltage(fwdRevCmd);
+            //What does this do 
+            dtPID.setReference(0, ControlType.kVoltage);
+            
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
-
+            dtLeftMaster.setVoltage(dtLPID.);
         }
 
 
