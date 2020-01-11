@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj.GenericHID;
  */
 
 public class DriverController {
+   
+   
     XboxController driverController;
     private static DriverController instance = null;
     
@@ -80,7 +82,4 @@ public class DriverController {
     }
 
     
-
-
-
 }

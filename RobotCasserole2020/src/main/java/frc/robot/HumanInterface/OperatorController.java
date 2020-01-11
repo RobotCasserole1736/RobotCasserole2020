@@ -63,6 +63,13 @@ public class OperatorController {
     public boolean createSound(){
         return operaterController.getBumperPressed(Hand.kLeft);
     }
+    public double getShooterWheelSpeed(){
+        return operaterController.getTriggerAxis(Hand.kRight);
+    }
+    public boolean getShooterLaunchCommand(){
+        return operaterController.getBumperPressed(Hand.kRight);
+    }
+    
 
 
 }
