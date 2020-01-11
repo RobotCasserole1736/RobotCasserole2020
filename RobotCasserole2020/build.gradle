@@ -4,6 +4,8 @@ plugins {
     id "org.ajoberstar.grgit" version "3.0.0"
 }
 
+import org.ajoberstar.grgit.Grgit
+
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
 
