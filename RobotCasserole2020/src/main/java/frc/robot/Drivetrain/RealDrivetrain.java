@@ -72,7 +72,7 @@ public class RealDrivetrain extends Drivetrain {
     Calibration kD;
     Calibration kFF;
     double kIz;
-    boolean updateCalValues;
+    boolean calsUpdated;
 
     
 
@@ -102,15 +102,6 @@ public class RealDrivetrain extends Drivetrain {
         kIz = 0;
 
         
-
-        
-        
-
-
-        
-
-
-
             dtLeftIntern.follow(dtLeftMaster);
             dtRightIntern.follow(dtRightMaster);
         
@@ -205,16 +196,19 @@ public class RealDrivetrain extends Drivetrain {
     }
 
     @Override
-    public void updateGains(boolean force) {
-        if(force) {
+    public void updateGains(boolean forceChange) {
+        if(forceChange || haveCalsChanged()) {
             dtPID.setP(kP.get());
             dtPID.setI(kI.get());
             dtPID.setD(kD.get());
             dtPID.setIZone(kIz);
             dtPID.setFF(kFF.get());
+            calsUpdated = true;
         }
 
+
     }
+    
 
     @Override
     public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM) {
@@ -264,5 +258,8 @@ public class RealDrivetrain extends Drivetrain {
     }
     public double getGyroLockRotationCmd(){
         return gyroLockRotationCmd;
+    }
+    private boolean haveCalsChanged() {
+        return kP.isChanged() || kI.isChanged() || kD.isChanged() || kFF.isChanged();
     }
 }
