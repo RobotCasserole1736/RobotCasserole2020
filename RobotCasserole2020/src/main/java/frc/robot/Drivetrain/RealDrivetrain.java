@@ -8,10 +8,12 @@ import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.RobotConstants;
 import frc.lib.DataServer.Signal;
+import frc.robot.LoopTiming;
 
 public class RealDrivetrain extends Drivetrain {
 
-    //TODO Put in Robot Constants
+    
+    double sampleTimeMS;
 
 
     
@@ -79,6 +81,8 @@ public class RealDrivetrain extends Drivetrain {
         currentL2Sig = new Signal("Left Intern Moter Current", "Amps");
         currentR1Sig = new Signal("Right Master Moter Current", "Amps");
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
+
+        
         
 
 
@@ -103,13 +107,22 @@ public class RealDrivetrain extends Drivetrain {
         dtNeoR1Current = dtRightMaster.getOutputCurrent();
         dtNeoR2Current = dtRightIntern.getOutputCurrent();
 
+        leftWheelSpeedDesiredSig.addSample(sampleTimeMS, fwdRevCmd);
+        leftWheelSpeedActualSig.addSample(sampleTimeMS, leftWheelSpeedRPM);
+        rightWheelSpeedDesiredSig.addSample(sampleTimeMS, fwdRevCmd);
+        rightWheelSpeedActualSig.addSample(sampleTimeMS, rightWheelSpeedRPM);
 
         currentL1Sig.addSample(sampleTimeMS, dtNeoL1Current);
+        currentL2Sig.addSample(sampleTimeMS, dtNeoL2Current);
+        currentR1Sig.addSample(sampleTimeMS, dtNeoR1Current);
+        currentR2Sig.addSample(sampleTimeMS, dtNeoR2Current);
+        
         
     }
 
     @Override
     public void update() {
+        sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         sampleSensors();
         
 
