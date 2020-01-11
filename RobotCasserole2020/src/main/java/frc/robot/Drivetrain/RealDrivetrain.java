@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.RobotConstants;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
+import com.revrobotics.CANPIDController;
+import frc.lib.Calibration.Calibration;
 
 public class RealDrivetrain extends Drivetrain {
 
@@ -63,6 +65,12 @@ public class RealDrivetrain extends Drivetrain {
     Signal currentR1Sig;
     Signal currentR2Sig;
 
+    Calibration kP;
+    Calibration kI;
+    Calibration kD;
+    Calibration kF;
+    double kIz;
+    boolean updateCalValues;
 
     
 
@@ -82,6 +90,11 @@ public class RealDrivetrain extends Drivetrain {
         currentR1Sig = new Signal("Right Master Moter Current", "Amps");
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
 
+        kP = new Calibration("Drivetrain P Value", 0);
+        kP = new Calibration("Drivetrain I Value", 0);
+        kP = new Calibration("Drivetrain D Value", 0);
+        
+
         
         
 
@@ -89,10 +102,9 @@ public class RealDrivetrain extends Drivetrain {
         
 
 
-        for(int i =0; i < 10; i++){
+
             dtLeftIntern.follow(dtLeftMaster);
             dtRightIntern.follow(dtRightMaster);
-        }
         
 
     }
@@ -124,7 +136,15 @@ public class RealDrivetrain extends Drivetrain {
     public void update() {
         sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         sampleSensors();
+
+        if(opMode == DrivetrainOpMode.kOpenLoop) {
         
+            dtLeftMaster.set(fwdRevCmd);
+            dtRightMaster.set(fwdRevCmd);
+        }        
+        else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
+
+        }
 
 
 
