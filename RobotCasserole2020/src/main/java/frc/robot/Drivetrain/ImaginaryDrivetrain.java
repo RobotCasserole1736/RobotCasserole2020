@@ -39,8 +39,8 @@ public class ImaginaryDrivetrain extends Drivetrain{
     public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
         opModeCmd = DrivetrainOpMode.kOpenLoop;
 
-        double motorSpeedLeftCMD = Utils.capMotorCmd(forwardReverseCmd + rotationCmd);
-        double motorSpeedRightCMD = Utils.capMotorCmd(forwardReverseCmd - rotationCmd);
+        double motorSpeedLeftCMD = Utils.capMotorCmd(forwardReverseCmd - rotationCmd);
+        double motorSpeedRightCMD = Utils.capMotorCmd(forwardReverseCmd + rotationCmd);
 
         DesLeftRPM = Utils.FT_PER_SEC_TO_RPM(DT_MAX_SPEED_FT_PER_SEC)*motorSpeedLeftCMD;
         DesRightRPM = Utils.FT_PER_SEC_TO_RPM(DT_MAX_SPEED_FT_PER_SEC)*motorSpeedRightCMD;
@@ -66,6 +66,9 @@ public class ImaginaryDrivetrain extends Drivetrain{
             headingAvailable = false;
             actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
         } 
+
+        RobotPose.getInstance().setLeftMotorSpeed(ActLeftRPM);
+        RobotPose.getInstance().setRightMotorSpeed(ActRightRPM);
 
         RobotPose.getInstance().update();
 

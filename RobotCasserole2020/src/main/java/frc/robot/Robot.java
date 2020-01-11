@@ -136,6 +136,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
     CrashTracker.logTeleopPeriodic();
+
+    Drivetrain.getInstance().setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
+                                            DriverController.getInstance().getRotateCmd());
+
     Drivetrain.getInstance().update();
     updateDriverView();
     colorSensor.update();

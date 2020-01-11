@@ -2,6 +2,7 @@ package frc.robot.HumanInterface;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import frc.robot.Drivetrain.Utils;
 import edu.wpi.first.wpilibj.GenericHID;
 
 /*
@@ -45,12 +46,20 @@ public class DriverController {
 
     }
 
+    /**
+     * Get the driver-commanded forward/reverse speed
+     * @return 1.0 for full forward, -1.0 for full reverse
+     */
     public double getFwdRevCmd(){
-        return driverController.getY(GenericHID.Hand.kLeft); 
+        return Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft),3.0, 0.15); 
     }
 
+        /**
+     * Get the driver-commanded rotation
+     * @return -1.0 for clockwise, 1.0 for counter-clockwise
+     */
     public double getRotateCmd(){
-        return driverController.getX(GenericHID.Hand.kRight); 
+        return Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 3.0, 0.15); 
     }
 
     public boolean getAutoHighGoalAlignDesired(){
