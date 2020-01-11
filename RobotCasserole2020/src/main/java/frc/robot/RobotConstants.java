@@ -1,6 +1,10 @@
 package frc.robot;
 
-public class RobotConstants{
+import com.revrobotics.ColorMatch;
+
+import edu.wpi.first.wpilibj.util.Color;
+
+public class RobotConstants {
 
 
     //This class should contain a bunch of static-public-final constant values
@@ -15,6 +19,12 @@ public class RobotConstants{
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;
 	public static final double ROBOT_TRACK_WIDTH_FT = 1.75;
-	public static final double MAIN_LOOP_SAMPLE_RATE_S = 0.02;
+    public static final double MAIN_LOOP_SAMPLE_RATE_S = 0.02;
+    
+    //Color Sensor Configuration
+    public static final Color kBlueTarget   = ColorMatch.makeColor(0.143, 0.427, 0.429);
+	public static final Color kGreenTarget  = ColorMatch.makeColor(0.197, 0.561, 0.240);
+	public static final Color kRedTarget    = ColorMatch.makeColor(0.561, 0.232, 0.114);
+	public static final Color kYellowTarget = ColorMatch.makeColor(0.361, 0.524, 0.113);
 
 }

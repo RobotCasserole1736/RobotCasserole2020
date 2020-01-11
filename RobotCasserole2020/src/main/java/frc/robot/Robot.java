@@ -17,6 +17,7 @@ import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
+import frc.robot.ControlPanel.CasseroleColorSensor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -27,6 +28,7 @@ import frc.robot.HumanInterface.OperatorController;
  */
 public class Robot extends TimedRobot {
 
+
   //Website utilities
   CasseroleWebServer webserver;
   CalWrangler wrangler;
@@ -35,6 +37,7 @@ public class Robot extends TimedRobot {
 
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
+  CasseroleColorSensor colorSensor;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -53,6 +56,7 @@ public class Robot extends TimedRobot {
 
     OperatorController.getInstance();
     DriverController.getInstance();
+    colorSensor = CasseroleColorSensor.getInstance();
 
     Drivetrain.getInstance();
 
@@ -77,10 +81,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
     Drivetrain.getInstance().update();
+    colorSensor.update();
   }
 
+  /**
+   * This autonomous (along with the chooser code above) shows how to select
+   * between different autonomous modes using the dashboard. The sendable
+   * chooser code works with the Java SmartDashboard. If you prefer the
+   * LabVIEW Dashboard, remove all of the chooser code and uncomment the
+   * getString line to get the auto name from the text box below the Gyro
+   *
+   * <p>You can add additional auto modes by adding additional comparisons to
+   * the switch structure below with additional strings. If using the
+   * SendableChooser make sure to add them to the chooser code above as well.
+   */
   @Override
   public void autonomousInit() {
     CrashTracker.logAutoInit();
@@ -91,6 +108,8 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     loopTiming.markLoopStart();
     CrashTracker.logAutoPeriodic();
+
+    colorSensor.update();
 
     Drivetrain.getInstance().update();
     updateDriverView();
@@ -112,6 +131,7 @@ public class Robot extends TimedRobot {
     CrashTracker.logTeleopPeriodic();
     Drivetrain.getInstance().update();
     updateDriverView();
+    colorSensor.update();
     
     loopTiming.markLoopEnd();
   }
