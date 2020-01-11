@@ -44,6 +44,11 @@ public class RealDrivetrain extends Drivetrain {
     double rightWheelSpeedRPM = 0;
     double gyroAngle = 0;
     double gyroLockRotationCmd = 0;
+    double angErr = 0;
+    double headingCmdDeg = 0;
+    //Hopefully these are the same 
+    double lConversionFactor = leftEncoder.getVelocityConversionFactor();
+    double rConversionFactor = rightEncoder.getVelocityConversionFactor();
 
 
     
@@ -64,18 +69,24 @@ public class RealDrivetrain extends Drivetrain {
 
     }
 
-   
-    @Override
-    public void update() {
-        // TODO Auto-generated method stub
-        //sensors
+    public void sampleSensors() {
+        
+        leftWheelSpeedRPM = dtLeftMaster.getEncoder().getVelocity() * lConversionFactor;
+        rightWheelSpeedRPM = dtRightMaster.getEncoder().getVelocity() * rConversionFactor;
+
         dtNeoL1Current = dtLeftMaster.getOutputCurrent();
         dtNeoL2Current = dtLeftIntern.getOutputCurrent();
         dtNeoR1Current = dtRightMaster.getOutputCurrent();
         dtNeoR2Current = dtRightIntern.getOutputCurrent();
 
-        leftWheelSpeedRPM = dtLeftMaster.getEncoder().getVelocity();
-        rightWheelSpeedRPM = dtRightMaster.getEncoder().getVelocity();
+        
+    }
+
+    @Override
+    public void update() {
+        sampleSensors();
+        
+
 
 
 
@@ -83,46 +94,51 @@ public class RealDrivetrain extends Drivetrain {
         
     }
     @Override
-    public void setOpenLoopCmd(double forwardReverseCmd, double rotaionCmd) {
+    public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
         opModeCmd = DrivetrainOpMode.kOpenLoop;
-        forwardReverseCmd = fwdRevCmd;
+        fwdRevCmd = forwardReverseCmd;
+        rotCmd = rotationCmd;
+
+
 
     }
 
     @Override
     public void setGyroLockCmd(double forwardReverseCmd) {
         opModeCmd = DrivetrainOpMode.kGyroLock;
-        forwardReverseCmd = fwdRevCmd;
+        fwdRevCmd = forwardReverseCmd;
 
     }
 
     @Override
     public void setPositionCmd(double forwardReverseCmd, double angleError) {
         opModeCmd = DrivetrainOpMode.kTargetPosition;
+        fwdRevCmd = forwardReverseCmd;
+        angErr = angleError;
         
     }
 
     @Override
     public boolean isGyroOnline() {
-        // TODO Auto-generated method stub
+        // TODO We need gyro to do this
         return false;
     }
 
     @Override
     public double getLeftWheelSpeedRPM() {
-        // TODO Auto-generated method stub
-        return 0;
+        
+        return leftWheelSpeedRPM;
     }
 
     @Override
     public double getRightWheelSpeedRPM() {
-        // TODO Auto-generated method stub
-        return 0;
+        
+        return rightWheelSpeedRPM;
     }
 
     @Override
     public void updateGains(boolean force) {
-        // TODO Auto-generated method stub
+        //TODO dont want to do this now
 
     }
 
@@ -134,18 +150,18 @@ public class RealDrivetrain extends Drivetrain {
     }
 
     @Override
-    public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM, double headingCmdDeg) {
+    public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM, double inHeadingCmdDeg) {
         opModeCmd = DrivetrainOpMode.kClosedLoopVelocity;
         leftWheelSpeedRPM  = leftCmdRPM;
         rightWheelSpeedRPM = rightCmdRPM;
-        headingCmdDeg = headingCmdDeg;
+        headingCmdDeg = inHeadingCmdDeg;
 
 
     }
 
     @Override
     public double getGyroAngle() {
-        // TODO Auto-generated method stub
+        // TODO Need the gyro up and working
         return gyroAngle;
     }
 
