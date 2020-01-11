@@ -7,106 +7,13 @@ var hostname = window.location.hostname + ":" + port;
 var ROBOT_W_FT = 2;
 var ROBOT_L_FT = 2.5;
 var FIELDPOLY_FT =
-    [[0, 0],[13.5, 0],[13.5, 54],[-13.5, 54],[-13.5, 0],[0, 0]];
-    //RED ROCKET LEFT
-var FIELDELEMENTPOLY1_FT = 
-    [[-13.5, 17],[-13.5, 19.75],[-12.46, 19.15],[-12.46, 17.65],[-13.5, 17]];
-    //RED ROCKET RIGHT
-var FIELDELEMENTPOLY2_FT = 
-    [[13.5, 17],[13.5, 19.75],[12.46, 19.15],[12.46, 17.65],[13.5, 17]];
-    //BLUE ROCKET LEFT
-var FIELDELEMENTPOLY3_FT = 
-    [[-13.5, 37],[-13.5, 34.25],[-12.46, 34.85],[-12.46, 36.35],[-13.5, 37]];
-    //BLUE ROCKET RIGHT
-var FIELDELEMENTPOLY4_FT = 
-    [[13.5, 37],[13.5, 34.25],[12.46, 34.85],[12.46, 36.35],[13.5, 37]];
-    //RED CARGO SHIP
-var FIELDELEMENTPOLY5_FT = 
-    [[0, 26.25],[2.3, 26.25],[2.3, 19.14],[-2.3, 19.11],[-2.3, 26.25],[0, 26.25]];
-    //BLUE CARGO SHIP
-var FIELDELEMENTPOLY6_FT = 
-    [[0, 27.75],[2.3, 27.75],[2.3, 34.86],[-2.3, 34.86],[-2.3, 27.75],[0, 27.75]];  
-    //RED HAB
-var FIELDELEMENTPOLY7_FT = 
-    [[0, 0],[6.5, 0],[6.5, 4],[6.3, 4],[6.3, 7.11],[-6.3, 7.11],[-6.3, 4],[-6.5, 4],[-6.5, 0],[0, 0]];
-    //BLUE HAB
-var FIELDELEMENTPOLY8_FT = 
-    [[0, 54],[6.5, 54],[6.5, 50],[6.3, 50],[6.3, 47],[-6.3, 47],[-6.3, 50],[-6.5, 50],[-6.5, 54],[0, 54]];
-    //cargo ship lines
-var FIELDTAPEPOLY1_FT = 
-    [[0.9, 17.64],[0.9, 36.36],[0.7, 36.36],[0.7, 17.64],[0.9, 17.64]];
+    [[0, 0],[13.5, 0],[13.5, 54],[-13.5, 54],[-13.5, 0],[0, 0]];  
 
-var FIELDTAPEPOLY2_FT = 
-    [[-0.9, 17.64],[-0.9, 36.36],[-0.7, 36.36],[-0.7, 17.64],[-0.7, 17.64]];
 
-var FIELDTAPEPOLY3_FT = 
-    [[3.85, 21.4],[3.85, 21.6],[-3.85, 21.6],[-3.85, 21.4],[3.85, 21.4]];
-
-var FIELDTAPEPOLY4_FT = 
-    [[3.85, 23.2],[3.85, 23.4],[-3.85, 23.4],[-3.85, 23.2],[3.85, 23.2]];
-
-var FIELDTAPEPOLY5_FT = 
-    [[3.85, 25],[3.85, 25.2],[-3.85, 25.2],[-3.85, 25],[3.85, 25]];
-
-var FIELDTAPEPOLY6_FT = 
-    [[3.85, 28.5],[3.85, 28.7],[-3.85, 28.7],[-3.85, 28.5],[3.85, 28.5]];
-
-var FIELDTAPEPOLY7_FT = 
-    [[3.85, 30.3],[3.85, 30.5],[-3.85, 30.5],[-3.85, 30.3],[3.85, 30.3]];    
-
-var FIELDTAPEPOLY8_FT = 
-    [[3.85, 32.1],[3.85, 32.3],[-3.85, 32.3],[-3.85, 32.1],[3.85, 32.1]];    
-    //rocket ship lines
-var FIELDTAPEPOLY9_FT =
-    [[13.1, 17.8],[13.2, 17.8],[12.75, 16.5],[12.65, 16.5],[13.1, 17.8]]; 
-    
-var FIELDTAPEPOLY10_FT =
-    [[-13.1, 17.8],[-13.2, 17.8],[-12.75, 16.5],[-12.65, 16.5],[-13.1, 17.8]];
-
-var FIELDTAPEPOLY11_FT =
-    [[13, 19.3],[13.1, 19.3],[12.65, 20.3],[12.55, 20.3],[13, 19.3]]; 
-    
-var FIELDTAPEPOLY12_FT =
-    [[-13, 19.3],[-13.1, 19.3],[-12.65, 20.3],[-12.55, 20.3],[-13, 19.3]];
-    
-var FIELDTAPEPOLY13_FT =
-    [[13.1, 36.2],[13.2, 36.2],[12.75, 37.5],[12.65, 37.5],[13.1, 36.2]];
-    
-var FIELDTAPEPOLY14_FT =
-    [[-13.1, 36.2],[-13.2, 36.2],[-12.75, 37.5],[-12.65, 37.5],[-13.1, 36.2]];
-
-var FIELDTAPEPOLY15_FT =
-    [[13, 34.7],[13.1, 34.7],[12.65, 33.7],[12.55, 33.7],[13, 34.7]];
-
-var FIELDTAPEPOLY16_FT =
-    [[-13, 34.7],[-13.1, 34.7],[-12.65, 33.7],[-12.55, 33.7],[-13, 34.7]];
-
-var FIELDTAPEPOLY17_FT =
-    [[12.46, 18.3],[10.96, 18.3],[10.96, 18.5],[12.46, 18.5],[12.46, 18.3]];    
-
-var FIELDTAPEPOLY18_FT =
-    [[-12.46, 18.3],[-10.96, 18.3],[-10.96, 18.5],[-12.46, 18.5],[-12.46, 18.3]];
-
-var FIELDTAPEPOLY19_FT =
-    [[12.46, 35.7],[10.96, 35.7],[10.96, 35.5],[12.46, 35.5],[12.46, 35.7]];
-
-var FIELDTAPEPOLY20_FT =
-    [[-12.46, 35.7],[-10.96, 35.7],[-10.96, 35.5],[-12.46, 35.5],[-12.46, 35.7]];
-    //Human player station lines
-var FIELDTAPEPOLY21_FT =
-    [[-10.6, 0],[-10.6, 1.5],[-10.8, 1.5],[-10.8, 0],[-10.6, 0]];
-
-var FIELDTAPEPOLY22_FT =
-    [[10.6, 0],[10.6, 1.5],[10.8, 1.5],[10.8, 0],[10.6, 0]];
-
-var FIELDTAPEPOLY23_FT =
-    [[-10.6, 54],[-10.6, 52.5],[-10.8, 52.5],[-10.8, 54],[-10.6, 54]];    
-    
-var FIELDTAPEPOLY24_FT =
-    [[10.6, 54],[10.6, 52.5],[10.8, 52.5],[10.8, 54],[10.6, 54]];    
-    //Render Constants
+//Render Constants
 var PX_PER_FOOT = 15;
 var FIELD_COLOR = '#534F4D';
+var FIELD_BG_PX_PER_FOOT = 1306.0/27.0;
 var BOT_COLOR = '#d22';
 var RED_FIELD_ELEMENT_COLOR = '#FF2D00';
 var BLUE_FIELD_ELEMENT_COLOR = '#004CFF';
@@ -116,8 +23,37 @@ var CANVAS_MARGIN_PX = 20;
 var ROBOT_W_PX = 0;
 var ROBOT_L_PX = 0;
 
+var dataSocket = null;
+
 //Websocket variables
-var dataSocket = new WebSocket("ws://" + hostname + "/ds")
+window.onload = function() {
+    dataSocket = new WebSocket("ws://" + hostname + "/ds")
+    numTransmissions = 0;
+
+    dataSocket.onopen = function (event) {
+        document.getElementById("id01").innerHTML = "Socket Open";
+    
+        // Send the command to get the list of all signals
+        dataSocket.send(JSON.stringify({ cmd: "getSig" }));
+    };
+    
+    dataSocket.onmessage = function (event) {
+        procData(event.data);
+        numTransmissions = numTransmissions + 1;
+        document.getElementById("id01").innerHTML = "COM Status: Socket Open. RX Count:" + numTransmissions;
+    };
+    
+    dataSocket.onerror = function (error) {
+        document.getElementById("id01").innerHTML = "COM Status: Error with socket. Reconnect to robot, open driver station, then refresh this page.";
+        alert("ERROR from Robot PoseView: Robot Disconnected!!!\n\nAfter connecting to the robot, open the driver station, then refresh this page.");
+    };
+    
+    dataSocket.onclose = function (error) {
+        document.getElementById("id01").innerHTML = "COM Status: Error with socket. Reconnect to robot, open driver station, then refresh this page.";
+        alert("ERROR from Robot PoseView: Robot Disconnected!!!\n\nAfter connecting to the robot, open the driver station, then refresh this page.");
+    };
+    
+}
 var numTransmissions = 0;
 var botDesPoseXSignalName = "botDesPoseX";
 var botDesPoseYSignalName = "botDesPoseY";
@@ -138,28 +74,6 @@ var botPrevDesPoseY = -1;
 var botPrevActPoseX = -1;
 var botPrevActPoseY = -1;
 
-dataSocket.onopen = function (event) {
-    document.getElementById("id01").innerHTML = "Socket Open";
-
-    // Send the command to get the list of all signals
-    dataSocket.send(JSON.stringify({ cmd: "getSig" }));
-};
-
-dataSocket.onmessage = function (event) {
-    procData(event.data);
-    numTransmissions = numTransmissions + 1;
-    document.getElementById("id01").innerHTML = "COM Status: Socket Open. RX Count:" + numTransmissions;
-};
-
-dataSocket.onerror = function (error) {
-    document.getElementById("id01").innerHTML = "COM Status: Error with socket. Reconnect to robot, open driver station, then refresh this page.";
-    alert("ERROR from Robot PoseView: Robot Disconnected!!!\n\nAfter connecting to the robot, open the driver station, then refresh this page.");
-};
-
-dataSocket.onclose = function (error) {
-    document.getElementById("id01").innerHTML = "COM Status: Error with socket. Reconnect to robot, open driver station, then refresh this page.";
-    alert("ERROR from Robot PoseView: Robot Disconnected!!!\n\nAfter connecting to the robot, open the driver station, then refresh this page.");
-};
 
 function procData(json_data) {
 
@@ -238,8 +152,11 @@ function procData(json_data) {
             }
 
             //Adjust width/height of everything based on the field dimensions requested.
-            this.ctx.canvas.height = max_y_px - min_y_px;
-            this.ctx.canvas.width = max_x_px - min_x_px;
+            const image = document.getElementById('source');
+            bg_image_width_px = image.width / FIELD_BG_PX_PER_FOOT * PX_PER_FOOT;
+            bg_image_height_px = image.height / FIELD_BG_PX_PER_FOOT * PX_PER_FOOT;
+            this.ctx.canvas.height = bg_image_height_px;
+            this.ctx.canvas.width = bg_image_width_px;
             this.ctx_robot.canvas.height = this.ctx.canvas.height;
             this.ctx_robot.canvas.width = this.ctx.canvas.width;
             this.ctx_path.canvas.height = this.ctx.canvas.height;
@@ -252,8 +169,6 @@ function procData(json_data) {
 
             //Configure the appearance 
             this.ctx.fillStyle = FIELD_COLOR;
-
-
             //Draw polygon based on specified points 
             this.ctx.beginPath();
             for (i = 0; i < FIELDPOLY_FT.length; i++) {
@@ -266,534 +181,13 @@ function procData(json_data) {
                     this.ctx.lineTo(x_px, y_px);
                 }
             }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            this.ctx.fillStyle = TAPE_COLOR;
-            //DRAW GAFFERS TAPE 1
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY1_FT.length; i++) {
-                x_px = FIELDTAPEPOLY1_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY1_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 2
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY2_FT.length; i++) {
-                x_px = FIELDTAPEPOLY2_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY2_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 3
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY3_FT.length; i++) {
-                x_px = FIELDTAPEPOLY3_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY3_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 4
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY4_FT.length; i++) {
-                x_px = FIELDTAPEPOLY4_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY4_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 5
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY5_FT.length; i++) {
-                x_px = FIELDTAPEPOLY5_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY5_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-                                
-            //DRAW GAFFERS TAPE 6
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY6_FT.length; i++) {
-                x_px = FIELDTAPEPOLY6_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY6_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 7
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY7_FT.length; i++) {
-                x_px = FIELDTAPEPOLY7_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY7_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 8
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY8_FT.length; i++) {
-                x_px = FIELDTAPEPOLY8_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY8_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-           
-            //DRAW GAFFERS TAPE 9
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY9_FT.length; i++) {
-                x_px = FIELDTAPEPOLY9_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY9_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 10
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY10_FT.length; i++) {
-                x_px = FIELDTAPEPOLY10_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY10_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 11
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY11_FT.length; i++) {
-                x_px = FIELDTAPEPOLY11_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY11_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 12
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY12_FT.length; i++) {
-                x_px = FIELDTAPEPOLY12_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY12_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 13
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY13_FT.length; i++) {
-                x_px = FIELDTAPEPOLY13_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY13_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 14
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY14_FT.length; i++) {
-                x_px = FIELDTAPEPOLY14_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY14_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
             
-            //DRAW GAFFERS TAPE 15
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY15_FT.length; i++) {
-                x_px = FIELDTAPEPOLY15_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY15_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
             this.ctx.closePath();
             this.ctx.fill();
 
-            //DRAW GAFFERS TAPE 16
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY16_FT.length; i++) {
-                x_px = FIELDTAPEPOLY16_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY16_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
+            this.ctx.drawImage(image,0,0,bg_image_width_px, bg_image_height_px);
 
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 17
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY17_FT.length; i++) {
-                x_px = FIELDTAPEPOLY17_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY17_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 18
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY18_FT.length; i++) {
-                x_px = FIELDTAPEPOLY18_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY18_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 19
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY19_FT.length; i++) {
-                x_px = FIELDTAPEPOLY19_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY19_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 20
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY20_FT.length; i++) {
-                x_px = FIELDTAPEPOLY20_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY20_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 21
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY21_FT.length; i++) {
-                x_px = FIELDTAPEPOLY21_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY21_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 22
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY22_FT.length; i++) {
-                x_px = FIELDTAPEPOLY22_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY22_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 23
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY23_FT.length; i++) {
-                x_px = FIELDTAPEPOLY23_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY23_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW GAFFERS TAPE 24
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDTAPEPOLY24_FT.length; i++) {
-                x_px = FIELDTAPEPOLY24_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDTAPEPOLY24_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-
-            this.ctx.fillStyle = RED_FIELD_ELEMENT_COLOR;
-            //draw RED ROCKET LEFT
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDELEMENTPOLY1_FT.length; i++) {
-                x_px = FIELDELEMENTPOLY1_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY1_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW RED ROCKET RIGHT
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDELEMENTPOLY2_FT.length; i++) {
-                x_px = FIELDELEMENTPOLY2_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY2_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-
-              //DRAW RED CARGO
-              this.ctx.beginPath();
-              for (i = 0; i < FIELDELEMENTPOLY5_FT.length; i++) {
-                  x_px = FIELDELEMENTPOLY5_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                  y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY5_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-  
-                  if (i == 0) {
-                      this.ctx.moveTo(x_px, y_px);
-                  } else {
-                      this.ctx.lineTo(x_px, y_px);
-                  }
-              }
-
-              this.ctx.closePath();
-              this.ctx.fill();
-
-              //DRAW RED HAB
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDELEMENTPOLY7_FT.length; i++) {
-                x_px = FIELDELEMENTPOLY7_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY7_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            this.ctx.fillStyle = BLUE_FIELD_ELEMENT_COLOR;
-
-              //DRAW BLUE ROCKET LEFT
-              this.ctx.beginPath();
-              for (i = 0; i < FIELDELEMENTPOLY3_FT.length; i++) {
-                  x_px = FIELDELEMENTPOLY3_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                  y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY3_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-  
-                  if (i == 0) {
-                      this.ctx.moveTo(x_px, y_px);
-                  } else {
-                      this.ctx.lineTo(x_px, y_px);
-                  }
-              }
-  
-              this.ctx.closePath();
-              this.ctx.fill();
-  
-
-               //DRAW BLUE ROCKET RIGHT
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDELEMENTPOLY4_FT.length; i++) {
-                x_px = FIELDELEMENTPOLY4_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY4_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-            //DRAW BLUE CARGO
-            this.ctx.beginPath();
-            for (i = 0; i < FIELDELEMENTPOLY6_FT.length; i++) {
-                x_px = FIELDELEMENTPOLY6_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY6_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-
-                if (i == 0) {
-                    this.ctx.moveTo(x_px, y_px);
-                } else {
-                    this.ctx.lineTo(x_px, y_px);
-                }
-            }
-
-            this.ctx.closePath();
-            this.ctx.fill();
-
-              //DRAW BLUE HAB
-              this.ctx.beginPath();
-              for (i = 0; i < FIELDELEMENTPOLY8_FT.length; i++) {
-                  x_px = FIELDELEMENTPOLY8_FT[i][0] * PX_PER_FOOT + this.bot_origin_offset_x;
-                  y_px = this.ctx.canvas.height - (FIELDELEMENTPOLY8_FT[i][1] * PX_PER_FOOT) + this.bot_origin_offset_y; //transform from software refrence frame to html/js canvas reference frame.
-  
-                  if (i == 0) {
-                      this.ctx.moveTo(x_px, y_px);
-                  } else {
-                      this.ctx.lineTo(x_px, y_px);
-                  }
-              }
-  
-              this.ctx.closePath();
-              this.ctx.fill();
-
-              
             
-            
-
             //Save robot dimensions
             ROBOT_W_PX = ROBOT_W_FT * PX_PER_FOOT;
             ROBOT_L_PX = ROBOT_L_FT * PX_PER_FOOT;
