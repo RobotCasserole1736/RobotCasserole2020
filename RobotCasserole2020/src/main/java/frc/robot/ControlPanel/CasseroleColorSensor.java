@@ -26,7 +26,6 @@ import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorMatch;
 
 
@@ -44,9 +43,9 @@ import com.revrobotics.ColorMatch;
 	ColorMatch m_colorMatcher;
 
 	double[] redMin = {0.34, 0.36, 0.16};
-	double[] redMax = {0.47, 0.45, 0.22};
-	double[] greenMin = {0.17, 0.49, 0.23};
-	double[] greenMax = {0.28, 0.57, 0.25};
+	double[] redMax = {0.54, 0.45, 0.22};
+	double[] greenMin = {0.17, 0.49, 0.22};
+	double[] greenMax = {0.28, 0.57, 0.27};
 	double[] blueMin = {0.12, 0.41, 0.26};
 	double[] blueMax = {0.24, 0.47, 0.45};
 	double[] yellowMin = {0.30, 0.48, 0.10};
@@ -70,12 +69,6 @@ import com.revrobotics.ColorMatch;
 
 		//Init color match algorithm
 		m_colorMatcher = new ColorMatch();
-
-		
-		// m_colorMatcher.addColorMatch(RobotConstants.kBlueTarget);
-		// m_colorMatcher.addColorMatch(RobotConstants.kGreenTarget);
-	 	// m_colorMatcher.addColorMatch(RobotConstants.kRedTarget);
-		//  m_colorMatcher.addColorMatch(RobotConstants.kYellowTarget);
 		 
 		sensorRedSig   = new Signal("Color Sensor Red Intensity", "intensity");
 		sensorGrnSig   = new Signal("Color Sensor Green Intensity", "intensity");
