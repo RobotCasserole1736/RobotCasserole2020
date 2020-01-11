@@ -39,6 +39,9 @@ public class Robot extends TimedRobot {
   JeVoisInterface jevois;
   CasseroleColorSensor colorSensor;
 
+  //Shooter
+  ShooterControl shooterCtrl;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -57,6 +60,8 @@ public class Robot extends TimedRobot {
     OperatorController.getInstance();
     DriverController.getInstance();
     colorSensor = CasseroleColorSensor.getInstance();
+
+    shooterCtrl = ShooterControl.getInstance();
 
     Drivetrain.getInstance();
 
@@ -111,6 +116,8 @@ public class Robot extends TimedRobot {
 
     colorSensor.update();
 
+    shooterCtrl.update();
+
     Drivetrain.getInstance().update();
     updateDriverView();
 
@@ -132,7 +139,9 @@ public class Robot extends TimedRobot {
     Drivetrain.getInstance().update();
     updateDriverView();
     colorSensor.update();
-    
+
+    shooterCtrl.update();
+
     loopTiming.markLoopEnd();
   }
 

@@ -15,6 +15,8 @@ public class RobotConstants {
     static public final int DT_LEFT_NEO_2_CANID = 2;
     static public final int DT_RIGHT_NEO_1_CANID = 3;
     static public final int DT_RIGHT_NEO_2_CANID = 4;
+    static public final int SHOOTER_MOTOR_1 = 5;
+    static public final int SHOOTER_MOTOR_2 = 6;
 
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;
