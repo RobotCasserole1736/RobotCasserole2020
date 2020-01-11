@@ -7,6 +7,7 @@ import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
 import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.RobotConstants;
+import frc.lib.DataServer.Signal;
 
 public class RealDrivetrain extends Drivetrain {
 
@@ -50,6 +51,16 @@ public class RealDrivetrain extends Drivetrain {
     double lConversionFactor = leftEncoder.getVelocityConversionFactor();
     double rConversionFactor = rightEncoder.getVelocityConversionFactor();
 
+    Signal leftWheelSpeedDesiredSig;
+    Signal leftWheelSpeedActualSig;
+    Signal rightWheelSpeedDesiredSig;
+    Signal rightWheelSpeedActualSig;
+
+    Signal currentL1Sig;
+    Signal currentL2Sig;
+    Signal currentR1Sig;
+    Signal currentR2Sig;
+
 
     
 
@@ -58,6 +69,19 @@ public class RealDrivetrain extends Drivetrain {
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+
+        leftWheelSpeedDesiredSig = new Signal("Drivetrain Left Wheel Desired Speed", "RPM");
+        leftWheelSpeedActualSig = new Signal("Drivetrain Left Wheel Actual Speed", "RPM");
+        rightWheelSpeedDesiredSig = new Signal("Drivetrain Right Wheel Desired Speed", "RPM");
+        rightWheelSpeedActualSig = new Signal("Drivetrain Right Wheel Actual Speed", "RPM");
+
+        currentL1Sig = new Signal("Left Master Moter Current", "Amps");
+        currentL2Sig = new Signal("Left Intern Moter Current", "Amps");
+        currentR1Sig = new Signal("Right Master Moter Current", "Amps");
+        currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
+        
+
+
         
 
 
@@ -79,6 +103,8 @@ public class RealDrivetrain extends Drivetrain {
         dtNeoR1Current = dtRightMaster.getOutputCurrent();
         dtNeoR2Current = dtRightIntern.getOutputCurrent();
 
+
+        currentL1Sig.addSample(sampleTimeMS, dtNeoL1Current);
         
     }
 
@@ -173,19 +199,19 @@ public class RealDrivetrain extends Drivetrain {
 
     @Override
     public double getLeftNeo2Current() {
-        // TODO Auto-generated method stub
+        
         return dtNeoL2Current;
     }
 
     @Override
     public double getRightNeo1Current() {
-        // TODO Auto-generated method stub
+       
         return dtNeoR1Current;
     }
 
     @Override
     public double getRightNeo2Current() {
-        // TODO Auto-generated method stub
+      
         return dtNeoR2Current;
     }
     public double getGyroLockRotationCmd(){
