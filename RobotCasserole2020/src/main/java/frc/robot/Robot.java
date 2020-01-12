@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
-import frc.lib.Util.CasseroleCrashHandler;
 import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
+import frc.robot.Autonomous.Autonomous;
 import frc.robot.ControlPanel.CasseroleColorSensor;
 
 /**
@@ -42,10 +42,11 @@ public class Robot extends TimedRobot {
   //Shooter
   ShooterControl shooterCtrl;
 
-  /**
-   * This function is run when the robot is first started up and should be
-   * used for any initialization code.
-   */
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ Robot Init
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void robotInit() {
     
@@ -65,6 +66,8 @@ public class Robot extends TimedRobot {
 
     Drivetrain.getInstance();
 
+    Autonomous.getInstance();
+
     loopTiming = LoopTiming.getInstance();
 
     /* Website Setup */
@@ -76,12 +79,17 @@ public class Robot extends TimedRobot {
   }
   
     
-  
-
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ DISABLED MODE
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void disabledInit() {
     CrashTracker.logDisabledInit();
     dataServer.logger.stopLogging();
+    Autonomous.getInstance().reset();
+
   }
 
   @Override
@@ -89,21 +97,31 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 
+    Autonomous.getInstance().sampleDashboardSelector();
+
     colorSensor.update();
 
     shooterCtrl.update();
 
     Drivetrain.getInstance().update();
-    colorSensor.update();
 
     updateDriverView();
     loopTiming.markLoopEnd();
   }
 
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ AUTONOMOUS MODE
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void autonomousInit() {
     CrashTracker.logAutoInit();
     dataServer.logger.startLoggingAuto();
+    Autonomous.getInstance().sampleDashboardSelector();
+    Autonomous.getInstance().startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
   }
 
   @Override
@@ -111,6 +129,8 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logAutoPeriodic();
 
+    Autonomous.getInstance().update();
+
     colorSensor.update();
 
     shooterCtrl.update();
@@ -122,6 +142,11 @@ public class Robot extends TimedRobot {
   }
 
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ TELEOP MODE
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   @Override
   public void teleopInit() {
@@ -134,23 +159,41 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logTeleopPeriodic();
 
-    Drivetrain.getInstance().setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
-                                            DriverController.getInstance().getRotateCmd());
-
-    Drivetrain.getInstance().update();
-    updateDriverView();
     colorSensor.update();
 
+    Autonomous.getInstance().sampleOperatorCommands();
+    Autonomous.getInstance().update();
+
     shooterCtrl.update();
+
+    if(Autonomous.getInstance().isActive()){
+      //Nothing to do, expect that auto sequencer will provide drivetrain comands
+    } else {
+      //Driver control in manual
+      Drivetrain.getInstance().setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
+                                              DriverController.getInstance().getRotateCmd());
+    }
+    Drivetrain.getInstance().update();
+
+
+    updateDriverView();
+
 
     loopTiming.markLoopEnd();
   }
 
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ UTILITIES
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   private void initDriverView(){
     CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
     CasseroleDriverView.newBoolean("highgroundacquired", "green");
+    CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
+		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
     CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
     CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
 
@@ -161,6 +204,12 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("highgroundacquired",OperatorController.getInstance().createSound());
   }
 
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~ TEST MODE
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void testInit() {
     
