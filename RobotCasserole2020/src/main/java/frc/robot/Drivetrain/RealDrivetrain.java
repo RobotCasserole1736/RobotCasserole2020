@@ -145,14 +145,14 @@ public class RealDrivetrain extends Drivetrain {
 
         if(opMode == DrivetrainOpMode.kOpenLoop) {
         
-            dtLeftMaster.setVoltage(fwdRevCmd);
-            dtRightMaster.setVoltage(fwdRevCmd);
+            //dtLeftMaster.setVoltage(fwdRevCmd);
+            //dtRightMaster.setVoltage(fwdRevCmd);
             //What does this do 
-            dtPID.setReference(0, ControlType.kVoltage);
+            //dtPID.setReference(0, ControlType.kVoltage);
             
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
-            dtLeftMaster.setVoltage(dtLPID.);
+            //dtLeftMaster.setVoltage(dtLPID.);
         }
 
 
@@ -208,12 +208,12 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public void updateGains(boolean forceChange) {
         if(forceChange || haveCalsChanged()) {
-            dtPID.setP(kP.get());
-            dtPID.setI(kI.get());
-            dtPID.setD(kD.get());
-            dtPID.setIZone(kIz);
-            dtPID.setFF(kFF.get());
-            calsUpdated = true;
+            //dtPID.setP(kP.get());
+            //dtPID.setI(kI.get());
+            //dtPID.setD(kD.get());
+            //dtPID.setIZone(kIz);
+            //dtPID.setFF(kFF.get());
+            //calsUpdated = true;
         }
 
 

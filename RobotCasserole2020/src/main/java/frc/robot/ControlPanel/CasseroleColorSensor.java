@@ -86,7 +86,6 @@ import com.revrobotics.ColorMatch;
 		double[] sensorValueList={sensorValues.red,sensorValues.green,sensorValues.blue};
 
 		controlPanelColor = colorOfWheel(sensorValueList);
-		System.out.println(controlPanelColor);
 
 		double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
 		sensorRedSig.addSample(sampleTimeMs, sensorValues.red);  
