@@ -19,7 +19,19 @@ import frc.lib.DataServer.Signal;
  * Add your docs here.
  */
 public class ShooterControl {
-    private static ShooterControl instance = null;
+
+    /* Allowable shooter operation modes*/
+    public enum ShooterCtrlMode {
+        SpoolUp(0),   
+        HoldSpeed(1),  
+        Stop(2);
+
+        public final int value;
+        private ShooterCtrlMode(int value) {
+            this.value = value;
+        }
+    }
+    
 
     Calibration shooterRPMSetpoint;
 
@@ -37,6 +49,7 @@ public class ShooterControl {
 
     boolean run;
 
+    private static ShooterControl instance = null;
 	public static synchronized ShooterControl getInstance() {
 		if(instance == null)
 		instance = new ShooterControl();
@@ -70,7 +83,7 @@ public class ShooterControl {
     }
 
     public void setRun(final boolean runCmd) {
-        run = runCmd;
+        run = runCmd; //TODO - Update this to accept one of three inputs.
     }
 
 
@@ -82,5 +95,11 @@ public class ShooterControl {
         }else if(run == false) {
             shooterPIDCtrl.setReference(0, ControlType.kVelocity);
         }
+    }
+
+    public boolean isUnderLoad(){
+        //TODO - return True when balls are being launched by the shooter, false if they are not.
+        // Should have a good amount of debouncing to prevent lots of false/true/false/true transitions
+        return false;
     }
 }
