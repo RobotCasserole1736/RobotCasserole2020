@@ -19,5 +19,5 @@ jobs:
           java-version: "11"
       - name: Gradle Build
         run: |
-          chmod +x ./gradlew
-          ./gradlew build
+          chmod +x ./RobotCasserole2020/gradlew
+          ./RobotCasserole2020/gradlew build
