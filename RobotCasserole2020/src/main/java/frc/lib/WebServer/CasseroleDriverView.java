@@ -50,6 +50,7 @@ public class CasseroleDriverView {
     static volatile Hashtable<String, DriverViewDial> dialObjects = new Hashtable<String, DriverViewDial>();
     static volatile Hashtable<String, DriverViewWebcam> webcamObjects = new Hashtable<String, DriverViewWebcam>();
     static volatile Hashtable<String, DriverViewBoolean> booleanObjects = new Hashtable<String, DriverViewBoolean>();
+    static volatile Hashtable<String, DriverViewSoundWidget> soundWidgetObjects = new Hashtable<String, DriverViewSoundWidget>();
     static volatile Hashtable<String, DriverViewAutoSelector> asObjects = new Hashtable<String, DriverViewAutoSelector>();
     static volatile Hashtable<String, DriverViewStringBox> stringBoxObjects = new Hashtable<String, DriverViewStringBox>();
 
@@ -131,6 +132,21 @@ public class CasseroleDriverView {
         booleanObjects.put(name_in, newBoolean);
     }
 
+
+    /**
+     * Create a new Sound Widget. This will play the specified file on the
+     * user's PC on the false->true transitions of value
+     * 
+     * @param name_in  Name of the value to display. Also used to reference the
+     *                 value when updating it.
+     * @param fname_in File name to play. Should be something supported by web browsers, like .mp3
+     */
+    public static void newSoundWidget(String name_in, String fname_in) {
+
+        DriverViewSoundWidget newSW = new DriverViewSoundWidget(name_in, fname_in);
+        soundWidgetObjects.put(name_in, newSW);
+    }
+
     /**
      * 
      * @param name_in
@@ -183,7 +199,7 @@ public class CasseroleDriverView {
     /**
      * Display a new value on an existing boolean display
      * 
-     * @param name_in  Name of the dial to update
+     * @param name_in  Name of the indicator to update
      * @param value_in Value to display on the indicator.
      */
     // might be called from different threads, but all calls go to the web server
@@ -194,6 +210,23 @@ public class CasseroleDriverView {
         } else {
             System.out.println(
                     "Warning: Driverview web server: No boolean named " + name_in + " exists yet. No value set. ");
+        }
+    }
+
+    /**
+     * Changes the play-desired value of a sound widget
+     * 
+     * @param name_in  Name of the widget to update
+     * @param value_in true = play sound, false = stop
+     */
+    // might be called from different threads, but all calls go to the web server
+    // thread.
+    public static synchronized void setSoundWidget(String name_in, boolean value_in) {
+        if (soundWidgetObjects.containsKey(name_in)) {
+            soundWidgetObjects.get(name_in).setVal(value_in);
+        } else {
+            System.out.println(
+                    "Warning: Driverview web server: No sound widget named " + name_in + " exists yet. No value set. ");
         }
     }
 
@@ -238,6 +271,7 @@ public class CasseroleDriverView {
         tmp_list.addAll(dialObjects.values());
         tmp_list.addAll(webcamObjects.values());
         tmp_list.addAll(booleanObjects.values());
+        tmp_list.addAll(soundWidgetObjects.values());
         tmp_list.addAll(stringBoxObjects.values());
         tmp_list.addAll(asObjects.values());
 

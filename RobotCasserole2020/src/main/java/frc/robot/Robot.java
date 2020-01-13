@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
@@ -191,7 +192,7 @@ public class Robot extends TimedRobot {
 
   private void initDriverView(){
     CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
-    CasseroleDriverView.newBoolean("highgroundacquired", "green");
+    CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
     CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
@@ -201,7 +202,7 @@ public class Robot extends TimedRobot {
 
   public void updateDriverView(){
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
-    CasseroleDriverView.setBoolean("highgroundacquired",OperatorController.getInstance().createSound());
+    CasseroleDriverView.setSoundWidget("High Ground Acqd",DriverStation.getInstance().isFMSAttached());
   }
 
 
