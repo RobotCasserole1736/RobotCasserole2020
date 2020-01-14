@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 
 /*
  *******************************************************************************************
- * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
  *******************************************************************************************
  *
  * This software is released under the MIT Licence - see the license.txt
