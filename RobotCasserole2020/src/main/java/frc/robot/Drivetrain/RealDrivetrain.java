@@ -4,8 +4,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
-import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
-import edu.wpi.first.wpilibj.CAN;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.RobotConstants;
 import frc.lib.DataServer.Signal;
