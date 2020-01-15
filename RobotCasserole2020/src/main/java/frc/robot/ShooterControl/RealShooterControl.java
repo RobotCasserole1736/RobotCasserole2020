@@ -1,11 +1,11 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
+/* Copyright (c) 2018-2020 FIRST. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package frc.robot.ShooterControl;
 
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -14,11 +14,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
+import frc.robot.RobotConstants;
 
 /**
  * Add your docs here.
  */
-public class ShooterControl {
+public class RealShooterControl extends ShooterControl {
 
     /* Allowable shooter operation modes*/
     public enum ShooterCtrlMode {
@@ -47,16 +48,7 @@ public class ShooterControl {
     CANSparkMax shooterMotor2; //Unpaid Intern
     CANPIDController shooterPIDCtrl;
 
-    boolean run;
-
-    private static ShooterControl instance = null;
-	public static synchronized ShooterControl getInstance() {
-		if(instance == null)
-		instance = new ShooterControl();
-		return instance;
-    }
-
-    private ShooterControl() {
+    public RealShooterControl() {
 
         shooterRPMSetpoint = new Calibration("Shooter RPM Setpoint", 0);
 
@@ -81,11 +73,6 @@ public class ShooterControl {
         shooterPIDCtrl.setFF(shooterMotorF.get());
 
     }
-
-    public void setRun(final boolean runCmd) {
-        run = runCmd; //TODO - Update this to accept one of three inputs.
-    }
-
 
     public void update() {
 
