@@ -41,11 +41,11 @@ import frc.robot.RobotConstants;
  *   |                    V                           V                             
  *   |                                                                              
  *   |                    =============================                       <-|
- *   |                    |    O                 O    |       <-|               |           
- *   |                    |                           |         |               |   
- *   |                Rear|      Robot +----> Y+      |Front    |Wheel Base     | Bumper Width
- *   |                    |            |              |         |               |      
- *   |                    |    O       V X+      O    |       <-|               |                  
+ *   |                    |    O       ^ Y+      O    |       <-|               |           
+ *   |                    |            |              |         |               |   
+ *   |                Rear|      Robot +----> X+      |Front    |Wheel Base     | Bumper Width
+ *   |                    |                           |         |               |      
+ *   |                    |    O                 O    |       <-|               |                  
  *   |                    =============================                       <-|     
  *   |                                                                              
  *   |                                                                              
@@ -56,7 +56,7 @@ import frc.robot.RobotConstants;
  *   V
  * Positive field Theta (T)   is defined as rotation from X+ to Y+. 0 Theta points along positive X axis. 
  * Field->Robot theta defined as angle from Field X axis to Robot X axis.
- * Robot drawn at T = 270deg.
+ * Robot drawn at T = 0deg.
  * 
  */
 
@@ -75,9 +75,9 @@ public class RobotPose {
     final double FIELD_RIGHT_BOUNDARY_FT = 13.47;
 
     //Starting Position    
-    public final double INIT_POSE_X = 3.0;
-    public final double INIT_POSE_Y = 1.25;
-    public final double INIT_POSE_T = 0;
+    public final double INIT_POSE_X = 0.0;
+    public final double INIT_POSE_Y = 3.0;
+    public final double INIT_POSE_T = 90;
 
     //Robot State
     double leftWheelSpeed_RPM;
@@ -121,10 +121,10 @@ public class RobotPose {
     private RobotPose() {
         DesX = new Signal("botDesPoseX", "ft");
         DesY = new Signal("botDesPoseY", "ft");
-        DesT = new Signal("botDesPoseT", "Deg");
+        DesT = new Signal("botDesPoseT", "deg");
         ActX = new Signal("botActPoseX", "ft");
         ActY = new Signal("botActPoseY", "ft");
-        ActT = new Signal("botActPoseT", "Deg");
+        ActT = new Signal("botActPoseT", "deg");
 
         resetPos = new Calibration("Pose Calc Reset Position", 0, 0, 1);
     }
@@ -148,10 +148,10 @@ public class RobotPose {
          poseAngle   = poseAngle_in ;
     }
 
-    public void setDesiredPose(double deltaX_in, double deltaY_in, double deltaT_in){
-        desPoseX = poseX + cos(poseT)*deltaX_in - sin(poseT)*deltaY_in;
-        desPoseY = poseY + sin(poseT)*deltaX_in + cos(poseT)*deltaY_in;
-        desPoseT = poseT + deltaT_in;
+    public void updateFieldPoseFromRobotMotion(double deltaX_in, double deltaY_in, double deltaT_in){
+        desPoseX = poseX + cos(poseT)*deltaX_in*delta_t_sec - sin(poseT)*deltaY_in*delta_t_sec;
+        desPoseY = poseY + sin(poseT)*deltaX_in*delta_t_sec + cos(poseT)*deltaY_in*delta_t_sec;
+        desPoseT = poseT + deltaT_in*delta_t_sec;
     }
 
     public double getRobotPoseAngleDeg(){
@@ -180,13 +180,24 @@ public class RobotPose {
 
     }
     
-    private void reset() {
+    public void reset() {
         poseX = INIT_POSE_X;
         poseY = INIT_POSE_Y;
         poseT = INIT_POSE_T;
         desPoseX = INIT_POSE_X;
         desPoseY = INIT_POSE_Y;
         desPoseT = INIT_POSE_T;
+        leftWheelSpeed_RPM = 0;
+        rightWheelSpeed_RPM = 0;
+    }
+
+    public void resetToPosition(double x_ft, double y_ft, double pose_angle_deg){
+        poseX = x_ft;
+        poseY = y_ft;
+        poseT = pose_angle_deg;
+        desPoseX = x_ft;
+        desPoseY = y_ft;
+        desPoseT = pose_angle_deg;
         leftWheelSpeed_RPM = 0;
         rightWheelSpeed_RPM = 0;
     }
@@ -199,8 +210,8 @@ public class RobotPose {
         double rightVelocity_FPS = Utils.RPM_TO_FT_PER_SEC(rightWheelSpeed_RPM);
         
         //Tank-drive robot frame displacement
-        delta_y_robot_ft  = (leftVelocity_FPS + rightVelocity_FPS)/2 *delta_t_sec;
-        delta_x_robot_ft  = 0;
+        delta_y_robot_ft  = 0;
+        delta_x_robot_ft  = (leftVelocity_FPS + rightVelocity_FPS)/2 *delta_t_sec;
         delta_t_robot_deg = ((-1.0 * leftVelocity_FPS) + rightVelocity_FPS)/2 * delta_t_sec * (1/SIDE_LINEAR_DISTANCE_PER_ROBOT_ROTATION_FT) * 360.0;
         
         //Transform to field coordinates

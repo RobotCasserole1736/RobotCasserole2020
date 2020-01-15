@@ -1,11 +1,13 @@
 package frc.robot.Autonomous;
 
-import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.AutoSequencer.AutoSequencer;
-import frc.lib.SignalMath.MathyCircularBuffer;
 import frc.lib.WebServer.CasseroleDriverView;
+import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
+import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
+import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventWait;
+import frc.robot.Drivetrain.Drivetrain;
 
 
 
@@ -38,7 +40,7 @@ public class Autonomous {
         DriveFwd(1),  
         ShootOnly(2),  
         VisionAlignShoot(3),   
-        BallTheif(4),
+        BallThief(4),
         Inactive(-1); 
 
         public final int value;
@@ -69,7 +71,7 @@ public class Autonomous {
                                                               "Drive Forward", 
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
-                                                              "Ball Theif"};
+                                                              "Ball Thief"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
                                                               "3s", 
@@ -111,7 +113,7 @@ public class Autonomous {
 		} else if (actionStr.compareTo(ACTION_MODES[3]) == 0) { 
 			modeCmd = AutoMode.VisionAlignShoot;
 		} else if (actionStr.compareTo(ACTION_MODES[4]) == 0) { 
-			modeCmd = AutoMode.BallTheif;
+			modeCmd = AutoMode.BallThief;
 		} else { 
 			modeCmd = AutoMode.Inactive;
         }
@@ -155,19 +157,27 @@ public class Autonomous {
                 break;
 
                 case DriveFwd:
-                    seq.addEvent(new AutoEventDriveForTime(2, 0.25));
+                    Drivetrain.getInstance().setInitialPose(-10, 10, 0.0);
+                    //seq.addEvent(new AutoEventDriveForTime(2, 0.25));
+                    seq.addEvent(new AutoEventPathPlanTest());
                 break;
 
                 case ShootOnly:
+                    Drivetrain.getInstance().setInitialPose(-8, 10, 270.0);
                     //TODO
                 break;
 
                 case VisionAlignShoot:
+                    Drivetrain.getInstance().setInitialPose(-11, 10, 290.0);
                     //TODO
                 break;
 
-                case BallTheif:
-                    //TODO
+                case BallThief:
+                    Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
+                    seq.addEvent(new AutoEventDriveToBallThief());
+                    //some event to run intake
+                    seq.addEvent(new AutoEventBackUpFromBallThief());
+                    //some event to shoot balls
                 break;
             }
             modeCmdPrev = modeCmd;

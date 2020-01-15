@@ -25,6 +25,9 @@ public class ImaginaryDrivetrain extends Drivetrain{
     Signal DesiredRightSimRPM;
     Signal DesiredLeftSimRPM;
 
+    Signal DesiredPoseAngleDeg;
+    Signal ActualPoseAngleDeg;
+
     final double DT_MAX_SPEED_FT_PER_SEC = 15.0;
     final double DT_MAX_ACCEL_FT_PER_SEC_PER_SEC = 8.0;
 
@@ -34,6 +37,8 @@ public class ImaginaryDrivetrain extends Drivetrain{
         ActualLeftSimRPM = new Signal("Drivetrain Sim Actual Left Speed", "RPM");
         DesiredRightSimRPM = new Signal("Drivetrain Sim Desired Right Speed", "RPM");
         DesiredLeftSimRPM = new Signal("Drivetrain Sim Desired Left Speed", "RPM");
+        DesiredPoseAngleDeg = new Signal("Drivetrain Sim Desired Pose Angle", "deg");
+        ActualPoseAngleDeg = new Signal("Drivetrain Sim Actual Pose Angle", "deg");
     }
 
     public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
@@ -57,18 +62,14 @@ public class ImaginaryDrivetrain extends Drivetrain{
             //Asssume perfect drivetrain closed loop.
             ActLeftRPM = DesLeftRPM;
             ActRightRPM = DesRightRPM;
-            headingAvailable = false;
-            actPoseAngle = desPoseAngle;
-
         } else if (opModeCmd == DrivetrainOpMode.kOpenLoop){
             ActLeftRPM = simMotor(ActLeftRPM, DesLeftRPM);
             ActRightRPM = simMotor(ActRightRPM, DesRightRPM);
-            headingAvailable = false;
-            actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
         } 
 
         RobotPose.getInstance().setLeftMotorSpeed(ActLeftRPM);
         RobotPose.getInstance().setRightMotorSpeed(ActRightRPM);
+        actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
 
         RobotPose.getInstance().update();
 
@@ -78,6 +79,8 @@ public class ImaginaryDrivetrain extends Drivetrain{
         ActualRightSimRPM.addSample(sampleTimeMs, ActRightRPM);
         DesiredLeftSimRPM.addSample(sampleTimeMs, DesLeftRPM);
         DesiredRightSimRPM.addSample(sampleTimeMs, DesRightRPM);
+        ActualPoseAngleDeg.addSample(sampleTimeMs, desPoseAngle);
+        DesiredPoseAngleDeg.addSample(sampleTimeMs, actPoseAngle);
     }
 
     
@@ -193,6 +196,12 @@ public class ImaginaryDrivetrain extends Drivetrain{
     @Override
     public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM) {
         // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setInitialPose(double x_ft, double y_ft, double pose_angle_deg) {
+        RobotPose.getInstance().resetToPosition(x_ft, y_ft, pose_angle_deg);
 
     }
 

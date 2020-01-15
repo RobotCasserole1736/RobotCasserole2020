@@ -272,4 +272,9 @@ public class RealDrivetrain extends Drivetrain {
     private boolean haveCalsChanged() {
         return kP.isChanged() || kI.isChanged() || kD.isChanged() || kFF.isChanged();
     }
+
+    @Override
+    public void setInitialPose(double x_ft, double y_ft, double theta_ft) {
+        // TODO Auto-generated method stub
+    }
 }
