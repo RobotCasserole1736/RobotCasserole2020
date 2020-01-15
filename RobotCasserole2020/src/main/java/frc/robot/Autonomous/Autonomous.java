@@ -4,7 +4,9 @@ import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.AutoSequencer.AutoSequencer;
 import frc.lib.SignalMath.MathyCircularBuffer;
 import frc.lib.WebServer.CasseroleDriverView;
+import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
+import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventWait;
 
 
@@ -38,7 +40,7 @@ public class Autonomous {
         DriveFwd(1),  
         ShootOnly(2),  
         VisionAlignShoot(3),   
-        BallTheif(4),
+        BallThief(4),
         Inactive(-1); 
 
         public final int value;
@@ -69,7 +71,7 @@ public class Autonomous {
                                                               "Drive Forward", 
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
-                                                              "Ball Theif"};
+                                                              "Ball Thief"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
                                                               "3s", 
@@ -111,7 +113,7 @@ public class Autonomous {
 		} else if (actionStr.compareTo(ACTION_MODES[3]) == 0) { 
 			modeCmd = AutoMode.VisionAlignShoot;
 		} else if (actionStr.compareTo(ACTION_MODES[4]) == 0) { 
-			modeCmd = AutoMode.BallTheif;
+			modeCmd = AutoMode.BallThief;
 		} else { 
 			modeCmd = AutoMode.Inactive;
         }
@@ -166,8 +168,11 @@ public class Autonomous {
                     //TODO
                 break;
 
-                case BallTheif:
-                    //TODO
+                case BallThief:
+                    seq.addEvent(new AutoEventDriveToBallThief());
+                    //some event to run intake
+                    seq.addEvent(new AutoEventBackUpFromBallThief());
+                    //some event to shoot balls
                 break;
             }
             modeCmdPrev = modeCmd;
