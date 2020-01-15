@@ -20,6 +20,9 @@ public class RobotConstants {
     
     static public final int VISON_LED_RING_PORT = 0;
 
+    public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
+    public static final int ANALOG_PRESSURE_SENSOR_PORT = 1;
+
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;
 	public static final double ROBOT_TRACK_WIDTH_FT = 1.75;

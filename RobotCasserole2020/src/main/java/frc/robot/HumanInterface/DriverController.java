@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 
 /*
  *******************************************************************************************
- * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
  *******************************************************************************************
  *
  * This software is released under the MIT Licence - see the license.txt
@@ -28,6 +28,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 public class DriverController {
     XboxController driverController;
     private static DriverController instance = null;
+    boolean compressorEnableReq = true;
+    boolean compressorDisableReq = false;
+
     
     public static synchronized DriverController getInstance() {
 		if(instance == null)
@@ -45,7 +48,28 @@ public class DriverController {
         //driverRotateCmd = Utils.ctrlAxisScale(   rCmd, joystickExpScaleFactor.get(), joystickDeadzone.get());
 
     }
+    public void update(){
+        if(driverController.getStartButton()){
+            compressorEnableReq = true;
+            compressorDisableReq = false;
+        } else if(driverController.getBackButton()) {
+            compressorEnableReq = false;
+            compressorDisableReq = true;
+        } else {
+            compressorEnableReq = false;
+            compressorDisableReq = false;
+        }
 
+
+
+    }
+    public boolean getCompressorDisableReq() {
+        return this.compressorDisableReq;
+    }
+
+    public boolean getCompressorEnableReq() {
+        return this.compressorEnableReq;
+    }
     /**
      * Get the driver-commanded forward/reverse speed
      * @return 1.0 for full forward, -1.0 for full reverse
