@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot;
+package frc.robot.ShooterControl;
 
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -14,11 +14,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
+import frc.robot.RobotConstants;
 
 /**
  * Add your docs here.
  */
-public class ShooterControl {
+public class RealShooterControl extends ShooterControl {
 
     /* Allowable shooter operation modes*/
     public enum ShooterCtrlMode {
@@ -47,16 +48,7 @@ public class ShooterControl {
     CANSparkMax shooterMotor2; //Unpaid Intern
     CANPIDController shooterPIDCtrl;
 
-    boolean run;
-
-    private static ShooterControl instance = null;
-	public static synchronized ShooterControl getInstance() {
-		if(instance == null)
-		instance = new ShooterControl();
-		return instance;
-    }
-
-    private ShooterControl() {
+    public RealShooterControl() {
 
         shooterRPMSetpoint = new Calibration("Shooter RPM Setpoint", 0);
 
@@ -81,11 +73,6 @@ public class ShooterControl {
         shooterPIDCtrl.setFF(shooterMotorF.get());
 
     }
-
-    public void setRun(final boolean runCmd) {
-        run = runCmd; //TODO - Update this to accept one of three inputs.
-    }
-
 
     public void update() {
 

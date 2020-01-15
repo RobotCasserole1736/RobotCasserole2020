@@ -17,6 +17,7 @@ import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
+import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.ControlPanel.CasseroleColorSensor;
 
