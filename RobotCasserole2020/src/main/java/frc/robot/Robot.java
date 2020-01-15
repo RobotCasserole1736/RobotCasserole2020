@@ -86,6 +86,11 @@ public class Robot extends TimedRobot {
     Drivetrain.getInstance().update();
     updateDriverView();
     loopTiming.markLoopStart();
+
+
+    // put all code before this 
+    loopTiming.markLoopEnd();
+    
     
   }
 
@@ -100,6 +105,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     Drivetrain.getInstance().update();
     updateDriverView();
+    loopTiming.markLoopStart();
+
+    // put all code before this 
+    loopTiming.markLoopEnd();
     
   }
 
