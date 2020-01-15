@@ -11,5 +11,6 @@ public class RobotConstants{
     static public final int DT_LEFT_NEO_2_CANID = 2;
     static public final int DT_RIGHT_NEO_1_CANID = 3;
     static public final int DT_RIGHT_NEO_2_CANID = 4;
+    public static final int POWER_DISTRIBUTION_PANEL_CANID = 0;
 
 }
