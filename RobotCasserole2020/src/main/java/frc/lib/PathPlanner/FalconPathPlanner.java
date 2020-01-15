@@ -730,7 +730,7 @@ public static void plotPath(FalconPathPlanner path) {
 
     // force graph to show 1/2 field dimensions of 24ft x 27 feet
     fig1.setXTic(-27, 27, 1);
-    fig1.setYTic(0, 30, 1);
+    fig1.setYTic(-27, 27, 1);
     fig1.addData(path.smoothPath, Color.red, Color.blue);
     
     fig1.addData(path.leftPath, Color.magenta);

@@ -262,8 +262,7 @@ function procData(json_data) {
                 //Handle robot pose update
                 poseX_px  = actPoseX * PX_PER_FOOT + this.bot_origin_offset_x;
                 poseY_px  = (ctx.canvas.height - actPoseY * PX_PER_FOOT) + this.bot_origin_offset_y;
-                poseT_adj = -1 * actPoseT;
-                drawRobot(this.ctx_robot, poseX_px, poseY_px, poseT_adj, true);
+                drawRobot(this.ctx_robot, poseX_px, poseY_px, actPoseT, true);
                 //Draw new line segment
                 drawPathSegment(this.ctx_path, poseX_px, poseY_px,botPrevActPoseX,botPrevActPoseY,true);
                 botPrevActPoseX = poseX_px;
@@ -276,8 +275,7 @@ function procData(json_data) {
                 //Handle robot pose update
                 poseX_px  = desPoseX * PX_PER_FOOT + this.bot_origin_offset_x;
                 poseY_px  = (ctx.canvas.height - desPoseY * PX_PER_FOOT) + this.bot_origin_offset_y;
-                poseT_adj = -1 * desPoseT;
-                drawRobot(this.ctx_robot, poseX_px, poseY_px, poseT_adj, false);
+                drawRobot(this.ctx_robot, poseX_px, poseY_px, desPoseT, false);
                 //draw new line segment
                 drawPathSegment(this.ctx_path, poseX_px, poseY_px,botPrevDesPoseX,botPrevDesPoseY,false);
                 botPrevDesPoseX = poseX_px;
@@ -290,6 +288,10 @@ function procData(json_data) {
 drawRobot = function (ctx_in, x_pos_px, y_pos_px, rotation_deg, isActual) {
 
     //Draw the robot itself
+
+    //Tweak rotation to match the javascript canvas draw angle
+    rotation_deg -= 90;
+    rotation_deg *= -1;
 
     //Rotate to robot reference frame
     ctx_in.translate(x_pos_px, y_pos_px);

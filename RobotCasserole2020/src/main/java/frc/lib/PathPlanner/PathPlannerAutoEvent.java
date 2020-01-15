@@ -137,6 +137,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
      * assign these velocities to the drivetrain at the proper time.
      */
     double startTime = 0;
+    double startPoseAngle = 0;
     public void userUpdate() {
     	double tmp;
         
@@ -154,24 +155,23 @@ public class PathPlannerAutoEvent extends AutoEvent {
         if (timestep == 0) {
         	timestep = 1;
         }
+
         
         //Interpret the path planner outputs into commands which are meaningful.
-        double leftCommand_RPM  = FT_PER_SEC_TO_RPM(path.smoothLeftVelocity[timestep][1]);
-        double rightCommand_RPM = FT_PER_SEC_TO_RPM(path.smoothRightVelocity[timestep][1]);
-        double poseCommand_deg = 90.0-path.heading[timestep][1];
+        double leftCommand_RPM  = 0;
+        double rightCommand_RPM = 0;
+        double poseCommand_deg  = 0;
         
         if(reversed) {
         	//When running in reversed mode, we need to undo the inversion applied to the 
         	// the waypoints.
-        	leftCommand_RPM  *= -1;
-        	rightCommand_RPM *= -1;
-        	
-        	//Note that we don't invert the pose command. Despite the fact that the "heading"
-        	// has inverted by 180 degrees (aka robot travels backward), the pose angle remains
-        	// forward. Since the path planner assumes we are actually traveling forward, and the 
-        	// drivetrain takes in a pose command, we don't need to invert the Pose command before
-        	// passing to the drivetrain.
+            leftCommand_RPM  = -1*FT_PER_SEC_TO_WHEEL_RPM(path.smoothRightVelocity[timestep][1]);
+            rightCommand_RPM = -1*FT_PER_SEC_TO_WHEEL_RPM(path.smoothLeftVelocity[timestep][1]);
+        } else {
+            leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(path.smoothLeftVelocity[timestep][1]);
+            rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(path.smoothRightVelocity[timestep][1]); 
         }
+        poseCommand_deg  = (path.heading[timestep][1]-90.0) + startPoseAngle;
         
         if(useFixedHeadingMode) {
             Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, userManualHeadingDesired);
@@ -227,10 +227,11 @@ public class PathPlannerAutoEvent extends AutoEvent {
 		}
 		
         startTime = Timer.getFPGATimestamp();
+        startPoseAngle = Drivetrain.getInstance().getGyroAngle();
         done = false;
 	}
 	
-	private double FT_PER_SEC_TO_RPM(double ftps_in) {
+	private double FT_PER_SEC_TO_WHEEL_RPM(double ftps_in) {
 		return ftps_in / (2*Math.PI*Drivetrain.WHEEL_ROLLING_RADIUS_FT) * 60;
 	} 
 

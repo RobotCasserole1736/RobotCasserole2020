@@ -1,13 +1,13 @@
 package frc.robot.Autonomous;
 
-import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.AutoSequencer.AutoSequencer;
-import frc.lib.SignalMath.MathyCircularBuffer;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
+import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventWait;
+import frc.robot.Drivetrain.Drivetrain;
 
 
 
@@ -157,18 +157,23 @@ public class Autonomous {
                 break;
 
                 case DriveFwd:
-                    seq.addEvent(new AutoEventDriveForTime(2, 0.25));
+                    Drivetrain.getInstance().setInitialPose(-10, 10, 0.0);
+                    //seq.addEvent(new AutoEventDriveForTime(2, 0.25));
+                    seq.addEvent(new AutoEventPathPlanTest());
                 break;
 
                 case ShootOnly:
+                    Drivetrain.getInstance().setInitialPose(-8, 10, 270.0);
                     //TODO
                 break;
 
                 case VisionAlignShoot:
+                    Drivetrain.getInstance().setInitialPose(-11, 10, 290.0);
                     //TODO
                 break;
 
                 case BallThief:
+                    Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     seq.addEvent(new AutoEventDriveToBallThief());
                     //some event to run intake
                     seq.addEvent(new AutoEventBackUpFromBallThief());

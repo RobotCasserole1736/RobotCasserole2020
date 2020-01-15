@@ -7,24 +7,25 @@ import frc.lib.PathPlanner.PathPlannerAutoEvent;
 /**
  * go to scale on left.
  */
-public class AutoEventDriveToBallThief extends AutoEvent {
+public class AutoEventPathPlanTest extends AutoEvent {
 	PathPlannerAutoEvent driveForward;
 
 	private final double[][] waypoints = new double[][] {
         {0, 0},
-        {0, 130.36} //Puts front of robot right on the balls. If intake is further forward it may need to change.
+		{0, 60},
+		{25,70},
+		{25,100}
 	};
 	
-	private final double time = 2.0;
+	private final double time = 5.0;
 
-	public AutoEventDriveToBallThief() {
+	public AutoEventPathPlanTest() {
 		driveForward = new PathPlannerAutoEvent(waypoints, time, false, 0.5, 0.5, 0.001, 0.9);
 	}
 
 	@Override
 	public void userUpdate() {
 		driveForward.userUpdate();
-		// shotCTRL.setDesiredShooterState(ShooterStates.PREP_TO_SHOOT);
 	}
 	@Override
 	public void userForceStop() {
@@ -46,7 +47,7 @@ public class AutoEventDriveToBallThief extends AutoEvent {
 		driveForward.userStart();
 	}
     public static void main(String[] args) {
-		AutoEventDriveToBallThief autoEvent = new AutoEventDriveToBallThief();
+		AutoEventPathPlanTest autoEvent = new AutoEventPathPlanTest();
 		FalconPathPlanner.plotPath(autoEvent.driveForward.path);
 	}
 }

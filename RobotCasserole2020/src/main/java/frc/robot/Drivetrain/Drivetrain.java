@@ -42,5 +42,6 @@ public abstract class Drivetrain {
     public abstract double getLeftNeo2Current();
     public abstract double getRightNeo1Current();
     public abstract double getRightNeo2Current();
+    public abstract void setInitialPose(double x_ft, double y_ft, double theta_ft);
 
 }
