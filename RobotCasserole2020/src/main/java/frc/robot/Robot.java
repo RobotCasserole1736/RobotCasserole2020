@@ -9,17 +9,21 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleWebServer;
+import frc.lib.DataServer.Signal;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.ControlPanel.CasseroleColorSensor;
+import edu.wpi.first.wpilibj.RobotController;
+import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,6 +40,16 @@ public class Robot extends TimedRobot {
   CalWrangler wrangler;
   CasseroleDataServer dataServer;
   LoopTiming loopTiming;
+  PowerDistributionPanel pdp;
+  CasseroleRIOLoadMonitor loadMon;
+
+      //Top level telemetry signals
+  Signal rioDSSampLoadSig;
+  Signal rioDSLogQueueLenSig;
+  Signal rioCurrDrawLoadSig;
+  Signal rioBattVoltLoadSig;
+  Signal rioIsBrownoutSig;
+  Signal rioCANBusUsagePctSig;
 
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
@@ -59,6 +73,16 @@ public class Robot extends TimedRobot {
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
     jevois = JeVoisInterface.getInstance();
+    pdp = new PowerDistributionPanel(RobotConstants.POWER_DISTRIBUTION_PANEL_CANID);
+    loadMon= new CasseroleRIOLoadMonitor();
+
+    /* Init local telemetry signals */
+    rioDSSampLoadSig = new Signal("Dataserver Stored Samples", "count"); 
+    rioCurrDrawLoadSig = new Signal("Battery Current Draw", "A");
+    rioBattVoltLoadSig = new Signal("Battery Voltage", "V");
+    rioDSLogQueueLenSig = new Signal("Dataserver File Logger Queue Length", "count");
+    rioIsBrownoutSig = new Signal("Robot Brownout", "bool");
+    rioCANBusUsagePctSig = new Signal("Robot CAN Bus Utilization", "pct");
 
     OperatorController.getInstance();
     DriverController.getInstance();
@@ -80,6 +104,16 @@ public class Robot extends TimedRobot {
     
   }
   
+  public void telemetryUpdate(){
+    double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
+
+    rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
+    rioCurrDrawLoadSig.addSample(sampleTimeMs, pdp.getTotalCurrent());
+    rioBattVoltLoadSig.addSample(sampleTimeMs, pdp.getVoltage());  
+    rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
+    rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
+    rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
+  }
     
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -108,6 +142,7 @@ public class Robot extends TimedRobot {
     Drivetrain.getInstance().update();
 
     updateDriverView();
+    telemetryUpdate();
     loopTiming.markLoopEnd();
   }
 
@@ -139,7 +174,9 @@ public class Robot extends TimedRobot {
 
     Drivetrain.getInstance().update();
     updateDriverView();
+    telemetryUpdate();
 
+    // put all code before this 
     loopTiming.markLoopEnd();
   }
 
@@ -179,9 +216,11 @@ public class Robot extends TimedRobot {
 
 
     updateDriverView();
+    telemetryUpdate();
 
-
+    // put all code before this 
     loopTiming.markLoopEnd();
+    
   }
 
 
@@ -220,7 +259,8 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     loopTiming.markLoopStart();
-
+    
+    telemetryUpdate();
     loopTiming.markLoopEnd();
   }
 }

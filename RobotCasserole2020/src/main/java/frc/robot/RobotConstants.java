@@ -1,9 +1,5 @@
 package frc.robot;
 
-import com.revrobotics.ColorMatch;
-
-import edu.wpi.first.wpilibj.util.Color;
-
 public class RobotConstants {
 
 
@@ -22,6 +18,7 @@ public class RobotConstants {
 
     public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
     public static final int ANALOG_PRESSURE_SENSOR_PORT = 1;
+    public static final int POWER_DISTRIBUTION_PANEL_CANID = 0;
 
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;
