@@ -19,6 +19,7 @@ public class RobotConstants {
     static public final int SHOOTER_MOTOR_2 = 6;
     
     static public final int VISON_LED_RING_PORT = 0;
+    static public final int PHOTON_CANNON_PORT = 7;
 
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;
