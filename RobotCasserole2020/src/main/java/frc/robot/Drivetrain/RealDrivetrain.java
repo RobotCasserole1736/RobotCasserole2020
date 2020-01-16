@@ -19,12 +19,13 @@ public class RealDrivetrain extends Drivetrain {
 
     
     CANSparkMax dtLeftMaster;
-    CANSparkMax dtRightMaster;
     CANEncoder leftEncoder;
-
     CANSparkMax dtLeftIntern;
-    CANSparkMax dtRightIntern;
+
+    CANSparkMax dtRightMaster;
     CANEncoder rightEncoder;
+    CANSparkMax dtRightIntern;
+  
 
     Gyro dtGyro;
     
