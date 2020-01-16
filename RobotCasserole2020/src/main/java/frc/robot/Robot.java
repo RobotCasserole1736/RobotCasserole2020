@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
   CasseroleColorSensor colorSensor;
+  PhotonCannonControl photonCannon;
 
   //Shooter
   ShooterControl shooterCtrl;
@@ -56,6 +57,7 @@ public class Robot extends TimedRobot {
     /* Init website utilties */
     webserver = new CasseroleWebServer();
     wrangler = new CalWrangler();
+    photonCannon = new PhotonCannonControl();
     dataServer = CasseroleDataServer.getInstance();
     jevois = JeVoisInterface.getInstance();
 
@@ -159,6 +161,7 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
     CrashTracker.logTeleopPeriodic();
+    photonCannon.update();
 
     colorSensor.update();
 
