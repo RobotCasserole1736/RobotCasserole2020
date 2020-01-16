@@ -1,7 +1,7 @@
 package frc.robot.ControlPanel;
 /*
  *******************************************************************************************
- * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
  *******************************************************************************************
  *
  * This software is released under the MIT Licence - see the license.txt
@@ -10,7 +10,10 @@ package frc.robot.ControlPanel;
  * Non-legally-binding statement from Team 1736:
  *  Thank you for taking the time to read through our software! We hope you
  *   find it educational and informative! 
- *  Please feel free to snag our software for your own use in whatever project
+ *  Please feel free to snag package frc.robot.ControlPanel;
+/*
+ *******************************************************************************************
+ * Copyright (C) 2our software for your own use in whatever project
  *   you have going on right now! We'd love to be able to help out! Shoot us 
  *   any questions you may have, all our contact info should be on our website
  *   (listed above).
@@ -42,6 +45,8 @@ import com.revrobotics.ColorMatch;
 	I2C.Port i2cPort;
 	ColorMatch m_colorMatcher;
 
+	ControlPanelColor controlPanelColor;
+
 	double[] redMin = {0.34, 0.36, 0.16};
 	double[] redMax = {0.54, 0.45, 0.22};
 	double[] greenMin = {0.17, 0.49, 0.22};
@@ -63,6 +68,8 @@ import com.revrobotics.ColorMatch;
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private CasseroleColorSensor() {
 		
+		controlPanelColor = controlPanelColor.kUNKNOWN;
+
 		//Configure color sensor
 		i2cPort = I2C.Port.kOnboard;
 		m_colorSensor = new ColorSensorV3(i2cPort);
@@ -81,7 +88,6 @@ import com.revrobotics.ColorMatch;
 	// It will sample the values from the sensor, and calculate what color it thinks things are
 	public void update(){
 		sensorValues = m_colorSensor.getColor();
-		ControlPanelColor controlPanelColor;
 		
 		double[] sensorValueList={sensorValues.red,sensorValues.green,sensorValues.blue};
 
@@ -118,4 +124,7 @@ import com.revrobotics.ColorMatch;
 		}
 	}
 
-}
+	public int getControlPanelColor(){
+        return this.controlPanelColor.value;
+	}
+ }
