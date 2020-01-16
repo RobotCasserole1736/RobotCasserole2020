@@ -234,7 +234,6 @@ public class RealDrivetrain extends Drivetrain {
         rightWheelSpeedRPM = rightCmdRPM;
         headingCmdDeg = inHeadingCmdDeg;
 
-
     }
 
     @Override

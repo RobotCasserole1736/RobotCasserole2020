@@ -195,6 +195,9 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     @Override
     public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM) {
+        opModeCmd = DrivetrainOpMode.kClosedLoopVelocity;
+        DesRightRPM = rightCmdRPM;
+        DesLeftRPM = leftCmdRPM;
         // TODO Auto-generated method stub
 
     }
