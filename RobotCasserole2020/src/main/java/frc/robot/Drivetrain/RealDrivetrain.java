@@ -50,9 +50,9 @@ public class RealDrivetrain extends Drivetrain {
     double gyroLockRotationCmd = 0;
     double angErr = 0;
     double headingCmdDeg = 0;
-    //Hopefully these are the same 
-    double lConversionFactor = leftEncoder.getVelocityConversionFactor();
-    double rConversionFactor = rightEncoder.getVelocityConversionFactor();
+    //TODO update these 
+    double lConversionFactor = 1;
+    double rConversionFactor = 1;
 
     Signal leftWheelSpeedDesiredSig;
     Signal leftWheelSpeedActualSig;
@@ -122,12 +122,12 @@ public class RealDrivetrain extends Drivetrain {
         leftWheelSpeedActualSig.addSample(sampleTimeMS, leftWheelSpeedRPM);
         rightWheelSpeedDesiredSig.addSample(sampleTimeMS, fwdRevCmd);
         rightWheelSpeedActualSig.addSample(sampleTimeMS, rightWheelSpeedRPM);
-
-        kP.acknowledgeValUpdate();
-        kI.acknowledgeValUpdate();
-        kD.acknowledgeValUpdate();
-        kFF.acknowledgeValUpdate();
-
+        if(calsUpdated) {
+            kP.acknowledgeValUpdate();
+            kI.acknowledgeValUpdate();
+            kD.acknowledgeValUpdate();
+            kFF.acknowledgeValUpdate();
+        }
         currentL1Sig.addSample(sampleTimeMS, dtNeoL1Current);
         currentL2Sig.addSample(sampleTimeMS, dtNeoL2Current);
         currentR1Sig.addSample(sampleTimeMS, dtNeoR1Current);
