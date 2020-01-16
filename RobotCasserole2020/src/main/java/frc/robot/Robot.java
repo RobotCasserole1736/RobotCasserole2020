@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.sql.Driver;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.WebServer.CasseroleDriverView;
@@ -36,6 +38,9 @@ public class Robot extends TimedRobot {
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
 
+  //
+  Drivetrain drivetrain;
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -54,7 +59,7 @@ public class Robot extends TimedRobot {
     OperatorController.getInstance();
     DriverController.getInstance();
 
-    Drivetrain.getInstance();
+    drivetrain = Drivetrain.getInstance();
 
     loopTiming = LoopTiming.getInstance();
 
@@ -92,7 +97,7 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logAutoPeriodic();
 
-    Drivetrain.getInstance().update();
+    drivetrain.update();
     updateDriverView();
 
     loopTiming.markLoopEnd();
@@ -110,7 +115,8 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
     CrashTracker.logTeleopPeriodic();
-    Drivetrain.getInstance().update();
+    drivetrain.update();
+    drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), DriverController.getInstance().getRotateCmd());
     updateDriverView();
     
     loopTiming.markLoopEnd();

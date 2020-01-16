@@ -79,6 +79,7 @@ public class RealDrivetrain extends Drivetrain {
 
     public RealDrivetrain(){
         dtLeftMaster = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
+        dtLeftMaster.restoreFactoryDefaults();
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);
         dtRightMaster = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_1_CANID, MotorType.kBrushless);
         dtRightIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
@@ -96,7 +97,7 @@ public class RealDrivetrain extends Drivetrain {
         currentR1Sig = new Signal("Right Master Moter Current", "Amps");
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
 
-        kP = new Calibration("Drivetrain P Value", 0);
+        kP = new Calibration("Drivetrain P Value", 0.00);
         kI = new Calibration("Drivetrain I Value", 0);
         kD = new Calibration("Drivetrain D Value", 0);
         kFF = new Calibration("Drivetrain F Value", 0);
@@ -141,20 +142,20 @@ public class RealDrivetrain extends Drivetrain {
     public void update() {
         sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         sampleSensors();
-
+        opMode = opModeCmd;
+    
         if(opMode == DrivetrainOpMode.kOpenLoop) {
         
-            dtLeftMaster.setVoltage(fwdRevCmd);
+           dtLeftMaster.set(fwdRevCmd);
             dtRightMaster.setVoltage(fwdRevCmd);
             //What does this do 
-            dtLPID.setReference(0, ControlType.kVoltage);
+            dtLPID.setReference(fwdRevCmd*13, ControlType.kVoltage);
             dtRPID.setReference(0, ControlType.kVoltage);
-            
+           
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
             //no errors so it works
-            dtLPID.setReference(1, ControlType.kVoltage);
-            dtLeftMaster.setVoltage(dtLPID.getSmartMotionMinOutputVelocity(0));
+            dtLPID.setReference(1, ControlType.kVelocity);
         }
 
 
