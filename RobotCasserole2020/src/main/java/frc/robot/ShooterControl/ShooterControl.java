@@ -7,7 +7,7 @@
 
 package frc.robot.ShooterControl;
 
-import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.RobotSimMode;
 
 /**
  * Add your docs here.
@@ -33,10 +33,10 @@ public abstract class ShooterControl {
 	public static synchronized ShooterControl getInstance() {
 		if(instance == null){
             //On init, choose whether we want a real or fake drivetrain
-            if(RobotBase.isReal()){
-                instance = new RealShooterControl(); 
-            } else {
+            if(RobotSimMode.getInstance().runSimulation()){
                 instance = new ImaginaryShooterControl();
+            } else {
+                instance = new RealShooterControl();
             }
         }
 		return instance;

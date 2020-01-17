@@ -1,6 +1,6 @@
 package frc.robot.Drivetrain;
 
-import edu.wpi.first.wpilibj.RobotBase;
+import frc.robot.RobotSimMode;
 
 public abstract class Drivetrain {
     
@@ -18,10 +18,10 @@ public abstract class Drivetrain {
     public static Drivetrain getInstance() {
         if (instance == null) {
             //On init, choose whether we want a real or fake drivetrain
-            if(RobotBase.isReal()){
-                instance = new RealDrivetrain(); 
+            if(RobotSimMode.getInstance().runSimulation()){
+                instance = new ImaginaryDrivetrain(); 
             } else {
-                instance = new ImaginaryDrivetrain();
+                instance = new RealDrivetrain(); 
             }
         }
         return instance;

@@ -1,6 +1,6 @@
 package frc.robot.Drivetrain;
 
-//import com.analog.adis16448.frc.ADIS16448_IMU;
+import com.analog.adis16448.frc.ADIS16448_IMU;
 
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
@@ -27,24 +27,24 @@ import frc.robot.LoopTiming;
 
 public class CasseroleGyro {
 
-    //ADIS16448_IMU imu;
+    ADIS16448_IMU imu;
 
     Signal poseAngleSig;
 
     double angle_deg = 0;
     
     public CasseroleGyro(){
-        //imu = new ADIS16448_IMU();
+        imu = new ADIS16448_IMU();
         poseAngleSig = new Signal("DT_Pose_Angle", "deg");
     }
 
     public void update(){
-        //angle_deg = imu.getYaw();
+        angle_deg = imu.getAngle();
         poseAngleSig.addSample(LoopTiming.getInstance().getLoopStartTimeSec()*1000, angle_deg);
     }
 
     public void calibrate(){
-        //imu.calibrate();
+        imu.calibrate();
     }
 
 

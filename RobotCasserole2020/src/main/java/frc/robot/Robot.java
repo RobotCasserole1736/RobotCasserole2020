@@ -16,6 +16,7 @@ import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.lib.DataServer.Signal;
+import frc.robot.Drivetrain.CasseroleGyro;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
@@ -58,6 +59,9 @@ public class Robot extends TimedRobot {
   //Shooter
   ShooterControl shooterCtrl;
 
+  //Temp
+  CasseroleGyro gyro_test;
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ Robot Init
@@ -89,6 +93,8 @@ public class Robot extends TimedRobot {
     colorSensor = CasseroleColorSensor.getInstance();
 
     shooterCtrl = ShooterControl.getInstance();
+
+    gyro_test = new CasseroleGyro();
 
     Drivetrain.getInstance();
 

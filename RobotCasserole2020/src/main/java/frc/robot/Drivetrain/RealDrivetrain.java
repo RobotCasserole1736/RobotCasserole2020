@@ -1,12 +1,8 @@
 package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
-import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
-import edu.wpi.first.wpilibj.CAN;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.RobotConstants;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
@@ -28,7 +24,7 @@ public class RealDrivetrain extends Drivetrain {
     CANSparkMax dtRightIntern;
     CANEncoder rightEncoder;
 
-    Gyro dtGyro;
+    CasseroleGyro dtGyro;
     
 
     
@@ -104,13 +100,20 @@ public class RealDrivetrain extends Drivetrain {
         kIz = 0;
 
         
-            dtLeftIntern.follow(dtLeftMaster);
-            dtRightIntern.follow(dtRightMaster);
+        dtLeftIntern.follow(dtLeftMaster);
+        dtRightIntern.follow(dtRightMaster);
+
+        dtGyro = new CasseroleGyro();
+        dtGyro.calibrate();
         
 
     }
 
     public void sampleSensors() {
+
+        dtGyro.update();
+
+        gyroAngle = dtGyro.getAngleDeg();
         
         leftWheelSpeedRPM = dtLeftMaster.getEncoder().getVelocity() * lConversionFactor;
         rightWheelSpeedRPM = dtRightMaster.getEncoder().getVelocity() * rConversionFactor;
