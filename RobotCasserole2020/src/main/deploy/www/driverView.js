@@ -8,7 +8,6 @@ var hostname = window.location.hostname + ":" + port;
 var dataSocket = new WebSocket("ws://" + hostname + "/driverviewstream")
 var numTransmissions = 0;
 var display_objs = {};
-var highGround = new Audio('highground.mp3');
 
 //Class for a dial
 
@@ -369,6 +368,51 @@ casseroleBooleanDisplay.prototype.setValue = function (new_value) {
 
 //END Boolean Display class
 
+//START Sound Widget class
+var casseroleSoundWidget = function (elementID_in, name_in, file_in) {
+
+    //initial input values
+    this.name = name_in;
+    this.file = file_in;
+    this.value = false;
+    this.prevValue = false;
+    this.elementID = elementID_in;
+    this.soundfile = null;
+
+    try{
+        this.soundfile = new Audio(this.file);
+    } catch(e){
+        console.error("Error while attempting to load audio file" + this.file + " for " + this.name);
+        console.error(e);
+    }
+    
+
+    //Nothing to draw
+}
+
+casseroleSoundWidget.prototype.setValue = function (new_value) {
+    this.prevValue = this.value
+    if (new_value == "False") {
+        this.value = false;
+    } else if (new_value == "True") {
+        this.value = true;
+    }
+    //else, do nothing
+
+    // try to play a sound, but don't try too hard.
+    if(this.soundfile != null){
+        if(this.value == true && this.prevValue == false){
+            try{
+                this.soundfile.play();
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }
+}
+
+// END Sound Widget class
+
 
 
 //Data socket handlers
@@ -454,6 +498,8 @@ dataSocket.onmessage = function (event) {
                 display_objs[arr.obj_array[i].name] = (new casseroleStringBox("obj" + (arr.obj_array[i].name), arr.obj_array[i].displayName));
             } else if (arr.obj_array[i].type == "boolean") {
                 display_objs[arr.obj_array[i].name] = (new casseroleBooleanDisplay("obj" + (arr.obj_array[i].name), arr.obj_array[i].displayName, arr.obj_array[i].color));
+            } else if (arr.obj_array[i].type == "soundWidget") {
+                display_objs[arr.obj_array[i].name] = (new casseroleSoundWidget("obj" + (arr.obj_array[i].name), arr.obj_array[i].displayName, arr.obj_array[i].file));
             }
             //ignore other types
         }
@@ -468,16 +514,6 @@ dataSocket.onmessage = function (event) {
                 autoSelSetCurrent(arr.obj_array[i].name, arr.obj_array[i].val);
             } else {
                 display_objs[arr.obj_array[i].name].setValue(arr.obj_array[i].value);
-                
-                nameOfSignal = arr.obj_array[i].name;
-                sigVal = arr.obj_array[i].value;
-
-                if(nameOfSignal == "highgroundacquired" && sigVal == "True"){
-                    //display_objs[highgroundacquired].setValue(highground.mp3);
-                    highGround.play();
-                }
-                
-                
             }
 
         }

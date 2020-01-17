@@ -115,7 +115,7 @@ public class JeVoisInterface {
         jevoisFramerateSig = new Signal("Jevois Framerate", "fps");
         jevoisPacketsPerSecSig = new Signal("Jevois Packets Per Sec", "pps");
         framecounterSig = new Signal("Jevois Frame Count", "count");
-        tgtGeneralAngleSig = new Signal("Jevois General Angle", "Deg");
+        tgtGeneralAngleSig = new Signal("Jevois General Angle", "deg");
         jevoisLatchCounterSig = new Signal("Jevois Latch Count", "count");
 
         //Retry strategy to get this serial port open.

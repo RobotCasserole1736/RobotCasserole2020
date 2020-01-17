@@ -1,5 +1,4 @@
 package frc.robot.ControlPanel;
-
 /*
  *******************************************************************************************
  * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
@@ -20,7 +19,17 @@ package frc.robot.ControlPanel;
  *   if you would consider donating to our club to help further STEM education.
  */
 
-public class CasseroleColorSensor {
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.util.Color;
+import frc.lib.DataServer.Signal;
+import frc.robot.LoopTiming;
+import frc.robot.RobotConstants;
+
+import com.revrobotics.ColorSensorV3;
+import com.revrobotics.ColorMatch;
+
+
+ public class CasseroleColorSensor {
 	private static CasseroleColorSensor instance = null;
 
 	public static synchronized CasseroleColorSensor getInstance() {
@@ -29,27 +38,84 @@ public class CasseroleColorSensor {
 		return instance;
 	}
 
+	ColorSensorV3 m_colorSensor;
+	I2C.Port i2cPort;
+	ColorMatch m_colorMatcher;
+
+	double[] redMin = {0.34, 0.36, 0.16};
+	double[] redMax = {0.54, 0.45, 0.22};
+	double[] greenMin = {0.17, 0.49, 0.22};
+	double[] greenMax = {0.28, 0.57, 0.27};
+	double[] blueMin = {0.12, 0.41, 0.26};
+	double[] blueMax = {0.24, 0.47, 0.45};
+	double[] yellowMin = {0.30, 0.48, 0.10};
+	double[] yellowMax = {0.32, 0.56, 0.21};
+
+	Color sensorValues;
+	double IR;
+	String colorString;
+
+	Signal sensorRedSig;
+	Signal sensorGrnSig;
+	Signal sensorBluSig;
+	Signal matchResultSig;
+
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private CasseroleColorSensor() {
-		//TODO - Put code to init the sensor & its processing
+		
+		//Configure color sensor
+		i2cPort = I2C.Port.kOnboard;
+		m_colorSensor = new ColorSensorV3(i2cPort);
+
+		//Init color match algorithm
+		m_colorMatcher = new ColorMatch();
+		 
+		sensorRedSig   = new Signal("Color Sensor Red Intensity", "intensity");
+		sensorGrnSig   = new Signal("Color Sensor Green Intensity", "intensity");
+		sensorBluSig   = new Signal("Color Sensor Blue Intensity", "intensity");
+		matchResultSig = new Signal("Color Sensor Match Color", "color");
 	}
+	
 
 	// This method should be called once per loop.
 	// It will sample the values from the sensor, and calculate what color it thinks things are
 	public void update(){
-		//TODO - fill me out	
+		sensorValues = m_colorSensor.getColor();
+		ControlPanelColor controlPanelColor;
+		
+		double[] sensorValueList={sensorValues.red,sensorValues.green,sensorValues.blue};
+
+		controlPanelColor = colorOfWheel(sensorValueList);
+
+		double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
+		sensorRedSig.addSample(sampleTimeMs, sensorValues.red);  
+		sensorGrnSig.addSample(sampleTimeMs, sensorValues.green);  
+		sensorBluSig.addSample(sampleTimeMs, sensorValues.blue); 
+		matchResultSig.addSample(sampleTimeMs, controlPanelColor.value);
+	}
+	
+	public boolean inRange(double[] inList,double[]min,double[]max){
+		boolean retVal=true;
+		for(int i = 0; i < 3; i++){
+			if(inList[i]>max[i]||inList[i]<min[i]){
+				retVal=false;
+			}
+		}
+		return retVal;
 	}
 
-
-	//Returns the best-guess color seen by the sensor.
-	public ControlPanelColor getColor(){
-		return ControlPanelColor.kUNKNOWN; //TODO - make this return something useful
+	public ControlPanelColor colorOfWheel(double[] sensorValueList){
+		if(inRange(sensorValueList, redMin, redMax)){
+			return ControlPanelColor.kRED;
+		} else if(inRange(sensorValueList, greenMin, greenMax)){
+			return ControlPanelColor.kGREEN;
+		} else if(inRange(sensorValueList, blueMin, blueMax)){
+			return ControlPanelColor.kBLUE;
+		} else if(inRange(sensorValueList, yellowMin, yellowMax)){
+			return ControlPanelColor.kYELLOW;
+		} else {
+			return ControlPanelColor.kUNKNOWN;
+		}
 	}
-
-	//Get the confidence percentage as to how certain the sensor is of the color seen.
-	public double getConfidence(){
-		return 0; //TODO - make this return something useful
-	}
-
 
 }

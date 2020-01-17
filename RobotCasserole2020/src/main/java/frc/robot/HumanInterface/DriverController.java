@@ -2,11 +2,12 @@ package frc.robot.HumanInterface;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import frc.robot.Drivetrain.Utils;
 import edu.wpi.first.wpilibj.GenericHID;
 
 /*
  *******************************************************************************************
- * Copyright (C) 2019 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
  *******************************************************************************************
  *
  * This software is released under the MIT Licence - see the license.txt
@@ -27,6 +28,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 public class DriverController {
     XboxController driverController;
     private static DriverController instance = null;
+    boolean compressorEnableReq = true;
+    boolean compressorDisableReq = false;
+
     
     public static synchronized DriverController getInstance() {
 		if(instance == null)
@@ -44,18 +48,47 @@ public class DriverController {
         //driverRotateCmd = Utils.ctrlAxisScale(   rCmd, joystickExpScaleFactor.get(), joystickDeadzone.get());
 
     }
+    public void update(){
+        if(driverController.getStartButton()){
+            compressorEnableReq = true;
+            compressorDisableReq = false;
+        } else if(driverController.getBackButton()) {
+            compressorEnableReq = false;
+            compressorDisableReq = true;
+        } else {
+            compressorEnableReq = false;
+            compressorDisableReq = false;
+        }
 
-    public double getFwdRevCmd(){
-        return driverController.getY(GenericHID.Hand.kLeft); 
+
+
+    }
+    public boolean getCompressorDisableReq() {
+        return this.compressorDisableReq;
     }
 
+    public boolean getCompressorEnableReq() {
+        return this.compressorEnableReq;
+    }
+    /**
+     * Get the driver-commanded forward/reverse speed
+     * @return 1.0 for full forward, -1.0 for full reverse
+     */
+    public double getFwdRevCmd(){
+        return Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft),3.0, 0.15); 
+    }
+
+        /**
+     * Get the driver-commanded rotation
+     * @return -1.0 for clockwise, 1.0 for counter-clockwise
+     */
     public double getRotateCmd(){
-        return driverController.getX(GenericHID.Hand.kRight); 
+        return Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 3.0, 0.15); 
     }
 
     public boolean getAutoHighGoalAlignDesired(){
         return driverController.getXButtonPressed(); 
-
+ 
     }
     
     public boolean getDesiredYButtonCommand(){

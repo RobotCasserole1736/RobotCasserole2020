@@ -1,7 +1,6 @@
 package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -10,6 +9,7 @@ import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
 import com.revrobotics.CANPIDController;
 import frc.lib.Calibration.Calibration;
+import com.revrobotics.ControlType;
 
 public class RealDrivetrain extends Drivetrain {
 
@@ -27,7 +27,7 @@ public class RealDrivetrain extends Drivetrain {
     CANSparkMax dtRightIntern;
   
 
-    Gyro dtGyro;
+    CasseroleGyro dtGyro;
     
 
     
@@ -106,11 +106,18 @@ public class RealDrivetrain extends Drivetrain {
         
         dtLeftIntern.follow(dtLeftMaster);
         dtRightIntern.follow(dtRightMaster);
+
+        dtGyro = new CasseroleGyro();
+        dtGyro.calibrate();
         
 
     }
 
     public void sampleSensors() {
+
+        dtGyro.update();
+
+        gyroAngle = dtGyro.getAngleDeg();
         
         leftWheelSpeedRPM = dtLeftMaster.getEncoder().getVelocity() * lConversionFactor;
         rightWheelSpeedRPM = dtRightMaster.getEncoder().getVelocity() * rConversionFactor;
@@ -281,5 +288,10 @@ public class RealDrivetrain extends Drivetrain {
     }
     private boolean haveCalsChanged() {
         return kP.isChanged() || kI.isChanged() || kD.isChanged() || kFF.isChanged();
+    }
+
+    @Override
+    public void setInitialPose(double x_ft, double y_ft, double theta_ft) {
+        // TODO Auto-generated method stub
     }
 }
