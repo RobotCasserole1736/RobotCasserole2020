@@ -2,11 +2,18 @@ package frc.robot.ControlPanel;
 
 import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.ControlPanel.ControlPanelManipulator;
+
 
 public class ControlPanelStateMachine{
 
     /* Singelton Stuff */
     private static ControlPanelStateMachine instance = null;
+    
+    
+    
+    
+    
 
     public static synchronized ControlPanelStateMachine getInstance() {
         if(instance == null)
@@ -72,9 +79,7 @@ public class ControlPanelStateMachine{
     public boolean degreesToTurn(int colorOnWheelList,int colorGotten){
         boolean Rotation = true;
         for(int i = 0; i < 3; i++){
-            if(colorGotten == ){
 
-            }
 
 
         }
@@ -82,43 +87,31 @@ public class ControlPanelStateMachine{
     }
 
     //change Tur to Turn if we decide on this function.
-    public int degreesToTur(int colorOnWheel, String gameData){
-        if(colorOnWheel == 0){
-            if(gameData.charAt(0) == 'B'){
-                //move motor 90 degrees clockwise
-            } else if(gameData.charAt(0) == 'G'){
-                //move motor 45 degrees clockwise
-            }else if(gameData.charAt(0) == 'Y'){
-                //move motor 45 degrees counter-clockwise
-            }
-        } else if(colorOnWheel == 1){
-            if(gameData.charAt(0) == 'Y'){
-                return 90; //move motor 90 degrees clockwise
-            } else if(gameData.charAt(0) == 'B'){
-                return 45; //move motor 45 degrees clockwise
-            }else if(gameData.charAt(0) == 'R'){
-                return -45; //move motor 45 degrees counter-clockwise
-            }
-        } else if(colorOnWheel == 2){
-            if(gameData.charAt(0) == 'R'){
-                return 90; //move motor 90 degrees clockwise
-            } else if(gameData.charAt(0) == 'Y'){
-                return 45; //move motor 45 degrees clockwise
-            }else if(gameData.charAt(0) == 'G'){
-                return -45; //move motor 45 degrees counter-clockwise
-            }
-        } else if(colorOnWheel == 3){
-            if(gameData.charAt(0) == 'Y'){
-                return 90; //move motor 90 degrees clockwise
-            } else if(gameData.charAt(0) == 'R'){
-                return 45; //move motor 45 degrees clockwise
-            }else if(gameData.charAt(0) == 'B'){
-                return -45; //move motor 45 degrees counter-clockwise
-            }
-        } else {
-            return 10; //10 is the number of degrees to turn
+    public int degreesToTur(ControlPanelColor colorOnWheel, String gameData){
+        //convert gameData to rotational information
+        String desiredColor=String.valueOf(gameData.charAt(0));
+        int desiredRotation;
+        if(desiredColor.equals("R")){
+            desiredRotation=0;
+        }else if(desiredColor.equals("G")){
+            desiredRotation=45;
+        }else if(desiredColor.equals("B")){
+            desiredRotation=90;
+        }else if(desiredColor.equals("Y")){
+            desiredRotation=135;
+        }else{
+            //Maybe adjust this. I wasn't sure why we would rotate 10 degrees but thats what was already in code so...
+            return 10;
         }
-        return 1; //delete when function is finished.
+        
+        int rotateCmd=desiredRotation-(colorOnWheel.value*45);
+
+        //checks if there is a 135 degree rotation. If so sets it to it 45 degrees in the opposite direction
+        if(Math.abs(rotateCmd)>90){
+            rotateCmd=(rotateCmd/-3);
+        }
+
+        return rotateCmd;
     }
 
         //TODO - user will pass in true if they want the rotate-to-color cycle to start and run, or false if they want to stop the cycle.
