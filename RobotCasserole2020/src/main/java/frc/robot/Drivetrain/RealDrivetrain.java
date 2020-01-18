@@ -81,8 +81,11 @@ public class RealDrivetrain extends Drivetrain {
         dtLeftMaster = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
         dtLeftMaster.restoreFactoryDefaults();
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);
+        dtLeftIntern.restoreFactoryDefaults();
         dtRightMaster = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_1_CANID, MotorType.kBrushless);
+        dtRightMaster.restoreFactoryDefaults();
         dtRightIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+        dtRightIntern.restoreFactoryDefaults();
 
         dtLPID = new CANPIDController(dtLeftMaster);
         dtRPID = new CANPIDController(dtRightMaster);
