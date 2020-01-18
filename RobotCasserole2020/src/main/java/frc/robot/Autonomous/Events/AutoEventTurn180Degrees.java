@@ -33,7 +33,7 @@ public class AutoEventTurn180Degrees extends AutoEvent {
 		currentTime = Timer.getFPGATimestamp();
 		elapsedTime = currentTime - startTime;
         //Drivetrain.getInstance().disableHeadingCmd();
-        Drivetrain.getInstance().setClosedLoopSpeedCmd(TURN_SPEED_RPM, (-1 * TURN_SPEED_RPM));
+        Drivetrain.getInstance().setClosedLoopSpeedCmd((-1*TURN_SPEED_RPM), (TURN_SPEED_RPM));
 		if(Drivetrain.getInstance().getGyroAngle() > targetAngle || elapsedTime > TIMEOUT_S) {
 			weAreDone = true;
 			Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);

@@ -19,6 +19,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
     double desPoseAngle = RobotPose.getInstance().INIT_POSE_T;
     double actPoseAngle = RobotPose.getInstance().INIT_POSE_T;
     boolean headingAvailable = false;
+    boolean useHeadingCommand = false;
 
     Signal ActualRightSimRPM;
     Signal ActualLeftSimRPM;
@@ -43,6 +44,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
         opModeCmd = DrivetrainOpMode.kOpenLoop;
+        useHeadingCommand = false;
 
         double motorSpeedLeftCMD = Utils.capMotorCmd(forwardReverseCmd - rotationCmd);
         double motorSpeedRightCMD = Utils.capMotorCmd(forwardReverseCmd + rotationCmd);
@@ -58,6 +60,15 @@ public class ImaginaryDrivetrain extends Drivetrain{
         prevOpMode = opMode;
         opMode = opModeCmd;
 
+        double angleErrCorrFactor  = 0;
+        actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
+
+        if(useHeadingCommand){
+            angleErrCorrFactor = 0.5*(actPoseAngle - desPoseAngle); //Simple P control to correct for angle errors
+        } else {
+            angleErrCorrFactor = 0;
+        }
+
         if(opModeCmd == DrivetrainOpMode.kClosedLoopVelocity){
             //Asssume perfect drivetrain closed loop.
             ActLeftRPM = DesLeftRPM;
@@ -67,9 +78,9 @@ public class ImaginaryDrivetrain extends Drivetrain{
             ActRightRPM = simMotor(ActRightRPM, DesRightRPM);
         } 
 
-        RobotPose.getInstance().setLeftMotorSpeed(ActLeftRPM);
-        RobotPose.getInstance().setRightMotorSpeed(ActRightRPM);
-        actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
+        RobotPose.getInstance().setLeftMotorSpeed(ActLeftRPM + angleErrCorrFactor);
+        RobotPose.getInstance().setRightMotorSpeed(ActRightRPM - angleErrCorrFactor);
+        
 
         RobotPose.getInstance().update();
 
@@ -159,6 +170,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
         DesRightRPM = rightCmdRPM;
         DesLeftRPM = leftCmdRPM;
         desPoseAngle = headingCmdDeg;
+        useHeadingCommand = true;
     }
 
     
@@ -198,8 +210,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
         opModeCmd = DrivetrainOpMode.kClosedLoopVelocity;
         DesRightRPM = rightCmdRPM;
         DesLeftRPM = leftCmdRPM;
-        // TODO Auto-generated method stub
-
+        useHeadingCommand = false;
     }
 
     @Override
