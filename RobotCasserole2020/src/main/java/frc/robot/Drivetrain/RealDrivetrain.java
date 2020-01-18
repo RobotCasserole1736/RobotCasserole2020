@@ -3,11 +3,13 @@ package frc.robot.Drivetrain;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.robot.RobotConstants;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
 import com.revrobotics.CANPIDController;
 import frc.lib.Calibration.Calibration;
+import com.revrobotics.ControlType;
 
 public class RealDrivetrain extends Drivetrain {
 
@@ -17,12 +19,13 @@ public class RealDrivetrain extends Drivetrain {
 
     
     CANSparkMax dtLeftMaster;
-    CANSparkMax dtRightMaster;
     CANEncoder leftEncoder;
-
     CANSparkMax dtLeftIntern;
-    CANSparkMax dtRightIntern;
+
+    CANSparkMax dtRightMaster;
     CANEncoder rightEncoder;
+    CANSparkMax dtRightIntern;
+  
 
     CasseroleGyro dtGyro;
     
@@ -48,9 +51,9 @@ public class RealDrivetrain extends Drivetrain {
     double gyroLockRotationCmd = 0;
     double angErr = 0;
     double headingCmdDeg = 0;
-    //Hopefully these are the same 
-    double lConversionFactor = leftEncoder.getVelocityConversionFactor();
-    double rConversionFactor = rightEncoder.getVelocityConversionFactor();
+    //TODO update these 
+    double lConversionFactor = 1;
+    double rConversionFactor = 1;
 
     Signal leftWheelSpeedDesiredSig;
     Signal leftWheelSpeedActualSig;
@@ -75,10 +78,14 @@ public class RealDrivetrain extends Drivetrain {
     
 
     public RealDrivetrain(){
-        dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
+        dtLeftMaster = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
+        dtLeftMaster.restoreFactoryDefaults();
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);
-        dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
-        dtLeftIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+        dtLeftIntern.restoreFactoryDefaults();
+        dtRightMaster = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_1_CANID, MotorType.kBrushless);
+        dtRightMaster.restoreFactoryDefaults();
+        dtRightIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+        dtRightIntern.restoreFactoryDefaults();
 
         dtLPID = new CANPIDController(dtLeftMaster);
         dtRPID = new CANPIDController(dtRightMaster);
@@ -93,7 +100,7 @@ public class RealDrivetrain extends Drivetrain {
         currentR1Sig = new Signal("Right Master Moter Current", "Amps");
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
 
-        kP = new Calibration("Drivetrain P Value", 0);
+        kP = new Calibration("Drivetrain P Value", 0.00);
         kI = new Calibration("Drivetrain I Value", 0);
         kD = new Calibration("Drivetrain D Value", 0);
         kFF = new Calibration("Drivetrain F Value", 0);
@@ -127,12 +134,12 @@ public class RealDrivetrain extends Drivetrain {
         leftWheelSpeedActualSig.addSample(sampleTimeMS, leftWheelSpeedRPM);
         rightWheelSpeedDesiredSig.addSample(sampleTimeMS, fwdRevCmd);
         rightWheelSpeedActualSig.addSample(sampleTimeMS, rightWheelSpeedRPM);
-
-        kP.acknowledgeValUpdate();
-        kI.acknowledgeValUpdate();
-        kD.acknowledgeValUpdate();
-        kFF.acknowledgeValUpdate();
-
+        if(calsUpdated) {
+            kP.acknowledgeValUpdate();
+            kI.acknowledgeValUpdate();
+            kD.acknowledgeValUpdate();
+            kFF.acknowledgeValUpdate();
+        }
         currentL1Sig.addSample(sampleTimeMS, dtNeoL1Current);
         currentL2Sig.addSample(sampleTimeMS, dtNeoL2Current);
         currentR1Sig.addSample(sampleTimeMS, dtNeoR1Current);
@@ -145,17 +152,20 @@ public class RealDrivetrain extends Drivetrain {
     public void update() {
         sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         sampleSensors();
-
+        opMode = opModeCmd;
+    
         if(opMode == DrivetrainOpMode.kOpenLoop) {
         
-            //dtLeftMaster.setVoltage(fwdRevCmd);
-            //dtRightMaster.setVoltage(fwdRevCmd);
+           dtLeftMaster.set(fwdRevCmd);
+            dtRightMaster.setVoltage(fwdRevCmd);
             //What does this do 
-            //dtPID.setReference(0, ControlType.kVoltage);
-            
+            dtLPID.setReference(fwdRevCmd*13, ControlType.kVoltage);
+            dtRPID.setReference(0, ControlType.kVoltage);
+           
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
-            //dtLeftMaster.setVoltage(dtLPID.);
+            //no errors so it works
+            dtLPID.setReference(1, ControlType.kVelocity);
         }
 
 
@@ -211,12 +221,19 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public void updateGains(boolean forceChange) {
         if(forceChange || haveCalsChanged()) {
-            //dtPID.setP(kP.get());
-            //dtPID.setI(kI.get());
-            //dtPID.setD(kD.get());
-            //dtPID.setIZone(kIz);
-            //dtPID.setFF(kFF.get());
-            //calsUpdated = true;
+            
+            dtLPID.setP(kP.get());
+            dtLPID.setI(kI.get());
+            dtLPID.setD(kD.get());
+            dtLPID.setIZone(kIz);
+            dtLPID.setFF(kFF.get());
+
+            dtRPID.setP(kP.get());
+            dtRPID.setI(kI.get());
+            dtRPID.setD(kD.get());
+            dtRPID.setIZone(kIz);
+            dtRPID.setFF(kFF.get());
+            calsUpdated = true;
         }
 
 

@@ -7,7 +7,8 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
+import java.sql.Driver;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.lib.Calibration.CalWrangler;
@@ -25,6 +26,7 @@ import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
+import edu.wpi.first.wpilibj.DriverStation;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -58,6 +60,7 @@ public class Robot extends TimedRobot {
   VisionLEDRingControl eyeOfVeganSauron;
 
   //Subsystems
+  Drivetrain drivetrain;
   ShooterControl shooterCtrl;
   IntakeControl intakeCtrl;
   PneumaticsControl thbbtbbtbbtbbt;
@@ -101,7 +104,7 @@ public class Robot extends TimedRobot {
 
     shooterCtrl = ShooterControl.getInstance();
 
-    Drivetrain.getInstance();
+    drivetrain = Drivetrain.getInstance();
 
     Autonomous.getInstance();
 
@@ -194,6 +197,7 @@ public class Robot extends TimedRobot {
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
 
+    drivetrain.update();
     Autonomous.getInstance().update();
 
     ctrlPanel.update();
@@ -201,7 +205,6 @@ public class Robot extends TimedRobot {
     shooterCtrl.update();
     intakeCtrl.update();
 
-    Drivetrain.getInstance().update();
     updateDriverView();
     telemetryUpdate();
 
@@ -240,6 +243,7 @@ public class Robot extends TimedRobot {
     thbbtbbtbbtbbt.update();
 
     
+    drivetrain.update();
 
     Autonomous.getInstance().sampleOperatorCommands();
     Autonomous.getInstance().update();
@@ -252,10 +256,10 @@ public class Robot extends TimedRobot {
       //Nothing to do, expect that auto sequencer will provide drivetrain comands
     } else {
       //Driver control in manual
-      Drivetrain.getInstance().setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
+      drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
                                               DriverController.getInstance().getRotateCmd());
     }
-    Drivetrain.getInstance().update();
+
 
 
     updateDriverView();
