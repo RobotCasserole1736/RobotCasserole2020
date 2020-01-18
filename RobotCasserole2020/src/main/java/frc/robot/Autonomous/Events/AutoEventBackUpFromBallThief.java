@@ -23,8 +23,8 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
 	private final double[][] waypoints_inches = new double[][] {
 		{0,0},
         {0, -30},
-        {-132, -112},
-        {-132, -132},
+        {-132, -100},
+        {-132, -120},
 	};
 
     final double time = 3.0;

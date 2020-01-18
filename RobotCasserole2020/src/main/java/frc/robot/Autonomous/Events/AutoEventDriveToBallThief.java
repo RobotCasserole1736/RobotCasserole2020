@@ -12,7 +12,7 @@ public class AutoEventDriveToBallThief extends AutoEvent {
 
 	private final double[][] waypoints = new double[][] {
         {0, 0},
-        {0, 130.36} //Puts front of robot right on the balls. If intake is further forward it may need to change.
+        {0, 130} //Puts front of robot right on the balls. If intake is further forward it may need to change.
 	};
 	
 	private final double time = 2.0;
