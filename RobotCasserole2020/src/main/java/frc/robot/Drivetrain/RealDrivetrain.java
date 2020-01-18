@@ -51,6 +51,8 @@ public class RealDrivetrain extends Drivetrain {
     double gyroLockRotationCmd = 0;
     double angErr = 0;
     double headingCmdDeg = 0;
+    double dtLeftSpeedCmd = 0;
+    double dtRightSpeedCmd = 0;
     //TODO update these 
     double lConversionFactor = 1;
     double rConversionFactor = 1;
@@ -155,17 +157,23 @@ public class RealDrivetrain extends Drivetrain {
         opMode = opModeCmd;
     
         if(opMode == DrivetrainOpMode.kOpenLoop) {
-        
-           dtLeftMaster.set(fwdRevCmd);
-            dtRightMaster.setVoltage(fwdRevCmd);
-            //What does this do 
-            dtLPID.setReference(fwdRevCmd*13, ControlType.kVoltage);
-            dtRPID.setReference(0, ControlType.kVoltage);
+            
+            dtLeftSpeedCmd = Utils.capMotorCmd(fwdRevCmd + rotCmd);
+            dtRightSpeedCmd = Utils.capMotorCmd(fwdRevCmd - rotCmd);
+            //Do we want to set or run the motors in PID mode
+            // dtLeftMaster.set(dtLeftSpeedCmd);
+            // dtRightMaster.set(dtLeftSpeedCmd);
+
+            dtLPID.setReference(dtLeftSpeedCmd*13, ControlType.kVoltage);
+            dtRPID.setReference(dtRightSpeedCmd*13, ControlType.kVoltage);
            
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
             //no errors so it works
-            dtLPID.setReference(1, ControlType.kVelocity);
+            //WheelSpeed Needs to be converted            
+            dtLPID.setReference(leftWheelSpeedRPM, ControlType.kVelocity);
+            dtRPID.setReference(rightWheelSpeedRPM, ControlType.kVelocity);
+
         }
 
 
