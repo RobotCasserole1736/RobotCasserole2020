@@ -21,19 +21,6 @@ import frc.robot.RobotConstants;
  */
 public class RealShooterControl extends ShooterControl {
 
-    /* Allowable shooter operation modes*/
-    public enum ShooterCtrlMode {
-        SpoolUp(0),   
-        HoldSpeed(1),  
-        Stop(2);
-
-        public final int value;
-        private ShooterCtrlMode(int value) {
-            this.value = value;
-        }
-    }
-    
-
     Calibration shooterRPMSetpoint;
 
     Calibration shooterMotorP;

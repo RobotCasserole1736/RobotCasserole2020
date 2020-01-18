@@ -7,6 +7,8 @@
 
 package frc.robot.ShooterControl;
 
+import frc.lib.Calibration.Calibration;
+
 /**
  * Add your docs here.
  */
@@ -20,6 +22,11 @@ public class ImaginaryShooterControl extends ShooterControl {
 
     public void update() {
 
+        if(run == true){
+            
+        }else if(run == false){
+            
+        }
     }
 
     public boolean isUnderLoad(){
