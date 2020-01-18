@@ -9,4 +9,5 @@ public enum ControlPanelColor{
     private ControlPanelColor(int value) {
         this.value = value;
     }
+
 }

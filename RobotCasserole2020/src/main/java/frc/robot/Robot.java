@@ -25,6 +25,7 @@ import frc.robot.Autonomous.Autonomous;
 import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
+import frc.robot.ControlPanel.ControlPanelStateMachine;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -101,6 +102,8 @@ public class Robot extends TimedRobot {
     Autonomous.getInstance();
 
     loopTiming = LoopTiming.getInstance();
+
+    ControlPanelStateMachine.getInstance();
 
     /* Website Setup */
     initDriverView();
