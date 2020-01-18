@@ -1,9 +1,7 @@
 package frc.robot.Autonomous.Events;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.robot.Drivetrain.CasseroleGyro;
 import frc.robot.Drivetrain.Drivetrain;
 
 public class AutoEventTurn extends AutoEvent {
