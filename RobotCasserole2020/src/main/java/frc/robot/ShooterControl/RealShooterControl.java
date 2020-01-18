@@ -12,8 +12,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
+import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 
 /**
@@ -33,6 +35,10 @@ public class RealShooterControl extends ShooterControl {
         }
     }
     
+    boolean underLoad = false;
+    int currentStateShooter;
+    double timer = 0;
+    double outputTime;
 
     Calibration shooterRPMSetpoint;
 
@@ -41,8 +47,15 @@ public class RealShooterControl extends ShooterControl {
     Calibration shooterMotorD;
     Calibration shooterMotorF;
 
+    Calibration loadedThresholdShooter;
+    Calibration unloadedThresholdShooter;
+    Calibration loadedTimer;
+    Calibration unloadedTimer;
+
     Signal rpmDesiredSig;
     Signal rpmActualSig;
+
+    Signal isUnderLoad;
 
     CANSparkMax shooterMotor1; //Master
     CANSparkMax shooterMotor2; //Unpaid Intern
@@ -55,10 +68,17 @@ public class RealShooterControl extends ShooterControl {
         shooterMotorP = new Calibration("Shooter Motor P", 0);
         shooterMotorI = new Calibration("Shooter Motor I", 0);
         shooterMotorD = new Calibration("Shooter Motor D", 0);
-        shooterMotorF = new Calibration("Shooter Motor F", 0); 
+        shooterMotorF = new Calibration("Shooter Motor F", 0);
+
+        loadedThresholdShooter = new Calibration("loadedThresholdShooter", 20);
+        unloadedThresholdShooter = new Calibration("unloadedThresholdShooter", 10);
+        loadedTimer = new Calibration("loaded Timer", 2);
+        unloadedTimer = new Calibration("unloaded Timer ", 2);
 
         rpmDesiredSig = new Signal("Desired Shooter RPM", "RPM");
         rpmActualSig = new Signal("Actual Shooter RPM", "RPM");
+
+        isUnderLoad = new Signal("Shooter Under Load","boolean");
 
         shooterMotor1 = new CANSparkMax(RobotConstants.SHOOTER_MOTOR_1, MotorType.kBrushless);
         shooterMotor2 = new CANSparkMax(RobotConstants.SHOOTER_MOTOR_2, MotorType.kBrushless); 
@@ -82,11 +102,34 @@ public class RealShooterControl extends ShooterControl {
         }else if(run == false) {
             shooterPIDCtrl.setReference(0, ControlType.kVelocity);
         }
+
+        //2 means the hold state
+        if(currentStateShooter == 2){
+            if(shooterMotor1.getOutputCurrent() > loadedThresholdShooter.get()){
+                if (timer==0){
+                    timer=Timer.getFPGATimestamp();
+                }
+                outputTime = Timer.getFPGATimestamp()-timer;
+                if(outputTime > loadedTimer.get()){
+                    underLoad = true;
+                    timer = 0;
+                }
+            }else if((shooterMotor1.getOutputCurrent() < unloadedThresholdShooter.get())){
+                if (timer==0){
+                    timer=Timer.getFPGATimestamp();
+                }
+                outputTime = Timer.getFPGATimestamp()-timer;            
+                if(outputTime > unloadedTimer.get()){
+                    underLoad = false;
+                    timer = 0;
+                }
+            }
+        }else{
+            underLoad = false;
+        }
     }
 
     public boolean isUnderLoad(){
-        //TODO - return True when balls are being launched by the shooter, false if they are not.
-        // Should have a good amount of debouncing to prevent lots of false/true/false/true transitions
-        return false;
+        return this.underLoad;
     }
 }
