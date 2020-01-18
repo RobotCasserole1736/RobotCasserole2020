@@ -15,6 +15,7 @@ public class RobotConstants {
     static public final int SHOOTER_MOTOR_2 = 6;
     
     static public final int VISON_LED_RING_PORT = 0;
+    static public final int PHOTON_CANNON_PORT = 7;
 
     public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
     public static final int ANALOG_PRESSURE_SENSOR_PORT = 1;

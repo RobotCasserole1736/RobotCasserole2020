@@ -61,8 +61,10 @@ public class OperatorController {
          return operaterController.getBButtonPressed(); 
     }
     public boolean createSound(){
+        return operaterController.getStickButtonPressed(Hand.kLeft);
+    }
+    public boolean flashlight(){
         return operaterController.getBumperPressed(Hand.kLeft);
     }
-
 
 }

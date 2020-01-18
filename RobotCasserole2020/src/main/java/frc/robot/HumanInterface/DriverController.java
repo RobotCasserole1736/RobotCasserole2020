@@ -91,8 +91,8 @@ public class DriverController {
  
     }
     
-    public boolean getDesiredYButtonCommand(){
-        return driverController.getYButtonPressed();
+    public boolean getPhotonCannonInput(){
+        return driverController.getYButton();
     }
 
     public boolean getDesiredBButtonCommand(){
