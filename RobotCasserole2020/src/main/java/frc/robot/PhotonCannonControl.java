@@ -6,6 +6,7 @@ import frc.lib.DataServer.Signal;
 import frc.robot.HumanInterface.OperatorController;
 
 public class PhotonCannonControl {
+    
     private static PhotonCannonControl inst = null;
     public static synchronized PhotonCannonControl getInstance() {
         if (inst==null){
@@ -20,7 +21,7 @@ public class PhotonCannonControl {
 
     Signal photonCannonSignal;
 
-    public PhotonCannonControl(){
+    private PhotonCannonControl(){
         photonRelayOutput = new DigitalOutput(RobotConstants.PHOTON_CANNON_PORT);
         photonCannonSignal = new Signal("Photon Cannon State", "bool");
     }

@@ -11,8 +11,7 @@ public class ControlPanelStateMachine{
     private static ControlPanelStateMachine instance = null;
     
     
-    
-    
+    CasseroleColorSensor colorSensor;
     
 
     public static synchronized ControlPanelStateMachine getInstance() {
@@ -23,57 +22,40 @@ public class ControlPanelStateMachine{
 
     int colorOnWheel = CasseroleColorSensor.getInstance().getControlPanelColor();
 
+    ControlPanelColor gameDataColor = ControlPanelColor.kUNKNOWN;
+
     private ControlPanelStateMachine(){
         //System.out.println("The color on the wheel is "+ColorOnWheel);
-
-        String gameData;
-        gameData = DriverStation.getInstance().getGameSpecificMessage();
-        char colorDesired = gameData.charAt(0);
-        int[] colorOnWheelList={0,1,2,3};
-
-        int colorGotten;
-
-        if(gameData.charAt(0) == 'R'){
-            colorGotten = 0;
-        }
-        if(gameData.charAt(0) == 'G'){
-            colorGotten = 1;
-        }
-        if(gameData.charAt(0) == 'B'){
-            colorGotten = 2;
-        }
-        if(gameData.charAt(0) == 'Y'){
-            colorGotten = 3;
-        }
+        colorSensor = CasseroleColorSensor.getInstance();
 
     }
 
-    public void setRotateToColorDesired(boolean rotateToColorCmd_in){
+    public void parseGameData(){
+
         String gameData;
         gameData = DriverStation.getInstance().getGameSpecificMessage();
+
         if(gameData.length() > 0){
-            switch (gameData.charAt(0))
-            {
-              case 'B' :
-                //Blue case code
-                break;
-              case 'G' :
-                //Green case code
-                break;
-              case 'R' :
-                //Red case code
-                break;
-              case 'Y' :
-                //Yellow case code
-                break;
-              default :
-                //This is corrupt data
-                break;
+            if(gameData.charAt(0) == 'R'){
+                gameDataColor = ControlPanelColor.kRED;
             }
-          } else {
-            //Code for no data received yet
-          }
+            if(gameData.charAt(0) == 'G'){
+                gameDataColor = ControlPanelColor.kGREEN;
+            }
+            if(gameData.charAt(0) == 'B'){
+                gameDataColor = ControlPanelColor.kBLUE;
+            }
+            if(gameData.charAt(0) == 'Y'){
+                gameDataColor = ControlPanelColor.kYELLOW;
+            }
+        } else {
+            gameDataColor = ControlPanelColor.kUNKNOWN;
         }
+    }
+
+    public void setRotateToColorDesired(boolean rotateToColorCmd_in){
+
+    }
     
     
     public boolean degreesToTurn(int colorOnWheelList,int colorGotten){
@@ -89,17 +71,17 @@ public class ControlPanelStateMachine{
     //change Tur to Turn if we decide on this function.
     public int degreesToTur(ControlPanelColor colorOnWheel, String gameData){
         //convert gameData to rotational information
-        String desiredColor=String.valueOf(gameData.charAt(0));
-        int desiredRotation;
-        if(desiredColor.equals("R")){
+
+        int desiredRotation = 0;
+        if(gameDataColor == ControlPanelColor.kRED){
             desiredRotation=0;
-        }else if(desiredColor.equals("G")){
+        }else if(gameDataColor == ControlPanelColor.kGREEN){
             desiredRotation=45;
-        }else if(desiredColor.equals("B")){
+        }else if(gameDataColor == ControlPanelColor.kBLUE){
             desiredRotation=90;
-        }else if(desiredColor.equals("Y")){
+        }else if(gameDataColor == ControlPanelColor.kYELLOW){
             desiredRotation=135;
-        }else{
+        }else{ //kUNKNOWN
             //Maybe adjust this. I wasn't sure why we would rotate 10 degrees but thats what was already in code so...
             return 10;
         }
@@ -118,6 +100,12 @@ public class ControlPanelStateMachine{
 
     public void setRotateStage2Desired(boolean rotateStage2Cmd_in){
         //TODO - user will pass in true if they want the rotate-to-color cycle to start and run, or false if they want to stop the cycle.
+
+    }
+
+    public void update(){
+        parseGameData();
+        colorSensor.update();
 
     }
 

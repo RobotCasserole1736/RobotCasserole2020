@@ -54,14 +54,14 @@ public class Robot extends TimedRobot {
 
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
-  CasseroleColorSensor colorSensor;
   PhotonCannonControl photonCannon;
+  VisionLEDRingControl eyeOfVeganSauron;
 
   //Subsystems
   ShooterControl shooterCtrl;
   IntakeControl intakeCtrl;
   PneumaticsControl thbbtbbtbbtbbt;
-  VisionLEDRingControl eyeOfVeganSauron;
+  ControlPanelStateMachine ctrlPanel;
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -77,7 +77,6 @@ public class Robot extends TimedRobot {
     /* Init website utilties */
     webserver = new CasseroleWebServer();
     wrangler = new CalWrangler();
-    photonCannon = new PhotonCannonControl();
     dataServer = CasseroleDataServer.getInstance();
     jevois = JeVoisInterface.getInstance();
     pdp = new PowerDistributionPanel(RobotConstants.POWER_DISTRIBUTION_PANEL_CANID);
@@ -91,9 +90,14 @@ public class Robot extends TimedRobot {
     rioIsBrownoutSig = new Signal("Robot Brownout", "bool");
     rioCANBusUsagePctSig = new Signal("Robot CAN Bus Utilization", "pct");
 
+    thbbtbbtbbtbbt = PneumaticsControl.getInstance();
+    eyeOfVeganSauron = VisionLEDRingControl.getInstance();
+    photonCannon = PhotonCannonControl.getInstance();
+
+
     OperatorController.getInstance();
     DriverController.getInstance();
-    colorSensor = CasseroleColorSensor.getInstance();
+    ctrlPanel = ControlPanelStateMachine.getInstance();
 
     shooterCtrl = ShooterControl.getInstance();
 
@@ -153,7 +157,7 @@ public class Robot extends TimedRobot {
 
     Autonomous.getInstance().sampleDashboardSelector();
 
-    colorSensor.update();
+    ctrlPanel.update();
 
     shooterCtrl.update();
     intakeCtrl.update();
@@ -192,7 +196,7 @@ public class Robot extends TimedRobot {
 
     Autonomous.getInstance().update();
 
-    colorSensor.update();
+    ctrlPanel.update();
 
     shooterCtrl.update();
     intakeCtrl.update();
@@ -232,16 +236,17 @@ public class Robot extends TimedRobot {
       eyeOfVeganSauron.setLEDRingState(true);
     }
     photonCannon.update();
-    
+
     thbbtbbtbbtbbt.update();
 
-    colorSensor.update();
+    
 
     Autonomous.getInstance().sampleOperatorCommands();
     Autonomous.getInstance().update();
 
     shooterCtrl.update();
     intakeCtrl.update();
+    ctrlPanel.update();
 
     if(Autonomous.getInstance().isActive()){
       //Nothing to do, expect that auto sequencer will provide drivetrain comands
