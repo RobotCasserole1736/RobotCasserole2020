@@ -12,6 +12,8 @@ package frc.robot.ShooterControl;
  */
 public class ImaginaryShooterControl extends ShooterControl {
 
+    double speed_rpm = 0;
+
     public ImaginaryShooterControl() {
 
     }
@@ -23,5 +25,9 @@ public class ImaginaryShooterControl extends ShooterControl {
     public boolean isUnderLoad(){
         //Not really doable in simulation
         return false;
+    }
+
+    public double getSpeed_rpm(){
+        return speed_rpm;
     }
 }

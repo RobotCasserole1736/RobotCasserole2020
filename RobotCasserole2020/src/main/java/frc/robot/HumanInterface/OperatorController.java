@@ -63,7 +63,7 @@ public class OperatorController {
     public boolean createSound(){
         return operaterController.getStickButtonPressed(Hand.kLeft);
     }
-    public boolean flashlight(){
+    public boolean flashlightCmd(){
         return operaterController.getBumperPressed(Hand.kLeft);
     }
 

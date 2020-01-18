@@ -22,19 +22,17 @@ public class PhotonCannonControl {
 
     public PhotonCannonControl(){
         photonRelayOutput = new DigitalOutput(RobotConstants.PHOTON_CANNON_PORT);
-        photonCannonSignal = new Signal("Photon Cannon State", "bool ");
+        photonCannonSignal = new Signal("Photon Cannon State", "bool");
     }
 
-    private void setPhotonCannonState(boolean enabled){
-        photonRelayOutput.set(enabled);
+    public void setPhotonCannonState(boolean enabled){
+        curCannonState = enabled;
     }
     
     public void update(){
-        curCannonState = OperatorController.getInstance().flashlight();
-        if (prevCannonState != curCannonState){
-            setPhotonCannonState(curCannonState);
-        }
+        photonRelayOutput.set(curCannonState);
         prevCannonState = curCannonState;
+
         double sample_time_ms = Timer.getFPGATimestamp()*1000;
         photonCannonSignal.addSample(sample_time_ms, curCannonState);
     }

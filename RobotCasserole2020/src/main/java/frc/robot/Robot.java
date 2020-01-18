@@ -16,7 +16,6 @@ import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.lib.DataServer.Signal;
-import frc.robot.Drivetrain.CasseroleGyro;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
@@ -45,7 +44,7 @@ public class Robot extends TimedRobot {
   PowerDistributionPanel pdp;
   CasseroleRIOLoadMonitor loadMon;
 
-      //Top level telemetry signals
+  //Top level telemetry signals
   Signal rioDSSampLoadSig;
   Signal rioDSLogQueueLenSig;
   Signal rioCurrDrawLoadSig;
@@ -58,11 +57,12 @@ public class Robot extends TimedRobot {
   CasseroleColorSensor colorSensor;
   PhotonCannonControl photonCannon;
 
-  //Shooter
+  //Subsystems
   ShooterControl shooterCtrl;
+  IntakeControl intakeCtrl;
+  PneumaticsControl thbbtbbtbbtbbt;
+  VisionLEDRingControl eyeOfVeganSauron;
 
-  //Temp
-  CasseroleGyro gyro_test;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -97,11 +97,11 @@ public class Robot extends TimedRobot {
 
     shooterCtrl = ShooterControl.getInstance();
 
-    gyro_test = new CasseroleGyro();
-
     Drivetrain.getInstance();
 
     Autonomous.getInstance();
+
+    intakeCtrl = IntakeControl.getInstance();
 
     loopTiming = LoopTiming.getInstance();
 
@@ -144,11 +144,19 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 
+    
+    thbbtbbtbbtbbt.update();
+    eyeOfVeganSauron.setLEDRingState(false);
+    photonCannon.setPhotonCannonState(false);
+    photonCannon.update();
+    
+
     Autonomous.getInstance().sampleDashboardSelector();
 
     colorSensor.update();
 
     shooterCtrl.update();
+    intakeCtrl.update();
 
     Drivetrain.getInstance().update();
 
@@ -177,11 +185,17 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logAutoPeriodic();
 
+    thbbtbbtbbtbbt.update();
+    eyeOfVeganSauron.setLEDRingState(true);
+    photonCannon.setPhotonCannonState(false);
+    photonCannon.update();
+
     Autonomous.getInstance().update();
 
     colorSensor.update();
 
     shooterCtrl.update();
+    intakeCtrl.update();
 
     Drivetrain.getInstance().update();
     updateDriverView();
@@ -208,7 +222,18 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
     CrashTracker.logTeleopPeriodic();
+
+    //Based on operator commands, change which photon source we use.
+    if(OperatorController.getInstance().flashlightCmd()){
+      photonCannon.setPhotonCannonState(true);
+      eyeOfVeganSauron.setLEDRingState(false);
+    } else {
+      photonCannon.setPhotonCannonState(false);
+      eyeOfVeganSauron.setLEDRingState(true);
+    }
     photonCannon.update();
+    
+    thbbtbbtbbtbbt.update();
 
     colorSensor.update();
 
@@ -216,6 +241,7 @@ public class Robot extends TimedRobot {
     Autonomous.getInstance().update();
 
     shooterCtrl.update();
+    intakeCtrl.update();
 
     if(Autonomous.getInstance().isActive()){
       //Nothing to do, expect that auto sequencer will provide drivetrain comands
