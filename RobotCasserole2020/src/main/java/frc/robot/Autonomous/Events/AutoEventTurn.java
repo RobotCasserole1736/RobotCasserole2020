@@ -6,9 +6,10 @@ import frc.lib.AutoSequencer.AutoEvent;
 import frc.robot.Drivetrain.CasseroleGyro;
 import frc.robot.Drivetrain.Drivetrain;
 
-public class AutoEventTurn180Degrees extends AutoEvent {
+public class AutoEventTurn extends AutoEvent {
 	
 	private double targetAngle;
+	double desAngle;
 	private boolean weAreDone;
 	private double currentTime = 0.0;
 	private double startTime = 0.0;
@@ -16,11 +17,15 @@ public class AutoEventTurn180Degrees extends AutoEvent {
 	
 	final double TURN_SPEED_RPM = 100;
 	final double TIMEOUT_S = 5.0;
+
+	public AutoEventTurn(double inAngleDeg){
+		desAngle=inAngleDeg;
+	}
 	
 	@Override
 	public void userStart() {
 		// get gyro
-		targetAngle = Drivetrain.getInstance().getGyroAngle() + 180;
+		targetAngle = Drivetrain.getInstance().getGyroAngle() + desAngle;
 		startTime = Timer.getFPGATimestamp();
 	}
 

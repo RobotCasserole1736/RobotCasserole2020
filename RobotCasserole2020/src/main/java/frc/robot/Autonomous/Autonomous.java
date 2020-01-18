@@ -6,7 +6,8 @@ import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
-import frc.robot.Autonomous.Events.AutoEventTurn180Degrees;
+import frc.robot.Autonomous.Events.AutoEventTurn;
+
 import frc.robot.Autonomous.Events.AutoEventWait;
 import frc.robot.Drivetrain.Drivetrain;
 
@@ -178,7 +179,7 @@ public class Autonomous {
                     seq.addEvent(new AutoEventDriveToBallThief());
                     //some event to run intake
                     seq.addEvent(new AutoEventBackUpFromBallThief());
-                    seq.addEvent(new AutoEventTurn180Degrees());
+                    seq.addEvent(new AutoEventTurn(180));
                     //some event to shoot balls
                 break;
             }
