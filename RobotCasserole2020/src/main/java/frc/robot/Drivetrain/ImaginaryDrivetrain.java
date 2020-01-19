@@ -139,11 +139,6 @@ public class ImaginaryDrivetrain extends Drivetrain{
     }
 
     @Override
-    public void setPositionCmd(double forwardReverseCmd, double angleError) {
-        //TODO - maybe
-    }
-
-    @Override
     public boolean isGyroOnline() {
         return headingAvailable;
     }

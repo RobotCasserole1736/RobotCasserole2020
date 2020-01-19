@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import java.sql.Driver;
-
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.lib.Calibration.CalWrangler;
@@ -22,7 +20,6 @@ import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.Autonomous.Autonomous;
-import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
@@ -53,6 +50,9 @@ public class Robot extends TimedRobot {
   Signal rioBattVoltLoadSig;
   Signal rioIsBrownoutSig;
   Signal rioCANBusUsagePctSig;
+
+  //Autonomous Control Utilities
+  Autonomous auto;
 
   //Sensors and Cameras and stuff, oh my!
   JeVoisInterface jevois;
@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
 
     drivetrain = Drivetrain.getInstance();
 
-    Autonomous.getInstance();
+    auto = Autonomous.getInstance();
 
     intakeCtrl = IntakeControl.getInstance();
 
@@ -142,7 +142,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     CrashTracker.logDisabledInit();
     dataServer.logger.stopLogging();
-    Autonomous.getInstance().reset();
+    auto.reset();
 
   }
 
@@ -157,15 +157,16 @@ public class Robot extends TimedRobot {
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
     
-
-    Autonomous.getInstance().sampleDashboardSelector();
+    auto.sampleDashboardSelector();
 
     ctrlPanel.update();
 
     shooterCtrl.update();
     intakeCtrl.update();
 
-    Drivetrain.getInstance().update();
+    drivetrain.setOpenLoopCmd(0, 0);
+    drivetrain.updateGains(false);
+    drivetrain.update();
 
     updateDriverView();
     telemetryUpdate();
@@ -183,8 +184,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     CrashTracker.logAutoInit();
     dataServer.logger.startLoggingAuto();
-    Autonomous.getInstance().sampleDashboardSelector();
-    Autonomous.getInstance().startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
+    auto.sampleDashboardSelector();
+    auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
   }
 
   @Override
@@ -197,13 +198,13 @@ public class Robot extends TimedRobot {
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
 
-    drivetrain.update();
-    Autonomous.getInstance().update();
+    auto.update();
 
     ctrlPanel.update();
-
     shooterCtrl.update();
     intakeCtrl.update();
+
+    drivetrain.update();
 
     updateDriverView();
     telemetryUpdate();
@@ -242,25 +243,22 @@ public class Robot extends TimedRobot {
 
     thbbtbbtbbtbbt.update();
 
-    
-    drivetrain.update();
-
-    Autonomous.getInstance().sampleOperatorCommands();
-    Autonomous.getInstance().update();
+    auto.sampleOperatorCommands();
+    auto.update();
 
     shooterCtrl.update();
     intakeCtrl.update();
     ctrlPanel.update();
 
-    if(Autonomous.getInstance().isActive()){
+    if(auto.isActive()){
       //Nothing to do, expect that auto sequencer will provide drivetrain comands
     } else {
       //Driver control in manual
       drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
-                                              DriverController.getInstance().getRotateCmd());
+                                DriverController.getInstance().getRotateCmd());
     }
 
-
+    drivetrain.update();
 
     updateDriverView();
     telemetryUpdate();
@@ -278,7 +276,11 @@ public class Robot extends TimedRobot {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   private void initDriverView(){
+    CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
+    CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
+    CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
     CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
+    CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -288,7 +290,11 @@ public class Robot extends TimedRobot {
   }
 
   public void updateDriverView(){
+    CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
+    CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
+    CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
     CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
+    CasseroleDriverView.setBoolean("Vision Target Visible", jevois.isTgtVisible());
     CasseroleDriverView.setSoundWidget("High Ground Acqd",DriverStation.getInstance().isFMSAttached());
   }
 

@@ -32,6 +32,7 @@ public class CasseroleGyro {
     Signal poseAngleSig;
 
     double angle_deg = 0;
+    double angle_offset = 0;
     
     public CasseroleGyro(){
         imu = new ADIS16448_IMU();
@@ -39,7 +40,7 @@ public class CasseroleGyro {
     }
 
     public void update(){
-        angle_deg = imu.getAngle();
+        angle_deg = imu.getAngle() + angle_offset;
         poseAngleSig.addSample(LoopTiming.getInstance().getLoopStartTimeSec()*1000, angle_deg);
     }
 
@@ -55,6 +56,15 @@ public class CasseroleGyro {
         //"180" is pointed at the left wall of the field
         //"270" is pointed at you.
         //Angle should not "wrap" - ie, 356 is a valid angle that means "5 degrees past the right wall".
+    }
+
+	public boolean isOnline() {
+		return imu != null; //As long as it's init'ed, not much to to.
+    }
+    
+    //Resets casseroleGyro to start outputting curAngle. All future angle outputs are referenced relative to this.
+    public void setCurAngle(double curAngle) {
+        angle_offset = curAngle - imu.getAngle();
     }
 
 }

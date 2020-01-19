@@ -30,4 +30,9 @@ public class ImaginaryShooterControl extends ShooterControl {
     public double getSpeed_rpm(){
         return speed_rpm;
     }
+
+    @Override
+    public double getSpeedRPM() {
+        return speed_rpm;
+    }
 }

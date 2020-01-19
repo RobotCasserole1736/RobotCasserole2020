@@ -3,7 +3,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
-import frc.robot.HumanInterface.OperatorController;
 
 public class PhotonCannonControl {
     

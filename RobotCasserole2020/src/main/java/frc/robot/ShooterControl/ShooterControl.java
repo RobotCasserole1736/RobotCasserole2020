@@ -26,8 +26,18 @@ public abstract class ShooterControl {
         }
     }
     
+    public enum ShooterRunCommand {
+        ShotFar(0),   
+        ShotClose(1),  
+        Stop(2);
 
-    boolean run;
+        public final int value;
+        private ShooterRunCommand(int value) {
+            this.value = value;
+        }
+    }
+
+    ShooterRunCommand run;
 
     private static ShooterControl instance = null;
 	public static synchronized ShooterControl getInstance() {
@@ -42,11 +52,13 @@ public abstract class ShooterControl {
 		return instance;
     }
 
-    public void setRun(final boolean runCmd) {
+    public void setRun(ShooterRunCommand runCmd) {
         run = runCmd;
     }
 
     public abstract void update();
 
     public abstract boolean isUnderLoad();
+
+    public abstract double getSpeedRPM();
 }

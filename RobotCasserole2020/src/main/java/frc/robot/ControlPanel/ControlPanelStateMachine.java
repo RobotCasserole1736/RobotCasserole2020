@@ -36,11 +36,11 @@ public class ControlPanelStateMachine{
 
 
 
-    private ControlPanelStateMachine(){S
+    private ControlPanelStateMachine(){
         colorSensor = CasseroleColorSensor.getInstance();
-        degreesToRotateStaticSig = Signal("Degrees for 3.25 spin","degrees");
-        degreesToColorSig = Signal("Degrees to Rotate to Color","degrees");
-        colorNeededSig = Signal("Color That We Need","Color");
+        degreesToRotateStaticSig = new Signal("Degrees for 3.25 spin","degrees");
+        degreesToColorSig = new Signal("Degrees to Rotate to Color","degrees");
+        colorNeededSig = new Signal("Color That We Need","Color");
     }
 
     public int degreesToTurn(ControlPanelColor colorOnWheel, String gameData){

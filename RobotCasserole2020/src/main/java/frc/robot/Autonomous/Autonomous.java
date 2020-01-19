@@ -1,15 +1,17 @@
 package frc.robot.Autonomous;
 
 import frc.lib.AutoSequencer.AutoSequencer;
+import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
-import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventTurn;
 
 import frc.robot.Autonomous.Events.AutoEventWait;
 import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.ShooterControl.ShooterControl;
+import frc.robot.ShooterControl.ShooterControl.ShooterRunCommand;
 
 
 
@@ -63,6 +65,7 @@ public class Autonomous {
     AutoSequencer seq;
 
     double delayTime_s= 0.0;
+    double delayTime_s_prev= 0.0;
     AutoMode modeCmd = AutoMode.Inactive;
     AutoMode modeCmdPrev = AutoMode.Inactive;
     AutoMode actualMode;
@@ -120,7 +123,7 @@ public class Autonomous {
 			modeCmd = AutoMode.Inactive;
         }
 
-        loadSequencer();
+        loadSequencer(true);
     }
 
     public void sampleOperatorCommands(){
@@ -130,7 +133,7 @@ public class Autonomous {
         modeCmd = AutoMode.Inactive;
 
         //Load/run the command imedeately.
-        loadSequencer();
+        loadSequencer(false);
         startSequencer();
     }
 
@@ -141,18 +144,43 @@ public class Autonomous {
         }
     }
 
-    public void loadSequencer(){
+    public void loadSequencer(boolean resetPose){
         
-        if(modeCmd != modeCmdPrev){
+        if(modeCmd != modeCmdPrev || delayTime_s_prev != delayTime_s){
 
+            CrashTracker.logGenericMessage("Initing new auto routine " + autoModeName);
+
+            //Ensure everything on the robot is stopped
             seq.stop();
+            Drivetrain.getInstance().setOpenLoopCmd(0, 0);
+            ShooterControl.getInstance().setRun(ShooterRunCommand.Stop);
             seq.clearAllEvents();
+            
 
-            /* Tack on the very first "wait" event */
+            // Tack on the very first "wait" event 
             if(delayTime_s != 0.0){
                 seq.addEvent(new AutoEventWait(delayTime_s));
             }
 
+            // If desired, make sure we set our robot's initial position. Uusally this is for auto.
+            if(resetPose){
+                switch(modeCmd){
+                    case DriveFwd:
+                        Drivetrain.getInstance().setInitialPose(-10, 10, 0.0);
+                    break;
+                    case ShootOnly:
+                        Drivetrain.getInstance().setInitialPose(-8, 10, 270.0);
+                    break;
+                    case VisionAlignShoot:
+                        Drivetrain.getInstance().setInitialPose(-11, 10, 290.0);
+                    break;
+                    case BallThief:
+                        Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
+                    break;
+                }
+            }
+
+            //Queue up the auto sequence manager with the desired events
             switch(modeCmd){
                 case DoNothing:
                     //Empty sequencer - no one here but us chickens.
@@ -185,6 +213,7 @@ public class Autonomous {
             }
             modeCmdPrev = modeCmd;
             actualMode = modeCmd;
+            delayTime_s_prev = delayTime_s;
         }
     }
 
@@ -200,7 +229,7 @@ public class Autonomous {
     /* Should be called when returning to disabled to stop everything */
     public void reset(){
         modeCmd = AutoMode.Inactive;
-        loadSequencer();
+        loadSequencer(false);
     }
 
     public boolean isActive(){
