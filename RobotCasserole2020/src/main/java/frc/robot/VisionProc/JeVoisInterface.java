@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.VisionProc;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SerialPort;
@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
 import frc.lib.Util.CrashTracker;
 
-public class JeVoisInterface {
+public class JeVoisInterface extends VisionCamera{
 
     private static JeVoisInterface instance = null;
 
@@ -19,31 +19,18 @@ public class JeVoisInterface {
     // Serial Port Constants 
     private static final int BAUD_RATE = 115200;
     
-    // MJPG Streaming Constants 
-    private static final int MJPG_STREAM_PORT = 1180;
-    
     // Packet format constants 
     private static final String PACKET_START_CHAR = "{";
     private static final String PACKET_END_CHAR = "}";
     private static final String PACKET_DILEM_CHAR = ",";
-    
-    // Confgure the camera to stream debug images or not.
-    private boolean broadcastUSBCam = false;
-    
+
     // When not streaming, use this mapping
     private static final int NO_STREAM_MAPPING = 0;
-    
-    // When streaming, use this set of configuration
-    private static final int STREAM_WIDTH_PX = 352;
-    private static final int STREAM_HEIGHT_PX = 288;
-    private static final int STREAM_RATE_FPS = 15;
     
     // Serial port used for getting target data from JeVois 
     private SerialPort visionPort = null;
 
     // Status variables 
-    private boolean dataStreamRunning = false;
-    private boolean camStreamRunning = false;
     private boolean visionOnline = false;
 
     // Packet rate performace tracking
@@ -150,8 +137,6 @@ public class JeVoisInterface {
         //Ensure the JeVois is starting with the stream off.
         stopDataOnlyStream();
 
-        setCameraStreamActive(useUSBStream);
-
         start();
 
         //Start listening for packets
@@ -184,25 +169,6 @@ public class JeVoisInterface {
         if (visionPort != null){
             //all on jevois
         }
-    }
-
-    /*
-     * Main getters/setters
-     */
-
-    /**
-     * Set to true to enable the camera stream, or set to false to stream serial-packets only.
-     * Note this cannot be changed at runtime due to jevois constraints. You must stop whatatever processing
-     * is going on first.
-     */
-    public void setCameraStreamActive(boolean active){
-        if(dataStreamRunning == false){
-            broadcastUSBCam = active;
-        } else {
-            DriverStation.reportError("Attempt to change cal stream mode while JeVois is still running. This is disallowed.", false);
-        }
-        
-
     }
 
     /**
@@ -368,28 +334,11 @@ public class JeVoisInterface {
         //Send serial commands to start the streaming of target info
         sendCmdAndCheck("setmapping " + Integer.toString(NO_STREAM_MAPPING));
         sendCmdAndCheck("streamon");
-        dataStreamRunning = true;
     }
 
     private void stopDataOnlyStream(){
         //Send serial commands to stop the streaming of target info
         sendCmdAndCheck("streamoff");
-        dataStreamRunning = false;
-    }
-    
-
-    
-    /**
-     * Cease the operation of the camera stream. Unknown if needed.
-     */
-    private void stopCameraStream(){
-        if(camStreamRunning){
-            //TODO figure out if this is broken
-            // camServer.free();
-            // visionCam.free();
-            camStreamRunning = false;
-            dataStreamRunning = false;
-        }
     }
     
     /**
@@ -676,5 +625,11 @@ public class JeVoisInterface {
             }
         }
     });
+
+    @Override
+    public void update() {
+        // TODO Auto-generated method stub
+
+    }
     
 }

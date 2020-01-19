@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.geometry.Twist2d;
 import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.MathyCircularBuffer;
-import frc.robot.JeVoisInterface;
+import frc.robot.VisionProc.JeVoisInterface;
 import frc.robot.LoopTiming;
 
 class JevoisPoseCapture {

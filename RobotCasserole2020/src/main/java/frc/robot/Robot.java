@@ -19,6 +19,7 @@ import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
+import frc.robot.VisionProc.JeVoisInterface;
 import frc.robot.Autonomous.Autonomous;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
