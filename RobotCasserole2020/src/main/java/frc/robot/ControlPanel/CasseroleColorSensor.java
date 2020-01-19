@@ -124,7 +124,7 @@ import com.revrobotics.ColorMatch;
 		}
 	}
 
-	public int getControlPanelColor(){
-        return this.controlPanelColor.value;
+	public ControlPanelColor getControlPanelColor(){
+        return this.controlPanelColor;
 	}
  }

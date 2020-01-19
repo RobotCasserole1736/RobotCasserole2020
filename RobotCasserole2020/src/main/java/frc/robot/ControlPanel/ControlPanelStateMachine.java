@@ -2,8 +2,8 @@ package frc.robot.ControlPanel;
 
 import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.robot.ControlPanel.ControlPanelManipulator;
-
+import frc.robot.HumanInterface.OperatorController;
+import frc.lib.DataServer.Signal;
 
 public class ControlPanelStateMachine{
 
@@ -20,56 +20,30 @@ public class ControlPanelStateMachine{
         return instance;
     }
 
-    int colorOnWheel = CasseroleColorSensor.getInstance().getControlPanelColor();
+    ControlPanelColor colorOnWheel = CasseroleColorSensor.getInstance().getControlPanelColor();
+    int degreesToRotateColor;
+    boolean prevXBtn=false;
+    boolean prevYBtn=false;
+    int degreesToRotateThreeToFive;
+
+    String gameData = DriverStation.getInstance().getGameSpecificMessage();
 
     ControlPanelColor gameDataColor = ControlPanelColor.kUNKNOWN;
+    
+    Signal degreesToRotateStaticSig;
+    Signal degreesToColorSig;
+    Signal colorNeededSig;
 
-    private ControlPanelStateMachine(){
-        //System.out.println("The color on the wheel is "+ColorOnWheel);
+
+
+    private ControlPanelStateMachine(){S
         colorSensor = CasseroleColorSensor.getInstance();
-
+        degreesToRotateStaticSig = Signal("Degrees for 3.25 spin","degrees");
+        degreesToColorSig = Signal("Degrees to Rotate to Color","degrees");
+        colorNeededSig = Signal("Color That We Need","Color");
     }
 
-    public void parseGameData(){
-
-        String gameData;
-        gameData = DriverStation.getInstance().getGameSpecificMessage();
-
-        if(gameData.length() > 0){
-            if(gameData.charAt(0) == 'R'){
-                gameDataColor = ControlPanelColor.kRED;
-            }
-            if(gameData.charAt(0) == 'G'){
-                gameDataColor = ControlPanelColor.kGREEN;
-            }
-            if(gameData.charAt(0) == 'B'){
-                gameDataColor = ControlPanelColor.kBLUE;
-            }
-            if(gameData.charAt(0) == 'Y'){
-                gameDataColor = ControlPanelColor.kYELLOW;
-            }
-        } else {
-            gameDataColor = ControlPanelColor.kUNKNOWN;
-        }
-    }
-
-    public void setRotateToColorDesired(boolean rotateToColorCmd_in){
-
-    }
-    
-    
-    public boolean degreesToTurn(int colorOnWheelList,int colorGotten){
-        boolean Rotation = true;
-        for(int i = 0; i < 3; i++){
-
-
-
-        }
-        return true;
-    }
-
-    //change Tur to Turn if we decide on this function.
-    public int degreesToTur(ControlPanelColor colorOnWheel, String gameData){
+    public int degreesToTurn(ControlPanelColor colorOnWheel, String gameData){
         //convert gameData to rotational information
 
         int desiredRotation = 0;
@@ -81,9 +55,9 @@ public class ControlPanelStateMachine{
             desiredRotation=90;
         }else if(gameDataColor == ControlPanelColor.kYELLOW){
             desiredRotation=135;
-        }else{ //kUNKNOWN
-            //Maybe adjust this. I wasn't sure why we would rotate 10 degrees but thats what was already in code so...
-            return 10;
+        }else{ 
+            //10 is used to correct and/or move so the color seonsor can see the exact color
+            desiredRotation=10;
         }
         
         int rotateCmd=desiredRotation-(colorOnWheel.value*45);
@@ -96,18 +70,44 @@ public class ControlPanelStateMachine{
         return rotateCmd;
     }
 
-        //TODO - user will pass in true if they want the rotate-to-color cycle to start and run, or false if they want to stop the cycle.
-
-    public void setRotateStage2Desired(boolean rotateStage2Cmd_in){
-        //TODO - user will pass in true if they want the rotate-to-color cycle to start and run, or false if they want to stop the cycle.
-
+    public int setRotateStage2Desired(boolean rotateStage2Cmd_in){
+        //rotates the wheel 3.25 times (1170 degrees) giving us leeway to rotate the last 360 degrees
+        int rotateCmd = 1170;
+        return rotateCmd;
     }
 
     public void update(){
-        parseGameData();
-        colorSensor.update();
 
+        boolean operatorXButtonPressed;
+        boolean operatorYButtonPressed;
+        
+
+        operatorXButtonPressed = OperatorController.getInstance().getControlPanelThreeRotationsDesired();
+        operatorYButtonPressed = OperatorController.getInstance().getControlPanelSeekToColorDesired();
+
+        if(prevXBtn != operatorXButtonPressed && prevXBtn==false){
+            degreesToRotateThreeToFive = degreesToTurn(colorOnWheel, gameData);
+        }else if(prevXBtn != operatorXButtonPressed){
+            degreesToRotateThreeToFive = 0;
+        }
+
+        if(prevYBtn != operatorYButtonPressed && prevYBtn==false){
+            degreesToRotateColor = degreesToTurn(colorOnWheel, gameData);
+        }else if(prevYBtn != operatorYButtonPressed){
+            degreesToRotateColor= 0;
+        }
+
+        
+        colorSensor.update();
+        prevXBtn=operatorXButtonPressed;
+        prevYBtn=operatorYButtonPressed;
     }
 
+    public int getdegreesToRotateThreeToFive(){
+       return this.getdegreesToRotateThreeToFive();
+    }
 
+    public int getdegreesToRotateColor(){
+       return this.getdegreesToRotateColor();
+    }
 }
