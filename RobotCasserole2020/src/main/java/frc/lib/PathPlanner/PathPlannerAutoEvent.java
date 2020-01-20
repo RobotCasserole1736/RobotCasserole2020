@@ -21,8 +21,12 @@ package frc.lib.PathPlanner;
  */
 
 import frc.lib.AutoSequencer.AutoEvent;
+import frc.robot.RobotConstants;
 import frc.robot.Drivetrain.Drivetrain;
-
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
+import jaci.pathfinder.modifiers.TankModifier;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -33,13 +37,16 @@ import edu.wpi.first.wpilibj.Timer;
 public class PathPlannerAutoEvent extends AutoEvent {
 
     /* Path planner wrapped by this auto event */
-    public FalconPathPlanner path;
-    private double[][] waypoints;
+    private Waypoint[] waypoints;
     private double time_duration_s; 
     boolean pathCalculated = false;
     boolean reversed = false;
     
     boolean done = false;
+
+    Trajectory trj_center;
+    Trajectory trj_left;
+    Trajectory trj_right;
 
     private int timestep;
     private double taskRate = 0.02;
@@ -58,7 +65,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
      * @param timeAllowed_in Number of seconds the path traversal should take. Must be long enough
      *        to allow the path planner to output realistic speeds.         
      */
-    public PathPlannerAutoEvent(double[][] waypoints_in, double timeAllowed_in) { 
+    public PathPlannerAutoEvent(Waypoint[] waypoints_in, double timeAllowed_in) { 
     	super();
     	commonConstructor(waypoints_in, timeAllowed_in, false, 0.2, 0.5, 0.01, 0.9);
     }
@@ -71,7 +78,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
      *        to allow the path planner to output realistic speeds. 
      * @param reversed set to True if you desire the robot to travel backward through the provided path        
      */
-    public PathPlannerAutoEvent(double[][] waypoints_in, double timeAllowed_in, boolean reversed_in) {        
+    public PathPlannerAutoEvent(Waypoint[] waypoints_in, double timeAllowed_in, boolean reversed_in) {        
     	super();
     	commonConstructor(waypoints_in, timeAllowed_in, reversed_in, 0.2, 0.5, 0.01, 0.9);
 
@@ -86,51 +93,32 @@ public class PathPlannerAutoEvent extends AutoEvent {
      *        to allow the path planner to output realistic speeds. 
      * @param reversed set to True if you desire the robot to travel backward through the provided path        
      */
-    public PathPlannerAutoEvent(double[][] waypoints_in, double timeAllowed_in, boolean reversed_in, double alpha, double beta, double valpha, double vbeta) {        
+    public PathPlannerAutoEvent(Waypoint[] waypoints_in, double timeAllowed_in, boolean reversed_in, double alpha, double beta, double valpha, double vbeta) {        
     	super();
     	commonConstructor(waypoints_in, timeAllowed_in, reversed_in, alpha, beta, valpha, vbeta);
 
     }
     
-    private void commonConstructor(double[][] waypoints_in, double timeAllowed_in, boolean reversed_in, double alpha, double beta, double valpha, double vbeta) {
+    private void commonConstructor(Waypoint[] waypoints_in, double timeAllowed_in, boolean reversed_in, double alpha, double beta, double valpha, double vbeta) {
         waypoints = waypoints_in;
         time_duration_s = timeAllowed_in;
         reversed = reversed_in;
         
-        if(reversed) {
-	        //Reflect all points across the origin. It is expected the user will provide the actual
-	        // waypoints to us. We will invert before sending to the pathPlanner (to satisfy its assumptions)
-	        // then re-invert as needed before sending to drivetrain.
-	        for(int ii = 0; ii < waypoints.length; ii++) {
-	        	for(int jj = 0; jj < waypoints[ii].length; jj++) {
-	        		waypoints[ii][jj] *= -1;
-	        	}
-	        }
-	   
-        }
-        
-        //Convert all waypoints from inches to ft
-        for(int ii = 0; ii < waypoints.length; ii++) {
-        	for(int jj = 0; jj < waypoints[ii].length; jj++) {
-        		waypoints[ii][jj] *= 1.0/12.0;
-        	}
-        }
-        
-        path = new FalconPathPlanner(waypoints);
-        pathCalculated = false;
-        
-        //Default alpha/beta
-		path.setPathAlpha(alpha);
-		path.setPathBeta(beta);
-		path.setVelocityAlpha(valpha);
-		path.setVelocityBeta(vbeta);
-		
-		if (pathCalculated == false) {
-            path.calculate(time_duration_s, taskRate, DT_TRACK_WIDTH_FT);
-            timestep = 0;
-            pathCalculated = true;
-		}
+        Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, 
+                                                         Trajectory.Config.SAMPLES_HIGH, 
+                                                         RobotConstants.MAIN_LOOP_SAMPLE_RATE_S, 
+                                                         3.5, //Max Vel (m/s)
+                                                         1.5, //Max Accel (m/s2)
+                                                         60.0); //Max Jerk (m/s3)
 
+        trj_center = Pathfinder.generate(waypoints, config);
+
+        //Transform robot center trajectory to left/right wheel velocities.
+        TankModifier modifier = new TankModifier(trj_center);
+        modifier.modify(DT_TRACK_WIDTH_FT);
+        trj_left  = modifier.getLeftTrajectory();       // Get the Left Side
+        trj_right = modifier.getRightTrajectory();      // Get the Right Side
+        
     }
     /**
      * On the first loop, calculates velocities needed to take the path specified. Later loops will
