@@ -84,8 +84,8 @@ public class Conveyor{
 
         convMotorSpeedCmdSig = new Signal("Speed Command for the Conveyor Motor", "%");
         motorCurrentSig = new Signal("Conveyor Motor Current", "Amps");
-        shooterEndSensorSig = new Signal("Is there a Ball at the Shooter End Conveyor", "Boolean")
-        intakeEndSensorSig = new Signal("Is there a ball at the Intake End of the Conveyor", "Boolean")
+        shooterEndSensorSig = new Signal("Is there a Ball at the Shooter End Conveyor", "Boolean");
+        intakeEndSensorSig = new Signal("Is there a ball at the Intake End of the Conveyor", "Boolean");
     }
     public void sampleSensors() {
         intakeEndSensorTriggered = intakeEndSensor.get();
