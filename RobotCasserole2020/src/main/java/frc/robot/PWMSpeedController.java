@@ -2,7 +2,7 @@ package frc.robot;
 
 public class PWMSpeedController{
     double arduino = 0;
-    int prime = 1;
+    int prime = -1;
     
 
     
@@ -12,9 +12,9 @@ public class PWMSpeedController{
     }
     public void update(){
         prime++;
-        if (prime >= 500){
-            arduino = -1;
-            prime=0;
+        if (prime >= 1500){
+            arduino = 0;
+            prime=-1;
         }
     }
 }
