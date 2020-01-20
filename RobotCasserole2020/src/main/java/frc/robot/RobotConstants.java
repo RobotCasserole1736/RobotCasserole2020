@@ -22,7 +22,7 @@ public class RobotConstants {
     public static final int ANALOG_PRESSURE_SENSOR_PORT = 0;
     public static final int POWER_DISTRIBUTION_PANEL_CANID = 0;
 
-    static public final int INTAKE_SOLENOID_FWD = 0; //Not sure what these should be
+    static public final int INTAKE_SOLENOID_FWD = 0; 
     static public final int INTAKE_SOLENOID_REV = 1;
 
     // Robot Physical Parameters
