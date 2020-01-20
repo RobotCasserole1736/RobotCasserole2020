@@ -18,6 +18,16 @@ public class RobotConstants {
     static public final int HOPPER_SPARK_RIGHT_ID=7;
     static public final int HOPPER_SPARK_LEFT_PDP_ID = 8;
     static public final int HOPPER_SPARK_RIGHT_PDP_ID = 9;
+
+    static public final int CLIMBER_SPARK_LEFT_ID=8;
+    static public final int CLIMBER_SPARK_RIGHT_ID=9;
+    static public final int CLIMBER_SPARK_LEFT_PDP_ID=8;
+    static public final int CLIMBER_SPARK_RIGHT_PDP_ID=9;
+    static public final int CLIMBER_LIMIT_UPPER_ID=8;
+    static public final int CLIMBER_LIMIT_LOWER_ID=9;
+    static public final int CLIMBER_SOLENOID_ID=4;
+
+;
     
     static public final int VISON_LED_RING_PORT = 0;
     static public final int PHOTON_CANNON_PORT = 7;
