@@ -42,9 +42,14 @@ public class BallDistanceSensor{
     public void update(){
         sensorVoltage_V = sensorInput.getVoltage();
 
-        detectedDistance_in = voltFilter.filter(voltsToInches(sensorVoltage_V));
+        double tempDistance = voltsToInches(sensorVoltage_V);
 
-        distAvailable = true; //TODO - better range/error handling.
+        if(tempDistance < 7.0 || tempDistance > 24.0){
+            detectedDistance_in = voltFilter.filter(tempDistance);
+            distAvailable = true;
+        } else {
+            distAvailable = false;
+        }
 
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         sensorVoltageSig.addSample(sampleTimeMS, sensorVoltage_V);
@@ -57,6 +62,6 @@ public class BallDistanceSensor{
     }
 
     public double getDistance_in(){
-        return 0;
+        return detectedDistance_in;
     }
 }
