@@ -21,6 +21,7 @@ import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.VisionProc.JeVoisInterface;
 import frc.robot.Autonomous.Autonomous;
+import frc.robot.BallHandling.Hopper;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
@@ -64,6 +65,7 @@ public class Robot extends TimedRobot {
   Drivetrain drivetrain;
   ShooterControl shooterCtrl;
   IntakeControl intakeCtrl;
+  Hopper hopper;
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
 
@@ -83,7 +85,7 @@ public class Robot extends TimedRobot {
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
     jevois = JeVoisInterface.getInstance();
-    pdp = new PowerDistributionPanel(RobotConstants.POWER_DISTRIBUTION_PANEL_CANID);
+    pdp = CasserolePDP.getInstance();
     loadMon= new CasseroleRIOLoadMonitor();
 
     /* Init local telemetry signals */
@@ -110,6 +112,8 @@ public class Robot extends TimedRobot {
     auto = Autonomous.getInstance();
 
     intakeCtrl = IntakeControl.getInstance();
+
+    hopper = Hopper.getInstance();
 
     loopTiming = LoopTiming.getInstance();
 
@@ -203,6 +207,7 @@ public class Robot extends TimedRobot {
 
     ctrlPanel.update();
     shooterCtrl.update();
+    hopper.update();
     intakeCtrl.update();
 
     drivetrain.update();
@@ -242,6 +247,7 @@ public class Robot extends TimedRobot {
     }
     photonCannon.update();
 
+
     thbbtbbtbbtbbt.update();
 
     auto.sampleOperatorCommands();
@@ -249,6 +255,7 @@ public class Robot extends TimedRobot {
 
     shooterCtrl.update();
     intakeCtrl.update();
+    hopper.update();
     ctrlPanel.update();
 
     if(auto.isActive()){
