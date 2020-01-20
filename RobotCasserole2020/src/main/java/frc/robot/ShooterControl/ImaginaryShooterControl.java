@@ -15,6 +15,7 @@ import frc.lib.Calibration.Calibration;
 public class ImaginaryShooterControl extends ShooterControl {
 
     double speed_rpm = 0;
+    double voltage = 0;
 
     public ImaginaryShooterControl() {
 
@@ -23,10 +24,11 @@ public class ImaginaryShooterControl extends ShooterControl {
     public void update() {
 
         if(run == true){
-            
+            voltage=12;
         }else if(run == false){
-            
+            voltage=0;
         }
+        speed_rpm = ((((.02) voltage * prevSpeedRPM )));
     }
 
     public boolean isUnderLoad(){
