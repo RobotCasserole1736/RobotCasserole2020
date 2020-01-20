@@ -13,6 +13,7 @@ public class RobotConstants {
     static public final int DT_RIGHT_NEO_2_CANID = 4;
     static public final int SHOOTER_MOTOR_1 = 5;
     static public final int SHOOTER_MOTOR_2 = 6;
+    static public final int INTAKE_MOTOR = 8;
     
     static public final int VISON_LED_RING_PORT = 0;
     static public final int PHOTON_CANNON_PORT = 7;
@@ -20,6 +21,9 @@ public class RobotConstants {
     public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
     public static final int ANALOG_PRESSURE_SENSOR_PORT = 0;
     public static final int POWER_DISTRIBUTION_PANEL_CANID = 0;
+
+    static public final int INTAKE_SOLENOID_FWD = 0; //Not sure what these should be
+    static public final int INTAKE_SOLENOID_REV = 1;
 
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;

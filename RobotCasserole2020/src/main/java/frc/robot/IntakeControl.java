@@ -1,6 +1,28 @@
 package frc.robot;
 
-public class IntakeControl{
+import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.lib.Calibration.Calibration;
+import frc.lib.DataServer.Signal;
+
+public class IntakeControl {
+
+	Spark intakeMotor;
+	DoubleSolenoid intakeSolenoid;
+
+	Calibration intakeSpeedCmd;
+	Calibration ejectSpeedCmd;
+
+	IntakePosition posState;
+	IntakeSpeed spdState;
+
+	public final Value INTAKE_RETRACTED = Value.kReverse;
+	public final Value INTAKE_EXTENDED = Value.kForward;
+
+	Signal posStateSig;
+	Signal spdStateSig;
+	Signal motorCurrentSig;
 
     private static IntakeControl instance = null;
 	public static synchronized IntakeControl getInstance() {
@@ -34,15 +56,46 @@ public class IntakeControl{
 
 
 	private IntakeControl(){
+		intakeMotor = new Spark(RobotConstants.INTAKE_MOTOR);
+		intakeSolenoid = new DoubleSolenoid(RobotConstants.INTAKE_SOLENOID_FWD, RobotConstants.INTAKE_SOLENOID_REV);
+		
+		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.5);
+		ejectSpeedCmd = new Calibration("Eject Speed Cmd", -0.5); 
+
+		posState = IntakePosition.Retracted; 
+		spdState = IntakeSpeed.Stop;
+
+		posStateSig = new Signal("Intake Position State", "state");
+		spdStateSig = new Signal("Intake Speed State", "state");
+		motorCurrentSig = new Signal("Intake Motor Current", "A");
 		//TODO
 	}
 
 	public void update(){
+		switch(posState){
+			case Retracted:
+				intakeSolenoid.set(INTAKE_RETRACTED);
+			break;
+			case Extended:
+				intakeSolenoid.set(INTAKE_EXTENDED);
+			break;
+		}
+		switch(spdState){
+			case Eject:
+				intakeMotor.set(ejectSpeedCmd.get());
+			break;
+			case Stop:
+				intakeMotor.set(0);
+			break;
+			case Intake:
+				intakeMotor.set(intakeSpeedCmd.get());
+			break; 
+		}
 		//TODO
 	}
 
 	public void setDesiredPosition(IntakePosition des_pos){
-		//TODO
+		posState = des_pos;
 	}
 
 	public IntakePosition getActualPosition(){
@@ -50,9 +103,6 @@ public class IntakeControl{
 	}
 
 	public void setDesiredSpeed(IntakeSpeed des_spd){
-		//TODO
-	}
-
-
-
+		spdState = des_spd;
+	}		//TODO
 }
