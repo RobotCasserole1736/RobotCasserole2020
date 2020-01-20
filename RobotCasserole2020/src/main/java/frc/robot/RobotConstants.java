@@ -19,7 +19,11 @@ public class RobotConstants {
 
     public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
     public static final int ANALOG_PRESSURE_SENSOR_PORT = 0;
-    public static final int POWER_DISTRIBUTION_PANEL_CANID = 0;
+    public static final int POWER_DISTRIBUTION_PANEL_CANID = 0; 
+
+    public static final int CONVEYOR_MOTOR = 0;
+    public static final int CONVEYOR_TO_SHOOTER_DIO_PORT = 0;
+    public static final int CONVEYOR_TO_INTAKE_DIO_PORT = 1;
 
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;
