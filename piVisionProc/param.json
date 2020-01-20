@@ -1,0 +1,96 @@
+{
+    "fps": 30,
+    "height": 480,
+    "pixel format": "yuyv",
+    "properties": [
+        {
+            "name": "connect_verbose",
+            "value": 1
+        },
+        {
+            "name": "raw_brightness",
+            "value": 0
+        },
+        {
+            "name": "brightness",
+            "value": 0
+        },
+        {
+            "name": "raw_contrast",
+            "value": 255
+        },
+        {
+            "name": "contrast",
+            "value": 100
+        },
+        {
+            "name": "raw_saturation",
+            "value": 252
+        },
+        {
+            "name": "saturation",
+            "value": 99
+        },
+        {
+            "name": "raw_hue",
+            "value": 90
+        },
+        {
+            "name": "hue",
+            "value": 100
+        },
+        {
+            "name": "white_balance_automatic",
+            "value": false
+        },
+        {
+            "name": "exposure",
+            "value": 0
+        },
+        {
+            "name": "gain_automatic",
+            "value": false
+        },
+        {
+            "name": "raw_gain",
+            "value": 1
+        },
+        {
+            "name": "gain",
+            "value": 2
+        },
+        {
+            "name": "horizontal_flip",
+            "value": false
+        },
+        {
+            "name": "vertical_flip",
+            "value": false
+        },
+        {
+            "name": "power_line_frequency",
+            "value": 0
+        },
+        {
+            "name": "raw_sharpness",
+            "value": 6
+        },
+        {
+            "name": "sharpness",
+            "value": 11
+        },
+        {
+            "name": "auto_exposure",
+            "value": 1
+        },
+        {
+            "name": "white_balance_temperature_auto",
+            "value": 0
+        },
+        {
+            "name": "white_balance_temperature",
+            "value": 0
+        }
+    ],
+    "width": 640
+}
