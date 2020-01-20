@@ -46,15 +46,19 @@ public class ControlPanelStateMachine{
     }
 
     public void parseGameData(String gameData){
-        String desiredColor=String.valueOf(gameData.charAt(0));
-        if(desiredColor.equals("R")){
-            gameDataColor=ControlPanelColor.kRED;
-        }else if(desiredColor.equals("G")){
-            gameDataColor=ControlPanelColor.kGREEN;
-        }else if(desiredColor.equals("B")){
-            gameDataColor=ControlPanelColor.kBLUE;
-        }else if(desiredColor.equals("Y")){
-            gameDataColor=ControlPanelColor.kYELLOW;
+        if(gameData.length() > 0){
+            String desiredColor=String.valueOf(gameData.charAt(0));
+            if(desiredColor.equals("R")){
+                gameDataColor=ControlPanelColor.kRED;
+            }else if(desiredColor.equals("G")){
+                gameDataColor=ControlPanelColor.kGREEN;
+            }else if(desiredColor.equals("B")){
+                gameDataColor=ControlPanelColor.kBLUE;
+            }else if(desiredColor.equals("Y")){
+                gameDataColor=ControlPanelColor.kYELLOW;
+            }else{
+                gameDataColor=ControlPanelColor.kUNKNOWN;
+            }
         }else{
             gameDataColor=ControlPanelColor.kUNKNOWN;
         }
