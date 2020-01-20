@@ -1,30 +1,48 @@
 package frc.robot.BallHandling;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Spark;
+
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
+import frc.lib.DataServer.Signal;
+import edu.wpi.first.hal.PDPJNI;
+import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
+
 
 
 
 public class Conveyor{
 
-    CANSparkMax conveyorMotor;
+    Spark conveyorMotor;
     DigitalInput shooterEndSensor;
     DigitalInput intakeEndSensor;
+    PDPDataJNI pdp;
+    
     
     //Calibrations
     Calibration conveyorLoadingSpeedCal;
-    Calibration conveyorshootNowSpeedCal;
+    Calibration conveyorPrepToShootCal;
+    Calibration conveyorFullSendCal;
+    Calibration conveyorReverseCal;
+
 
     //State Data
+    Double sampleTimeMS;
+    ConveyerOpMode opMode;
+    ConveyerOpMode prevOpMode;
     boolean shooterEndSensorTriggered = false;
     boolean intakeEndSensorTriggered = false;
-
-
+    double motorCurrent;
+    
+    Signal convMotorSpeedCmdSig; 
+    Signal motorCurrentSig;
+    Signal shooterEndSensorSig;
+    Signal intakeEndSensorSig;
+    
+    
     /* Singleton infratructure*/
     private static Conveyor inst = null;
     public static synchronized Conveyor getInstance() {
@@ -53,24 +71,40 @@ public class Conveyor{
 
     private Conveyor(){
         //Physical Devices
-        conveyorMotor = new CANSparkMax(RobotConstants.CONVEYOR_MOTOR, MotorType.kBrushless);
+        conveyorMotor = new Spark(RobotConstants.CONVEYOR_MOTOR);
         shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_DIO_PORT);
         intakeEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_INTAKE_DIO_PORT);
+        pdp = new PDPDataJNI();
 
         //Calibrations
-        conveyorLoadingSpeedCal = new Calibration("Default Calibration for Loading from Hopper to Conveyor", 0.3);
-        conveyorshootNowSpeedCal = new Calibration("Operator Says Stop Loading and Shoot", 0.5);
+        conveyorLoadingSpeedCal = new Calibration("Default Calibration for Loading from Hopper to Conveyor", 0.5);
+        conveyorPrepToShootCal = new Calibration("Operator Says Stop Loading and Shoot", 0.5);
+        conveyorFullSendCal = new Calibration("Full Send", 0.85);
+        conveyorReverseCal = new Calibration("EmptyTheRobot", 0.6);
 
+        convMotorSpeedCmdSig = new Signal("Speed Command for the Conveyor Motor", "%");
+        motorCurrentSig = new Signal("Conveyor Motor Current", "Amps");
+        shooterEndSensorSig = new Signal("Is there a Ball at the Shooter End Conveyor", "Boolean")
+        intakeEndSensorSig = new Signal("Is there a ball at the Intake End of the Conveyor", "Boolean")
     }
     public void sampleSensors() {
         intakeEndSensorTriggered = intakeEndSensor.get();
         shooterEndSensorTriggered = shooterEndSensor.get();
-
+        
+        
+       
+        motorCurrent = pdp.getCurrent(RobotConstants.CONVEYOR_MOTOR_PDP_INDEX, RobotConstants.CONVEYOR_MOTOR_PDP_CHANNEL);
     }
 
     public void update(){
         sampleSensors();
+        setOpMode(opMode);
         
+        convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
+        motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
+        shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggered);
+        intakeEndSensorSig.addSample(sampleTimeMS, intakeEndSensorTriggered);
+
     }
 
     // Pass in the desired conveyer operational mode
@@ -78,29 +112,50 @@ public class Conveyor{
     //     AdvanceToShooter(2),   //Run forward until the conveyor->shooter sensor sees the first ball, but no further.
     //     InjectIntoSHooter(3),  //Run forward continuously, pushing balls up into the shooter wheel
     //     Reverse(4); 
-    public void setOpMode(ConveyerOpMode cmd){
-        switch(cmd) {
+    public void setOpMode(ConveyerOpMode opMode_in){
+        opMode = opMode_in;
+        switch(opMode) {
             case Stop:
-            conveyorMotor.set(0);
-            case AdvanceFromHopper:
-            conveyorMotor.set(conveyorLoadingSpeedCal);
-            case InjectIntoShooter:
-            ;
-            case Reverse:
-            ;
+                conveyorMotor.set(0);
+            break;
 
+            case AdvanceFromHopper:
+                if(intakeEndSensorTriggered) {
+                    conveyorMotor.set(conveyorLoadingSpeedCal.get());
+                    
+                }else{
+                    conveyorMotor.set(0);   
+                }    
+            break;
+
+            case AdvanceToShooter:
+                if(!shooterEndSensorTriggered) {
+                    conveyorMotor.set(conveyorPrepToShootCal.get());
+                }else{
+                    conveyorMotor.set(0);
+                }
+            break;
+
+            case InjectIntoShooter:
+                conveyorMotor.set(conveyorFullSendCal.get());
+            break;
+        
+            case Reverse:
+                conveyorMotor.set(conveyorReverseCal.get());
+            break;
         }
+        prevOpMode = opMode;
     }
 
     
 
     public boolean getLowerSensorValue(){
-        //TODO - return true if the hopper->conveyor sensor sees a ball, false otherwise
+        // return true if the hopper->conveyor sensor sees a ball, false otherwise
         return intakeEndSensorTriggered;
     }
 
     public boolean getUpperSensorValue(){
-        //TODO - return true if the conveyor->shooter sensor sees a ball, false otherwise
+        // return true if the conveyor->shooter sensor sees a ball, false otherwise
         return shooterEndSensorTriggered;
     }
 

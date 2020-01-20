@@ -24,6 +24,8 @@ public class RobotConstants {
     public static final int CONVEYOR_MOTOR = 0;
     public static final int CONVEYOR_TO_SHOOTER_DIO_PORT = 0;
     public static final int CONVEYOR_TO_INTAKE_DIO_PORT = 1;
+    public static final int CONVEYOR_MOTOR_PDP_INDEX = 0;
+    public static final int CONVEYOR_MOTOR_PDP_CHANNEL = 1;
 
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 0.25;
