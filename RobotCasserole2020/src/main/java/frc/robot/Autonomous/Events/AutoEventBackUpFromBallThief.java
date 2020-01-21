@@ -23,8 +23,9 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
 	private final double[][] waypoints_inches = new double[][] {
 		{0,0},
         {0, -30},
-        {-132, -100},
-        {-132, -120},
+        {-130, -100},
+		{-130, -120},
+		//if these change you need to change the steak auto endpoints\\
 	};
 
     final double time = 3.0;
