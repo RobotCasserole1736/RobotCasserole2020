@@ -90,8 +90,8 @@ public class ImaginaryDrivetrain extends Drivetrain{
         ActualRightSimRPM.addSample(sampleTimeMs, ActRightRPM);
         DesiredLeftSimRPM.addSample(sampleTimeMs, DesLeftRPM);
         DesiredRightSimRPM.addSample(sampleTimeMs, DesRightRPM);
-        ActualPoseAngleDeg.addSample(sampleTimeMs, desPoseAngle);
-        DesiredPoseAngleDeg.addSample(sampleTimeMs, actPoseAngle);
+        ActualPoseAngleDeg.addSample(sampleTimeMs, actPoseAngle);
+        DesiredPoseAngleDeg.addSample(sampleTimeMs, desPoseAngle);
     }
 
     

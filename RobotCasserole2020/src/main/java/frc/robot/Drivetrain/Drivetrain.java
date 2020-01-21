@@ -4,11 +4,6 @@ import frc.robot.RobotSimMode;
 
 public abstract class Drivetrain {
     
-	//Debug only //Copied this from the 2018 code so that PathPlannerAutoEvent would be happy
-	public double leftAutoCmdFtPerSec = 0;
-	public double rightAutoCmdFtPerSec = 0;
-    public double autoTimestamp = 0;
-    
     //Also added this so that PathPlannerAutoEvent would be happy
     public static final double WHEEL_ROLLING_RADIUS_FT = 0.24; //Radius of 6in wheel
 

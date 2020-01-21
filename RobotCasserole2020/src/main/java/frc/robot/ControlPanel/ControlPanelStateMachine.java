@@ -21,7 +21,7 @@ public class ControlPanelStateMachine{
         return instance;
     }
 
-    ControlPanelColor colorOnWheel = CasseroleColorSensor.getInstance().getControlPanelColor();
+    ControlPanelColor colorOnWheel = ControlPanelColor.kUNKNOWN;
     ControlPanelColor gameDataColor = ControlPanelColor.kUNKNOWN;
 
     boolean prevXBtn=false;
@@ -32,7 +32,7 @@ public class ControlPanelStateMachine{
 
     double sampleTimeMS;
 
-    String gameData = DriverStation.getInstance().getGameSpecificMessage();
+    String gameData;
     
     Signal degreesToRotateStaticSig;
     Signal degreesToColorSig;
@@ -45,9 +45,12 @@ public class ControlPanelStateMachine{
         colorNeededSig = new Signal("Color Needed","Color");
     }
 
-    public void parseGameData(String gameData){
-        String desiredColor=String.valueOf(gameData.charAt(0));
-        if(desiredColor.length() > 0){
+    public void parseGameData(){
+
+        gameData = DriverStation.getInstance().getGameSpecificMessage();
+
+        if(gameData.length() > 0){
+            String desiredColor=String.valueOf(gameData.charAt(0));
             if(desiredColor.equals("R")){
                 gameDataColor=ControlPanelColor.kRED;
             }else if(desiredColor.equals("G")){
@@ -91,7 +94,8 @@ public class ControlPanelStateMachine{
 
         sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
 
-        parseGameData(gameData);
+        colorOnWheel = CasseroleColorSensor.getInstance().getControlPanelColor();
+        parseGameData();
 
         operatorXButtonPressed = OperatorController.getInstance().getControlPanelThreeRotationsDesired();
         operatorYButtonPressed = OperatorController.getInstance().getControlPanelSeekToColorDesired();

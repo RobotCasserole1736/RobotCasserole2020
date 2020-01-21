@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - AutoEventDriveToBallThief",
+      "request": "launch",
+      "mainClass": "frc.robot.Autonomous.Events.AutoEventDriveToBallThief",
+      "projectName": "RobotCasserole2020"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - AutoEventBackUpFromBallThief",
       "request": "launch",
       "mainClass": "frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief",

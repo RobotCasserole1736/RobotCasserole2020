@@ -3,51 +3,49 @@ package frc.robot.Autonomous.Events;
 import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.PathPlanner.FalconPathPlanner;
 import frc.lib.PathPlanner.PathPlannerAutoEvent;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Waypoint;
 
 /**
  * go to scale on left.
  */
 public class AutoEventPathPlanTest extends AutoEvent {
-	PathPlannerAutoEvent driveForward;
+    PathPlannerAutoEvent driveForward;
 
-	private final double[][] waypoints = new double[][] {
-        {0, 0},
-		{0, 60},
-		{25,70},
-		{25,100}
-	};
-	
-	private final double time = 5.0;
+    private final Waypoint[] waypoints_ft = new Waypoint[] {
+        new Waypoint(0,      0,  Pathfinder.d2r(0)),
+        new Waypoint(11.0,   11.0,  Pathfinder.d2r(-60.0))
+    };
 
-	public AutoEventPathPlanTest() {
-		driveForward = new PathPlannerAutoEvent(waypoints, time, false, 0.5, 0.5, 0.001, 0.9);
-	}
+    public AutoEventPathPlanTest() {
+        driveForward = new PathPlannerAutoEvent(waypoints_ft, false);
+    }
 
-	@Override
-	public void userUpdate() {
-		driveForward.userUpdate();
-	}
-	@Override
-	public void userForceStop() {
-		driveForward.userForceStop();
-	}
+    @Override
+    public void userUpdate() {
+        driveForward.userUpdate();
+    }
+    @Override
+    public void userForceStop() {
+        driveForward.userForceStop();
+    }
 
-	@Override
-	public boolean isTriggered() {
-		return driveForward.isTriggered();
-	}
+    @Override
+    public boolean isTriggered() {
+        return driveForward.isTriggered();
+    }
 
-	@Override
-	public boolean isDone() {
-		return driveForward.isDone();
-	}
+    @Override
+    public boolean isDone() {
+        return driveForward.isDone();
+    }
 
-	@Override
-	public void userStart() {
-		driveForward.userStart();
-	}
+    @Override
+    public void userStart() {
+        driveForward.userStart();
+    }
     public static void main(String[] args) {
-		AutoEventPathPlanTest autoEvent = new AutoEventPathPlanTest();
-		FalconPathPlanner.plotPath(autoEvent.driveForward.path);
-	}
+        AutoEventPathPlanTest autoEvent = new AutoEventPathPlanTest();
+        //TODO 
+    }
 }
