@@ -25,7 +25,13 @@ public class RobotConstants {
 
     public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
     public static final int ANALOG_PRESSURE_SENSOR_PORT = 0;
-    public static final int POWER_DISTRIBUTION_PANEL_CANID = 0;
+    public static final int POWER_DISTRIBUTION_PANEL_CANID = 0; 
+
+    public static final int CONVEYOR_MOTOR = 0;
+    public static final int CONVEYOR_TO_SHOOTER_DIO_PORT = 0;
+    public static final int CONVEYOR_TO_INTAKE_DIO_PORT = 1;
+    public static final int CONVEYOR_MOTOR_PDP_INDEX = 0;
+    public static final int CONVEYOR_MOTOR_PDP_CHANNEL = 1;
 
     static public final int INTAKE_SOLENOID_FWD = 0; 
     static public final int INTAKE_SOLENOID_REV = 1;
