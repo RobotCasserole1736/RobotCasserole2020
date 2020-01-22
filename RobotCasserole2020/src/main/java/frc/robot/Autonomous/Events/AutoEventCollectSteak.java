@@ -3,53 +3,56 @@ package frc.robot.Autonomous.Events;
 import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.PathPlanner.FalconPathPlanner;
 import frc.lib.PathPlanner.PathPlannerAutoEvent;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Waypoint;
 
 /**
- * go to scale on left.
+ * drive straight and stuff. Step response check (with typical smoothing)
  */
 public class AutoEventCollectSteak extends AutoEvent {
-    PathPlannerAutoEvent driveForward;
-    
-	private final double[][] waypoints_inches = new double[][] {
-        {0, 0},
-        {0, 50},
-        {-137, 100},
-        {-137, 123}
-        
-	};
-	
-	private final double time = 2.0;
-    
-	public AutoEventCollectSteak() {
-        driveForward = new PathPlannerAutoEvent(waypoints_inches, time, false, 1, 0.3, 0.01, 0.9);
-	}
-    
-	@Override
-	public void userUpdate() {
-        driveForward.userUpdate();
+    PathPlannerAutoEvent driveBackward;
+
+    //Waypoints always start at (0,0), and are referenced relative to the robot's
+    // position and pose angle whenever the event starts running. Units must be inches.
+
+    private final Waypoint[] waypoints_ft = new Waypoint[] {
+        new Waypoint(0,      0,  Pathfinder.d2r(0)),
+        new Waypoint(-11, -8.3,  Pathfinder.d2r(0))
+    };
+
+    public AutoEventCollectSteak() {
+        driveBackward = new PathPlannerAutoEvent(waypoints_ft, true);
     }
-		// shotCTRL.setDesiredShooterState(ShooterStates.PREP_TO_ollectSteak
-        @Override
-        public void userForceStop() {
-            driveForward.userForceStop();
-        }
-        
-        @Override
-        public boolean isTriggered() {
-            return driveForward.isTriggered();
-        }
-        
-        @Override
-        public boolean isDone() {
-            return driveForward.isDone();
-        }
-        
-        @Override
-        public void userStart() {
-            driveForward.userStart();
-        }
-        public static void main(String[] args) {
-            AutoEventCollectSteak autoEvent = new AutoEventCollectSteak();
-            FalconPathPlanner.plotPath(autoEvent.driveForward.path);
-        }
+
+    @Override
+    public void userUpdate() {
+        driveBackward.userUpdate();
     }
+
+    @Override
+    public void userForceStop() {
+        driveBackward.userForceStop();
+    }
+
+    @Override
+    public boolean isTriggered() {
+        return driveBackward.isTriggered();
+    }
+
+    @Override
+    public boolean isDone() {
+        return driveBackward.isDone();
+    }
+
+    @Override
+    public void userStart() {
+        driveBackward.userStart();
+    }
+    
+    public static void main(String[] args) {
+		System.out.println("Starting path planner calculation...");
+        AutoEventCollectSteak autoEvent = new AutoEventCollectSteak();
+		//TODO
+		System.out.println("Done");
+    }
+}
