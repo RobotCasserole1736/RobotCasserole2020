@@ -57,15 +57,27 @@ public class PathPlannerAutoEvent extends AutoEvent {
     boolean useFixedHeadingMode = false;
     double userManualHeadingDesired = 0;
 
+    double desStartX = 0;
+    double desStartY = 0;
+    double desStartT = 0;
+
     public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in) {
+        commonConstructor(waypoints_in, reversed_in, 3.5, 2.5);
+    }
+
+    public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel){
+        commonConstructor(waypoints_in, reversed_in, maxVel, maxAccel);
+    }
+
+    private void commonConstructor(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel) {
         waypoints = waypoints_in;
         reversed = reversed_in;
         
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, 
                                                          Trajectory.Config.SAMPLES_HIGH, 
                                                          taskRate, 
-                                                         3.5, //Max Vel (m/s)
-                                                         2.5, //Max Accel (m/s2)
+                                                         maxVel, //Max Vel (m/s)
+                                                         maxAccel, //Max Accel (m/s2)
                                                          60.0); //Max Jerk (m/s3)
 
         if(reversed_in){
@@ -123,11 +135,17 @@ public class PathPlannerAutoEvent extends AutoEvent {
         double leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(trj_left.get(timestep).velocity);
         double rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(trj_right.get(timestep).velocity); 
         double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(timestep).heading));
+        double desX = trj_center.get(timestep).y;//Hurray for subtle and undocumented reference frame conversions.
+        double desY = trj_center.get(timestep).x;//Hurray for subtle and undocumented reference frame conversions.
+        double desT = Pathfinder.r2d(trj_center.get(timestep).heading);
         
         if(reversed){
-            leftCommand_RPM  = -1.0 * leftCommand_RPM;
-            rightCommand_RPM = -1.0 * rightCommand_RPM;
-            poseCommand_deg  = -1.0 * poseCommand_deg;
+            leftCommand_RPM  *= -1;
+            rightCommand_RPM *= -1;
+            poseCommand_deg  *= -1;
+            desX *= -1;
+            desY *= -1;
+            desT *= -1;
         }
 
         //Rotate to the reference frame where we started the path plan event
@@ -138,6 +156,10 @@ public class PathPlannerAutoEvent extends AutoEvent {
         } else {
             Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, poseCommand_deg);
         }
+
+        Drivetrain.getInstance().dtPose.setDesiredPose( desX + desStartX, 
+                                                        desY + desStartY, 
+                                                        desT + desStartT);
     }
 
 
@@ -178,6 +200,9 @@ public class PathPlannerAutoEvent extends AutoEvent {
     public void userStart() {
         startTime = Timer.getFPGATimestamp();
         startPoseAngle = Drivetrain.getInstance().getGyroAngle();
+        desStartX = Drivetrain.getInstance().dtPose.poseX;
+        desStartY = Drivetrain.getInstance().dtPose.poseY;
+        desStartT = Drivetrain.getInstance().dtPose.poseT;
         done = false;
     }
     

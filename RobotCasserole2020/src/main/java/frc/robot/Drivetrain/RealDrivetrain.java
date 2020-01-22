@@ -85,6 +85,8 @@ public class RealDrivetrain extends Drivetrain {
     
 
     public RealDrivetrain(){
+        dtPose = new RobotPose();
+
         dtLeftMaster = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
         dtLeftMaster.restoreFactoryDefaults();
         dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);

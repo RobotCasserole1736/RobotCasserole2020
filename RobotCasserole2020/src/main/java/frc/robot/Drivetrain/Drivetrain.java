@@ -22,6 +22,8 @@ public abstract class Drivetrain {
         return instance;
     }
 
+    public RobotPose dtPose;
+
     public abstract void update();
     public abstract void setOpenLoopCmd(double forwardReverseCmd, double rotaionCmd);
     public abstract void setGyroLockCmd(double forwardReverseCmd);
