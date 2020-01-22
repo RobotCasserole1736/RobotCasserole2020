@@ -16,6 +16,10 @@ public class AutoEventTurn extends AutoEvent {
 	final double TURN_SPEED_RPM = 100;
 	final double TIMEOUT_S = 5.0;
 
+	double startT = 0;
+	double startX = 0;
+	double startY = 0;
+
 	public AutoEventTurn(double inAngleDeg){
 		desAngle=inAngleDeg;
 	}
@@ -25,6 +29,10 @@ public class AutoEventTurn extends AutoEvent {
 		// get gyro
 		targetAngle = Drivetrain.getInstance().getGyroAngle() + desAngle;
 		startTime = Timer.getFPGATimestamp();
+		startT = Drivetrain.getInstance().dtPose.poseT;
+		startX = Drivetrain.getInstance().dtPose.poseX;
+		startY = Drivetrain.getInstance().dtPose.poseY;
+		Drivetrain.getInstance().dtPose.setDesiredPose(startX, startY, startT + desAngle);
 	}
 
 	@Override

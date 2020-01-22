@@ -1,7 +1,6 @@
 package frc.robot.Autonomous.Events;
 
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.lib.PathPlanner.FalconPathPlanner;
 import frc.lib.PathPlanner.PathPlannerAutoEvent;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;

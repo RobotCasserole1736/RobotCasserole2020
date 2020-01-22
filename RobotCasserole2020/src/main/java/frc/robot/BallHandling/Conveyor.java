@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.Spark;
 
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.robot.CasserolePDP;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
@@ -91,9 +92,7 @@ public class Conveyor{
         intakeEndSensorTriggered = intakeEndSensor.get();
         shooterEndSensorTriggered = shooterEndSensor.get();
         
-        
-       
-        motorCurrent = pdp.getCurrent(RobotConstants.CONVEYOR_MOTOR_PDP_INDEX, RobotConstants.CONVEYOR_MOTOR_PDP_CHANNEL);
+        motorCurrent = CasserolePDP.getInstance().getCurrent(RobotConstants.CONVEYOR_MOTOR_PDP_CHANNEL);
     }
 
     public void update(){
