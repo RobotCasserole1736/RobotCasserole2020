@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   ShooterControl shooterCtrl;
   IntakeControl intakeCtrl;
   Hopper hopper;
+  Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
 
@@ -114,6 +115,8 @@ public class Robot extends TimedRobot {
     intakeCtrl = IntakeControl.getInstance();
 
     hopper = Hopper.getInstance();
+
+    climber= Climber.getInstance();
 
     loopTiming = LoopTiming.getInstance();
 
@@ -209,6 +212,7 @@ public class Robot extends TimedRobot {
     shooterCtrl.update();
     hopper.update();
     intakeCtrl.update();
+    climber.update();
 
     drivetrain.update();
 
@@ -255,6 +259,7 @@ public class Robot extends TimedRobot {
 
     shooterCtrl.update();
     intakeCtrl.update();
+    climber.update();
     hopper.update();
     ctrlPanel.update();
 
