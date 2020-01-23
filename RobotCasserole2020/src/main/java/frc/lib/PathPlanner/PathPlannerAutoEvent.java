@@ -122,10 +122,10 @@ public class PathPlannerAutoEvent extends AutoEvent {
         double tmp = (Timer.getFPGATimestamp()-startTime)/taskRate;
         timestep = (int) Math.round(tmp);
         
-        int maxTimestep = trj_center.length() - 3; //Last two points are bogus?
+        int maxTimestep = trj_center.length();
 
         if(timestep >= maxTimestep) {
-            timestep = (maxTimestep);
+            timestep = (maxTimestep - 1);
             done = true;
         }
 
@@ -140,6 +140,13 @@ public class PathPlannerAutoEvent extends AutoEvent {
         double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
         double desT = Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading);
         
+        //UMMMM I guess pathplanner freaks out every now and then?
+        if(poseCommand_deg > 180.0){
+            poseCommand_deg -= 360.0;
+        } else if (poseCommand_deg < -180.0 ) {
+            poseCommand_deg += 360.0;
+        }
+
         if(reversed){
             leftCommand_RPM  *= -1;
             rightCommand_RPM *= -1;
