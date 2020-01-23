@@ -93,8 +93,8 @@ public class PathPlannerAutoEvent extends AutoEvent {
             //Transform robot center trajectory to left/right wheel velocities.
             TankModifier modifier = new TankModifier(trj_center);
             modifier.modify(DT_TRACK_WIDTH_FT);
-            trj_left  = modifier.getLeftTrajectory();       // Get the Left Side
-            trj_right = modifier.getRightTrajectory();      // Get the Right Side
+            trj_left  = modifier.getRightTrajectory();     // Get the Left Side  (Yes, pathplanner is inverted compared to what we want)
+            trj_right = modifier.getLeftTrajectory();      // Get the Right Side (Yes, pathplanner is inverted compared to what we want)
         } catch(Exception e) {
             CrashTracker.logGenericMessage("[Auto Path Planner]: Could not create auto path");
             CrashTracker.logGenericMessage(e.toString());
@@ -122,9 +122,10 @@ public class PathPlannerAutoEvent extends AutoEvent {
         double tmp = (Timer.getFPGATimestamp()-startTime)/taskRate;
         timestep = (int) Math.round(tmp);
         
+        int maxTimestep = trj_center.length();
 
-        if(timestep >= trj_center.length()) {
-            timestep = (int) (trj_center.length() - 1);
+        if(timestep >= maxTimestep) {
+            timestep = (maxTimestep - 1);
             done = true;
         }
 
@@ -134,15 +135,26 @@ public class PathPlannerAutoEvent extends AutoEvent {
 
         double leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(trj_left.get(timestep).velocity);
         double rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(trj_right.get(timestep).velocity); 
-        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(timestep).heading)) * -1;
-        double desX = trj_center.get(timestep).y;//Hurray for subtle and undocumented reference frame conversions.
-        double desY = trj_center.get(timestep).x;//Hurray for subtle and undocumented reference frame conversions.
-        double desT = Pathfinder.r2d(trj_center.get(timestep).heading) * -1;
+        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading));
+        double desX = trj_center.get(timestep).y; //Hurray for subtle and undocumented reference frame conversions.
+        double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
+        double desT = Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading);
         
-        
+        //UMMMM I guess pathplanner freaks out every now and then?
+        if(poseCommand_deg > 180.0){
+            poseCommand_deg -= 360.0;
+        } else if (poseCommand_deg < -180.0 ) {
+            poseCommand_deg += 360.0;
+        }
+
         if(reversed){
             leftCommand_RPM  *= -1;
             rightCommand_RPM *= -1;
+
+            double tmpSpdCmd = leftCommand_RPM;
+            leftCommand_RPM = rightCommand_RPM;
+            rightCommand_RPM = tmpSpdCmd;
+
             desX *= -1;
             desY *= -1;
         }
@@ -199,9 +211,9 @@ public class PathPlannerAutoEvent extends AutoEvent {
     public void userStart() {
         startTime = Timer.getFPGATimestamp();
         startPoseAngle = Drivetrain.getInstance().getGyroAngle();
-        desStartX = Drivetrain.getInstance().dtPose.poseX;
-        desStartY = Drivetrain.getInstance().dtPose.poseY;
-        desStartT = Drivetrain.getInstance().dtPose.poseT;
+        desStartX      = Drivetrain.getInstance().dtPose.poseX;
+        desStartY      = Drivetrain.getInstance().dtPose.poseY;
+        desStartT      = Drivetrain.getInstance().dtPose.poseT;
         done = false;
     }
     

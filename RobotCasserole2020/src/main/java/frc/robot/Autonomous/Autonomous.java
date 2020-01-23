@@ -203,31 +203,27 @@ public class Autonomous {
                 break;
 
                 case DriveFwd:
-                    Drivetrain.getInstance().setInitialPose(-10, 10, 0.0);
                     //seq.addEvent(new AutoEventDriveForTime(2, 0.25));
                     seq.addEvent(new AutoEventPathPlanTest());
                 break;
 
                 case ShootOnly:
-                    Drivetrain.getInstance().setInitialPose(-8, 10, 270.0);
                     //TODO
                 break;
 
                 case VisionAlignShoot:
-                    Drivetrain.getInstance().setInitialPose(-11, 10, 290.0);
                     //TODO
                 break;
 
                 case BallThief:
-                    Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     seq.addEvent(new AutoEventDriveToBallThief());
                     //some event to run intake
                     seq.addEvent(new AutoEventBackUpFromBallThief());
                     seq.addEvent(new AutoEventTurn(180));
                     //some event to shoot balls
                 break;
+
                 case Steak:
-                    Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     seq.addEvent(new AutoEventDriveToBallThief());
                     //some event to run intake
                     seq.addEvent(new AutoEventBackUpFromBallThief());

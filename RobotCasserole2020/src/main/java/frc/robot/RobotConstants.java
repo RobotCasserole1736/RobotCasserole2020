@@ -49,7 +49,7 @@ public class RobotConstants {
     public static final int ANALOG_PRESSURE_SENSOR_PORT = 0;
 
     // Robot Physical Parameters
-	public static final double WHEEL_RADIUS_FT = 0.25;
+	public static final double WHEEL_RADIUS_FT = 3.0/12.0;
 	public static final double ROBOT_TRACK_WIDTH_FT = 1.75;
     public static final double MAIN_LOOP_SAMPLE_RATE_S = 0.02;
 
