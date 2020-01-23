@@ -135,8 +135,8 @@ public class PathPlannerAutoEvent extends AutoEvent {
         double leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(trj_left.get(timestep).velocity);
         double rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(trj_right.get(timestep).velocity); 
         double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(timestep).heading));
-        double desX = trj_center.get(timestep).y;//Hurray for subtle and undocumented reference frame conversions.
-        double desY = trj_center.get(timestep).x;//Hurray for subtle and undocumented reference frame conversions.
+        double desX = trj_center.get(timestep).y; //Hurray for subtle and undocumented reference frame conversions.
+        double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
         double desT = Pathfinder.r2d(trj_center.get(timestep).heading);
         
         if(reversed){
@@ -200,9 +200,9 @@ public class PathPlannerAutoEvent extends AutoEvent {
     public void userStart() {
         startTime = Timer.getFPGATimestamp();
         startPoseAngle = Drivetrain.getInstance().getGyroAngle();
-        desStartX = Drivetrain.getInstance().dtPose.poseX;
-        desStartY = Drivetrain.getInstance().dtPose.poseY;
-        desStartT = Drivetrain.getInstance().dtPose.poseT;
+        desStartX      = Drivetrain.getInstance().dtPose.poseX;
+        desStartY      = Drivetrain.getInstance().dtPose.poseY;
+        desStartT      = Drivetrain.getInstance().dtPose.poseT;
         done = false;
     }
     
