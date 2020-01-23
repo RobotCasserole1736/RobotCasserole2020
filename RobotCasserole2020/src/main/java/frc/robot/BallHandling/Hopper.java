@@ -35,7 +35,7 @@ public class Hopper{
         Stop(0),     //No Motion
         Injest(1),   //Run balls toward the conveyer
         ClearJam(2), //Randomly (ish) change direction in an attempt to un-jam stuck balls
-        Reverse(1);  //Run balls toward the intake
+        Reverse(3);  //Run balls toward the intake
 
         public final int value;
 

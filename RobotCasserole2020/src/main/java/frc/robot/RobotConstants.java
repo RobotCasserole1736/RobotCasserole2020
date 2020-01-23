@@ -14,6 +14,7 @@ public class RobotConstants {
     static public final int DT_RIGHT_NEO_2_CANID = 13;
     static public final int SHOOTER_MOTOR_1 = 14;
     static public final int SHOOTER_MOTOR_2 = 15;
+    static public final int TOF_CAN_ID = 16;
     public static final int POWER_DISTRIBUTION_PANEL_CANID = 0; 
     public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
 

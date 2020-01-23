@@ -1,5 +1,7 @@
 package frc.robot.BallHandling;
 
+import com.playingwithfusion.TimeOfFlight;
+
 import edu.wpi.first.wpilibj.AnalogInput;
 import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
@@ -17,11 +19,11 @@ public class BallDistanceSensor{
     }
 
     
-    AnalogInput sensorInput;
+    TimeOfFlight tofSensor;
 
     double detectedDistance_in;
     boolean distAvailable;
-    double sensorVoltage_V;
+    double sensorDistance_in;
 
     Signal sensorVoltageSig;
     Signal detectedDistancesSig;
@@ -31,20 +33,19 @@ public class BallDistanceSensor{
 
     private BallDistanceSensor(){
         distAvailable = false;
-        sensorInput = new AnalogInput(RobotConstants.BALL_DIST_SENSOR_PORT);
+        tofSensor = new TimeOfFlight(RobotConstants.TOF_CAN_ID);
+        tofSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
         
         sensorVoltageSig = new Signal("Distance Sensor Raw Voltage", "V");
         detectedDistancesSig = new Signal("Distance Sensor Distance", "in");
         distAvailSig = new Signal("Distance Sensor Available", "bool");
-        voltFilter = new AveragingFilter(10, 0);
+        voltFilter = new AveragingFilter(2, 0);
     }
 
     public void update(){
-        sensorVoltage_V = sensorInput.getVoltage();
+        double tempDistance = tofSensor.getRange()/25.40; //Convert from mm to inches
 
-        double tempDistance = voltsToInches(sensorVoltage_V);
-
-        if(tempDistance < 7.0 || tempDistance > 24.0){
+        if(tofSensor.isRangeValid()){
             detectedDistance_in = voltFilter.filter(tempDistance);
             distAvailable = true;
         } else {
@@ -52,13 +53,8 @@ public class BallDistanceSensor{
         }
 
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
-        sensorVoltageSig.addSample(sampleTimeMS, sensorVoltage_V);
         detectedDistancesSig.addSample(sampleTimeMS, detectedDistance_in);
         distAvailSig.addSample(sampleTimeMS, distAvailable);
-    }
-
-    double voltsToInches(double voltsIn){
-        return voltsIn * 512/5.0; // Per https://www.maxbotix.com/documents/LV-MaxSonar-EZ_Datasheet.pdf - output is Vcc/512 volts per inch.
     }
 
     public double getDistance_in(){

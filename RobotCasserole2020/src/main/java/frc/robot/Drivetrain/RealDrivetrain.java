@@ -151,6 +151,7 @@ public class RealDrivetrain extends Drivetrain {
             kI.acknowledgeValUpdate();
             kD.acknowledgeValUpdate();
             kFF.acknowledgeValUpdate();
+            calsUpdated = false;
         }
     }
 

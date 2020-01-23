@@ -21,6 +21,7 @@ import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.VisionProc.JeVoisInterface;
 import frc.robot.Autonomous.Autonomous;
+import frc.robot.BallHandling.BallDistanceSensor;
 import frc.robot.BallHandling.Hopper;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
@@ -158,6 +159,8 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
+
+    BallDistanceSensor.getInstance().update();
 
     
     thbbtbbtbbtbbt.update();
