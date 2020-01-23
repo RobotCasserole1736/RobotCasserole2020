@@ -134,18 +134,17 @@ public class PathPlannerAutoEvent extends AutoEvent {
 
         double leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(trj_left.get(timestep).velocity);
         double rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(trj_right.get(timestep).velocity); 
-        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(timestep).heading));
+        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(timestep).heading)) * -1;
         double desX = trj_center.get(timestep).y;//Hurray for subtle and undocumented reference frame conversions.
         double desY = trj_center.get(timestep).x;//Hurray for subtle and undocumented reference frame conversions.
-        double desT = Pathfinder.r2d(trj_center.get(timestep).heading);
+        double desT = Pathfinder.r2d(trj_center.get(timestep).heading) * -1;
+        
         
         if(reversed){
             leftCommand_RPM  *= -1;
             rightCommand_RPM *= -1;
-            poseCommand_deg  *= -1;
             desX *= -1;
             desY *= -1;
-            desT *= -1;
         }
 
         //Rotate to the reference frame where we started the path plan event
