@@ -62,7 +62,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
     double desStartT = 0;
 
     public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in) {
-        commonConstructor(waypoints_in, reversed_in, 3.5, 2.5);
+        commonConstructor(waypoints_in, reversed_in, 8.0, 6.0); //Default for max speed (ft/sec), and max accesl ()
     }
 
     public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel){
@@ -76,9 +76,9 @@ public class PathPlannerAutoEvent extends AutoEvent {
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, 
                                                          Trajectory.Config.SAMPLES_HIGH, 
                                                          taskRate, 
-                                                         maxVel, //Max Vel (m/s)
-                                                         maxAccel, //Max Accel (m/s2)
-                                                         60.0); //Max Jerk (m/s3)
+                                                         maxVel, //Max Vel (ft/sec)
+                                                         maxAccel, //Max Accel (ft/sec2)
+                                                         180.0); //Max Jerk (ft/sec3)
 
         if(reversed_in){
             for(Waypoint wpt: waypoints){
