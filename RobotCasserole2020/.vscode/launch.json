@@ -6,9 +6,9 @@
   "configurations": [
     {
       "type": "java",
-      "name": "CodeLens (Launch) - AutoEventDriveToBallThief",
+      "name": "CodeLens (Launch) - AutoEventCollectSteak",
       "request": "launch",
-      "mainClass": "frc.robot.Autonomous.Events.AutoEventDriveToBallThief",
+      "mainClass": "frc.robot.Autonomous.Events.AutoEventCollectSteak",
       "projectName": "RobotCasserole2020"
     },
     {
