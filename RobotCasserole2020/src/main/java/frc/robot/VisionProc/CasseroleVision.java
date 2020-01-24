@@ -18,11 +18,13 @@ public class CasseroleVision extends VisionCamera {
     NetworkTableEntry framerate_fps_nt;
     NetworkTableEntry targetVisible_nt;
     NetworkTableEntry targetAngle_deg_nt;
+    NetworkTableEntry targetPosStable_nt;
     
     double proc_duration_sec;
     double framerate_fps;
     double targetAngle_deg;
     boolean targetVisible;
+    boolean targetPosStable;
 
     boolean visionOnline;
     long visionUpdatedTime;
@@ -34,6 +36,7 @@ public class CasseroleVision extends VisionCamera {
         framerate_fps_nt = table.getEntry("framerate_fps");
         targetVisible_nt = table.getEntry("targetVisible");
         targetAngle_deg_nt = table.getEntry("targetAngle_deg");
+        targetPosStable_nt = table.getEntry("targetPosStable");
     }
 
     @Override
@@ -42,6 +45,7 @@ public class CasseroleVision extends VisionCamera {
         proc_duration_sec = proc_duration_sec_nt.getDouble(-1.0);
         framerate_fps = framerate_fps_nt.getDouble(-1.0);
         targetVisible = targetVisible_nt.getBoolean(false);
+        targetPosStable = targetPosStable_nt.getBoolean(false);
         targetAngle_deg = targetAngle_deg_nt.getDouble(-1.0);
         visionUpdatedTime = targetAngle_deg_nt.getLastChange();
         
@@ -83,6 +87,11 @@ public class CasseroleVision extends VisionCamera {
 	@Override
 	public boolean isVisionOnline() {
 		return visionOnline;
-	}
+    }
+    
+    @Override
+    public boolean isTargetStable(){
+        return targetPosStable;
+    }
 
 }

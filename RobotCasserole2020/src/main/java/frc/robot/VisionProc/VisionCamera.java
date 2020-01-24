@@ -30,5 +30,8 @@ public abstract class VisionCamera {
     /** Returns true if the vision camera is connected to the roboRIO */
     public abstract boolean isVisionOnline();
 
+    /** Returns true when the image has settled and the pose reading can be trusted */
+    public abstract boolean isTargetStable();
+
 
 }

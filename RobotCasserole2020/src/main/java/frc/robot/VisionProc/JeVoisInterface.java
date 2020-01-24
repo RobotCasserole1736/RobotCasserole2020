@@ -631,5 +631,11 @@ public class JeVoisInterface extends VisionCamera {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public boolean isTargetStable() {
+        // TODO Auto-generated method stub
+        return false;
+    }
     
 }

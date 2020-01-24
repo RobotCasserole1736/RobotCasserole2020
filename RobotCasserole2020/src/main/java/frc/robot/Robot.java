@@ -19,7 +19,8 @@ import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
-import frc.robot.VisionProc.JeVoisInterface;
+import frc.robot.VisionProc.CasseroleVision;
+import frc.robot.VisionProc.VisionCamera;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.BallHandling.BallDistanceSensor;
 import frc.robot.BallHandling.Hopper;
@@ -58,7 +59,7 @@ public class Robot extends TimedRobot {
   Autonomous auto;
 
   //Sensors and Cameras and stuff, oh my!
-  JeVoisInterface jevois;
+  VisionCamera cam;
   PhotonCannonControl photonCannon;
   VisionLEDRingControl eyeOfVeganSauron;
 
@@ -86,7 +87,7 @@ public class Robot extends TimedRobot {
     webserver = new CasseroleWebServer();
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
-    jevois = JeVoisInterface.getInstance();
+    cam = CasseroleVision.getInstance();
     pdp = CasserolePDP.getInstance();
     loadMon= new CasseroleRIOLoadMonitor();
 
@@ -167,6 +168,7 @@ public class Robot extends TimedRobot {
     eyeOfVeganSauron.setLEDRingState(false);
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
+    cam.update();
     
     auto.sampleDashboardSelector();
 
@@ -208,6 +210,7 @@ public class Robot extends TimedRobot {
     eyeOfVeganSauron.setLEDRingState(true);
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
+    cam.update();
 
     auto.update();
 
@@ -253,6 +256,7 @@ public class Robot extends TimedRobot {
       eyeOfVeganSauron.setLEDRingState(true);
     }
     photonCannon.update();
+    cam.update();
 
 
     thbbtbbtbbtbbt.update();
@@ -309,8 +313,8 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
-    CasseroleDriverView.setBoolean("Vision Target Visible", jevois.isTgtVisible());
+    CasseroleDriverView.setBoolean("Vision Camera Offline", !cam.isVisionOnline());
+    CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setSoundWidget("High Ground Acqd",DriverStation.getInstance().isFMSAttached());
   }
 
