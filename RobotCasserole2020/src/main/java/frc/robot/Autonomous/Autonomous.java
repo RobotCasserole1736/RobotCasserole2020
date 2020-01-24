@@ -5,6 +5,7 @@ import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventCollectSteak;
+import frc.robot.Autonomous.Events.AutoEventShootFromCollectSteak;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventTurn;
@@ -47,6 +48,7 @@ public class Autonomous {
         VisionAlignShoot(3),   
         BallThief(4),
         Steak(5),
+        ShootSteak(6),
         Inactive(-1); 
 
         public final int value;
@@ -79,7 +81,8 @@ public class Autonomous {
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
                                                               "Ball Thief",
-                                                              "Steak"};
+                                                              "Steak",
+                                                              "ShootSteak"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
                                                               "3s", 
@@ -124,6 +127,8 @@ public class Autonomous {
 			modeCmd = AutoMode.BallThief;
 		} else if (actionStr.compareTo(ACTION_MODES[5]) == 0) { 
 			modeCmd = AutoMode.Steak;
+		} else if (actionStr.compareTo(ACTION_MODES[6]) == 0) { 
+			modeCmd = AutoMode.ShootSteak;
 		} else { 
 			modeCmd = AutoMode.Inactive;
         }
@@ -185,6 +190,9 @@ public class Autonomous {
                     case Steak:
                         Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     break;
+                    case ShootSteak:
+                        Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
+                    break;
                 }
             }
 
@@ -221,6 +229,16 @@ public class Autonomous {
                     seq.addEvent(new AutoEventBackUpFromBallThief());
                     //some event to shoot balls
                     seq.addEvent(new AutoEventCollectSteak());
+                break;
+                case ShootSteak:
+                    Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
+                    seq.addEvent(new AutoEventDriveToBallThief());
+                    //some event to run intake
+                    seq.addEvent(new AutoEventBackUpFromBallThief());
+                    //some event to shoot balls
+                    seq.addEvent(new AutoEventCollectSteak());
+                    seq.addEvent(new AutoEventShootFromCollectSteak());
+                    //shoot balls from 3 point spot
                 break;
             }
             modeCmdPrev = modeCmd;
