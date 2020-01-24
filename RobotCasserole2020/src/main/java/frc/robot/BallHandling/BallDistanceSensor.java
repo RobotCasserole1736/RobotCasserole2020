@@ -7,6 +7,7 @@ import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
+import frc.robot.RobotSimMode;
 
 public class BallDistanceSensor{
 
@@ -33,8 +34,11 @@ public class BallDistanceSensor{
 
     private BallDistanceSensor(){
         distAvailable = false;
-        tofSensor = new TimeOfFlight(RobotConstants.TOF_CAN_ID);
-        tofSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
+
+        if(!RobotSimMode.getInstance().runSimulation()){
+            tofSensor = new TimeOfFlight(RobotConstants.TOF_CAN_ID);
+            tofSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
+        }
         
         sensorVoltageSig = new Signal("Distance Sensor Raw Voltage", "V");
         detectedDistancesSig = new Signal("Distance Sensor Distance", "in");
@@ -43,9 +47,15 @@ public class BallDistanceSensor{
     }
 
     public void update(){
-        double tempDistance = tofSensor.getRange()/25.40; //Convert from mm to inches
+        double tempDistance = 0;
+        boolean rangeValid = false;
 
-        if(tofSensor.isRangeValid()){
+        if(!RobotSimMode.getInstance().runSimulation()){
+            tempDistance = tofSensor.getRange()/25.40; //Convert from mm to inches
+            rangeValid = tofSensor.isRangeValid();
+        }
+
+        if(rangeValid){
             detectedDistance_in = voltFilter.filter(tempDistance);
             distAvailable = true;
         } else {
