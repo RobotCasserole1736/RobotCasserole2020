@@ -26,8 +26,7 @@ public class RealDrivetrain extends Drivetrain {
 
     CasseroleGyro dtGyro;
     
-    
-    //Drivetrain limits
+
     
     //State Data
     double fwdRevCmd = 0;
@@ -198,13 +197,8 @@ public class RealDrivetrain extends Drivetrain {
         currentL2Sig.addSample(sampleTimeMS, dtNeoL2Current);
         currentR1Sig.addSample(sampleTimeMS, dtNeoR1Current);
         currentR2Sig.addSample(sampleTimeMS, dtNeoR2Current);
-
         
-    }
-    public int setSmartCurrentLimit(){
-        //return the current limit after configuration of the CANSparkMax
-        return 0;
-        //had to return int to clear errors 
+        
     }
     
     @Override
