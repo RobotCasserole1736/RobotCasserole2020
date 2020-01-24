@@ -50,7 +50,7 @@ public class RobotConstants {
 
     // Robot Physical Parameters
 	public static final double WHEEL_RADIUS_FT = 3.0/12.0;
-	public static final double ROBOT_TRACK_WIDTH_FT = 1.75;
+	public static final double ROBOT_TRACK_WIDTH_FT = 23.0/12.0;
     public static final double MAIN_LOOP_SAMPLE_RATE_S = 0.02;
 
     public static final double SHOOTER_GEAR_RATIO = 1.0;
