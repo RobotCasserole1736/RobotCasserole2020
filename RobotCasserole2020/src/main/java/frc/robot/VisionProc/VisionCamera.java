@@ -24,4 +24,11 @@ public abstract class VisionCamera {
     /* Returns the angle from the camera to the robot in degrees*/
     public abstract double getTgtGeneralAngle();
 
+    /** Returnsn true if the target is visble to the camera */
+    public abstract boolean isTgtVisible();
+
+    /** Returns true if the vision camera is connected to the roboRIO */
+    public abstract boolean isVisionOnline();
+
+
 }

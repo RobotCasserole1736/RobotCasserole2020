@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
 import frc.lib.Util.CrashTracker;
 
-public class JeVoisInterface extends VisionCamera{
+public class JeVoisInterface extends VisionCamera {
 
     private static JeVoisInterface instance = null;
 
