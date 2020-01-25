@@ -30,8 +30,6 @@ public class ControlPanelStateMachine{
 
     double sampleTimeMS;
 
-    String gameData;
-
     Signal degreesToRotateStaticSig;
     Signal degreesToColorSig;
     Signal colorNeededSig;
@@ -52,10 +50,9 @@ public class ControlPanelStateMachine{
         sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
 
         colorSensor.update();
-        parseGameData(gameData);
+        parseGameData(DriverStation.getInstance().getGameSpecificMessage());
 
         colorOnWheel = CasseroleColorSensor.getInstance().getControlPanelColor();
-        gameData = DriverStation.getInstance().getGameSpecificMessage();
 
         rotate3to5Activated = OperatorController.getInstance().getControlPanelThreeRotationsDesired();
         rotateToSpecificColorActivated = OperatorController.getInstance().getControlPanelSeekToColorDesired();

@@ -94,7 +94,7 @@ public class IntakeControl {
 		//TODO
 	}
 
-	public void setDesiredPosition(IntakePosition des_pos){
+	public void setPosMode(IntakePosition des_pos){
 		posState = des_pos;
 	}
 
@@ -102,13 +102,7 @@ public class IntakeControl {
 		return IntakePosition.Retracted; //TODO - make it return something reasonable
 	}
 
-	public void setDesiredSpeed(IntakeSpeed des_spd){
+	public void setSpeedMode(IntakeSpeed des_spd){
 		spdState = des_spd;
-	}		//TODO
-
-	public void setPosMode(IntakePosition retracted) {
-	}
-
-	public void setSpeedMode(IntakeSpeed stop) {
-	}
+	}	
 }

@@ -74,7 +74,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
         reversed = reversed_in;
         
         Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, 
-                                                         Trajectory.Config.SAMPLES_HIGH, 
+                                                         Trajectory.Config.SAMPLES_FAST, 
                                                          taskRate, 
                                                          maxVel, //Max Vel (ft/sec)
                                                          maxAccel, //Max Accel (ft/sec2)
