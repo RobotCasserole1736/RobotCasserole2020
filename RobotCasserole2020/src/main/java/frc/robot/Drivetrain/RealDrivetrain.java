@@ -9,6 +9,7 @@ import frc.robot.LoopTiming;
 import com.revrobotics.CANPIDController;
 import frc.lib.Calibration.Calibration;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 public class RealDrivetrain extends Drivetrain {
 
@@ -96,6 +97,13 @@ public class RealDrivetrain extends Drivetrain {
         dtRightIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
         dtRightIntern.restoreFactoryDefaults();
 
+        dtLeftMaster.setInverted(true);
+        dtLeftMaster.setIdleMode(IdleMode.kCoast);
+        dtLeftIntern.setIdleMode(IdleMode.kCoast);
+        dtRightMaster.setIdleMode(IdleMode.kCoast);
+        dtRightMaster.setIdleMode(IdleMode.kCoast);
+
+
         dtLeftMaster.getEncoder().setVelocityConversionFactor(RobotConstants.DRIVETRAIN_GEAR_RATIO);
         dtRightMaster.getEncoder().setVelocityConversionFactor(RobotConstants.DRIVETRAIN_GEAR_RATIO);
 
@@ -163,8 +171,8 @@ public class RealDrivetrain extends Drivetrain {
     
         if(opMode == DrivetrainOpMode.kOpenLoop) {
             
-            dtLeftSpeedCmd = Utils.capMotorCmd(fwdRevCmd + rotCmd);
-            dtRightSpeedCmd = Utils.capMotorCmd(fwdRevCmd - rotCmd);
+            dtLeftSpeedCmd = Utils.capMotorCmd(fwdRevCmd - rotCmd);
+            dtRightSpeedCmd = Utils.capMotorCmd(fwdRevCmd + rotCmd);
 
             dtLPID.setReference(dtLeftSpeedCmd*13, ControlType.kVoltage);
             dtRPID.setReference(dtRightSpeedCmd*13, ControlType.kVoltage);

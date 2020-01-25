@@ -14,7 +14,6 @@ public class Climber{
         return inst;
     }
     Spark leftClimber;
-    Spark rightClimber;
     DigitalInput upperLimitSwitch;
     DigitalInput lowerLimitSwitch;
     Solenoid climbLocker; 
@@ -29,7 +28,6 @@ public class Climber{
 
     public Climber(){
         leftClimber = new Spark(RobotConstants.CLIMBER_SPARK_LEFT_ID);
-        rightClimber = new Spark(RobotConstants.CLIMBER_SPARK_RIGHT_ID);
         upperLimitSwitch = new DigitalInput(RobotConstants.CLIMBER_LIMIT_UPPER_ID);
         lowerLimitSwitch = new DigitalInput(RobotConstants.CLIMBER_LIMIT_LOWER_ID);
         climbLocker = new Solenoid(RobotConstants.CLIMBER_SOLENOID_ID);
@@ -43,10 +41,10 @@ public class Climber{
     public void update(){
         double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
         if(climbEnabled){
-            climbLocker.set(false);
+            climbLocker.set(true);
             setClimber(0);
         }else{
-            climbLocker.set(true);
+            climbLocker.set(false);
             if (upperLimitSwitch.get()){
                 setClimber(Math.min(0,climbCMD));
             }else if (lowerLimitSwitch.get()){
@@ -72,6 +70,5 @@ public class Climber{
 
     private void setClimber(double cmd){
         leftClimber.set(cmd*climberSpeed.get());
-        rightClimber.set(cmd*climberSpeed.get());
     }
 }

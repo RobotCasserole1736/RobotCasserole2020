@@ -8,10 +8,12 @@ public class RobotConstants {
     // be hardcoded, to give your values meaningful names.
 
     //CAN ID's
-    static public final int DT_LEFT_NEO_1_CANID = 10;
-    static public final int DT_LEFT_NEO_2_CANID = 11;
-    static public final int DT_RIGHT_NEO_1_CANID = 12;
-    static public final int DT_RIGHT_NEO_2_CANID = 13;
+    static public final int DT_LEFT_NEO_1_CANID = 2;
+    static public final int DT_LEFT_NEO_2_CANID = 6;
+    static public final int HOPPER_NEO_LEFT_CAN_ID=9;
+    static public final int HOPPER_NEO_RIGHT_CAN_ID=4;
+    static public final int DT_RIGHT_NEO_1_CANID = 3;
+    static public final int DT_RIGHT_NEO_2_CANID = 8;
     static public final int SHOOTER_MOTOR_1 = 14;
     static public final int SHOOTER_MOTOR_2 = 15;
     static public final int TOF_CAN_ID = 16;
@@ -21,10 +23,7 @@ public class RobotConstants {
     //PWM Outputs
     public static final int CONVEYOR_MOTOR = 0;
     static public final int INTAKE_MOTOR = 1;
-    static public final int HOPPER_SPARK_LEFT_ID=2;
-    static public final int HOPPER_SPARK_RIGHT_ID=3;
-    static public final int CLIMBER_SPARK_LEFT_ID=4;
-    static public final int CLIMBER_SPARK_RIGHT_ID=5;
+    static public final int CLIMBER_SPARK_LEFT_ID=0;
 
     //PDP Current Measurements 
     static public final int HOPPER_SPARK_LEFT_PDP_ID = 0;
@@ -55,7 +54,7 @@ public class RobotConstants {
     public static final double MAIN_LOOP_SAMPLE_RATE_S = 0.02;
 
     public static final double SHOOTER_GEAR_RATIO = 1.0;
-    public static final double DRIVETRAIN_GEAR_RATIO = 15.0; //TODO - is this right?
+    public static final double DRIVETRAIN_GEAR_RATIO = 1.0/10.0; //TODO - is this right?
     
     //Color Sensor Configuration
     

@@ -1,15 +1,14 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 
 public class IntakeControl {
 
 	Spark intakeMotor;
-	DoubleSolenoid intakeSolenoid;
+	Solenoid intakeSolenoid;
 
 	Calibration intakeSpeedCmd;
 	Calibration ejectSpeedCmd;
@@ -17,8 +16,8 @@ public class IntakeControl {
 	IntakePosition posState;
 	IntakeSpeed spdState;
 
-	public final Value INTAKE_RETRACTED = Value.kReverse;
-	public final Value INTAKE_EXTENDED = Value.kForward;
+	public final boolean INTAKE_RETRACTED = false;
+	public final boolean INTAKE_EXTENDED = true;
 
 	Signal posStateSig;
 	Signal spdStateSig;
@@ -57,7 +56,7 @@ public class IntakeControl {
 
 	private IntakeControl(){
 		intakeMotor = new Spark(RobotConstants.INTAKE_MOTOR);
-		intakeSolenoid = new DoubleSolenoid(RobotConstants.INTAKE_SOLENOID_FWD, RobotConstants.INTAKE_SOLENOID_REV);
+		intakeSolenoid = new Solenoid(RobotConstants.INTAKE_SOLENOID_FWD);
 		
 		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.5);
 		ejectSpeedCmd = new Calibration("Eject Speed Cmd", -0.5); 

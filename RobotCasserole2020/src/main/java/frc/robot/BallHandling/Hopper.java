@@ -1,5 +1,7 @@
 package frc.robot.BallHandling;
 import edu.wpi.first.wpilibj.Spark;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
@@ -16,8 +18,8 @@ public class Hopper{
         return inst;
     }
     HopperOpMode hopperOpMode;
-    Spark HopperSparkLeft;
-    Spark HopperSparkRight;
+    CANSparkMax HopperSparkLeft;
+    CANSparkMax HopperSparkRight;
     int counter=0;
     int timer=30; //completely arbitrary number of loops to switch
     double randCmd=0;
@@ -46,8 +48,8 @@ public class Hopper{
 
 
     private Hopper(){
-        HopperSparkLeft= new Spark(RobotConstants.HOPPER_SPARK_LEFT_ID);
-        HopperSparkRight= new Spark(RobotConstants.HOPPER_SPARK_RIGHT_ID);
+        HopperSparkLeft= new CANSparkMax(RobotConstants.HOPPER_NEO_LEFT_CAN_ID, MotorType.kBrushless);
+        HopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
         HopperFWDSpeed = new Calibration("Hopper Forward Speed", 1);
         HopperBWDSpeed = new Calibration("Hopper Backwards Speed", -1);
         HopperSparkLeftCurrentSignal =new Signal("Hopper Spark Left Current","Amp");
