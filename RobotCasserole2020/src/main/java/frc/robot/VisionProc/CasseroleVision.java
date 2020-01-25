@@ -3,6 +3,8 @@ package frc.robot.VisionProc;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.lib.DataServer.Signal;
+import frc.robot.LoopTiming;
 
 public class CasseroleVision extends VisionCamera {
 
@@ -26,6 +28,12 @@ public class CasseroleVision extends VisionCamera {
     boolean targetVisible;
     boolean targetPosStable;
 
+    Signal targetAngleSignal;
+    Signal targetVisibleSignal;
+    Signal targetStableSignal;
+    Signal cameraFramerateSignal;
+    Signal cameraDurationSignal;
+
     boolean visionOnline;
     long visionUpdatedTime;
 
@@ -37,23 +45,42 @@ public class CasseroleVision extends VisionCamera {
         targetVisible_nt = table.getEntry("targetVisible");
         targetAngle_deg_nt = table.getEntry("targetAngle_deg");
         targetPosStable_nt = table.getEntry("targetPosStable");
+        targetAngleSignal= new Signal("Raspberry Pi Angle","deg");
+        targetVisibleSignal= new Signal("Raspberry Pi Visible Target","boolean");
+        targetStableSignal= new Signal("Raspberry Pi Stable Target","boolean");
+        cameraFramerateSignal= new Signal("Raspberry Pi Framerate","fps");
+        cameraDurationSignal= new Signal("Raspberry Pi Duration","sec");
     }
 
     @Override
     public void update() {
         //read values periodically
+        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
         proc_duration_sec = proc_duration_sec_nt.getDouble(-1.0);
         framerate_fps = framerate_fps_nt.getDouble(-1.0);
-        targetVisible = targetVisible_nt.getBoolean(false);
-        targetPosStable = targetPosStable_nt.getBoolean(false);
+        targetVisible = convertDoubletoBoolean(targetVisible_nt.getDouble(0.0));
+        targetPosStable = convertDoubletoBoolean(targetPosStable_nt.getDouble(0.0));
         targetAngle_deg = targetAngle_deg_nt.getDouble(-1.0);
         visionUpdatedTime = targetAngle_deg_nt.getLastChange();
+        targetAngleSignal.addSample(sampleTimeMs, targetAngle_deg);
+        targetVisibleSignal.addSample(sampleTimeMs, targetVisible);
+        targetStableSignal.addSample(sampleTimeMs, targetPosStable);
+        cameraFramerateSignal.addSample(sampleTimeMs, framerate_fps);
+        cameraDurationSignal.addSample(sampleTimeMs, proc_duration_sec);
         
         if(framerate_fps == -1.0){
             visionOnline = false;
             targetVisible = false;
         } else {
             visionOnline = true;
+        }
+    }
+
+    private boolean convertDoubletoBoolean(double inDouble){
+        if(inDouble==0){
+            return false;
+        }else{
+            return true;
         }
     }
 
@@ -81,7 +108,7 @@ public class CasseroleVision extends VisionCamera {
 
 	@Override
 	public boolean isTgtVisible() {
-		return targetVisible;
+	    return targetVisible;
 	}
 
 	@Override

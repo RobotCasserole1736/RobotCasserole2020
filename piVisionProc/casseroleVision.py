@@ -11,9 +11,9 @@ import time
 import sys
 
 import numpy as np
+import math
 import cv2
-
-import glob
+import picamera
 
 from PIL import Image
 
@@ -67,46 +67,6 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 
 
 ##############################################################################
-# Camera Calibrator
-##############################################################################
-class CameraParamGetter():
-    def calibrateToChess(self,inimg):
-        # termination criteria
-        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
-
-        # prepare object points, like (0,0,0), (1,0,0), (2,0,0) ....,(6,5,0)
-        objp = np.zeros((6*7,3), np.float32)
-        objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2)
-
-        # Arrays to store object points and image points from all the images.
-        objpoints = [] # 3d point in real world space
-        imgpoints = [] # 2d points in image plane.
-
-        images = glob.glob('*.jpg')
-        graysize=cv2.imread(images[0])
-
-        for fname in images:
-            img = cv2.imread(fname)
-            gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
-            # Find the chess board corners
-            ret, corners = cv2.findChessboardCorners(gray, (7,6),None)
-
-            # If found, add object points, image points (after refining them)
-            if ret == True:
-                objpoints.append(objp)
-
-                corners2 = cv2.cornerSubPix(gray,corners,(11,11),(-1,-1),criteria)
-                imgpoints.append(corners2)
-
-                # Draw and display the corners
-                img = cv2.drawChessboardCorners(img, (7,6), corners2,ret)
-                
-        ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, graysize.shape[::-1],None,None)       
-
-
-
-##############################################################################
 # Yearly Code
 ##############################################################################
 class VisionProcessor():
@@ -116,20 +76,28 @@ class VisionProcessor():
     ###################
     def init(self):
         self.debug=True
-        #self.camMatrix=np.
-        #self.distCoeffs=
+        self.camMatrix=np.array([[2.29925773e+03,0.00000000e+00,9.99462308e+02], [0.00000000e+00,2.25914533e+03,5.51498851e+02], [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
+        self.distCoeffs=np.array([[-4.15580768e-01,-4.63818812e-01,-4.28854580e-03,-5.07851815e-04,1.61811656e+00]])
 
         #Points of the Trapezoid
+        # self.ObjPoints=np.array([
+        #                     (0,0,0),
+        #                     (2,0,0),
+        #                     (11.1248,-15,0),
+        #                     (28.1252,-15,0),
+        #                     (37.25,0,0),
+        #                     (39.25,0,0),
+        #                     (29.4448,-17,0),
+        #                     (9.8051,-17,0)
+        #                     ],dtype=np.float64)
+
         self.ObjPoints=np.array([
                             (0,0,0),
-                            (2,0,0),
-                            (11.1248,-15,0),
-                            (28.1252,-15,0),
-                            (37.25,0,0),
                             (39.25,0,0),
                             (29.4448,-17,0),
                             (9.8051,-17,0)
                             ],dtype=np.float64)
+
 
         ###Ranges###
 
@@ -156,8 +124,21 @@ class VisionProcessor():
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
         filteredContours = self.filtercontours(contours, 100.0, 20.0, 1000.0)
         self.TargetDetection(filteredContours)
-        self.outputStr="{{{},{},{},{},{},{}}}\n".format(self.ret,self.angle,self.angle1,self.angle2,self.xval,self.yval)
-        return self.outputStr, self.maskoutput
+        self.updateTable()
+        if(self.debug):
+            self.outputStr="{{{},{},{},{},{},{}}}\n".format(self.ret,self.angle,self.angle1,self.angle2,self.xval,self.yval)
+            print(self.outputStr)
+        return self.maskoutput
+
+    ###################
+    # Main Process
+    ###################
+    def updateTable(self):
+        ntTable.putNumber("targetAngle_deg",self.angle1)
+        ntTable.putNumber("targetVisible",self.ret)
+        #TODO add stabilization
+        ntTable.putNumber("targetPosStable",True)
+
 
     ###################
     # Range Application
@@ -179,7 +160,7 @@ class VisionProcessor():
 
     def TargetDetection(self,contourinput):
 
-        self.ret="F"
+        self.ret=False
         self.angle=0
         self.angle1=0
         self.angle2=0
@@ -213,25 +194,21 @@ class VisionProcessor():
             
             ImgPoints=np.array([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]], dtype="double")
             #Actual Pnp algorithm, takes the points we calculated along with predefined points of target
-            # ____,rvec,tvec= cv2.solvePnP(self.ObjPoints,ImgPoints,self.camMatrix,self.distCoeffs)
+            ____,rvec,tvec= cv2.solvePnP(self.ObjPoints,ImgPoints,self.camMatrix,self.distCoeffs)
                 
             
-            # #othermatrix
-            # rvecmat=cv2.Rodrigues(rvec)[0]
-            # rvecmatinv=rvecmat.transpose()
-            # pzero_world=np.array(np.matmul(rvecmatinv,-tvec))
-            # self.angle2=math.atan2(pzero_world[0][0],pzero_world[2][0])
-            # ##Chooses the values we need for path planning
-            # distance = math.sqrt(tvec[0]**2 + tvec[2]**2)
-            # ##self.angle=(((lcoordflt[0]+rcoordflt[0])/2)-(self.w/2))/20
-            # self.angle1=(math.atan2(tvec[0], tvec[2]))
-            # self.ret="T"
-            # self.yaw=(str(rvec[2]).strip('[]'))
-            # self.xval=(str(tvec[2]).strip('[]'))
-            # self.yval=(str(tvec[0]).strip('[]'))
-            
-            # self.angle=((self.findCentroid([polygon]))-(self.w/2))/20
-
+            #othermatrix
+            rvecmat=cv2.Rodrigues(rvec)[0]
+            rvecmatinv=rvecmat.transpose()
+            pzero_world=np.array(np.matmul(rvecmatinv,-tvec))
+            self.angle2=math.atan2(pzero_world[0][0],pzero_world[2][0])
+            ##Chooses the values we need for path planning
+            distance = math.sqrt(tvec[0]**2 + tvec[2]**2)
+            self.angle1=(math.atan2(tvec[0], tvec[2]))
+            self.ret=True
+            self.yaw=(str(rvec[2]).strip('[]'))
+            self.xval=(str(tvec[2]).strip('[]'))
+            self.yval=(str(tvec[0]).strip('[]'))
 
 
     ###################
@@ -265,6 +242,15 @@ class VisionProcessor():
 # END OF YEARLY CODE
 ##############################################################################
 
+class cameraSettings():
+    def __init__(self):
+        camera=picamera.PiCamera()
+        print(camera._get_camera_settings())
+        camera.close()
+
+
+
+
 if __name__ == "__main__":
     global img
     img = None
@@ -273,8 +259,7 @@ if __name__ == "__main__":
     print("OpenCV Version: {}".format(cv2.__version__))
     print("numpy Version: {}".format(np.__version__))
 
-    #cap = cv2.VideoCapture('0')
-
+    doop = cameraSettings()
 
     # start NetworkTables
     ntinst = NetworkTablesInstance.getDefault()
@@ -284,13 +269,16 @@ if __name__ == "__main__":
 
     
     capture = cv2.VideoCapture(0)
-    capture.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    capture.set(cv2.CAP_PROP_SATURATION,0.2)
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    capture.set(cv2.CAP_PROP_FPS, 30)
+    capture.set(cv2.CAP_PROP_EXPOSURE,.0005)
+    capture.set(cv2.CAP_PROP_CONTRAST,1)
+    capture.set(cv2.CAP_PROP_SATURATION,1)
 
     
     try:
-        #server = ThreadedHTTPServer(('10.17.36.10', 5805), CamHandler)
+        #server = ThreadedHTTPServer(('10.17.36.11', 5805), CamHandler)
         server = ThreadedHTTPServer(('frcvision.local', 5805), CamHandler)
         t = threading.Thread(target=server.serve_forever)
         t.start()
@@ -307,8 +295,6 @@ if __name__ == "__main__":
     print("Vision Processing Starting..")
     Processor=VisionProcessor()
     Processor.init()
-    calibrator=CameraParamGetter()
-
     # loop forever
     while True:
         prev_cap_time = capture_time
@@ -320,11 +306,7 @@ if __name__ == "__main__":
             print("Bad Image Capture!")
             continue
         else:
-            
-            calibrator.calibrateToChess(cam_img)
-            consoleOutput, img = Processor.process(cam_img)
-            print(consoleOutput)
-            #TODO - image processing here
+            img = Processor.process(cam_img)
 
         proc_end_time = time.time_ns()/(10 ** 9)
         proc_time = proc_end_time - capture_time
