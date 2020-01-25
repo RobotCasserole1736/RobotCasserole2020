@@ -31,6 +31,11 @@ public class RobotConstants {
     static public final int CLIMBER_SPARK_LEFT_PDP_ID=2;
     static public final int CLIMBER_SPARK_RIGHT_PDP_ID=3;
     public static final int CONVEYOR_MOTOR_PDP_CHANNEL = 4;
+    
+    static public final int DRIVETRAIN_MOTOR_RIGHT_1 = 0;
+    static public final int DRIVETRAIN_MOTOR_RIGHT_2 = 1;
+    static public final int DRIVETRAIN_MOTOR_LEFT_1 = 2;
+    static public final int DRIVETRAIN_MOTOR_LEFT_2 = 3;
 
     //Digital IO
     static public final int VISON_LED_RING_PORT = 0;
