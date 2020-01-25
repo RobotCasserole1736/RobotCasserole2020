@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 
-    ledController.setPattern(LEDPatterns.Pattern2);
+    ledController.setPattern(LEDPatterns.Pattern0);
 
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(false);
@@ -188,6 +188,8 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logAutoPeriodic();
 
+    ledController.setPattern(LEDPatterns.Pattern2);
+
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(true);
     photonCannon.setPhotonCannonState(false);
@@ -199,6 +201,8 @@ public class Robot extends TimedRobot {
 
     shooterCtrl.update();
     intakeCtrl.update();
+
+    ledController.update();
 
     Drivetrain.getInstance().update();
     updateDriverView();
@@ -247,6 +251,7 @@ public class Robot extends TimedRobot {
     shooterCtrl.update();
     intakeCtrl.update();
     ctrlPanel.update();
+    ledController.update();
 
     if(Autonomous.getInstance().isActive()){
       //Nothing to do, expect that auto sequencer will provide drivetrain comands

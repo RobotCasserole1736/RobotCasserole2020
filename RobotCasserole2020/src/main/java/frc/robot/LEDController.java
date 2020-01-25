@@ -1,5 +1,4 @@
 package frc.robot;
-
 import edu.wpi.first.wpilibj.PWM;
 
 public class LEDController {
@@ -19,10 +18,10 @@ public class LEDController {
     }
 
     public enum LEDPatterns {
-        Pattern0(0), // "blue shooter"
-        Pattern1(1); // "red shooter"
-     /*   Pattern2(2), // "Running Lights [WHITE]"
-        Pattern3(3), // "Strobe [RED]"
+        Pattern0(0), // "panelYellow---disabled"
+        Pattern1(1), // "teleopBlue----teleop"
+        Pattern2(2); // "teleopRed-----auto"
+     /*   Pattern3(3), // "Strobe [RED]"
         Pattern4(4), // "Meteor Rain"
         Pattern5(5); // "Cyclon Bounce"
      */
@@ -53,11 +52,11 @@ public class LEDController {
             break;
             case Pattern1:
                 ctrl.setSpeed(1.0);
-/*
+
             break;
             case Pattern2:
                 ctrl.setSpeed(-1.0);
-
+/*
             break;
             case Pattern3:
                 ctrl.setSpeed(0.0);
