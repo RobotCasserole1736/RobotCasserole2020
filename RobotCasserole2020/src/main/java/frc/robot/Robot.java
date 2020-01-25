@@ -64,8 +64,6 @@ public class Robot extends TimedRobot {
   ControlPanelStateMachine ctrlPanel;
   LEDController ledController;
 
-
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~ Robot Init
@@ -151,7 +149,7 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 
-    ledController.setPattern(LEDPatterns.Pattern0);
+    ledController.setPattern(LEDPatterns.Pattern2);
 
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(false);
