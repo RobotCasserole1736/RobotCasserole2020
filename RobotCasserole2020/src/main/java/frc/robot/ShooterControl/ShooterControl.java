@@ -61,4 +61,6 @@ public abstract class ShooterControl {
     public abstract boolean isUnderLoad();
 
     public abstract double getSpeedRPM();
+
+    public abstract ShooterCtrlMode getShooterCtrlMode();
 }

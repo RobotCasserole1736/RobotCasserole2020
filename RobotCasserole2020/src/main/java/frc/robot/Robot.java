@@ -24,6 +24,7 @@ import frc.robot.VisionProc.VisionCamera;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.BallHandling.BallDistanceSensor;
 import frc.robot.BallHandling.Hopper;
+import frc.robot.BallHandling.IntakeControl;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;

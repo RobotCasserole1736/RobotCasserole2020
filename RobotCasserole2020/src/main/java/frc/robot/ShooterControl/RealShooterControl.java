@@ -220,4 +220,8 @@ public class RealShooterControl extends ShooterControl {
     public double getSpeedRPM(){
         return shooterActualSpeed_rpm;
     }
+
+    public ShooterCtrlMode getShooterCtrlMode(){
+        return currentStateShooter;
+    }
 }

@@ -35,4 +35,8 @@ public class ImaginaryShooterControl extends ShooterControl {
     public double getSpeedRPM() {
         return speed_rpm;
     }
+
+    public ShooterCtrlMode getShooterCtrlMode(){
+        return ShooterCtrlMode.Stop;
+    }
 }
