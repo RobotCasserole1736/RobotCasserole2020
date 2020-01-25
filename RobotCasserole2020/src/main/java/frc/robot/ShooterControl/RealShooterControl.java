@@ -32,8 +32,6 @@ public class RealShooterControl extends ShooterControl {
     double outputTime;
     double shooterActualSpeed_rpm;
 
-    Calibration shooterRPMSetpointFar;
-    Calibration shooterRPMSetpointClose;
     Calibration shooterMaxHoldErrorRPM;
 
     Calibration shooterMotorP_spoolup;

@@ -7,6 +7,8 @@
 
 package frc.robot.ShooterControl;
 
+import frc.lib.Calibration.Calibration;
+
 /**
  * Add your docs here.
  */
@@ -15,11 +17,14 @@ public class ImaginaryShooterControl extends ShooterControl {
     double speed_rpm = 0;
 
     public ImaginaryShooterControl() {
-
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 2000);
+        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 1500);
     }
 
     public void update() {
+        if(run == ShooterRunCommand.ShotClose){
 
+        }
     }
 
     public boolean isUnderLoad(){
