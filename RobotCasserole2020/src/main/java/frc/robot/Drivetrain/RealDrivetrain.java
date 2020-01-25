@@ -123,11 +123,11 @@ public class RealDrivetrain extends Drivetrain {
         currentR1Sig = new Signal("Right Master Moter Current", "Amps");
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
 
-        kP = new Calibration("Drivetrain P Value", 0.00);
+        kP = new Calibration("Drivetrain P Value", 0.005);
         kI = new Calibration("Drivetrain I Value", 0);
         kD = new Calibration("Drivetrain D Value", 0);
-        kFF = new Calibration("Drivetrain F Value", 0);
-        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 0.0);
+        kFF = new Calibration("Drivetrain F Value", 0.003);
+        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 0);
 
         
         dtLeftIntern.follow(dtLeftMaster);

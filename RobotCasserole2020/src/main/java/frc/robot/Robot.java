@@ -161,9 +161,9 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 
+
     BallDistanceSensor.getInstance().update();
 
-    
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(false);
     photonCannon.setPhotonCannonState(false);
@@ -174,7 +174,7 @@ public class Robot extends TimedRobot {
 
     ctrlPanel.update();
 
-    shooterCtrl.update();
+    //shooterCtrl.update();
     intakeCtrl.update();
 
     drivetrain.setOpenLoopCmd(0, 0);
@@ -215,7 +215,7 @@ public class Robot extends TimedRobot {
     auto.update();
 
     ctrlPanel.update();
-    shooterCtrl.update();
+    //shooterCtrl.update();
     hopper.update();
     intakeCtrl.update();
     climber.update();
@@ -264,7 +264,7 @@ public class Robot extends TimedRobot {
     auto.sampleOperatorCommands();
     auto.update();
 
-    shooterCtrl.update();
+    //shooterCtrl.update();
     intakeCtrl.update();
     climber.update();
     hopper.update();

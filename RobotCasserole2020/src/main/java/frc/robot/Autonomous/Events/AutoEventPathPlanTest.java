@@ -14,11 +14,11 @@ public class AutoEventPathPlanTest extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(11.0,   11.0,  Pathfinder.d2r(-60.0))
+        new Waypoint(20.0,   0.0,  Pathfinder.d2r(0.0))
     };
 
     public AutoEventPathPlanTest() {
-        driveForward = new PathPlannerAutoEvent(waypoints_ft, false);
+        driveForward = new PathPlannerAutoEvent(waypoints_ft, false, 3.0, 3.0);
     }
 
     @Override
