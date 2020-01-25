@@ -21,9 +21,10 @@ public class RobotConstants {
     public static final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
 
     //PWM Outputs
-    public static final int CONVEYOR_MOTOR = 0;
     static public final int INTAKE_MOTOR = 1;
     static public final int CLIMBER_SPARK_LEFT_ID=0;
+    public static final int CONVEYOR_MOTOR = 3;
+    static public final int LED_CONTROLLER_PORT = 9;
 
     //PDP Current Measurements 
     static public final int HOPPER_SPARK_LEFT_PDP_ID = 0;

@@ -1,9 +1,10 @@
-package frc.robot;
+package frc.robot.BallHandling;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
+import frc.robot.RobotConstants;
 
 public class IntakeControl {
 
@@ -104,4 +105,10 @@ public class IntakeControl {
 	public void setDesiredSpeed(IntakeSpeed des_spd){
 		spdState = des_spd;
 	}		//TODO
+
+	public void setPosMode(IntakePosition retracted) {
+	}
+
+	public void setSpeedMode(IntakeSpeed stop) {
+	}
 }

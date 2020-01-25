@@ -2,7 +2,6 @@ package frc.robot;
 
 import frc.robot.BallHandling.Conveyor;
 import frc.robot.BallHandling.Hopper;
-import frc.robot.BallHandling.Intake;
 import frc.robot.BallHandling.IntakeControl;
 import frc.robot.BallHandling.Conveyor.ConveyerOpMode;
 import frc.robot.BallHandling.Hopper.HopperOpMode;
