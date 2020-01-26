@@ -160,6 +160,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
+    int the_౫_variable = 5;
+
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 

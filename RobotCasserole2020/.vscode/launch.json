@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - testUnicode",
+      "request": "launch",
+      "mainClass": "frc.robot.testUnicode",
+      "projectName": "RobotCasserole2020"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - AutoEventCollectSteak",
       "request": "launch",
       "mainClass": "frc.robot.Autonomous.Events.AutoEventCollectSteak",

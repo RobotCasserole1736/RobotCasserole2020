@@ -186,3 +186,7 @@ task genMetaData(){
 // Add the file generation task to the standard build
 build.dependsOn genMetaData
 simulateExternalJava.dependsOn genMetaData
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
