@@ -34,7 +34,7 @@ public class DriverController {
     
     public static synchronized DriverController getInstance() {
 		if(instance == null)
-		instance = new DriverController();
+		    instance = new DriverController();
 		return instance;
 	}
 

@@ -131,7 +131,6 @@ public class CrashTracker {
                 writer.print("[" + getDateTimeString() + "]");
                 writer.print(" ");
                 writer.print(mark);
-                System.out.println(mark);
                 
 
                 if (nullableException != null) {
