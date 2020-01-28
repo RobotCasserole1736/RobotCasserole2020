@@ -13,34 +13,46 @@ import sys
 import numpy as np
 import math
 import cv2
-import os
 import picamera
-from imutils.video import VideoStream
-import imutils
-import picamera.array
 
 from PIL import Image
 
 from networktables import *
 import ntcore
 
-
+    
 import threading
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler,HTTPServer
 from socketserver import ThreadingMixIn
 
 from io import StringIO ## for Python 3
+import io
+
+import time
+import threading
 
 class CamHandler(BaseHTTPRequestHandler):
+    def stuff():
+        with picamera.PiCamera() as camera:
+            # set optional camera parameters (refer to PiCamera docs)
+            # for (arg, value) in kwargs.items():
+            #     setattr(camera, arg, value)
+
+            # initialize the stream
+            rawCapture = picamera.PiRGBArray(camera)
+            stream = camera.capture_continuous(rawCapture,
+                format="bgr", use_video_port=True)
+            return stream
+
     def do_GET(self):
         global img
         if self.path.endswith('.mjpg'):
             self.send_response(200)
-            self.send_header('Content-type', 'multipart/x-mixed-replace; boundary=--jpgboundary')
+            self.send_header('Content-type','multipart/x-mixed-replace; boundary=--jpgboundary')
             self.end_headers()
             while True:
                 try:
-                    if img is not None:
+                    if(img is not None):
                         ret, jpg = cv2.imencode('.jpg', img)
                         # print 'Compression ratio: %d4.0:1'%(compress(img.size,jpg.size))
                         self.wfile.write(b'--jpgboundary')
@@ -76,12 +88,10 @@ class VisionProcessor():
     #Init
     ###################
     def init(self):
-        self.debug = True
-        self.counter=0
-        #self.camMatrix = np.array([[2.29925773e+03,0.00000000e+00,9.99462308e+02], [0.00000000e+00,2.25914533e+03,5.51498851e+02], [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
-        self.camMatrix = np.array([[2306.29109, 0, 960], [0, 2305.12837, 540], [0, 0, 1]])
+        self.debug=True
+        self.camMatrix=np.array([[2.29925773e+03,0.00000000e+00,9.99462308e+02], [0.00000000e+00,2.25914533e+03,5.51498851e+02], [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
         #self.distCoeffs=np.array([[-4.15580768e-01,-4.63818812e-01,-4.28854580e-03,-5.07851815e-04,1.61811656e+00]])
-        self.distCoeffs = np.array([[-0.51752, 0.29812, -0.01135, -0.00401, 0.00000]])
+        self.distCoeffs=np.array([[ -0.51752,0.29812,-0.01135,-0.00401,0.00000 ]])
         #Points of the Trapezoid
         # self.ObjPoints=np.array([
         #                     (0,0,0),
@@ -94,24 +104,24 @@ class VisionProcessor():
         #                     (9.8051,-17,0)
         #                     ],dtype=np.float64)
 
-        self.ObjPoints = np.array([
-            (0, 0, 0),
-            (39.25, 0, 0),
-            (29.4448, -17, 0),
-            (9.8051, -17, 0)
-            ], dtype=np.float64)
+        self.ObjPoints=np.array([
+                            (0,0,0),
+                            (39.25,0,0),
+                            (29.4448,-17,0),
+                            (9.8051,-17,0)
+                            ],dtype=np.float64)
 
 
         ###Ranges###
 
         ##Test Vision Range
-        self.lowerBrightness = np.array([0, 0, 75])
-        self.upperBrightness = np.array([255, 255, 255])
+        self.lowerBrightness = np.array([0,0,75])
+        self.upperBrightness = np.array([255,255,255])
 
         ##I dont remember what these were for Range
         #lowerBrightness = np.array([70,0,150])
         #upperBrightness = np.array([100,200,255])
-
+        
         ##Standard Green Vision Tape Range
         #self.lowerBrightness=np.array([50,0,75])
         #self.upperBrightness=np.array([100,200,255])
@@ -122,28 +132,25 @@ class VisionProcessor():
     # Main Process
     ###################
     def process(self, inFrame):
-        self.inimg = inFrame
+        self.inimg=inFrame
         self.LightFilter()
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
         filteredContours = self.filtercontours(contours, 100.0, 20.0, 1000.0)
         self.TargetDetection(filteredContours)
         self.updateTable()
-        if self.debug:
-            self.outputStr = "{{{},{},{},{},{},{}}}\n".format(self.ret, self.angle, self.angle1, self.angle2, self.xval, self.yval)
-            print(self.outputStr)
-        if ntTable.getEntry("Take A Photo").value:
-            cv2.imwrite("Image"+str(self.counter), self.inimg)
-            self.counter+=1
+        if(self.debug):
+            self.outputStr="{{{},{},{},{},{},{}}}\n".format(self.ret,self.angle,self.angle1,self.angle2,self.xval,self.yval)
+            #print(self.outputStr)
         return self.maskoutput
 
     ###################
     # Main Process
     ###################
     def updateTable(self):
-        ntTable.putNumber("targetAngle_deg", self.angle1)
-        ntTable.putNumber("targetVisible", self.ret)
+        ntTable.putNumber("targetAngle_deg",self.angle1)
+        ntTable.putNumber("targetVisible",self.ret)
         #TODO add stabilization
-        ntTable.putNumber("targetPosStable", True)
+        ntTable.putNumber("targetPosStable",True)
 
 
     ###################
@@ -164,23 +171,23 @@ class VisionProcessor():
     # Target Detection
     ###################
 
-    def TargetDetection(self, contourinput):
+    def TargetDetection(self,contourinput):
 
-        self.ret = False
-        self.angle = 0
-        self.angle1 = 0
-        self.angle2 = 0
-        self.yaw = 0
-        self.xval = 0
-        self.yval = 0
+        self.ret=False
+        self.angle=0
+        self.angle1=0
+        self.angle2=0
+        self.yaw=0
+        self.xval=0
+        self.yval=0
 
         if contourinput:
             #get the largest contour
             polygon = sorted(contourinput, key=cv2.contourArea, reverse=True)[0]
 
             #Experimental Subpixel stuff
-            CornerIDs = self.cornerFinder(polygon)
-            corners = np.float32([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]])
+            CornerIDs=self.cornerFinder(polygon)
+            corners=np.float32([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]])
             criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.1)
             SC = cv2.cornerSubPix(self.mask, corners, (5,5), (-1,-1), criteria) 
             
@@ -194,27 +201,27 @@ class VisionProcessor():
                 cv2.circle(self.maskoutput,tuple(SC[1][0]),10,[0,200,0])
                 cv2.circle(self.maskoutput,tuple(SC[2][0]),10,[0,0,200])
                 cv2.circle(self.maskoutput,tuple(SC[3][0]),10,[100,100,100])
-
+                
             #Gets bottom, leftmost, topmost, and rightmost points of each contour
             #ImgPoints=np.array([approx[cornerIDs[0]],innerCornerList[innerCornerIDs[0]],innerCornerList[innerCornerIDs[3]],innerCornerList[innerCornerIDs[2]],innerCornerList[innerCornerIDs[1]],approx[cornerIDs[1]],approx[cornerIDs[2]],approx[cornerIDs[3]]], dtype="double")
-
-            ImgPoints = np.array([polygon[CornerIDs[0]], polygon[CornerIDs[1]], polygon[CornerIDs[2]], polygon[CornerIDs[3]]], dtype="double")
+            
+            ImgPoints=np.array([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]], dtype="double")
             #Actual Pnp algorithm, takes the points we calculated along with predefined points of target
-            _, rvec, tvec = cv2.solvePnP(self.ObjPoints, ImgPoints, self.camMatrix, self.distCoeffs)
-
-
+            ____,rvec,tvec= cv2.solvePnP(self.ObjPoints,ImgPoints,self.camMatrix,self.distCoeffs)
+                
+            
             #othermatrix
-            rvecmat = cv2.Rodrigues(rvec)[0]
-            rvecmatinv = rvecmat.transpose()
-            pzero_world = np.array(np.matmul(rvecmatinv, -tvec))
-            self.angle2 = np.degrees(math.atan2(pzero_world[0][0],pzero_world[2][0]))
+            rvecmat=cv2.Rodrigues(rvec)[0]
+            rvecmatinv=rvecmat.transpose()
+            pzero_world=np.array(np.matmul(rvecmatinv,-tvec))
+            self.angle2=math.atan2(pzero_world[0][0],pzero_world[2][0])
             ##Chooses the values we need for path planning
             distance = math.sqrt(tvec[0]**2 + tvec[2]**2)
-            self.angle1 =np.degrees((math.atan2(tvec[0], tvec[2])))
-            self.ret = True
-            self.yaw = (str(rvec[2]).strip('[]'))
-            self.xval = (str(tvec[2]).strip('[]'))
-            self.yval = (str(tvec[0]).strip('[]'))
+            self.angle1=(math.atan2(tvec[0], tvec[2]))
+            self.ret=True
+            self.yaw=(str(rvec[2]).strip('[]'))
+            self.xval=(str(tvec[2]).strip('[]'))
+            self.yval=(str(tvec[0]).strip('[]'))
 
 
     ###################
@@ -250,22 +257,23 @@ class VisionProcessor():
 
 class cameraSettings():
     def __init__(self):
-        global camera
         camera=picamera.PiCamera()
-        camera.resolution=(1920,1088)
-        # camera.framerate=30
-        # camera.rotation=0
-        # camera.saturation=100
-        # camera.brightness=30
-        # camera.contrast=100
-        # camera.sharpness=100
-        # camera.iso=100
-        # camera.awb_mode='off'
-        # camera.image_effect='none'
-        # camera.exposure_mode='off'
-        # camera.vflip=False
-        # camera.hflip=False
-        # camera.video_stabilization=False
+        camera.resolution=(1920,1080)
+        camera.framerate=30
+        camera.rotation=0
+        camera.saturation=100
+        camera.brightness=30
+        camera.contrast=100
+        camera.sharpness=100
+        camera.iso=100
+        camera.awb_mode='off'
+        camera.image_effect='none'
+        camera.exposure_mode='off'
+        camera.vflip=False
+        camera.hflip=False
+        camera.video_stabilization=False
+        print(camera.resolution)
+        camera.close()
         
 
 
@@ -273,7 +281,6 @@ class cameraSettings():
 
 if __name__ == "__main__":
     global img
-    global camera
     img = None
 
     print("Casserole Vision Processing starting")
@@ -286,12 +293,10 @@ if __name__ == "__main__":
     ntinst = NetworkTablesInstance.getDefault()
     print("Setting up NetworkTables client for team {}".format(1736))
     ntinst.startClientTeam(1736)
-    
 
 
     
     #capture = cv2.VideoCapture(0)
-    rawCapture=picamera.array.PiRGBArray(camera, size=(1920,1088))
     # capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
     # capture.set(cv2.CAP_PROP_FPS, 30)
@@ -307,42 +312,39 @@ if __name__ == "__main__":
         t.start()
         print("MJPEG Server Started")
     except KeyboardInterrupt:
-        capture.release()
+        #capture.release()
         server.socket.close()
 
     ntTable = NetworkTables.getTable("VisionData")
-
-    ONMATCH=ntTable.getEntry("InMatch").value
-    MATCHNUM=ntTable.getEntry("MatchNumber").value
-    if ONMATCH:
-        PATH=os.getcwd()
-        if not os.path.exists(MATCHNUM):
-            os.mkdir(MATCHNUM)
-            os.chdir(PATH+"//"+MATCHNUM)
 
     prev_cap_time = 0
     capture_time = 0
 
     print("Vision Processing Starting..")
-    Processor = VisionProcessor()
+    Processor=VisionProcessor()
     Processor.init()
     # loop forever
-    for frame in camera.capture_continuous(rawCapture, format="rgb"):
+    while True:
         prev_cap_time = capture_time
-        cam_img = frame.array
+        rc=True
+        cam_img = CamHandler.stuff()
         capture_time = time.time_ns()/(10 ** 9)
-
-
-        img = Processor.process(cam_img)
+        
+        if not rc:
+            img = None
+            print("Bad Image Capture!")
+            continue
+        else:
+            img = Processor.process(cam_img)
 
         proc_end_time = time.time_ns()/(10 ** 9)
         proc_time = proc_end_time - capture_time
         ntTable.putNumber("proc_duration_sec", proc_time)
         ntTable.putNumber("framerate_fps", 1.0/(capture_time - prev_cap_time))
-        
         time.sleep(0)
-        rawCapture.truncate(0)
-        print(1.0/(capture_time - prev_cap_time))
         
+
+
+
 
 
