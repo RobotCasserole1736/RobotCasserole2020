@@ -81,6 +81,7 @@ public class RealDrivetrain extends Drivetrain {
     Calibration kD;
     Calibration kFF;
     Calibration kPGyro;
+    Calibration currentLimit;
     boolean calsUpdated;
 
     
@@ -128,6 +129,7 @@ public class RealDrivetrain extends Drivetrain {
         kD = new Calibration("Drivetrain D Value", 0);
         kFF = new Calibration("Drivetrain F Value", 0.003);
         kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 0);
+        currentLimit = new Calibration("Drivetrain Per-Motor Smart Current Limit" , 60, 0, 100);
 
         
         dtLeftIntern.follow(dtLeftMaster);
@@ -190,7 +192,6 @@ public class RealDrivetrain extends Drivetrain {
 
             dtLPID.setReference(leftWheelSpeedDesiredRPM, ControlType.kVelocity);
             dtRPID.setReference(rightWheelSpeedDesiredRPM, ControlType.kVelocity);
-
         }
 
 
@@ -251,6 +252,12 @@ public class RealDrivetrain extends Drivetrain {
             dtRPID.setI(kI.get());
             dtRPID.setD(kD.get());
             dtRPID.setFF(kFF.get());
+
+            dtLeftMaster.setSmartCurrentLimit((int)currentLimit.get());
+            dtLeftIntern.setSmartCurrentLimit((int)currentLimit.get());
+            dtRightMaster.setSmartCurrentLimit((int)currentLimit.get());
+            dtRightIntern.setSmartCurrentLimit((int)currentLimit.get());
+
             calsUpdated = true;
         }
     }
