@@ -10,7 +10,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
     
     private double startAngle;
     private double desAngle;
-    private boolean weAreDone;
+    private boolean weAreDone = false;
     private double currentTime = 0.0;
     private double startTime = 0.0;
     private double elapsedTime = 0.0;

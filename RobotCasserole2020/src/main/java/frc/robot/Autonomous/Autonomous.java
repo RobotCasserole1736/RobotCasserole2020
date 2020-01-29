@@ -142,8 +142,6 @@ public class Autonomous {
         delayTime_s = 0; //Never delay while operator triggers auto modes
 
         //TODO - read driver & operator controls, and set the mode command to something meaningful
-        modeCmd = AutoMode.Inactive;
-        autoModeName = "Inactive";
 
         boolean tmp = DriverController.getInstance().getAutoHighGoalAlignDesired();
         if(tmp){
@@ -156,6 +154,8 @@ public class Autonomous {
             }
         } else {
             driverVisionAlignButtonReleased = true;
+            modeCmd = AutoMode.Inactive;
+            autoModeName = "Inactive";
         }
 
 
