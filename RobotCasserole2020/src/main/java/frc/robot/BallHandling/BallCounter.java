@@ -86,16 +86,22 @@ public class BallCounter {
         setConveyorDirection();
         
         if(curConveyorDirection == ConveyorDirection.Forward) {
-            if(curBallHeight != prevBallHeight || curConveyorDirection != prevConveyorDirection) {
-                if(curBallHeight == BallHeight.Apex){
-                    ballsInConveyor +=1 ;
+            if(curBallHeight != prevBallHeight) {
+                if(prevBallHeight == BallHeight.ShortButPresent && curBallHeight == BallHeight.Apex) {
+                    //When rolling into the conveyor the ball will go from short to apex
+                    if(curBallHeight == BallHeight.Apex){
+                        ballsInConveyor +=1;
+                    }
                 }
             }
                 
         }else if(curConveyorDirection == ConveyorDirection.Reverse) {
-                    if(curBallHeight != prevBallHeight || curConveyorDirection != prevConveyorDirection) {
-                        if(curBallHeight == BallHeight.Apex) {
-                            ballsInConveyor -= 1;
+                    if(curBallHeight != prevBallHeight) {
+                        if(prevBallHeight == BallHeight.Apex && curBallHeight == BallHeight.ShortButPresent) {  
+                            //When rolling out of the conveyor the ball will go from Apex to short  
+                            if(curBallHeight == BallHeight.Apex) {
+                                ballsInConveyor -= 1;
+                            }
                         }
                     }
         }   
