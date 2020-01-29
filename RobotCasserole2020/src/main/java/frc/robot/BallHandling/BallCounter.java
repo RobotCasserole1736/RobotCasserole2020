@@ -86,19 +86,19 @@ public class BallCounter {
         setConveyorDirection();
         
         if(curConveyorDirection == ConveyorDirection.Forward) {
-            if(curBallHeight != prevBallHeight) {
+            if(curBallHeight != prevBallHeight || curConveyorDirection != prevConveyorDirection) {
                 if(curBallHeight == BallHeight.Apex){
                     ballsInConveyor +=1 ;
+                }
             }
                 
         }else if(curConveyorDirection == ConveyorDirection.Reverse) {
-                    if(curBallHeight != prevBallHeight) {
+                    if(curBallHeight != prevBallHeight || curConveyorDirection != prevConveyorDirection) {
                         if(curBallHeight == BallHeight.Apex) {
                             ballsInConveyor -= 1;
+                        }
                     }
-                }
         }   
-        }
         prevBallHeight = curBallHeight;
         
         ballCountSig.addSample(sampleTimeMS, ballsInConveyor);
