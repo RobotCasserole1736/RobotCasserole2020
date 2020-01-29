@@ -157,5 +157,8 @@ public class Conveyor{
         // return true if the conveyor->shooter sensor sees a ball, false otherwise
         return shooterEndSensorTriggered;
     }
+    public ConveyerOpMode getOpMode() {
+        return opMode;
+    }
 
 }
