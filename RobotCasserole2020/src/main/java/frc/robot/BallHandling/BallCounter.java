@@ -18,7 +18,7 @@ import frc.lib.DataServer.Signal;
 
 public class BallCounter {
 
-    //State Data
+    double sampleTimeMS = 20;
     public enum BallHeight {
         Empty(0),
         ShortButPresent(1),
@@ -30,11 +30,26 @@ public class BallCounter {
             this.value = value;
         }
     }
+        public enum ConveyorDirection {
+            Stationary(0),
+            Forward(1),
+            Reverse(2);
+
+    
+            public final int value;
+    
+            private ConveyorDirection(int value) {
+                this.value = value;
+            }
+        }
 
     //State Data    
     int ballsInConveyor = 0;
     BallHeight curBallHeight;
     BallHeight prevBallHeight;
+
+    ConveyorDirection curConveyorDirection;
+    ConveyorDirection prevConveyorDirection;
 
     Double ballHeightIn;
 
@@ -57,6 +72,7 @@ public class BallCounter {
     }
     
     private BallCounter() {
+        
         ballMinThicknessCal = new Calibration("Ball Is too Short", 1);
         ballMaxThicknessCal = new Calibration("Thick Side of Ball", 5);
         
@@ -66,18 +82,29 @@ public class BallCounter {
 
     }
     public void update() {
+        setBallHeight();
+        setConveyorDirection();
         
-        if(curBallHeight != prevBallHeight) {
-            if(curBallHeight == BallHeight.Apex) {
-                ConveyerOpMode checkVal=Conveyor.getInstance().getOpMode();
-                if(checkVal == ConveyerOpMode.AdvanceFromHopper || checkVal == ConveyerOpMode.AdvanceToShooter || checkVal == ConveyerOpMode.InjectIntoShooter) {
+        if(curConveyorDirection == ConveyorDirection.Forward) {
+            if(curBallHeight != prevBallHeight) {
+                if(curBallHeight == BallHeight.Apex){
                     ballsInConveyor +=1 ;
-                }else if(checkVal == ConveyerOpMode.Reverse) {
-                    ballsInConveyor -= 1;
-                }
-
             }
+                
+        }else if(curConveyorDirection == ConveyorDirection.Reverse) {
+                    if(curBallHeight != prevBallHeight) {
+                        if(curBallHeight == BallHeight.Apex) {
+                            ballsInConveyor -= 1;
+                    }
+                }
+        }   
         }
+        prevBallHeight = curBallHeight;
+        
+        ballCountSig.addSample(sampleTimeMS, ballsInConveyor);
+        howFarFromSensorSig.addSample(sampleTimeMS, ballHeightIn);
+        whatHeightWeSaySig.addSample(sampleTimeMS, curBallHeight.value);
+  
     }
     public void setBallHeight() {
         ballHeightIn = BallDistanceSensor.getInstance().getDistance_in();
@@ -88,25 +115,21 @@ public class BallCounter {
         }else {
             curBallHeight = BallHeight.Empty;
         }
-
+    }
+    public void setConveyorDirection() {
+        ConveyerOpMode convOpMode = Conveyor.getInstance().getOpMode();
+        if(convOpMode == ConveyerOpMode.AdvanceFromHopper || convOpMode == ConveyerOpMode.AdvanceToShooter || convOpMode == ConveyerOpMode.InjectIntoShooter) {
+            curConveyorDirection = ConveyorDirection.Forward;
+        }else if(convOpMode == ConveyerOpMode.Reverse) {
+            curConveyorDirection = ConveyorDirection.Reverse;
+        }
 
     }
+
+
     public int getBallCount() {
         
         return ballsInConveyor;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+
