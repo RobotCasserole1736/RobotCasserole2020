@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.CasserolePDP;
 import frc.robot.RobotConstants;
+import frc.robot.Superstructure.SuperstructureOpMode;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import edu.wpi.first.hal.PDPJNI;
@@ -75,7 +76,6 @@ public class Conveyor{
         conveyorMotor = new Spark(RobotConstants.CONVEYOR_MOTOR);
         shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_DIO_PORT);
         intakeEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_INTAKE_DIO_PORT);
-        pdp = new PDPDataJNI();
 
         //Calibrations
         conveyorLoadingSpeedCal = new Calibration("Default Calibration for Loading from Hopper to Conveyor", 0.5);
@@ -97,22 +97,7 @@ public class Conveyor{
 
     public void update(){
         sampleSensors();
-        setOpMode(opMode);
-        
-        convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
-        motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
-        shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggered);
-        intakeEndSensorSig.addSample(sampleTimeMS, intakeEndSensorTriggered);
 
-    }
-
-    // Pass in the desired conveyer operational mode
-    // AdvanceFromHopper(1),  //Pull any available ball in from the hopper, no motion otherwise. Don't push any balls past the shooter sensor.
-    //     AdvanceToShooter(2),   //Run forward until the conveyor->shooter sensor sees the first ball, but no further.
-    //     InjectIntoSHooter(3),  //Run forward continuously, pushing balls up into the shooter wheel
-    //     Reverse(4); 
-    public void setOpMode(ConveyerOpMode opMode_in){
-        opMode = opMode_in;
         switch(opMode) {
             case Stop:
                 conveyorMotor.set(0);
@@ -144,9 +129,24 @@ public class Conveyor{
             break;
         }
         prevOpMode = opMode;
-    }
+        
+        convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
+        motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
+        shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggered);
+        intakeEndSensorSig.addSample(sampleTimeMS, intakeEndSensorTriggered);
 
     
+    }
+    public void setOpMode(ConveyerOpMode opMode_in) {
+        opMode_in = opMode;
+    }
+    
+
+    // Pass in the desired conveyer operational mode
+    // AdvanceFromHopper(1),  //Pull any available ball in from the hopper, no motion otherwise. Don't push any balls past the shooter sensor.
+    //     AdvanceToShooter(2),   //Run forward until the conveyor->shooter sensor sees the first ball, but no further.
+    //     InjectIntoSHooter(3),  //Run forward continuously, pushing balls up into the shooter wheel
+    //     Reverse(4); 
 
     public boolean getLowerSensorValue(){
         // return true if the hopper->conveyor sensor sees a ball, false otherwise
