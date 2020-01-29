@@ -21,3 +21,4 @@ jobs:
           cd RobotCasserole2020
           chmod +x ./gradlew
           ./gradlew build
+          du -h build/libs/RobotCasserole2020.jar
