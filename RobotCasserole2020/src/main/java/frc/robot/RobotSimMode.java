@@ -13,7 +13,7 @@ public class RobotSimMode{
     }
 
     private boolean runSim = false;
-    final boolean FORCE_SIM = true;
+    final boolean FORCE_SIM = false;
 
     private RobotSimMode(){
         runSim = FORCE_SIM || RobotBase.isSimulation();

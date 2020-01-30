@@ -61,7 +61,7 @@ import frc.robot.LoopTiming;
 public class CasseroleRIOLoadMonitor {
 	
 	/** Rate of update of the load variables in milliseconds. 1s should be enough? */
-	public static final int UPDATE_RATE_MS = 250;
+	public static final int UPDATE_RATE_MS = 1000;
 	
 	/** Overall (all-cpu) load percentage (non-idle time) */
 	public double totalCPULoadPct = 0;
@@ -123,7 +123,7 @@ public class CasseroleRIOLoadMonitor {
 	    
 	    //Set up thread properties and start it off
 	    monitorThread.setName("CasseroleRIOLoadMonitor");
-	    monitorThread.setPriority(Thread.MIN_PRIORITY+1);
+	    monitorThread.setPriority(Thread.MIN_PRIORITY);
 	    monitorThread.start();
 	}
 	

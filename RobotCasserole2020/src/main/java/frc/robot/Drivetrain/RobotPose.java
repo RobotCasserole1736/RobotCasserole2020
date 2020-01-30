@@ -80,16 +80,16 @@ public class RobotPose {
     public final double INIT_POSE_T = 90;
 
     //Robot State
-    double leftWheelSpeed_RPM;
-    double rightWheelSpeed_RPM;
-    double poseX = INIT_POSE_X;
-    double poseY = INIT_POSE_Y;
-    double poseT = INIT_POSE_T;
-    double delta_y_robot_ft;
-    double delta_x_robot_ft;
-    double delta_t_robot_deg;
-    double poseAngle = 0;
-    boolean angleAvail = false;
+    public double leftWheelSpeed_RPM;
+    public double rightWheelSpeed_RPM;
+    public double poseX = INIT_POSE_X;
+    public double poseY = INIT_POSE_Y;
+    public double poseT = INIT_POSE_T;
+    public double delta_y_robot_ft;
+    public double delta_x_robot_ft;
+    public double delta_t_robot_deg;
+    public double poseAngle = 0;
+    public boolean angleAvail = false;
 
     double desPoseX = INIT_POSE_X;
     double desPoseY = INIT_POSE_Y;
@@ -109,16 +109,9 @@ public class RobotPose {
     Signal ActX;
     Signal ActY;
     Signal ActT;
-
-    private static RobotPose instance = null;
-    public static synchronized RobotPose getInstance() {
-		if(instance == null)
-			instance = new RobotPose();
-        return instance;
-    }
     
 
-    private RobotPose() {
+    public RobotPose() {
         DesX = new Signal("botDesPoseX", "ft");
         DesY = new Signal("botDesPoseY", "ft");
         DesT = new Signal("botDesPoseT", "deg");
@@ -142,16 +135,15 @@ public class RobotPose {
     }
     
     
-
     public void setMeasuredPoseAngle(double poseAngle_in, boolean angleAvailable_in) {
          angleAvail = angleAvailable_in;
          poseAngle   = poseAngle_in ;
     }
 
     public void updateFieldPoseFromRobotMotion(double deltaX_in, double deltaY_in, double deltaT_in){
-        desPoseX = poseX + cos(poseT)*deltaX_in*delta_t_sec - sin(poseT)*deltaY_in*delta_t_sec;
-        desPoseY = poseY + sin(poseT)*deltaX_in*delta_t_sec + cos(poseT)*deltaY_in*delta_t_sec;
-        desPoseT = poseT + deltaT_in*delta_t_sec;
+        poseX += cos(poseT)*deltaX_in*delta_t_sec - sin(poseT)*deltaY_in*delta_t_sec;
+        poseY += sin(poseT)*deltaX_in*delta_t_sec + cos(poseT)*deltaY_in*delta_t_sec;
+        poseT += deltaT_in*delta_t_sec;
     }
 
     public double getRobotPoseAngleDeg(){
@@ -200,6 +192,12 @@ public class RobotPose {
         desPoseT = pose_angle_deg;
         leftWheelSpeed_RPM = 0;
         rightWheelSpeed_RPM = 0;
+    }
+
+    public void setDesiredPose(double x_ft, double y_ft, double pose_angle_deg){
+        desPoseX = x_ft;
+        desPoseY = y_ft;
+        desPoseT = pose_angle_deg;
     }
 
     private void updatePoseFromWheelSpeeds(){

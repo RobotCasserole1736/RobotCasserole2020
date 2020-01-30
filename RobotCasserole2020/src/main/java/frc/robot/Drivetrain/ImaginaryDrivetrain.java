@@ -16,8 +16,8 @@ public class ImaginaryDrivetrain extends Drivetrain{
     double ActRightRPM;
     double ActLeftRPM;
 
-    double desPoseAngle = RobotPose.getInstance().INIT_POSE_T;
-    double actPoseAngle = RobotPose.getInstance().INIT_POSE_T;
+    double desPoseAngle = 0;
+    double actPoseAngle = 0;
     boolean headingAvailable = false;
     boolean useHeadingCommand = false;
 
@@ -40,6 +40,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
         DesiredLeftSimRPM = new Signal("Drivetrain Sim Desired Left Speed", "RPM");
         DesiredPoseAngleDeg = new Signal("Drivetrain Sim Desired Pose Angle", "deg");
         ActualPoseAngleDeg = new Signal("Drivetrain Sim Actual Pose Angle", "deg");
+        dtPose = new RobotPose();
     }
 
     public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
@@ -61,7 +62,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
         opMode = opModeCmd;
 
         double angleErrCorrFactor  = 0;
-        actPoseAngle = RobotPose.getInstance().getRobotPoseAngleDeg();
+        actPoseAngle = dtPose.getRobotPoseAngleDeg();
 
         if(useHeadingCommand){
             angleErrCorrFactor = 0.5*(actPoseAngle - desPoseAngle); //Simple P control to correct for angle errors
@@ -78,11 +79,11 @@ public class ImaginaryDrivetrain extends Drivetrain{
             ActRightRPM = simMotor(ActRightRPM, DesRightRPM);
         } 
 
-        RobotPose.getInstance().setLeftMotorSpeed(ActLeftRPM + angleErrCorrFactor);
-        RobotPose.getInstance().setRightMotorSpeed(ActRightRPM - angleErrCorrFactor);
+        dtPose.setLeftMotorSpeed(ActLeftRPM + angleErrCorrFactor);
+        dtPose.setRightMotorSpeed(ActRightRPM - angleErrCorrFactor);
         
 
-        RobotPose.getInstance().update();
+        dtPose.update();
 
         double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
 
@@ -90,8 +91,8 @@ public class ImaginaryDrivetrain extends Drivetrain{
         ActualRightSimRPM.addSample(sampleTimeMs, ActRightRPM);
         DesiredLeftSimRPM.addSample(sampleTimeMs, DesLeftRPM);
         DesiredRightSimRPM.addSample(sampleTimeMs, DesRightRPM);
-        ActualPoseAngleDeg.addSample(sampleTimeMs, desPoseAngle);
-        DesiredPoseAngleDeg.addSample(sampleTimeMs, actPoseAngle);
+        ActualPoseAngleDeg.addSample(sampleTimeMs, actPoseAngle);
+        DesiredPoseAngleDeg.addSample(sampleTimeMs, desPoseAngle);
     }
 
     
@@ -135,11 +136,6 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     @Override
     public void setGyroLockCmd(double forwardReverseCmd) {
-        //TODO - maybe
-    }
-
-    @Override
-    public void setPositionCmd(double forwardReverseCmd, double angleError) {
         //TODO - maybe
     }
 
@@ -215,8 +211,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     @Override
     public void setInitialPose(double x_ft, double y_ft, double pose_angle_deg) {
-        RobotPose.getInstance().resetToPosition(x_ft, y_ft, pose_angle_deg);
-
+        dtPose.resetToPosition(x_ft, y_ft, pose_angle_deg);
     }
 
 }

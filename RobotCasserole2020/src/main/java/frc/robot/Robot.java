@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.lib.Calibration.CalWrangler;
@@ -20,11 +19,16 @@ import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
+import frc.robot.VisionProc.CasseroleVision;
+import frc.robot.VisionProc.VisionCamera;
 import frc.robot.Autonomous.Autonomous;
-import frc.robot.ControlPanel.CasseroleColorSensor;
+import frc.robot.BallHandling.BallDistanceSensor;
+import frc.robot.BallHandling.Hopper;
+import frc.robot.BallHandling.IntakeControl;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.LEDController.LEDPatterns;
 
 /**
@@ -52,14 +56,20 @@ public class Robot extends TimedRobot {
   Signal rioIsBrownoutSig;
   Signal rioCANBusUsagePctSig;
 
+  //Autonomous Control Utilities
+  Autonomous auto;
+
   //Sensors and Cameras and stuff, oh my!
-  JeVoisInterface jevois;
+  VisionCamera cam;
   PhotonCannonControl photonCannon;
   VisionLEDRingControl eyeOfVeganSauron;
 
   //Subsystems
+  Drivetrain drivetrain;
   ShooterControl shooterCtrl;
   IntakeControl intakeCtrl;
+  Hopper hopper;
+  Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
   LEDController ledController;
@@ -78,8 +88,8 @@ public class Robot extends TimedRobot {
     webserver = new CasseroleWebServer();
     wrangler = new CalWrangler();
     dataServer = CasseroleDataServer.getInstance();
-    jevois = JeVoisInterface.getInstance();
-    pdp = new PowerDistributionPanel(RobotConstants.POWER_DISTRIBUTION_PANEL_CANID);
+    cam = CasseroleVision.getInstance();
+    pdp = CasserolePDP.getInstance();
     loadMon= new CasseroleRIOLoadMonitor();
 
     /* Init local telemetry signals */
@@ -102,11 +112,15 @@ public class Robot extends TimedRobot {
 
     shooterCtrl = ShooterControl.getInstance();
 
-    Drivetrain.getInstance();
+    drivetrain = Drivetrain.getInstance();
 
-    Autonomous.getInstance();
+    auto = Autonomous.getInstance();
 
     intakeCtrl = IntakeControl.getInstance();
+
+    hopper = Hopper.getInstance();
+
+    climber= Climber.getInstance();
 
     loopTiming = LoopTiming.getInstance();
 
@@ -140,7 +154,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     CrashTracker.logDisabledInit();
     dataServer.logger.stopLogging();
-    Autonomous.getInstance().reset();
+    auto.reset();
 
   }
 
@@ -149,21 +163,26 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 
+
+    BallDistanceSensor.getInstance().update();
     ledController.setPattern(LEDPatterns.Pattern0);
 
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(false);
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
-
-    Autonomous.getInstance().sampleDashboardSelector();
+    cam.update();
+    
+    auto.sampleDashboardSelector();
 
     ctrlPanel.update();
 
-    shooterCtrl.update();
+    //shooterCtrl.update();
     intakeCtrl.update();
 
-    Drivetrain.getInstance().update();
+    drivetrain.setOpenLoopCmd(0, 0);
+    drivetrain.updateGains(false);
+    drivetrain.update();
 
     updateDriverView();
     telemetryUpdate();
@@ -179,8 +198,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     CrashTracker.logAutoInit();
     dataServer.logger.startLoggingAuto();
-    Autonomous.getInstance().sampleDashboardSelector();
-    Autonomous.getInstance().startSequencer(); // Actually trigger the start of whatever autonomous routine we're doing
+    auto.sampleDashboardSelector();
+    auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
   }
 
   @Override
@@ -194,17 +213,20 @@ public class Robot extends TimedRobot {
     eyeOfVeganSauron.setLEDRingState(true);
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
+    cam.update();
 
-    Autonomous.getInstance().update();
+    auto.update();
 
     ctrlPanel.update();
-
-    shooterCtrl.update();
+    //shooterCtrl.update();
+    hopper.update();
     intakeCtrl.update();
+    climber.update();
+
+    drivetrain.update();
 
     ledController.update();
 
-    Drivetrain.getInstance().update();
     updateDriverView();
     telemetryUpdate();
 
@@ -240,28 +262,30 @@ public class Robot extends TimedRobot {
       eyeOfVeganSauron.setLEDRingState(true);
     }
     photonCannon.update();
+    cam.update();
+
 
     thbbtbbtbbtbbt.update();
 
-    
+    auto.sampleOperatorCommands();
+    auto.update();
 
-    Autonomous.getInstance().sampleOperatorCommands();
-    Autonomous.getInstance().update();
-
-    shooterCtrl.update();
+    //shooterCtrl.update();
     intakeCtrl.update();
+    climber.update();
+    hopper.update();
     ctrlPanel.update();
     ledController.update();
 
-    if(Autonomous.getInstance().isActive()){
+    if(auto.isActive()){
       //Nothing to do, expect that auto sequencer will provide drivetrain comands
     } else {
       //Driver control in manual
-      Drivetrain.getInstance().setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
-                                              DriverController.getInstance().getRotateCmd());
+      drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
+                                DriverController.getInstance().getRotateCmd());
     }
-    Drivetrain.getInstance().update();
 
+    drivetrain.update();
 
     updateDriverView();
     telemetryUpdate();
@@ -279,7 +303,11 @@ public class Robot extends TimedRobot {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   private void initDriverView(){
+    CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
+    CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
+    CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
     CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
+    CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -289,7 +317,11 @@ public class Robot extends TimedRobot {
   }
 
   public void updateDriverView(){
-    CasseroleDriverView.setBoolean("Vision Camera Offline", !jevois.isVisionOnline());
+    CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
+    CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
+    CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
+    CasseroleDriverView.setBoolean("Vision Camera Offline", !cam.isVisionOnline());
+    CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setSoundWidget("High Ground Acqd",DriverStation.getInstance().isFMSAttached());
   }
 

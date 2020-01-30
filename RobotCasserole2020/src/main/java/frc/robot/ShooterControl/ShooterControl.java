@@ -7,6 +7,7 @@
 
 package frc.robot.ShooterControl;
 
+import frc.lib.Calibration.Calibration;
 import frc.robot.RobotSimMode;
 
 /**
@@ -25,9 +26,22 @@ public abstract class ShooterControl {
             this.value = value;
         }
     }
-    
 
-    boolean run;
+    public enum ShooterRunCommand {
+        ShotFar(0),   
+        ShotClose(1),  
+        Stop(2);
+
+        public final int value;
+        private ShooterRunCommand(int value) {
+            this.value = value;
+        }
+    }
+
+    ShooterRunCommand run;
+
+    Calibration shooterRPMSetpointFar;
+    Calibration shooterRPMSetpointClose;
 
     private static ShooterControl instance = null;
 	public static synchronized ShooterControl getInstance() {
@@ -42,11 +56,15 @@ public abstract class ShooterControl {
 		return instance;
     }
 
-    public void setRun(final boolean runCmd) {
+    public void setRun(ShooterRunCommand runCmd) {
         run = runCmd;
     }
 
     public abstract void update();
 
     public abstract boolean isUnderLoad();
+
+    public abstract double getSpeedRPM();
+
+    public abstract ShooterCtrlMode getShooterCtrlMode();
 }

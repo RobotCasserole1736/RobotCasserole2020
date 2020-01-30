@@ -21,8 +21,13 @@ package frc.lib.PathPlanner;
  */
 
 import frc.lib.AutoSequencer.AutoEvent;
+import frc.lib.Util.CrashTracker;
+import frc.robot.RobotConstants;
 import frc.robot.Drivetrain.Drivetrain;
-
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
+import jaci.pathfinder.modifiers.TankModifier;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -33,104 +38,71 @@ import edu.wpi.first.wpilibj.Timer;
 public class PathPlannerAutoEvent extends AutoEvent {
 
     /* Path planner wrapped by this auto event */
-    public FalconPathPlanner path;
-    private double[][] waypoints;
-    private double time_duration_s; 
+    private Waypoint[] waypoints;
     boolean pathCalculated = false;
     boolean reversed = false;
-    
+
     boolean done = false;
 
+    Trajectory trj_center;
+    Trajectory trj_left;
+    Trajectory trj_right;
+
     private int timestep;
-    private double taskRate = 0.02;
-    private final double DT_TRACK_WIDTH_FT = 25.0 / 12.0; //Width in Feet
+    private double taskRate = RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+    private final double DT_TRACK_WIDTH_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT; //Width in Feet
     
     //Special mode for supporting two-cube auto
     // Will lock-in a given heading at the start of the path execution,
     boolean useFixedHeadingMode = false;
     double userManualHeadingDesired = 0;
 
-    
-    /**
-     * Constructor. Set up the parameters of the planner here.
-     * 
-     * @param waypoints_in Set of x/y points which define the path the robot should take. In Inches.
-     * @param timeAllowed_in Number of seconds the path traversal should take. Must be long enough
-     *        to allow the path planner to output realistic speeds.         
-     */
-    public PathPlannerAutoEvent(double[][] waypoints_in, double timeAllowed_in) { 
-    	super();
-    	commonConstructor(waypoints_in, timeAllowed_in, false, 0.2, 0.5, 0.01, 0.9);
-    }
-    
-    /**
-     * Constructor. Set up the parameters of the planner here.
-     * 
-     * @param waypoints_in Set of x/y points which define the path the robot should take. Assumes Inches
-     * @param timeAllowed_in Number of seconds the path traversal should take. Must be long enough
-     *        to allow the path planner to output realistic speeds. 
-     * @param reversed set to True if you desire the robot to travel backward through the provided path        
-     */
-    public PathPlannerAutoEvent(double[][] waypoints_in, double timeAllowed_in, boolean reversed_in) {        
-    	super();
-    	commonConstructor(waypoints_in, timeAllowed_in, reversed_in, 0.2, 0.5, 0.01, 0.9);
+    double desStartX = 0;
+    double desStartY = 0;
+    double desStartT = 0;
 
+    public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in) {
+        commonConstructor(waypoints_in, reversed_in, 8.0, 6.0); //Default for max speed (ft/sec), and max accesl ()
     }
-    
-    
-    /**
-     * Constructor. Set up the parameters of the planner here.
-     * 
-     * @param waypoints_in Set of x/y points which define the path the robot should take. Assumes Inches
-     * @param timeAllowed_in Number of seconds the path traversal should take. Must be long enough
-     *        to allow the path planner to output realistic speeds. 
-     * @param reversed set to True if you desire the robot to travel backward through the provided path        
-     */
-    public PathPlannerAutoEvent(double[][] waypoints_in, double timeAllowed_in, boolean reversed_in, double alpha, double beta, double valpha, double vbeta) {        
-    	super();
-    	commonConstructor(waypoints_in, timeAllowed_in, reversed_in, alpha, beta, valpha, vbeta);
 
+    public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel){
+        commonConstructor(waypoints_in, reversed_in, maxVel, maxAccel);
     }
-    
-    private void commonConstructor(double[][] waypoints_in, double timeAllowed_in, boolean reversed_in, double alpha, double beta, double valpha, double vbeta) {
+
+    private void commonConstructor(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel) {
         waypoints = waypoints_in;
-        time_duration_s = timeAllowed_in;
         reversed = reversed_in;
         
-        if(reversed) {
-	        //Reflect all points across the origin. It is expected the user will provide the actual
-	        // waypoints to us. We will invert before sending to the pathPlanner (to satisfy its assumptions)
-	        // then re-invert as needed before sending to drivetrain.
-	        for(int ii = 0; ii < waypoints.length; ii++) {
-	        	for(int jj = 0; jj < waypoints[ii].length; jj++) {
-	        		waypoints[ii][jj] *= -1;
-	        	}
-	        }
-	   
-        }
-        
-        //Convert all waypoints from inches to ft
-        for(int ii = 0; ii < waypoints.length; ii++) {
-        	for(int jj = 0; jj < waypoints[ii].length; jj++) {
-        		waypoints[ii][jj] *= 1.0/12.0;
-        	}
-        }
-        
-        path = new FalconPathPlanner(waypoints);
-        pathCalculated = false;
-        
-        //Default alpha/beta
-		path.setPathAlpha(alpha);
-		path.setPathBeta(beta);
-		path.setVelocityAlpha(valpha);
-		path.setVelocityBeta(vbeta);
-		
-		if (pathCalculated == false) {
-            path.calculate(time_duration_s, taskRate, DT_TRACK_WIDTH_FT);
-            timestep = 0;
-            pathCalculated = true;
-		}
+        Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, 
+                                                         Trajectory.Config.SAMPLES_FAST, 
+                                                         taskRate, 
+                                                         maxVel, //Max Vel (ft/sec)
+                                                         maxAccel, //Max Accel (ft/sec2)
+                                                         180.0); //Max Jerk (ft/sec3)
 
+        if(reversed_in){
+            for(Waypoint wpt: waypoints){
+                wpt.x *= -1;
+                wpt.y *= -1;
+            }
+        }
+
+        try{
+            trj_center = Pathfinder.generate(waypoints, config);
+
+            //Transform robot center trajectory to left/right wheel velocities.
+            TankModifier modifier = new TankModifier(trj_center);
+            modifier.modify(DT_TRACK_WIDTH_FT);
+            trj_left  = modifier.getRightTrajectory();     // Get the Left Side  (Yes, pathplanner is inverted compared to what we want)
+            trj_right = modifier.getLeftTrajectory();      // Get the Right Side (Yes, pathplanner is inverted compared to what we want)
+        } catch(Exception e) {
+            CrashTracker.logGenericMessage("[Auto Path Planner]: Could not create auto path");
+            CrashTracker.logGenericMessage(e.toString());
+            trj_center = null;
+            trj_left = null;
+            trj_right = null;
+        }
+    
     }
     /**
      * On the first loop, calculates velocities needed to take the path specified. Later loops will
@@ -139,49 +111,66 @@ public class PathPlannerAutoEvent extends AutoEvent {
     double startTime = 0;
     double startPoseAngle = 0;
     public void userUpdate() {
-    	double tmp;
-        
-        //For _when_ loop timing isn't exact 20ms, and we need to skip setpoints,
-        // calculate the proper timestep based on FPGA timestamp.
-        tmp = (Timer.getFPGATimestamp()-startTime)/taskRate;
-        timestep = (int) Math.round(tmp);
-        
-        if(timestep >= path.numFinalPoints) {
-        	timestep = (int) (path.numFinalPoints - 1);
-        	done = true;
-        }
-        
-        //Be sure we skip the first timestep. The planner produces a bogus all-zeros point for it
-        if (timestep == 0) {
-        	timestep = 1;
+
+        if(trj_center == null){
+            done = true;
+            return; //no path, nothing to do.
         }
 
+        //For _when_ loop timing isn't exact 20ms, and we need to skip setpoints,
+        // calculate the proper timestep based on FPGA timestamp.
+        double tmp = (Timer.getFPGATimestamp()-startTime)/taskRate;
+        timestep = (int) Math.round(tmp);
         
-        //Interpret the path planner outputs into commands which are meaningful.
-        double leftCommand_RPM  = 0;
-        double rightCommand_RPM = 0;
-        double poseCommand_deg  = 0;
-        
-        if(reversed) {
-        	//When running in reversed mode, we need to undo the inversion applied to the 
-        	// the waypoints.
-            leftCommand_RPM  = -1*FT_PER_SEC_TO_WHEEL_RPM(path.smoothRightVelocity[timestep][1]);
-            rightCommand_RPM = -1*FT_PER_SEC_TO_WHEEL_RPM(path.smoothLeftVelocity[timestep][1]);
-        } else {
-            leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(path.smoothLeftVelocity[timestep][1]);
-            rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(path.smoothRightVelocity[timestep][1]); 
+        int maxTimestep = trj_center.length();
+
+        if(timestep >= maxTimestep) {
+            timestep = (maxTimestep - 1);
+            done = true;
         }
-        poseCommand_deg  = (path.heading[timestep][1]-90.0) + startPoseAngle;
+
+        if(timestep == 0){
+            timestep = 1; //Again, for some weird reason, step 0 is bogus?
+        }
+
+        double leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(trj_left.get(timestep).velocity);
+        double rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(trj_right.get(timestep).velocity); 
+        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading));
+        double desX = trj_center.get(timestep).y; //Hurray for subtle and undocumented reference frame conversions.
+        double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
+        double desT = Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading);
         
+        //UMMMM I guess pathplanner freaks out every now and then?
+        if(poseCommand_deg > 180.0){
+            poseCommand_deg -= 360.0;
+        } else if (poseCommand_deg < -180.0 ) {
+            poseCommand_deg += 360.0;
+        }
+
+        if(reversed){
+            leftCommand_RPM  *= -1;
+            rightCommand_RPM *= -1;
+
+            double tmpSpdCmd = leftCommand_RPM;
+            leftCommand_RPM = rightCommand_RPM;
+            rightCommand_RPM = tmpSpdCmd;
+
+            desX *= -1;
+            desY *= -1;
+        }
+
+        //Rotate to the reference frame where we started the path plan event
+        poseCommand_deg += startPoseAngle;
+
         if(useFixedHeadingMode) {
             Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, userManualHeadingDesired);
         } else {
             Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, poseCommand_deg);
         }
 
-        Drivetrain.getInstance().autoTimestamp = timestep;
-        Drivetrain.getInstance().leftAutoCmdFtPerSec = path.smoothLeftVelocity[timestep][1];
-        Drivetrain.getInstance().rightAutoCmdFtPerSec = path.smoothRightVelocity[timestep][1];
+        Drivetrain.getInstance().dtPose.setDesiredPose( desX + desStartX, 
+                                                        desY + desStartY, 
+                                                        desT + desStartT);
     }
 
 
@@ -189,7 +178,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
      * Force both sides of the drivetrain to zero
      */
     public void userForceStop() {
-    	Drivetrain.getInstance().setOpenLoopCmd(0, 0);
+        Drivetrain.getInstance().setOpenLoopCmd(0, 0);
     }
 
 
@@ -213,27 +202,24 @@ public class PathPlannerAutoEvent extends AutoEvent {
      * without the pathplanner's knowledge.
      */
     public void setDesiredHeadingOverride(double heading) {
-    	userManualHeadingDesired = heading;
-    	useFixedHeadingMode = true;
+        userManualHeadingDesired = heading;
+        useFixedHeadingMode = true;
     }
 
 
-	@Override
-	public void userStart() {
-		if (pathCalculated == false) {
-            path.calculate(time_duration_s, taskRate, DT_TRACK_WIDTH_FT);
-            timestep = 0;
-            pathCalculated = true;
-		}
-		
+    @Override
+    public void userStart() {
         startTime = Timer.getFPGATimestamp();
         startPoseAngle = Drivetrain.getInstance().getGyroAngle();
+        desStartX      = Drivetrain.getInstance().dtPose.poseX;
+        desStartY      = Drivetrain.getInstance().dtPose.poseY;
+        desStartT      = Drivetrain.getInstance().dtPose.poseT;
         done = false;
-	}
-	
-	private double FT_PER_SEC_TO_WHEEL_RPM(double ftps_in) {
-		return ftps_in / (2*Math.PI*Drivetrain.WHEEL_ROLLING_RADIUS_FT) * 60;
-	} 
+    }
+    
+    private double FT_PER_SEC_TO_WHEEL_RPM(double ftps_in) {
+        return ftps_in / (2*Math.PI*Drivetrain.WHEEL_ROLLING_RADIUS_FT) * 60;
+    } 
 
 
 }

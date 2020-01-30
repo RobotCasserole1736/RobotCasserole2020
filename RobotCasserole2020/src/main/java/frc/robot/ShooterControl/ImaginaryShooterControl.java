@@ -7,19 +7,38 @@
 
 package frc.robot.ShooterControl;
 
+import frc.lib.Calibration.Calibration;
+import frc.robot.RobotConstants;
+
 /**
  * Add your docs here.
  */
 public class ImaginaryShooterControl extends ShooterControl {
 
     double speed_rpm = 0;
+    double des_speed_rpm = 0;
+    final double SHOOTER_ACCEL_RPM_PER_SEC = 500;
+    final double SHOOTER_DECEL_RPM_PER_SEC = 200;
 
     public ImaginaryShooterControl() {
-
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 2000);
+        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 1500);
     }
 
     public void update() {
+        if(run == ShooterRunCommand.ShotClose){
+            des_speed_rpm = shooterRPMSetpointClose.get();
+        } else if (run == ShooterRunCommand.ShotFar){
+            des_speed_rpm = shooterRPMSetpointFar.get();
+        } else {
+            des_speed_rpm = 0;
+        }
 
+        if(speed_rpm < des_speed_rpm){
+            speed_rpm += SHOOTER_ACCEL_RPM_PER_SEC*RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+        } else if(speed_rpm > des_speed_rpm){
+            speed_rpm -= SHOOTER_DECEL_RPM_PER_SEC*RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+        }
     }
 
     public boolean isUnderLoad(){
@@ -29,5 +48,14 @@ public class ImaginaryShooterControl extends ShooterControl {
 
     public double getSpeed_rpm(){
         return speed_rpm;
+    }
+
+    @Override
+    public double getSpeedRPM() {
+        return speed_rpm;
+    }
+
+    public ShooterCtrlMode getShooterCtrlMode(){
+        return ShooterCtrlMode.Stop;
     }
 }

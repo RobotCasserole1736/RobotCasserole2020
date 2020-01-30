@@ -33,6 +33,11 @@ public class PneumaticsControl {
     Signal pressSwVallSig;
     Signal compCurrent;
 
+
+    double v_supplied=5;
+    double p_min=0;
+    double p_max=150;
+
     double curPressurePSI;
 
     /* Singelton Stuff */
@@ -57,8 +62,15 @@ public class PneumaticsControl {
 
     public void update(){
         double voltage = pressureSensor.getVoltage();
+
         //  curPressurePSI = ((voltage/5.0)-0.1)*(150/0.8); /*Equation derived from datasheet old sensor */
-        curPressurePSI = (250*(voltage/4.62)-25);
+        //  curPressurePSI = (250*(voltage/4.62)-25);       /*Equation derived from datasheet old sensor */
+        //  curPressurePSI=(((p_max-p_min)*(1-(0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)))+p_min;  /* actual equation but pmin is zero so we can simplify */
+        if(voltage >= 0.001){
+            curPressurePSI=(((p_max-(p_max*0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)));
+        } else {
+            curPressurePSI = 0;//meh, should never happen physically
+        }
 
         if(DriverController.getInstance().getCompressorDisableReq()){
             this.stop();
