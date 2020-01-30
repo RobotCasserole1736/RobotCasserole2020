@@ -75,7 +75,7 @@ public class DriverController {
      * @return 1.0 for full forward, -1.0 for full reverse
      */
     public double getFwdRevCmd(){
-        return Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft),3.0, 0.15); 
+        return Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.15); 
     }
 
         /**
@@ -83,7 +83,7 @@ public class DriverController {
      * @return -1.0 for clockwise, 1.0 for counter-clockwise
      */
     public double getRotateCmd(){
-        return Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 3.0, 0.15); 
+        return Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 5.0, 0.15); 
     }
 
     public boolean getAutoHighGoalAlignDesired(){
