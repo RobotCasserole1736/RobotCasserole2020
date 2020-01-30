@@ -102,7 +102,7 @@ public class RealDrivetrain extends Drivetrain {
         dtLeftMaster.setIdleMode(IdleMode.kCoast);
         dtLeftIntern.setIdleMode(IdleMode.kCoast);
         dtRightMaster.setIdleMode(IdleMode.kCoast);
-        dtRightMaster.setIdleMode(IdleMode.kCoast);
+        dtRightIntern.setIdleMode(IdleMode.kCoast);
 
 
         dtLeftMaster.getEncoder().setVelocityConversionFactor(RobotConstants.DRIVETRAIN_GEAR_RATIO);

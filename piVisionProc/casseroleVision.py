@@ -13,33 +13,30 @@ import sys
 import numpy as np
 import math
 import cv2
-import picamera
+import os
 
 from PIL import Image
 
 from networktables import *
 import ntcore
 
-    
+
 import threading
-from http.server import BaseHTTPRequestHandler,HTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
 from socketserver import ThreadingMixIn
 
 from io import StringIO ## for Python 3
-
-import time
-import threading
 
 class CamHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         global img
         if self.path.endswith('.mjpg'):
             self.send_response(200)
-            self.send_header('Content-type','multipart/x-mixed-replace; boundary=--jpgboundary')
+            self.send_header('Content-type', 'multipart/x-mixed-replace; boundary=--jpgboundary')
             self.end_headers()
             while True:
                 try:
-                    if(img is not None):
+                    if img is not None:
                         ret, jpg = cv2.imencode('.jpg', img)
                         # print 'Compression ratio: %d4.0:1'%(compress(img.size,jpg.size))
                         self.wfile.write(b'--jpgboundary')
@@ -75,10 +72,12 @@ class VisionProcessor():
     #Init
     ###################
     def init(self):
-        self.debug=True
-        self.camMatrix=np.array([[2.29925773e+03,0.00000000e+00,9.99462308e+02], [0.00000000e+00,2.25914533e+03,5.51498851e+02], [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
-        self.distCoeffs=np.array([[-4.15580768e-01,-4.63818812e-01,-4.28854580e-03,-5.07851815e-04,1.61811656e+00]])
-
+        self.debug = True
+        self.counter=0
+        #self.camMatrix = np.array([[2.29925773e+03,0.00000000e+00,9.99462308e+02], [0.00000000e+00,2.25914533e+03,5.51498851e+02], [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
+        self.camMatrix = np.array([[2306.29109, 0, 960], [0, 2305.12837, 540], [0, 0, 1]])
+        #self.distCoeffs=np.array([[-4.15580768e-01,-4.63818812e-01,-4.28854580e-03,-5.07851815e-04,1.61811656e+00]])
+        self.distCoeffs = np.array([[-0.51752, 0.29812, -0.01135, -0.00401, 0.00000]])
         #Points of the Trapezoid
         # self.ObjPoints=np.array([
         #                     (0,0,0),
@@ -91,27 +90,35 @@ class VisionProcessor():
         #                     (9.8051,-17,0)
         #                     ],dtype=np.float64)
 
-        self.ObjPoints=np.array([
-                            (0,0,0),
-                            (39.25,0,0),
-                            (29.4448,-17,0),
-                            (9.8051,-17,0)
-                            ],dtype=np.float64)
+        # self.ObjPoints = np.array([
+        #     (0, 0, 0),
+        #     (39.25, 0, 0),
+        #     (29.4448, -17, 0),
+        #     (9.8051, -17, 0)
+        #     ], dtype=np.float64)
+
+        self.ObjPoints = np.array([
+            (-19.625, 0, 0),
+            (19.625, 0, 0),
+            (9.8198, -17, 0),
+            (-9.8198, -17, 0)
+            ], dtype=np.float64)
+
 
 
         ###Ranges###
 
         ##Test Vision Range
-        self.lowerBrightness = np.array([0,0,75])
-        self.upperBrightness = np.array([255,255,255])
+        # self.lowerBrightness = np.array([0, 0, 75])
+        # self.upperBrightness = np.array([255, 255, 255])
 
         ##I dont remember what these were for Range
         #lowerBrightness = np.array([70,0,150])
         #upperBrightness = np.array([100,200,255])
-        
+
         ##Standard Green Vision Tape Range
-        #self.lowerBrightness=np.array([50,0,75])
-        #self.upperBrightness=np.array([100,200,255])
+        self.lowerBrightness=np.array([30,50,150])
+        self.upperBrightness=np.array([70,255,255])
 
 
 
@@ -119,25 +126,28 @@ class VisionProcessor():
     # Main Process
     ###################
     def process(self, inFrame):
-        self.inimg=inFrame
+        self.inimg = inFrame
         self.LightFilter()
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
-        filteredContours = self.filtercontours(contours, 100.0, 20.0, 1000.0)
+        filteredContours = self.filtercontours(contours, 100.0, 20.0, math.inf)
         self.TargetDetection(filteredContours)
         self.updateTable()
-        if(self.debug):
-            self.outputStr="{{{},{},{},{},{},{}}}\n".format(self.ret,self.angle,self.angle1,self.angle2,self.xval,self.yval)
+        if self.debug:
+            self.outputStr = "{{{},{},{},{},{},{}}}\n".format(self.ret, self.angle, self.angle1, self.angle2, self.xval, self.yval)
             print(self.outputStr)
+        if ntTable.getEntry("Take A Photo").value:
+            cv2.imwrite("Image"+str(self.counter), self.inimg)
+            self.counter+=1
         return self.maskoutput
 
     ###################
     # Main Process
     ###################
     def updateTable(self):
-        ntTable.putNumber("targetAngle_deg",self.angle1)
-        ntTable.putNumber("targetVisible",self.ret)
+        ntTable.putNumber("targetAngle_deg", self.angle1)
+        ntTable.putNumber("targetVisible", self.ret)
         #TODO add stabilization
-        ntTable.putNumber("targetPosStable",True)
+        ntTable.putNumber("targetPosStable", True)
 
 
     ###################
@@ -158,23 +168,23 @@ class VisionProcessor():
     # Target Detection
     ###################
 
-    def TargetDetection(self,contourinput):
+    def TargetDetection(self, contourinput):
 
-        self.ret=False
-        self.angle=0
-        self.angle1=0
-        self.angle2=0
-        self.yaw=0
-        self.xval=0
-        self.yval=0
+        self.ret = False
+        self.angle = 0
+        self.angle1 = 0
+        self.angle2 = 0
+        self.yaw = 0
+        self.xval = 0
+        self.yval = 0
 
         if contourinput:
             #get the largest contour
             polygon = sorted(contourinput, key=cv2.contourArea, reverse=True)[0]
 
             #Experimental Subpixel stuff
-            CornerIDs=self.cornerFinder(polygon)
-            corners=np.float32([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]])
+            CornerIDs = self.cornerFinder(polygon)
+            corners = np.float32([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]])
             criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.1)
             SC = cv2.cornerSubPix(self.mask, corners, (5,5), (-1,-1), criteria) 
             
@@ -184,31 +194,32 @@ class VisionProcessor():
                 cv2.circle(self.maskoutput,tuple(polygon[CornerIDs[1]][0]),10,[0,255,0])
                 cv2.circle(self.maskoutput,tuple(polygon[CornerIDs[2]][0]),10,[0,0,255])
                 cv2.circle(self.maskoutput,tuple(polygon[CornerIDs[3]][0]),10,[128,128,128])
-                cv2.circle(self.maskoutput,tuple(SC[0][0]),10,[200,0,0])
-                cv2.circle(self.maskoutput,tuple(SC[1][0]),10,[0,200,0])
-                cv2.circle(self.maskoutput,tuple(SC[2][0]),10,[0,0,200])
-                cv2.circle(self.maskoutput,tuple(SC[3][0]),10,[100,100,100])
-                
+                cv2.drawContours(self.maskoutput,[polygon], -1, (0,255,0), 3)
+                # cv2.circle(self.maskoutput,tuple(SC[0][0]),10,[200,0,0])
+                # cv2.circle(self.maskoutput,tuple(SC[1][0]),10,[0,200,0])
+                # cv2.circle(self.maskoutput,tuple(SC[2][0]),10,[0,0,200])
+                # cv2.circle(self.maskoutput,tuple(SC[3][0]),10,[100,100,100])
+
             #Gets bottom, leftmost, topmost, and rightmost points of each contour
-            #ImgPoints=np.array([approx[cornerIDs[0]],innerCornerList[innerCornerIDs[0]],innerCornerList[innerCornerIDs[3]],innerCornerList[innerCornerIDs[2]],innerCornerList[innerCornerIDs[1]],approx[cornerIDs[1]],approx[cornerIDs[2]],approx[cornerIDs[3]]], dtype="double")
-            
-            ImgPoints=np.array([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]], dtype="double")
+
+            #ImgPoints = np.array([polygon[CornerIDs[0]], polygon[CornerIDs[1]], polygon[CornerIDs[2]], polygon[CornerIDs[3]]], dtype="double")
+            ImgPoints = np.array([SC[0], SC[1], SC[2], SC[3]], dtype="double")
             #Actual Pnp algorithm, takes the points we calculated along with predefined points of target
-            ____,rvec,tvec= cv2.solvePnP(self.ObjPoints,ImgPoints,self.camMatrix,self.distCoeffs)
-                
-            
+            _, rvec, tvec = cv2.solvePnP(self.ObjPoints, ImgPoints, self.camMatrix, self.distCoeffs)
+
+
             #othermatrix
-            rvecmat=cv2.Rodrigues(rvec)[0]
-            rvecmatinv=rvecmat.transpose()
-            pzero_world=np.array(np.matmul(rvecmatinv,-tvec))
-            self.angle2=math.atan2(pzero_world[0][0],pzero_world[2][0])
+            rvecmat = cv2.Rodrigues(rvec)[0]
+            rvecmatinv = rvecmat.transpose()
+            pzero_world = np.array(np.matmul(rvecmatinv, -tvec))
+            self.angle2 = np.degrees(math.atan2(pzero_world[0][0],pzero_world[2][0]))
             ##Chooses the values we need for path planning
             distance = math.sqrt(tvec[0]**2 + tvec[2]**2)
-            self.angle1=(math.atan2(tvec[0], tvec[2]))
-            self.ret=True
-            self.yaw=(str(rvec[2]).strip('[]'))
-            self.xval=(str(tvec[2]).strip('[]'))
-            self.yval=(str(tvec[0]).strip('[]'))
+            self.angle1 = np.degrees((math.atan2(tvec[0], tvec[2])))
+            self.ret = True
+            self.yaw = (str(rvec[2]).strip('[]'))
+            self.xval = (str(tvec[2]).strip('[]'))
+            self.yval = (str(tvec[0]).strip('[]'))
 
 
     ###################
@@ -244,10 +255,45 @@ class VisionProcessor():
 
 class cameraSettings():
     def __init__(self):
-        camera=picamera.PiCamera()
-        print(camera._get_camera_settings())
-        camera.close()
+        cmdStart="v4l2-ctl --set-ctrl "
+        #Turns off Auto setting that would change the ones we put in place
+        os.system(cmdStart+"auto_exposure=1")
+        os.system(cmdStart+"white_balance_auto_preset=0")
 
+        #User Controls
+        os.system(cmdStart+"brightness=30")
+        os.system(cmdStart+"contrast=100")
+        os.system(cmdStart+"saturation=100")
+        os.system(cmdStart+"red_balance=1000")
+        os.system(cmdStart+"blue_balance=1000")
+        os.system(cmdStart+"horizontal_flip=0")
+        os.system(cmdStart+"vertical_flip=0")
+        os.system(cmdStart+"power_line_frequency=2")
+        os.system(cmdStart+"sharpness=100")
+        os.system(cmdStart+"color_effects=0")
+        os.system(cmdStart+"rotate=0")
+        os.system(cmdStart+"color_effects_cbcr=32896")
+
+        #Codec Controls
+        os.system(cmdStart+"video_bitrate_mode=1")
+        os.system(cmdStart+"video_bitrate=25000000")
+        os.system(cmdStart+"repeat_sequence_header=0")
+        os.system(cmdStart+"h264_i_frame_period=60")
+        os.system(cmdStart+"h264_level=11")
+        os.system(cmdStart+"h264_profile=4")
+
+        #Camera Controls
+        os.system(cmdStart+"exposure_time_absolute=6")
+        os.system(cmdStart+"exposure_dynamic_framerate=0")
+        os.system(cmdStart+"auto_exposure_bias=12")
+        os.system(cmdStart+"image_stabilization=0")
+        os.system(cmdStart+"iso_sensitivity=0")
+        os.system(cmdStart+"iso_sensitivity_auto=0")
+        os.system(cmdStart+"exposure_metering_mode=0")
+        os.system(cmdStart+"scene_mode=0")
+
+        #JPEG Compression controls
+        os.system(cmdStart+"compression_quality=100")
 
 
 
@@ -259,22 +305,19 @@ if __name__ == "__main__":
     print("OpenCV Version: {}".format(cv2.__version__))
     print("numpy Version: {}".format(np.__version__))
 
-    doop = cameraSettings()
+    cameraSettings()
 
     # start NetworkTables
     ntinst = NetworkTablesInstance.getDefault()
     print("Setting up NetworkTables client for team {}".format(1736))
     ntinst.startClientTeam(1736)
+    
 
 
     
     capture = cv2.VideoCapture(0)
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-    capture.set(cv2.CAP_PROP_FPS, 30)
-    capture.set(cv2.CAP_PROP_EXPOSURE,.0005)
-    capture.set(cv2.CAP_PROP_CONTRAST,1)
-    capture.set(cv2.CAP_PROP_SATURATION,1)
 
     
     try:
@@ -288,6 +331,14 @@ if __name__ == "__main__":
         server.socket.close()
 
     ntTable = NetworkTables.getTable("VisionData")
+
+    ONMATCH=ntTable.getEntry("InMatch").value
+    MATCHNUM=ntTable.getEntry("MatchNumber").value
+    if ONMATCH:
+        PATH=os.getcwd()
+        if not os.path.exists(MATCHNUM):
+            os.mkdir(MATCHNUM)
+            os.chdir(PATH+"//"+MATCHNUM)
 
     prev_cap_time = 0
     capture_time = 0
@@ -307,6 +358,7 @@ if __name__ == "__main__":
             continue
         else:
             img = Processor.process(cam_img)
+            # 26 deg
 
         proc_end_time = time.time_ns()/(10 ** 9)
         proc_time = proc_end_time - capture_time
