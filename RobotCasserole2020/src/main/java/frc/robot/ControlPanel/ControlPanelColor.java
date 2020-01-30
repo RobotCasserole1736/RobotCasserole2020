@@ -10,9 +10,10 @@ public enum ControlPanelColor{
         this.value = value;
     }
 
-    public ControlPanelColor getColorFromInt(int colorValue){
+    public static ControlPanelColor getColorFromInt(int colorValue){
 
-        //wraps colorValue to be positive, -1 equals 3 
+        //wraps colorValue to be positive, -1 equals 3, -2 equals 2 and so on
+        //(but giving a value less than -4 will throw an error)
         //which is to then be subject to the modulo operator below the if statement
         if(colorValue >= -4 && colorValue < 0){
             colorValue += 4;
