@@ -1,4 +1,5 @@
 #include <FastLED.h>
+#include "Fire.h"
 
 //Constants related to hardware setup
 #define NUM_LEDS 80
@@ -39,33 +40,34 @@ void loop()
   if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
   {
     //Disabled Pattern
-    //CasseroleColorStripeChase_update();
+    CasseroleColorStripeChase_update();
+  }
+  else if ((pulseLen_us >= 950) && (pulseLen_us <= 1050))
+  {
+    //TODO - Call periodic update for pattern 0
     ColorSparkle_update(0, 255, 0);
   }
-
-  if ((pulseLen_us >= 950) && (pulseLen_us <= 1050))
+  else if ((pulseLen_us >= 1200) && (pulseLen_us <= 1300))
   {
-    //TODO - Call periodic update for pattern 0
+    //TODO - Call periodic update for pattern 1
+    ColorSparkle_update(0, 0, 255);
+
   }
-
-  if ((pulseLen_us >= 1200) && (pulseLen_us <= 1300))
+  else if ((pulseLen_us >= 1450) && (pulseLen_us <= 1550))
   {
-    //TODO - Call periodic update for pattern 0
+    //TODO - Call periodic update for pattern 2
+    Fire(55,120,15);
+
   }
-
-  if ((pulseLen_us >= 1450) && (pulseLen_us <= 1550))
+  else if ((pulseLen_us >= 1700) && (pulseLen_us <= 1800))
   {
-    //TODO - Call periodic update for pattern 0
+    //TODO - Call periodic update for pattern 3
+    ColorSparkle_update(128, 128, 0);
   }
-
-  if ((pulseLen_us >= 1700) && (pulseLen_us <= 1800))
+  else if ((pulseLen_us >= 1950) && (pulseLen_us <= 2050))
   {
-    //TODO - Call periodic update for pattern 0
-  }
-
-  if ((pulseLen_us >= 1950) && (pulseLen_us <= 2050))
-  {
-    //TODO - Call periodic update for pattern 0
+    //TODO - Call periodic update for pattern 4
+    ColorSparkle_update(255, 0, 0);
   }
 
   // send the 'leds' array out to the actual LED strip
@@ -132,8 +134,6 @@ void ColorSparkle_update(int red, int grn, int blu) {
 
   }
 }
-
-
 
 //**************************************************************
 // Utilities
