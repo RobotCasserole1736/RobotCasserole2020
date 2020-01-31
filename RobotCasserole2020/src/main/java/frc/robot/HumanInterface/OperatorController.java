@@ -52,7 +52,7 @@ public class OperatorController {
    }
 	   
     public boolean getPrepToShootCmd() {
-	return operaterController.getBumper.kLeft;    
+	return operaterController.getBumper(Hand.kLeft);    
     }	 
 	   
     public boolean getIntakeDesired(){
@@ -66,16 +66,16 @@ public class OperatorController {
     }
 	    
     public boolean getUnjamCmd(){
-    	return operaterController.getLeftBumper;
+    	return operaterController.getBumper(Hand.kLeft);
     }   
     public boolean getEjectDesired(){
          return operaterController.getBackButton(); 
     }
 	    
 	    
-    }
+
     public boolean getPhotonCannonCmd(){
-        return operaterController.getAButton;
+        return operaterController.getAButton();
     }
 
     //Climber

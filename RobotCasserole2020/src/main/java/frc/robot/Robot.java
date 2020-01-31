@@ -254,7 +254,7 @@ public class Robot extends TimedRobot {
     ledController.setPattern(LEDPatterns.Pattern1);
 
     //Based on operator commands, change which photon source we use.
-    if(OperatorController.getInstance().flashlightCmd()){
+    if(OperatorController.getInstance().getPhotonCannonCmd()){
       photonCannon.setPhotonCannonState(true);
       eyeOfVeganSauron.setLEDRingState(false);
     } else {
