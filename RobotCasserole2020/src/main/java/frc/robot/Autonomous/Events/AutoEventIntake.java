@@ -2,7 +2,6 @@ package frc.robot.Autonomous.Events;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.Superstructure;
 
 public class AutoEventIntake extends AutoEvent {
@@ -20,24 +19,17 @@ public class AutoEventIntake extends AutoEvent {
 	public void userStart() {
 		endTime = Timer.getFPGATimestamp() + duration_s;
         completed = false;
-        Superstructure.getInstance().setIntakeDesired();
+        Superstructure.getInstance().setIntakeDesired(true);
 	}
 
 	@Override
 	public void userUpdate() {
 		completed = (Timer.getFPGATimestamp() > endTime);
-
-		if(!completed){
-			Drivetrain.getInstance().setOpenLoopCmd(speed, 0);
-		} else {
-			Drivetrain.getInstance().setOpenLoopCmd(0, 0);
-		}
 	}
 
 	@Override
 	public void userForceStop() {
-		Drivetrain.getInstance().setOpenLoopCmd(0, 0);
-		return;
+		Superstructure.getInstance().setIntakeDesired(false);
 	}
 
 	@Override
