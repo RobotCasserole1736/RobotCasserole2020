@@ -41,14 +41,41 @@ public class OperatorController {
     }
     
     //Ball Handling
+   public boolean getShootCmd(){
+	 boolean yesShoot = false;
+	 if(operaterController.getTriggerAxis(Hand.kLeft) > 0.2) {
+	    yesShoot = true;
+	}else {
+	    yesShoot = false; 
+	}
+	   return yesShoot;
+   }
+	   
+    public boolean getPrepToShootCmd() {
+	return operaterController.getBumper.kLeft;    
+    }	 
+	   
     public boolean getIntakeDesired(){
-        return operaterController.getBumper(Hand.kLeft);  
+        boolean yesIntake = false;
+	 if(operaterController.getTriggerAxis(Hand.kLeft) > 0.2) {
+	    yesIntake = true;
+	}else {
+	    yesIntake = false;   
+        }
+	    return yesIntake;
     }
+	    
+    public boolean getUnjamCmd(){
+    	return operaterController.getLeftBumper;
+    }   
     public boolean getEjectDesired(){
          return operaterController.getBackButton(); 
     }
+	    
+	    
+    }
     public boolean getPhotonCannonCmd(){
-        return operaterController.getBumper(Hand.kLeft);
+        return operaterController.getAButton;
     }
 
     //Climber
