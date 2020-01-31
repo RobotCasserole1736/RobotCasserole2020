@@ -1,6 +1,6 @@
 #include <FastLED.h>
 
-#define NUM_LEDS 10
+#define NUM_LEDS 200
 #define LED_PIN 2
 
 CRGB led[NUM_LEDS];
@@ -21,11 +21,11 @@ void setWhite(int val){
 void loop() {
 for (int i = 0; i < 256; i++){
   setWhite(i);
-  delay(10);
+  delay(2);
  }
  
  for (int i = 255; i > 0; i--){
   setWhite(i);
-  delay(10);
+  delay(2);
  }
 }

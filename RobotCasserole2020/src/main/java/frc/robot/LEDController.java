@@ -18,13 +18,13 @@ public class LEDController {
     }
 
     public enum LEDPatterns {
-        Pattern0(0), // "panelYellow---disabled"
-        Pattern1(1), // "teleopBlue----teleop"
-        Pattern2(2); // "teleopRed-----auto"
-     /*   Pattern3(3), // "Strobe [RED]"
-        Pattern4(4), // "Meteor Rain"
-        Pattern5(5); // "Cyclon Bounce"
-     */
+        Pattern0(0), // TODO - put what pattern this actually is
+        Pattern1(1), // TODO - put what pattern this actually is
+        Pattern2(2), // TODO - put what pattern this actually is
+        Pattern3(3), // TODO - put what pattern this actually is
+        Pattern4(4), // TODO - put what pattern this actually is
+        PatternDisabled(-1);
+     
 
         public final int value;
 
@@ -47,28 +47,22 @@ public class LEDController {
     public void update(){
         switch(patternCmd){
             case Pattern0:
-                ctrl.setDisabled();
-
+                ctrl.setSpeed(-1.0);
             break;
             case Pattern1:
-                ctrl.setSpeed(1.0);
-
+                ctrl.setSpeed(-0.5);
             break;
             case Pattern2:
-                ctrl.setSpeed(-1.0);
-/*
+                ctrl.setSpeed(0.0);
             break;
             case Pattern3:
-                ctrl.setSpeed(0.0);
-
+                ctrl.setSpeed(0.5);
             break;
             case Pattern4:
-                ctrl.setSpeed(0.5);
-
-            break;
-            case Pattern5:
                 ctrl.setSpeed(1.0);
-*/
+            break;
+            default:
+                //Do Nothing - disabled happens automatically by roboRIO
             break;
         }
     }
