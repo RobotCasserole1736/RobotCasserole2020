@@ -70,23 +70,23 @@ public class Superstructure {
 
         if(stopDes){
             opMode = SuperstructureOpMode.Stop;
-        }else if(ejectDes && !stopDes){
+        }else if(ejectDes){
             opMode = SuperstructureOpMode.Eject;
-        }else if(clearJamDes && !stopDes && !ejectDes){
+        }else if(clearJamDes){
             opMode = SuperstructureOpMode.ClearJam;
-        }else if(shootDes && !stopDes && !prepShootDes && !ejectDes && !clearJamDes){
+        }else if(shootDes && !prepShootDes){
             if(shoot.getShooterCtrlMode() == ShooterCtrlMode.HoldSpeed){
                 opMode = SuperstructureOpMode.Shoot;
             }else if(shoot.getShooterCtrlMode() != ShooterCtrlMode.HoldSpeed){
                 opMode = SuperstructureOpMode.PrepToShoot;
             } 
-        }else if(prepShootDes && intkDes && !stopDes && !ejectDes && !clearJamDes){
+        }else if(prepShootDes && intkDes){
             opMode = SuperstructureOpMode.PrepShootWhileIntake;
-        }else if(prepShootDes && !stopDes && !intkDes && !ejectDes && !clearJamDes){
+        }else if(prepShootDes && !intkDes){
             opMode = SuperstructureOpMode.PrepToShoot;
-        }else if(intkDes && !stopDes && !shootDes && !prepShootDes && !ejectDes && !clearJamDes){
+        }else if(intkDes && !shootDes && !prepShootDes){
             opMode = SuperstructureOpMode.Intake;
-        }else{ //if(!intkDes && !stopDes && !shootDes && !prepShootDes && !ejectDes && !clearJamDes)
+        }else{ //if(everything is false)
             opMode = SuperstructureOpMode.Normal;
         }
 
