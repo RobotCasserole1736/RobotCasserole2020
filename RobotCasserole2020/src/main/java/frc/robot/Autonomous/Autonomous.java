@@ -47,8 +47,7 @@ public class Autonomous {
         ShootOnly(2),  
         VisionAlignShoot(3),   
         BallThief(4),
-        Steak(5),
-        ShootSteak(6),
+        ShootSteak(5),
         Inactive(-1); 
 
         public final int value;
@@ -80,8 +79,7 @@ public class Autonomous {
                                                               "Drive Forward", 
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
-                                                              "Ball Thief",
-                                                              "Steak",
+                                                              "Ball Thief",                                              
                                                               "ShootSteak"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
@@ -126,8 +124,6 @@ public class Autonomous {
 		} else if (actionStr.compareTo(ACTION_MODES[4]) == 0) { 
 			modeCmd = AutoMode.BallThief;
 		} else if (actionStr.compareTo(ACTION_MODES[5]) == 0) { 
-			modeCmd = AutoMode.Steak;
-		} else if (actionStr.compareTo(ACTION_MODES[6]) == 0) { 
 			modeCmd = AutoMode.ShootSteak;
 		} else { 
 			modeCmd = AutoMode.Inactive;
@@ -187,9 +183,7 @@ public class Autonomous {
                     case BallThief:
                         Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     break;
-                    case Steak:
-                        Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
-                    break;
+
                     case ShootSteak:
                         Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     break;
@@ -223,13 +217,6 @@ public class Autonomous {
                     //some event to shoot balls
                 break;
 
-                case Steak:
-                    seq.addEvent(new AutoEventDriveToBallThief());
-                    //some event to run intake
-                    seq.addEvent(new AutoEventBackUpFromBallThief());
-                    //some event to shoot balls
-                    seq.addEvent(new AutoEventCollectSteak());
-                break;
                 case ShootSteak:
                     Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     seq.addEvent(new AutoEventDriveToBallThief());
