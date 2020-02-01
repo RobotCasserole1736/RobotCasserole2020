@@ -207,8 +207,6 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logAutoPeriodic();
 
-    ledController.setPattern(LEDPatterns.Pattern0);
-
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(true);
     photonCannon.setPhotonCannonState(false);
@@ -250,8 +248,6 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
     CrashTracker.logTeleopPeriodic();
-
-    ledController.setPattern(LEDPatterns.Pattern1);
 
     //Based on operator commands, change which photon source we use.
     if(OperatorController.getInstance().flashlightCmd()){
@@ -323,6 +319,9 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Vision Camera Offline", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setSoundWidget("High Ground Acqd",DriverStation.getInstance().isFMSAttached());
+  }
+  public void updateLEDpattern(){
+    //Peter will work on this later...rn hes kinda tired, ngl
   }
 
 

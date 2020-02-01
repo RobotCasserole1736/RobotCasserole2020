@@ -18,14 +18,13 @@ public class LEDController {
     }
 
     public enum LEDPatterns {
-        Pattern0(0), // TODO - put what pattern this actually is
-        Pattern1(1), // TODO - put what pattern this actually is
-        Pattern2(2), // TODO - put what pattern this actually is
-        Pattern3(3), // TODO - put what pattern this actually is
-        Pattern4(4), // TODO - put what pattern this actually is
-        Pattern5(5), // TODO - put what pattern this actually is
-        Pattern6(6), // TODO - put what pattern this actually is
-        Pattern7(7), // TODO - put what pattern this actually is
+        Pattern0(0), // Red Color Sparkle
+        Pattern1(1), // Blue Color Sparkle
+        Pattern2(2), // Fire
+        Pattern3(3), // Green Color Sparkle
+        Pattern4(4), // Blue Fade
+        Pattern5(5), // Red Fade
+        Pattern6(6), // Rainbow Fade Chase
         PatternDisabled(-1); // CasseroleColorStripeChase
      
 
@@ -80,11 +79,6 @@ public class LEDController {
                 //currently not assigned
             break;
             case Pattern6:
-                ctrl.setSpeed(0.75);
-                //this should be 1800-1900ms
-                //currently not assigned
-            break;
-            case Pattern7:
                 ctrl.setSpeed(1.0);
                 //this should be 1901-2000ms
                 //currently not assigned
