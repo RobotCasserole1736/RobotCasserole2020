@@ -207,7 +207,7 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logAutoPeriodic();
 
-    ledController.setPattern(LEDPatterns.Pattern2);
+    ledController.setPattern(LEDPatterns.Pattern0);
 
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(true);
