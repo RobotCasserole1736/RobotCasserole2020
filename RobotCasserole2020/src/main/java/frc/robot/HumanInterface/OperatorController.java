@@ -39,32 +39,70 @@ public class OperatorController {
         operaterController= new XboxController(1);
         
     }
+    
+    //Ball Handling
+   public boolean getShootCmd(){
+	 boolean yesShoot = false;
+	 if(operaterController.getTriggerAxis(Hand.kLeft) > 0.2) {
+	    yesShoot = true;
+	}else {
+	    yesShoot = false; 
+	}
+	   return yesShoot;
+   }
+	   
+    public boolean getPrepToShootCmd() {
+	return operaterController.getBumper(Hand.kLeft);    
+    }	 
+	   
+    public boolean getIntakeDesired(){
+        boolean yesIntake = false;
+	 if(operaterController.getTriggerAxis(Hand.kLeft) > 0.2) {
+	    yesIntake = true;
+	}else {
+	    yesIntake = false;   
+        }
+	    return yesIntake;
+    }
+	    
+    public boolean getUnjamCmd(){
+    	return operaterController.getBumper(Hand.kLeft);
+    }   
+    public boolean getEjectDesired(){
+         return operaterController.getBackButton(); 
+    }
+	    
+	    
 
+    public boolean getPhotonCannonCmd(){
+        return operaterController.getAButton();
+    }
+
+    //Climber
+    public boolean getClimbEnableCmd(){
+        return operaterController.getStartButton();
+    }
+    public double getClimbSpeedCmd(){
+        return operaterController.getY(GenericHID.Hand.kLeft); 
+    }
+    public boolean getBrakeCmd() {
+        return operaterController.getXButton();
+    }
+
+
+    //Control Panel
     public boolean getControlPanelThreeRotationsDesired(){
-        return operaterController.getXButtonPressed(); 
+        return operaterController.getYButton(); 
     }
 
     public boolean getControlPanelSeekToColorDesired(){
-        return operaterController.getYButtonPressed(); 
+        return operaterController.getBButton(); 
     }
 
-    public double getClimbSpeedCmd(){
-        return operaterController.getY(GenericHID.Hand.kLeft); 
-
-    }
-
-    public boolean getIntakeDesired(){
-        return operaterController.getAButtonPressed();  
-    }
-
-    public boolean getEjectDesired(){
-         return operaterController.getBButtonPressed(); 
-    }
+    //Extras
     public boolean createSound(){
-        return operaterController.getStickButtonPressed(Hand.kLeft);
+        return operaterController.getStickButton(Hand.kLeft);
     }
-    public boolean flashlightCmd(){
-        return operaterController.getBumperPressed(Hand.kLeft);
-    }
+    
 
 }
