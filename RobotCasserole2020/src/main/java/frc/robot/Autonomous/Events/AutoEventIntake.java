@@ -19,12 +19,15 @@ public class AutoEventIntake extends AutoEvent {
 	public void userStart() {
 		endTime = Timer.getFPGATimestamp() + duration_s;
         completed = false;
-        Superstructure.getInstance().setIntakeDesired(true);
+		Superstructure.getInstance().setIntakeDesired(true);
 	}
-
+	
 	@Override
 	public void userUpdate() {
 		completed = (Timer.getFPGATimestamp() > endTime);
+		if (completed){
+			Superstructure.getInstance().setIntakeDesired(false);
+		}
 	}
 
 	@Override
