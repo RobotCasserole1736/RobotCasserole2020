@@ -14,7 +14,6 @@ import frc.robot.Autonomous.Events.AutoEventTurnToVisionTarget;
 import frc.robot.Autonomous.Events.AutoEventWait;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
-import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterRunCommand;
 
@@ -50,7 +49,7 @@ public class Autonomous {
         ShootOnly(2),  
         VisionAlignShoot(3),   
         BallThief(4),
-        Steak(5),
+        ShootSteak(5),
         VisionAlignOnly(6),
         Inactive(-1); 
 
@@ -85,8 +84,8 @@ public class Autonomous {
                                                               "Drive Forward", 
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
-                                                              "Ball Thief",
-                                                              "Steak"};
+                                                              "Ball Thief",                                              
+                                                              "ShootSteak"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
                                                               "3s", 
@@ -130,7 +129,7 @@ public class Autonomous {
 		} else if (actionStr.compareTo(ACTION_MODES[4]) == 0) { 
 			modeCmd = AutoMode.BallThief;
 		} else if (actionStr.compareTo(ACTION_MODES[5]) == 0) { 
-			modeCmd = AutoMode.Steak;
+			modeCmd = AutoMode.ShootSteak;
 		} else { 
 			modeCmd = AutoMode.Inactive;
         }
@@ -202,12 +201,9 @@ public class Autonomous {
                     case BallThief:
                         Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     break;
-                    case Steak:
+                    case ShootSteak:
                         Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     break;
-                    default:
-                        //Do Nothing
-                    break; 
                 }
             }
 
@@ -244,7 +240,7 @@ public class Autonomous {
                     //some event to shoot balls
                 break;
 
-                case Steak:
+                case ShootSteak:
                     seq.addEvent(new AutoEventDriveToBallThief());
                     //some event to run intake
                     seq.addEvent(new AutoEventBackUpFromBallThief());

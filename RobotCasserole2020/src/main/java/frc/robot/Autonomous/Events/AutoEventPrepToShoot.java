@@ -4,14 +4,14 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.AutoSequencer.AutoEvent;
 import frc.robot.Superstructure;
 
-public class AutoEventIntake extends AutoEvent {
+public class AutoEventPrepToShoot extends AutoEvent {
 	
 	double speed;
 	double duration_s;
 	double endTime;
 	boolean completed = true;
 	
-	public AutoEventIntake(double duration_s_in) {
+	public AutoEventPrepToShoot(double duration_s_in) {
 		duration_s = duration_s_in;
 	}
 
