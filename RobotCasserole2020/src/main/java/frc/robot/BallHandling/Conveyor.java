@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.CasserolePDP;
 import frc.robot.RobotConstants;
-import frc.robot.Superstructure.SuperstructureOpMode;
+import frc.robot.Supperstructure.SupperstructureOpMode;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import edu.wpi.first.hal.PDPJNI;

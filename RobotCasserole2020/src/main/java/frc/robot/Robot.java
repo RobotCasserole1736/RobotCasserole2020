@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
   LEDController ledController;
+  Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is baked into _even_ our source code.
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -124,6 +125,8 @@ public class Robot extends TimedRobot {
     climber= Climber.getInstance();
 
     loopTiming = LoopTiming.getInstance();
+
+    supperstructure = Supperstructure.getInstance();
 
     ControlPanelStateMachine.getInstance();
 
@@ -264,6 +267,8 @@ public class Robot extends TimedRobot {
     }
     photonCannon.update();
     cam.update();
+
+    
 
 
     thbbtbbtbbtbbt.update();

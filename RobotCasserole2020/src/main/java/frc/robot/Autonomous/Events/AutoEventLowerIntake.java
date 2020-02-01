@@ -2,7 +2,7 @@ package frc.robot.Autonomous.Events;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.robot.Superstructure;
+import frc.robot.Supperstructure;
 import frc.robot.BallHandling.IntakeControl;
 
 public class AutoEventLowerIntake extends AutoEvent {
@@ -27,13 +27,13 @@ public class AutoEventLowerIntake extends AutoEvent {
 	public void userUpdate() {
 		completed = (Timer.getFPGATimestamp() > endTime);
 		if (completed){
-			Superstructure.getInstance().setIntakeDesired(false);
+			Supperstructure.getInstance().setIntakeDesired(false);
 		}
 	}
 
 	@Override
 	public void userForceStop() {
-		Superstructure.getInstance().setIntakeDesired(false);
+		Supperstructure.getInstance().setIntakeDesired(false);
 	}
 
 	@Override

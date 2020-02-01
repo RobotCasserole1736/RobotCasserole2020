@@ -11,20 +11,20 @@ import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.ShooterControl.ShooterControl.ShooterRunCommand;
 
-public class Superstructure {
+public class Supperstructure {
 
     /* Singleton infratructure */
-    private static Superstructure inst = null;
+    private static Supperstructure inst = null;
 
-    public static synchronized Superstructure getInstance() {
+    public static synchronized Supperstructure getInstance() {
         if (inst == null)
-            inst = new Superstructure();
+            inst = new Supperstructure();
         return inst;
     }
 
 
     /* All possible conveyer operational modes*/
-    public enum SuperstructureOpMode {
+    public enum SupperstructureOpMode {
         Normal(0),               //No intake, but advance balls from the hopper into the conveyor
         PrepToShoot(1),          //Run shooter wheel up to speed, and advance any balls in the system as close to the shooter as possible
         Shoot(2),                //Run all balls in the system through the shooter.
@@ -36,7 +36,7 @@ public class Superstructure {
 
         public final int value;
 
-        private SuperstructureOpMode(int value) {
+        private SupperstructureOpMode(int value) {
             this.value = value;
         }
     }
@@ -53,9 +53,9 @@ public class Superstructure {
     boolean stopDes;
     boolean clearJamDes;
 
-    SuperstructureOpMode opMode = SuperstructureOpMode.Normal; //Default
+    SupperstructureOpMode opMode = SupperstructureOpMode.Normal; //Default
 
-    public Superstructure(){
+    public Supperstructure(){
         conv =  Conveyor.getInstance();
         hopp =  Hopper.getInstance();
         intk =  IntakeControl.getInstance();
@@ -69,31 +69,31 @@ public class Superstructure {
         shoot.update();
 
         if(stopDes){
-            opMode = SuperstructureOpMode.Stop;
+            opMode = SupperstructureOpMode.Stop;
         }else if(ejectDes){
-            opMode = SuperstructureOpMode.Eject;
+            opMode = SupperstructureOpMode.Eject;
         }else if(clearJamDes){
-            opMode = SuperstructureOpMode.ClearJam;
+            opMode = SupperstructureOpMode.ClearJam;
         }else if(shootDes && !prepShootDes){
             if(shoot.getShooterCtrlMode() == ShooterCtrlMode.HoldSpeed){
-                opMode = SuperstructureOpMode.Shoot;
+                opMode = SupperstructureOpMode.Shoot;
             }else if(shoot.getShooterCtrlMode() != ShooterCtrlMode.HoldSpeed){
-                opMode = SuperstructureOpMode.PrepToShoot;
+                opMode = SupperstructureOpMode.PrepToShoot;
             } 
         }else if(prepShootDes && intkDes){
-            opMode = SuperstructureOpMode.PrepShootWhileIntake;
+            opMode = SupperstructureOpMode.PrepShootWhileIntake;
         }else if(prepShootDes && !intkDes){
-            opMode = SuperstructureOpMode.PrepToShoot;
+            opMode = SupperstructureOpMode.PrepToShoot;
         }else if(intkDes && !shootDes && !prepShootDes){
-            opMode = SuperstructureOpMode.Intake;
+            opMode = SupperstructureOpMode.Intake;
         }else{ //if(everything is false)
-            opMode = SuperstructureOpMode.Normal;
+            opMode = SupperstructureOpMode.Normal;
         }
 
         setOpMode(opMode);
     }
 
-    private void setOpMode(SuperstructureOpMode opMode_in){
+    private void setOpMode(SupperstructureOpMode opMode_in){
         switch(opMode_in){
             case Normal:
             intk.setPosMode(IntakePosition.Retracted);
