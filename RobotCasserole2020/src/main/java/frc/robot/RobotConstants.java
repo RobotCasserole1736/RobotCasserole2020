@@ -41,10 +41,12 @@ public class RobotConstants {
     //Digital IO
     static public final int VISON_LED_RING_PORT = 0;
     static public final int PHOTON_CANNON_PORT = 1;
-    static public final int CLIMBER_LIMIT_UPPER_ID=2;
-    static public final int CLIMBER_LIMIT_LOWER_ID=3;
-    public static final int CONVEYOR_TO_SHOOTER_DIO_PORT = 4;
-    public static final int CONVEYOR_TO_INTAKE_DIO_PORT = 5;
+    static public final int CLIMBER_LIMIT_UPPER_NO_ID=2;
+    static public final int CLIMBER_LIMIT_UPPER_NC_ID=3;
+    static public final int CLIMBER_LIMIT_LOWER_NO_ID=4;
+    static public final int CLIMBER_LIMIT_LOWER_NC_ID=5;
+    public static final int CONVEYOR_TO_SHOOTER_DIO_PORT = 6;
+    public static final int CONVEYOR_TO_INTAKE_DIO_PORT = 7;
 
     //Pneumatics Control Module
     static public final int CLIMBER_SOLENOID_ID = 0;
