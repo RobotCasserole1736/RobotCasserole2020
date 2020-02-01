@@ -482,6 +482,16 @@ function rectifySize(){
     }
 }
 
+function handleClearBtnClick(){
+    var i;
+    checkBoxList=document.getElementById("signalCheckboxes")
+    //Reset all checkboxes to unchecked.
+    for(i = 0; i < checkBoxList.children.length; i++){
+        checkbox = checkBoxList.children[i].children[0];
+        checkbox.checked = false;
+    }
+}
+
 function checkboxHandler(elem){
     var itemNo = parseInt(elem.id); //This feels like a hack. Ah well.
     if(global_chart) {
