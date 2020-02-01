@@ -1,9 +1,7 @@
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
-import edu.wpi.first.wpilibj.SerialPort.StopBits;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 
@@ -15,105 +13,96 @@ public class Climber{
             inst = new Climber();
         return inst;
     }
-    public enum SwitchState {
-        Pressed(0),
-        NotPressed(1),
-        Broken(2);
 
-        public final int value;
 
-        private SwitchState(int value) {
-            this.value = value;
-        }
-    }
-
-    Spark leftClimber;
-    DigitalInput upperLimitSwitch;
-    DigitalInput lowerLimitSwitch;
+    Spark climberMotor;
+    TwoWireParitySwitch upperLimitSwitch;
+    TwoWireParitySwitch lowerLimitSwitch;
     Solenoid climbLocker; 
     boolean climbEnabled;
     double climbCMD=0;
     Calibration climberSpeed;
+
     Signal climberCMDSignal;
-    Signal climberLeftCurrentSignal;
+    Signal climberMotorCmdSignal;
+    Signal climbMotorCurrentSignal;
     Signal climberRightCurrentSignal;
     Signal climberUpperLimitSignal;
     Signal climberLowerLimitSignal;
     Signal limitSwitchesReadingRightSig;
 
-    SwitchState limitSwitchState;
-    boolean canClimb;
+    TwoWireParitySwitch.SwitchState upperLSVal;
+    TwoWireParitySwitch.SwitchState lowerLSVal;
+
+    boolean lowerLimitSwitchFaulted;
+    boolean upperLimitSwitchFaulted;
 
     public Climber(){
-        leftClimber = new Spark(RobotConstants.CLIMBER_SPARK_LEFT_ID);
-        upperLimitSwitch = new DigitalInput(RobotConstants.CLIMBER_LIMIT_UPPER_ID);
-        lowerLimitSwitch = new DigitalInput(RobotConstants.CLIMBER_LIMIT_LOWER_ID);
+        climberMotor = new Spark(RobotConstants.CLIMBER_SPARK_LEFT_ID);
+        upperLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_UPPER_NO_ID, RobotConstants.CLIMBER_LIMIT_UPPER_NC_ID);
+        lowerLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_LOWER_NO_ID, RobotConstants.CLIMBER_LIMIT_LOWER_NC_ID);
         climbLocker = new Solenoid(RobotConstants.CLIMBER_SOLENOID_ID);
-        climberSpeed=new Calibration("Climber Max Speed", 1);
-        climberCMDSignal= new Signal("Climber Command","CMD");
-        climberLeftCurrentSignal= new Signal("Left Climber Current","Amp");
+        climberSpeed=new Calibration("Climber Max Speed", 1, 0, 1);
+        climberCMDSignal= new Signal("Climber Input Command","cmd");
+        climberMotorCmdSignal= new Signal("Climber Motor Command","cmd");
+        climbMotorCurrentSignal= new Signal("Left Climber Current","Amp");
         climberRightCurrentSignal= new Signal("Right Climber Current","Amp");
         climberUpperLimitSignal= new Signal("Climber Upper Limit Switch","boolean");
         climberLowerLimitSignal= new Signal("Climber Lower Limit Switch","boolean");
-        limitSwitchesReadingRightSig = new Signal("What Enum Value are the Limit Switches Responding With","State");
     }
+
     public void update(){
         double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
-        
-        canClimber();
-            if(canClimb) {
-            if(climbEnabled){
-                climbLocker.set(true);
-                setClimber(0);
+        double motorCmd = 0;
+
+        upperLSVal = upperLimitSwitch.get();
+        lowerLSVal = lowerLimitSwitch.get();
+
+        upperLimitSwitchFaulted = (upperLSVal == TwoWireParitySwitch.SwitchState.Broken) ;
+        lowerLimitSwitchFaulted = (lowerLSVal == TwoWireParitySwitch.SwitchState.Broken) ;
+
+        boolean canClimb = !upperLimitSwitchFaulted && !lowerLimitSwitchFaulted;
+
+        if(climbEnabled && canClimb){
+            climbLocker.set(true);
+            motorCmd = 0;
+        }else{
+            climbLocker.set(false);
+            if (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed){
+                motorCmd = Math.min(0,climbCMD);
+            }else if (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed){
+                motorCmd = Math.max(0,climbCMD);
             }else{
-                climbLocker.set(false);
-                if (upperLimitSwitch.get()){
-                    setClimber(Math.min(0,climbCMD));
-                }else if (lowerLimitSwitch.get()){
-                    setClimber(Math.min(0,climbCMD));
-                }else{
-                    setClimber(climbCMD);
-                }
+                motorCmd = climbCMD;
+            }
+            motorCmd *= climberSpeed.get();
         }
 
-        }
+        climberMotor.set(motorCmd);
+
         climberCMDSignal.addSample(sampleTimeMs, climbCMD);
-        climberLeftCurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_LEFT_PDP_ID));
-        climberRightCurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_RIGHT_PDP_ID));
-        climberUpperLimitSignal.addSample(sampleTimeMs, upperLimitSwitch.get());
-        climberLowerLimitSignal.addSample(sampleTimeMs, lowerLimitSwitch.get());
-        limitSwitchesReadingRightSig.addSample(sampleTimeMs, limitSwitchState.value);
+        climberMotorCmdSignal.addSample(sampleTimeMs, motorCmd);
+        climbMotorCurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_LEFT_PDP_ID));
+        climberUpperLimitSignal.addSample(sampleTimeMs, upperLimitSwitch.get().value);
+        climberLowerLimitSignal.addSample(sampleTimeMs, lowerLimitSwitch.get().value);
 
     }
-    public void defLimitSwitchStates() {
-        if(upperLimitSwitch.get() != lowerLimitSwitch.get()) {
-            if(upperLimitSwitch.get() == true || lowerLimitSwitch.get() == true) {
-                limitSwitchState = SwitchState.Pressed;        
-            }else {
-                limitSwitchState = SwitchState.NotPressed;}
-        }else {
-            limitSwitchState = SwitchState.Broken;
-        }
-    }
-
     
     public void setSpeed(double cmd){
+        //Positive means "climb up", negative means climb down
         climbCMD=cmd;
     }
 
     public void setClimberEnable(boolean enabled){
         climbEnabled = enabled;
     }
-    public void canClimber() {
-        if(limitSwitchState == SwitchState.Broken) {
-            canClimb = true;
-        }else{
-            canClimb = false;
-        }
+
+    public boolean isLowerLimitSwitchFaulted(){
+        return lowerLimitSwitchFaulted;
     }
 
-
-    private void setClimber(double cmd){
-        leftClimber.set(cmd*climberSpeed.get());
+    public boolean isUpperLimitSwitchFaulted(){
+        return upperLimitSwitchFaulted;
     }
+
 }

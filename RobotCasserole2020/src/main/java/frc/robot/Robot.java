@@ -19,6 +19,7 @@ import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
+import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.VisionProc.CasseroleVision;
 import frc.robot.VisionProc.VisionCamera;
 import frc.robot.Autonomous.Autonomous;
@@ -306,8 +307,11 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
     CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
     CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
-    CasseroleDriverView.newBoolean("Vision Camera Offline", "red");
+    CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
+    CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
+    CasseroleDriverView.newBoolean("Climber Upper SW Fault", "red");
+    CasseroleDriverView.newBoolean("Shooter Spoolup", "yellow");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -320,9 +324,12 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    CasseroleDriverView.setBoolean("Vision Camera Offline", !cam.isVisionOnline());
+    CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
-    CasseroleDriverView.setSoundWidget("High Ground Acqd",DriverStation.getInstance().isFMSAttached());
+    CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
+    CasseroleDriverView.setBoolean("Climber Upper SW Fault", climber.isUpperLimitSwitchFaulted());
+    CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
+    CasseroleDriverView.setSoundWidget("High Ground Acqd",false); //TODO
   }
 
 
