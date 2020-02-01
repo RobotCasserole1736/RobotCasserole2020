@@ -1,4 +1,4 @@
-![logo](ReadMeResources/InfiniteRecharge2020CasseroleBannerLogo.jpg)
+![logo](ReadMeResources/InfiniteRecharge2020CasseroleBannerLogoEdited.jpg)
 
 # RobotCasserole2020 🍲
 Software for Robot Casserole's 2020 FIRST Infinite Recharge 🔋 Competition Season
