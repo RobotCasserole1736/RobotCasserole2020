@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.lib.Calibration.CalWrangler;
+import frc.lib.Calibration.Calibration;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.Util.CrashTracker;
@@ -29,7 +30,6 @@ import frc.robot.BallHandling.IntakeControl;
 import edu.wpi.first.wpilibj.RobotController;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.LEDController.LEDPatterns;
 
 /**
@@ -75,6 +75,9 @@ public class Robot extends TimedRobot {
   ControlPanelStateMachine ctrlPanel;
   LEDController ledController;
   Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is baked into _even_ our source code.
+
+  //Misc.
+  Calibration snailModeLimitRPM;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,6 +133,8 @@ public class Robot extends TimedRobot {
 
     ControlPanelStateMachine.getInstance();
 
+    snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
+
     /* Website Setup */
     initDriverView();
 
@@ -181,8 +186,7 @@ public class Robot extends TimedRobot {
 
     ctrlPanel.update();
 
-    //shooterCtrl.update();
-    intakeCtrl.update();
+    supperstructure.update();
 
     drivetrain.setOpenLoopCmd(0, 0);
     drivetrain.updateGains(false);
@@ -212,7 +216,7 @@ public class Robot extends TimedRobot {
     CrashTracker.logAutoPeriodic();
 
     ledController.setPattern(LEDPatterns.Pattern2);
-
+ 
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(true);
     photonCannon.setPhotonCannonState(false);
@@ -222,9 +226,6 @@ public class Robot extends TimedRobot {
     auto.update();
 
     ctrlPanel.update();
-    //shooterCtrl.update();
-    hopper.update();
-    intakeCtrl.update();
     climber.update();
 
     drivetrain.update();
@@ -257,6 +258,9 @@ public class Robot extends TimedRobot {
 
     ledController.setPattern(LEDPatterns.Pattern1);
 
+    DriverController.getInstance().update();
+    OperatorController.getInstance().update();
+
     //Based on operator commands, change which photon source we use.
     if(OperatorController.getInstance().getPhotonCannonCmd()){
       photonCannon.setPhotonCannonState(true);
@@ -268,30 +272,44 @@ public class Robot extends TimedRobot {
     photonCannon.update();
     cam.update();
 
-    
-
-
     thbbtbbtbbtbbt.update();
 
     auto.sampleOperatorCommands();
     auto.update();
 
-    //shooterCtrl.update();
-    intakeCtrl.update();
-    climber.update();
-    hopper.update();
-    ctrlPanel.update();
-    ledController.update();
+    supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
+    supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
+    supperstructure.setEstopDesired(false); //TODO
+    supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
 
     if(auto.isActive()){
-      //Nothing to do, expect that auto sequencer will provide drivetrain comands
+      //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
     } else {
-      //Driver control in manual
-      drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
-                                DriverController.getInstance().getRotateCmd());
+      //Driver & operator control in manual
+      supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
+      supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
+
+      if(DriverController.getInstance().getSnailModeDesired()){
+        //Closed-loop, fine movement mode
+        double spd = snailModeLimitRPM.get();
+        double leftCmdRPM  = spd*(DriverController.getInstance().getFwdRevCmd() - DriverController.getInstance().getRotateCmd());
+        double rightCmdRPM = spd*(DriverController.getInstance().getFwdRevCmd() + DriverController.getInstance().getRotateCmd());
+        drivetrain.setClosedLoopSpeedCmd(leftCmdRPM, rightCmdRPM);
+      } else {
+        //Open loop control of motors
+        drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
+                                  DriverController.getInstance().getRotateCmd());
+      }
+
+
     }
 
     drivetrain.update();
+    supperstructure.update();
+
+    climber.update();
+    ctrlPanel.update();
+    ledController.update();
 
     updateDriverView();
     telemetryUpdate();

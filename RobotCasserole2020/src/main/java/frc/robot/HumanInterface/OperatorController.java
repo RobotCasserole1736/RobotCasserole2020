@@ -39,6 +39,10 @@ public class OperatorController {
         operaterController= new XboxController(1);
         
     }
+
+    public void update(){
+        return; //TODO - anything? Maybe not
+    }
     
     //Ball Handling
    public boolean getShootCmd(){
