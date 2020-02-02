@@ -354,6 +354,9 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
     CasseroleDriverView.setSoundWidget("High Ground Acqd",false); //TODO
   }
+  public void updateLEDpattern(){
+    //Peter will work on this later...rn hes kinda tired, ngl
+  }
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

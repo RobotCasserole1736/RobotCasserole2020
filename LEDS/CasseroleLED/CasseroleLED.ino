@@ -2,7 +2,7 @@
 #include "Fire.h"
 
 //Constants related to hardware setup
-#define NUM_LEDS 80
+#define NUM_LEDS 100
 #define LED_PIN 2
 #define ROBORIO_DATA_PIN 9
 
@@ -39,35 +39,46 @@ void loop()
 {
   if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
   {
-    //Disabled Pattern
-    CasseroleColorStripeChase_update();
+   //Disabled Pattern
+   CasseroleColorStripeChase_update();
   }
-  else if ((pulseLen_us >= 950) && (pulseLen_us <= 1050))
+  else if ((pulseLen_us >= 900) && (pulseLen_us <= 1000))
   {
     //TODO - Call periodic update for pattern 0
-    ColorSparkle_update(0, 255, 0);
+    ColorSparkle_update(255, 0, 0);
+    //red color sparkle
   }
-  else if ((pulseLen_us >= 1200) && (pulseLen_us <= 1300))
+  else if ((pulseLen_us >= 1200) && (pulseLen_us <= 1299))
   {
     //TODO - Call periodic update for pattern 1
     ColorSparkle_update(0, 0, 255);
-
+    //blue color sparkle
   }
-  else if ((pulseLen_us >= 1450) && (pulseLen_us <= 1550))
+  else if ((pulseLen_us >= 1300) && (pulseLen_us <= 1449))
   {
     //TODO - Call periodic update for pattern 2
     Fire(55,120,15);
-
   }
-  else if ((pulseLen_us >= 1700) && (pulseLen_us <= 1800))
+  else if ((pulseLen_us >= 1450) && (pulseLen_us <= 1499))
   {
     //TODO - Call periodic update for pattern 3
-    ColorSparkle_update(128, 128, 0);
+    ColorSparkle_update(0, 255, 0);
+    //green color sparkle
   }
-  else if ((pulseLen_us >= 1950) && (pulseLen_us <= 2050))
+  else if ((pulseLen_us >= 1600) && (pulseLen_us <= 1699))
   {
     //TODO - Call periodic update for pattern 4
-    ColorSparkle_update(255, 0, 0);
+    blueFade();
+  }
+  else if ((pulseLen_us >= 1700) && (pulseLen_us <= 1799))
+  {
+    //TODO - Call periodic update for pattern 5
+    redFade();
+  }
+  else if ((pulseLen_us >= 1901) && (pulseLen_us <= 2000))
+  {
+    //TODO - Call periodic update for pattern 6
+    Rainbow_Fade_Chase();
   }
 
   // send the 'leds' array out to the actual LED strip
@@ -78,6 +89,7 @@ void loop()
   // do some periodic updates
   EVERY_N_MILLISECONDS(200) {
     pulseLen_us = pulseIn(ROBORIO_DATA_PIN, HIGH, 50000);
+   Serial.println(pulseLen_us);
   }
 }
 
@@ -133,6 +145,75 @@ void ColorSparkle_update(int red, int grn, int blu) {
     }
 
   }
+}
+
+//**************************************************************
+// Pattern: Rainbow Fade Chase
+//**************************************************************
+void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { led[i].nscale8(250); } }
+void Rainbow_Fade_Chase(){
+  static uint8_t hue = 0;
+  for (int i = 0; i < NUM_LEDS; i++){
+    //Sends a pulse down the strip that
+    //continously increases hue of the leds
+    led[i] = CHSV(hue++, 255, 255);
+    FastLED.show();
+    fadeall();
+    delay(7);
+  }
+  for (int i = (NUM_LEDS)-1; i >= 0; i--){
+    //Sends a pulse up the strip that
+    //increases hue of the leds
+    led[i] = CHSV(hue++, 255, 255);
+    FastLED.show();
+    fadeall();
+    delay(7);
+  }
+}
+
+//**************************************************************
+// Pattern:Blue Fade
+//**************************************************************
+void setBlue(int val) {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    led[i] = CRGB(0, 0, val);}
+    FastLED.show();
+}
+void setWhite(int val){
+  for (int i = 0; i < NUM_LEDS; i++){
+    led[i] = CRGB(val, val, val);}
+    FastLED.show();
+}
+
+void blueFade(){
+for (int i = 0; i < 196; i++){
+  setBlue(i);}
+ for (int i = 195; i > 0; i--){
+  setBlue(i);}
+for (int i = 0; i < 256; i++){
+  setWhite(i);}
+ for (int i = 255; i > 0; i--){
+  setWhite(i);}
+}
+
+//**************************************************************
+// Pattern:Red Fade
+//**************************************************************
+void setRed(int val) {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    led[i] = CRGB(val, 0, 0);}
+    FastLED.show();
+}
+
+void redFade(){
+for (int i = 0; i < 196; i++){
+  setRed(i);}
+ for (int i = 195; i > 0; i--){
+  setRed(i);}
+for (int i = 0; i < 256; i++){
+  setWhite(i);}
+ for (int i = 255; i > 0; i--){
+  setWhite(i);}
 }
 
 //**************************************************************
