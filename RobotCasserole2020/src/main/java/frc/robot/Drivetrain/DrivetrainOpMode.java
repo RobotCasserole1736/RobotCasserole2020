@@ -1,5 +1,5 @@
 package frc.robot.Drivetrain;
 
 public enum DrivetrainOpMode {
-    kOpenLoop, kClosedLoopVelocity, kGyroLock, kTargetPosition
+    kOpenLoop, kClosedLoopVelocity, kGyroLock, kTurnToAngle;
 }

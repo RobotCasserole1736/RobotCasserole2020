@@ -81,6 +81,7 @@ public class RealDrivetrain extends Drivetrain {
     Calibration kD;
     Calibration kFF;
     Calibration kPGyro;
+
     Calibration currentLimit;
     boolean calsUpdated;
 
@@ -192,6 +193,25 @@ public class RealDrivetrain extends Drivetrain {
 
             dtLPID.setReference(leftWheelSpeedDesiredRPM, ControlType.kVelocity);
             dtRPID.setReference(rightWheelSpeedDesiredRPM, ControlType.kVelocity);
+
+        } else if (opMode == DrivetrainOpMode.kTurnToAngle){
+
+            double angleErr = (headingCmdDeg - gyroAngle);
+
+            //Bang-bang control of robot angle
+            if(angleErr > 0){
+                //Angle error positive, turn toward the left to correct
+                headingCorrCmdRPM = 100;
+            } else {
+                //Angle error negative, turn toward the right to correct
+                headingCorrCmdRPM = 100;
+            }
+
+            leftWheelSpeedDesiredRPM   = -1*headingCorrCmdRPM;
+            rightWheelSpeedDesiredRPM  = headingCorrCmdRPM;
+
+            dtLPID.setReference(leftWheelSpeedDesiredRPM, ControlType.kVelocity);
+            dtRPID.setReference(rightWheelSpeedDesiredRPM, ControlType.kVelocity);
         }
 
 
@@ -222,6 +242,12 @@ public class RealDrivetrain extends Drivetrain {
     public void setGyroLockCmd(double forwardReverseCmd) {
         opModeCmd = DrivetrainOpMode.kGyroLock;
         fwdRevCmd = forwardReverseCmd;
+    }
+
+    @Override
+    public void setTurnToAngleCmd(double angle_des) {
+        opMode = DrivetrainOpMode.kTurnToAngle;
+        headingCmdDeg = angle_des;
     }
 
     @Override

@@ -62,16 +62,8 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
                     //Wait for camera to report a stable target
                 }
             } else {
-                double angleErr = Drivetrain.getInstance().getGyroAngle() - desAngle;
 
-                //Bang-bang control of robot angle
-                if(angleErr > 0){
-                    //Angle error positive, turn toward the left to correct
-                    Drivetrain.getInstance().setClosedLoopSpeedCmd((-1*TURN_SPEED_RPM), (TURN_SPEED_RPM));
-                } else {
-                    //Angle error negative, turn toward the right to correct
-                    Drivetrain.getInstance().setClosedLoopSpeedCmd((TURN_SPEED_RPM), (-1*TURN_SPEED_RPM));
-                }
+                Drivetrain.getInstance().setTurnToAngleCmd(desAngle);
 
                 if(Math.abs(angleErr) < ALLOWABLE_ANGLE_ERR_DEG) {
                     weAreDone = true;
