@@ -30,7 +30,7 @@ public class PhotonCannonControl {
     }
     
     public void update(){
-        photonRelayOutput.set(curCannonState);
+        photonRelayOutput.set(!curCannonState);
         prevCannonState = curCannonState;
 
         double sample_time_ms = Timer.getFPGATimestamp()*1000;
