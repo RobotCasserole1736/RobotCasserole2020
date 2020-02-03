@@ -220,4 +220,10 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     }
 
+    @Override
+    public double getTurnToAngleErrDeg() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }
