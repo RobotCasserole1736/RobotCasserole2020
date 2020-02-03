@@ -72,6 +72,7 @@ public class RealDrivetrain extends Drivetrain {
     Signal currentL2Sig;
     Signal currentR1Sig;
     Signal currentR2Sig;
+    Signal headingCommandSig;
 
     CANPIDController dtLPID;
     CANPIDController dtRPID;
@@ -116,6 +117,7 @@ public class RealDrivetrain extends Drivetrain {
         rightWheelSpeedDesiredSig = new Signal("Drivetrain Right Wheel Desired Speed", "RPM");
         rightWheelSpeedActualSig = new Signal("Drivetrain Right Wheel Actual Speed", "RPM");
         headingCorrectionCmdSig = new Signal("Drivetrain Heading Correction Command", "RPM");
+        headingCommandSig = new Signal("Drivetrain Desired Heading", "deg");
         rightMotorOutput = new Signal("Drivetrain Right Motor Output Duty Cycle", "pct");
         leftMotorOutput  = new Signal("Drivetrain Left Motor output Duty Cycle", "pct");
 
@@ -124,11 +126,11 @@ public class RealDrivetrain extends Drivetrain {
         currentR1Sig = new Signal("Right Master Moter Current", "Amps");
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
 
-        kP = new Calibration("Drivetrain P Value", 0.005);
+        kP = new Calibration("Drivetrain P Value", 0.006);
         kI = new Calibration("Drivetrain I Value", 0);
-        kD = new Calibration("Drivetrain D Value", 0);
-        kFF = new Calibration("Drivetrain F Value", 0.003);
-        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 0);
+        kD = new Calibration("Drivetrain D Value", 0.0096);
+        kFF = new Calibration("Drivetrain F Value", 0.00195);
+        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 1.0);
         currentLimit = new Calibration("Drivetrain Per-Motor Smart Current Limit" , 60, 0, 100);
 
         
@@ -207,6 +209,7 @@ public class RealDrivetrain extends Drivetrain {
         currentL2Sig.addSample(sampleTimeMS, dtNeoL2Current);
         currentR1Sig.addSample(sampleTimeMS, dtNeoR1Current);
         currentR2Sig.addSample(sampleTimeMS, dtNeoR2Current);
+        headingCommandSig.addSample(sampleTimeMS, headingCmdDeg);
         
         
     }

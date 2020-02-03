@@ -15,7 +15,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
     private double startTime = 0.0;
     private double elapsedTime = 0.0;
     
-    final double TURN_SPEED_RPM = 100;
+    final double TURN_SPEED_RPM = 50;
     final double TIMEOUT_S = 5.0;
     final double ALLOWABLE_ANGLE_ERR_DEG = 2.0;
 
@@ -62,7 +62,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
                     //Wait for camera to report a stable target
                 }
             } else {
-                double angleErr = Drivetrain.getInstance().getGyroAngle() - desAngle;
+                double angleErr = desAngle - Drivetrain.getInstance().getGyroAngle();
 
                 //Bang-bang control of robot angle
                 if(angleErr > 0){
