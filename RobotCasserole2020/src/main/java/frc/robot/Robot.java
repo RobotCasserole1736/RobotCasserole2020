@@ -7,30 +7,31 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.Calibration.Calibration;
-import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.DataServer.CasseroleDataServer;
-import frc.lib.Util.CrashTracker;
-import frc.lib.WebServer.CasseroleWebServer;
 import frc.lib.DataServer.Signal;
+import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
+import frc.lib.Util.CrashTracker;
+import frc.lib.WebServer.CasseroleDriverView;
+import frc.lib.WebServer.CasseroleWebServer;
+import frc.robot.LEDController.LEDPatterns;
+import frc.robot.Autonomous.Autonomous;
+import frc.robot.BallHandling.BallDistanceSensor;
+import frc.robot.BallHandling.Hopper;
+import frc.robot.BallHandling.IntakeControl;
+import frc.robot.ControlPanel.ControlPanelStateMachine;
 import frc.robot.Drivetrain.Drivetrain;
+import frc.robot.Drivetrain.DrivetrainClosedLoopTestVectors;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.VisionProc.CasseroleVision;
 import frc.robot.VisionProc.VisionCamera;
-import frc.robot.Autonomous.Autonomous;
-import frc.robot.BallHandling.BallDistanceSensor;
-import frc.robot.BallHandling.Hopper;
-import frc.robot.BallHandling.IntakeControl;
-import edu.wpi.first.wpilibj.RobotController;
-import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
-import frc.robot.ControlPanel.ControlPanelStateMachine;
-import frc.robot.LEDController.LEDPatterns;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -73,6 +74,7 @@ public class Robot extends TimedRobot {
   Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
+  
   LEDController ledController;
   Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is baked into _even_ our source code.
 
@@ -86,6 +88,7 @@ public class Robot extends TimedRobot {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void robotInit() {
+    DrivetrainClosedLoopTestVectors.getInstance();
     
     CrashTracker.logRobotInit();
 
@@ -129,7 +132,7 @@ public class Robot extends TimedRobot {
 
     loopTiming = LoopTiming.getInstance();
 
-    supperstructure = Supperstructure.getInstance();
+    // supperstructure = Supperstructure.getInstance();
 
     ControlPanelStateMachine.getInstance();
 
@@ -186,7 +189,7 @@ public class Robot extends TimedRobot {
 
     ctrlPanel.update();
 
-    supperstructure.update();
+    // supperstructure.update();
 
     drivetrain.setOpenLoopCmd(0, 0);
     drivetrain.updateGains(false);
@@ -212,7 +215,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    
     loopTiming.markLoopStart();
+    DrivetrainClosedLoopTestVectors.getInstance().update();
     CrashTracker.logAutoPeriodic();
 
     ledController.setPattern(LEDPatterns.Pattern2);
@@ -254,6 +259,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
+    DrivetrainClosedLoopTestVectors.getInstance().update();
     CrashTracker.logTeleopPeriodic();
 
     ledController.setPattern(LEDPatterns.Pattern1);
@@ -277,17 +283,17 @@ public class Robot extends TimedRobot {
     auto.sampleOperatorCommands();
     auto.update();
 
-    supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
-    supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
-    supperstructure.setEstopDesired(false); //TODO
-    supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
+    // supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
+    // supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
+    // supperstructure.setEstopDesired(false); //TODO
+    // supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
 
     if(auto.isActive()){
       //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
     } else {
       //Driver & operator control in manual
-      supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
-      supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
+      // supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
+      // supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
 
       if(DriverController.getInstance().getSnailModeDesired()){
         //Closed-loop, fine movement mode
@@ -305,7 +311,7 @@ public class Robot extends TimedRobot {
     }
 
     drivetrain.update();
-    supperstructure.update();
+    // supperstructure.update();
 
     climber.update();
     ctrlPanel.update();

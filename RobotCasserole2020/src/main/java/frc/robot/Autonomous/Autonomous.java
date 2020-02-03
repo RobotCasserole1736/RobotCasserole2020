@@ -9,6 +9,7 @@ import frc.robot.Autonomous.Events.AutoEventShootFromCollectSteak;
 import frc.robot.Autonomous.Events.AutoEventStopRobot;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
+import frc.robot.Autonomous.Events.AutoEventReversePathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventTurn;
 import frc.robot.Autonomous.Events.AutoEventTurnToVisionTarget;
 import frc.robot.Autonomous.Events.AutoEventWait;
@@ -216,6 +217,8 @@ public class Autonomous {
                 case DriveFwd:
                     //seq.addEvent(new AutoEventDriveForTime(2, 0.25));
                     seq.addEvent(new AutoEventPathPlanTest());
+                    seq.addEvent(new AutoEventReversePathPlanTest());
+                    seq.addEvent(new AutoEventStopRobot());
                 break;
 
                 case ShootOnly:
