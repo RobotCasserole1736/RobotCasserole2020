@@ -320,9 +320,16 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setSoundWidget("High Ground Acqd",DriverStation.getInstance().isFMSAttached());
   }
-  public void updateLEDpattern(){
-    //Peter will work on this later...rn hes kinda tired, ngl
-  }
+
+    public void ledUpdater(){
+      double timeLeft;
+      timeLeft = DriverStation.getInstance().getMatchTime();
+      if (timeLeft <= 15, OperatorController.getInstance().getclimbEnabled = true,){
+        ledController.setPattern(LEDPatterns.Pattern6);
+      }
+      else if(){
+      }
+    }
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
