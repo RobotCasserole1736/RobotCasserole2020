@@ -5,8 +5,15 @@ import edu.wpi.first.wpilibj.Spark;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.robot.RobotConstants;
+import edu.wpi.first.wpilibj.Timer;
 
 public class IntakeControl {
+
+	double prevTimeExt;
+	double prevTimeRet;
+	double endTimeExt;
+	double endTimeRet;
+	double duration_s;
 
 	Spark intakeMotor;
 	Solenoid intakeSolenoid;
@@ -75,9 +82,11 @@ public class IntakeControl {
 		switch(posState){
 			case Retracted:
 				intakeSolenoid.set(INTAKE_RETRACTED);
+				prevTimeRet = Timer.getFPGATimestamp();
 			break;
 			case Extended:
 				intakeSolenoid.set(INTAKE_EXTENDED);
+				prevTimeExt = Timer.getFPGATimestamp();
 			break;
 		}
 		switch(spdState){
@@ -104,5 +113,30 @@ public class IntakeControl {
 
 	public void setSpeedMode(IntakeSpeed des_spd){
 		spdState = des_spd;
-	}	
+	}
+	public boolean isIntakeExtended(double duration_s_in){
+		boolean extended = false;
+		duration_s = duration_s_in;
+		endTimeExt = Timer.getFPGATimestamp() - prevTimeExt;
+		if(endTimeExt >= duration_s){
+			extended = true;
+		}else if(endTimeExt < duration_s){
+			extended = false;
+		} 
+		return extended;
+		//code shouldn't be used right now but may change later
+	}
+	
+	public boolean isIntakeRaise(double duration_s_in){
+		boolean raised = false;
+		duration_s = duration_s_in;
+		endTimeRet = Timer.getFPGATimestamp() - prevTimeRet;
+		if(endTimeRet >= duration_s){
+			raised = true;
+		}else if(endTimeRet < duration_s){
+			raised = false;
+		}
+		return raised;
+		//code shouldn't be used right now but may change later
+	}
 }
