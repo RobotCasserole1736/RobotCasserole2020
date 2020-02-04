@@ -6,8 +6,10 @@ import edu.wpi.first.wpilibj.Spark;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.CasserolePDP;
+import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
-import frc.robot.Superstructure.SuperstructureOpMode;
+import frc.robot.BallHandling.BallCounter.ConveyorDirection;
+import frc.robot.Supperstructure.SupperstructureOpMode;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import edu.wpi.first.hal.PDPJNI;
@@ -32,9 +34,8 @@ public class Conveyor{
 
 
     //State Data
-    Double sampleTimeMS;
-    ConveyerOpMode opMode;
-    ConveyerOpMode prevOpMode;
+    ConveyerOpMode opMode = ConveyerOpMode.Stop;
+    ConveyerOpMode prevOpMode = ConveyerOpMode.Stop;
     boolean shooterEndSensorTriggered = false;
     boolean intakeEndSensorTriggered = false;
     double motorCurrent;
@@ -88,6 +89,7 @@ public class Conveyor{
         shooterEndSensorSig = new Signal("Is there a Ball at the Shooter End Conveyor", "Boolean");
         intakeEndSensorSig = new Signal("Is there a ball at the Intake End of the Conveyor", "Boolean");
     }
+
     public void sampleSensors() {
         intakeEndSensorTriggered = intakeEndSensor.get();
         shooterEndSensorTriggered = shooterEndSensor.get();
@@ -130,6 +132,7 @@ public class Conveyor{
         }
         prevOpMode = opMode;
         
+        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
         motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
         shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggered);
@@ -138,7 +141,7 @@ public class Conveyor{
     
     }
     public void setOpMode(ConveyerOpMode opMode_in) {
-        opMode_in = opMode;
+        opMode = opMode_in;
     }
     
 

@@ -40,7 +40,7 @@ public class CasseroleGyro {
     }
 
     public void update(){
-        angle_deg = imu.getAngle() + angle_offset;
+        angle_deg = (-1*imu.getAngle()) + angle_offset;
         poseAngleSig.addSample(LoopTiming.getInstance().getLoopStartTimeSec()*1000, angle_deg);
     }
 

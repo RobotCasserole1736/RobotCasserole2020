@@ -215,7 +215,7 @@ class VisionProcessor():
             self.angle2 = np.degrees(math.atan2(pzero_world[0][0],pzero_world[2][0]))
             ##Chooses the values we need for path planning
             distance = math.sqrt(tvec[0]**2 + tvec[2]**2)
-            self.angle1 = np.degrees((math.atan2(tvec[0], tvec[2])))
+            self.angle1 = -1*np.degrees((math.atan2(tvec[0], tvec[2])))
             self.ret = True
             self.yaw = (str(rvec[2]).strip('[]'))
             self.xval = (str(tvec[2]).strip('[]'))
@@ -261,7 +261,7 @@ class cameraSettings():
         os.system(cmdStart+"white_balance_auto_preset=0")
 
         #User Controls
-        os.system(cmdStart+"brightness=30")
+        os.system(cmdStart+"brightness=35")
         os.system(cmdStart+"contrast=100")
         os.system(cmdStart+"saturation=100")
         os.system(cmdStart+"red_balance=1000")
@@ -283,7 +283,7 @@ class cameraSettings():
         os.system(cmdStart+"h264_profile=4")
 
         #Camera Controls
-        os.system(cmdStart+"exposure_time_absolute=6")
+        os.system(cmdStart+"exposure_time_absolute=9")
         os.system(cmdStart+"exposure_dynamic_framerate=0")
         os.system(cmdStart+"auto_exposure_bias=12")
         os.system(cmdStart+"image_stabilization=0")

@@ -214,4 +214,16 @@ public class ImaginaryDrivetrain extends Drivetrain{
         dtPose.resetToPosition(x_ft, y_ft, pose_angle_deg);
     }
 
+    @Override
+    public void setTurnToAngleCmd(double angle_cmd) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public double getTurnToAngleErrDeg() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

@@ -1,6 +1,0 @@
-{
-    "board": "arduino:avr:nano",
-    "configuration": "cpu=atmega328old",
-    "sketch": "CasseroleLED\\CasseroleLED.ino",
-    "port": "COM3"
-}

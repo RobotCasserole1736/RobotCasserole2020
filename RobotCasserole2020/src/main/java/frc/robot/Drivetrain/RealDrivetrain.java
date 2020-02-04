@@ -58,6 +58,9 @@ public class RealDrivetrain extends Drivetrain {
     double headingCmdDeg = 0;
     boolean headingCmdAvailable = false;
     double headingCorrCmdRPM = 0;
+    double angleErr;
+    double angleErrAccumulator;
+    double turnToAngleCurSpeedLimit = 0;
 
 
     Signal leftWheelSpeedDesiredSig;
@@ -72,6 +75,8 @@ public class RealDrivetrain extends Drivetrain {
     Signal currentL2Sig;
     Signal currentR1Sig;
     Signal currentR2Sig;
+    Signal headingCommandSig;
+    Signal opModeSig;
 
     CANPIDController dtLPID;
     CANPIDController dtRPID;
@@ -81,6 +86,12 @@ public class RealDrivetrain extends Drivetrain {
     Calibration kD;
     Calibration kFF;
     Calibration kPGyro;
+
+    Calibration turnToAnglekP;
+    Calibration turnToAnglekI;
+    Calibration turnToAngleMaxRPM;
+    Calibration turnToAngleMaxRPMPerSec;
+
     Calibration currentLimit;
     boolean calsUpdated;
 
@@ -116,20 +127,26 @@ public class RealDrivetrain extends Drivetrain {
         rightWheelSpeedDesiredSig = new Signal("Drivetrain Right Wheel Desired Speed", "RPM");
         rightWheelSpeedActualSig = new Signal("Drivetrain Right Wheel Actual Speed", "RPM");
         headingCorrectionCmdSig = new Signal("Drivetrain Heading Correction Command", "RPM");
+        headingCommandSig = new Signal("Drivetrain Desired Heading", "deg");
         rightMotorOutput = new Signal("Drivetrain Right Motor Output Duty Cycle", "pct");
         leftMotorOutput  = new Signal("Drivetrain Left Motor output Duty Cycle", "pct");
+        opModeSig = new Signal("Drivetrain Op Mode", "mode");
 
         currentL1Sig = new Signal("Left Master Moter Current", "Amps");
         currentL2Sig = new Signal("Left Intern Moter Current", "Amps");
         currentR1Sig = new Signal("Right Master Moter Current", "Amps");
         currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
 
-        kP = new Calibration("Drivetrain P Value", 0.005);
+        kP = new Calibration("Drivetrain P Value", 0.006);
         kI = new Calibration("Drivetrain I Value", 0);
-        kD = new Calibration("Drivetrain D Value", 0);
-        kFF = new Calibration("Drivetrain F Value", 0.003);
-        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 0);
+        kD = new Calibration("Drivetrain D Value", 0.0096);
+        kFF = new Calibration("Drivetrain F Value", 0.00195);
+        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 1.0);
         currentLimit = new Calibration("Drivetrain Per-Motor Smart Current Limit" , 60, 0, 100);
+        turnToAnglekP= new Calibration("Drivetrain Turn To Angle kP", 3.0);
+        turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0);
+        turnToAngleMaxRPM= new Calibration("Drivetrain Turn To Angle Max RPM", 150, 0, 500);
+        turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM/sec", 300, 0, 5000);
 
         
         dtLeftIntern.follow(dtLeftMaster);
@@ -167,9 +184,21 @@ public class RealDrivetrain extends Drivetrain {
 
     @Override
     public void update() {
+
+        prevOpMode = opMode;
+        opMode = opModeCmd;
         
         sampleSensors();
-        opMode = opModeCmd;
+
+        if(opMode != prevOpMode){
+            //Todo - reset I accumulators
+        }
+
+        if(prevOpMode != DrivetrainOpMode.kTurnToAngle && opMode == DrivetrainOpMode.kTurnToAngle){
+            //Reset for start of turn-to-angle
+            angleErrAccumulator = 0;
+            turnToAngleCurSpeedLimit = 0;
+        }
     
         if(opMode == DrivetrainOpMode.kOpenLoop) {
             
@@ -182,13 +211,45 @@ public class RealDrivetrain extends Drivetrain {
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
             if(headingCmdAvailable){
-                headingCorrCmdRPM = kPGyro.get() * (headingCmdDeg - gyroAngle); //Positive headingCorrCmd means turn to the left, which increases the pose angle.
+                angleErr = headingCmdDeg - gyroAngle;
+                headingCorrCmdRPM = kPGyro.get() * (angleErr); //Positive headingCorrCmd means turn to the left, which increases the pose angle.
             } else {
+                angleErr = 0;
                 headingCorrCmdRPM = 0;
             }    
 
             leftWheelSpeedDesiredRPM  -= headingCorrCmdRPM;
             rightWheelSpeedDesiredRPM += headingCorrCmdRPM;
+
+            dtLPID.setReference(leftWheelSpeedDesiredRPM, ControlType.kVelocity);
+            dtRPID.setReference(rightWheelSpeedDesiredRPM, ControlType.kVelocity);
+
+        } else if (opMode == DrivetrainOpMode.kTurnToAngle){
+
+            angleErr = (headingCmdDeg - gyroAngle);
+
+            if(Math.abs(angleErr) < 8.0){
+                //Only accumulate when we're close to the target.
+                angleErrAccumulator += angleErr;
+            } else {
+                angleErrAccumulator = 0; //otherwise let P take over.
+            }
+
+            if(turnToAngleCurSpeedLimit < turnToAngleMaxRPM.get()){
+                turnToAngleCurSpeedLimit += turnToAngleMaxRPMPerSec.get() * 0.02;//Assume 20ms loop
+            }
+
+            //Rate-limited KI control of robot angle
+            headingCorrCmdRPM = turnToAnglekP.get() * angleErr + turnToAnglekI.get() * angleErrAccumulator;
+
+            if(headingCorrCmdRPM > turnToAngleCurSpeedLimit){
+                headingCorrCmdRPM = turnToAngleCurSpeedLimit;
+            } else if (headingCorrCmdRPM < -1.0*turnToAngleCurSpeedLimit){
+                headingCorrCmdRPM = -1.0 * turnToAngleCurSpeedLimit;
+            }
+
+            leftWheelSpeedDesiredRPM   = -1*headingCorrCmdRPM;
+            rightWheelSpeedDesiredRPM  = headingCorrCmdRPM;
 
             dtLPID.setReference(leftWheelSpeedDesiredRPM, ControlType.kVelocity);
             dtRPID.setReference(rightWheelSpeedDesiredRPM, ControlType.kVelocity);
@@ -207,6 +268,8 @@ public class RealDrivetrain extends Drivetrain {
         currentL2Sig.addSample(sampleTimeMS, dtNeoL2Current);
         currentR1Sig.addSample(sampleTimeMS, dtNeoR1Current);
         currentR2Sig.addSample(sampleTimeMS, dtNeoR2Current);
+        headingCommandSig.addSample(sampleTimeMS, headingCmdDeg);
+        opModeSig.addSample(sampleTimeMS, opMode.toInt());
         
         
     }
@@ -222,6 +285,12 @@ public class RealDrivetrain extends Drivetrain {
     public void setGyroLockCmd(double forwardReverseCmd) {
         opModeCmd = DrivetrainOpMode.kGyroLock;
         fwdRevCmd = forwardReverseCmd;
+    }
+
+    @Override
+    public void setTurnToAngleCmd(double angle_des) {
+        opModeCmd = DrivetrainOpMode.kTurnToAngle;
+        headingCmdDeg = angle_des;
     }
 
     @Override
@@ -316,5 +385,10 @@ public class RealDrivetrain extends Drivetrain {
         //TODO - something with x_ft and y_ft?? Eeh.
         dtGyro.setCurAngle(theta_deg);
         gyroAngle = theta_deg;
+    }
+
+    @Override
+    public double getTurnToAngleErrDeg() {
+        return angleErr;
     }
 }
