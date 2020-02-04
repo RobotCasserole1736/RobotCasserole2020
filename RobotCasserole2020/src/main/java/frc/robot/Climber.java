@@ -37,6 +37,8 @@ public class Climber{
     boolean lowerLimitSwitchFaulted;
     boolean upperLimitSwitchFaulted;
 
+    double initialPulseCounter;
+
     public Climber(){
         climberMotor = new Spark(RobotConstants.CLIMBER_SPARK_LEFT_ID);
         upperLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_UPPER_NO_ID, RobotConstants.CLIMBER_LIMIT_UPPER_NC_ID);
@@ -67,23 +69,28 @@ public class Climber{
             
             climbLocker.set(true);
             motorCmd = 0;
+            initialPulseCounter = 4;
         
-        }else{
-            double loopCounter = 0;
-            if(loopCounter < 4) {
-                motorCmd = -0.5;
-                loopCounter++;
-            } else {
+        } else {
 
             climbLocker.set(false);
-            if (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed){
-                motorCmd = Math.min(0,climbCMD);
-            }else if (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed){
-                motorCmd = Math.max(0,climbCMD);
-            }else{
-                motorCmd = climbCMD;
-            }
-            motorCmd *= climberSpeed.get();
+            
+            if(initialPulseCounter > 0) {
+                //Initial Pulse for ensuring the latch fully disengages.
+                motorCmd = -0.5;
+                initialPulseCounter--;
+            } else {
+
+                if (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed){
+                    motorCmd = Math.min(0,climbCMD);
+                } else if (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed){
+                    motorCmd = Math.max(0,climbCMD);
+                } else {
+                    motorCmd = climbCMD;
+                }
+
+                motorCmd *= climberSpeed.get();
+                
             }
         }
 
