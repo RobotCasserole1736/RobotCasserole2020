@@ -25,7 +25,6 @@ import frc.robot.BallHandling.Hopper;
 import frc.robot.BallHandling.IntakeControl;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
 import frc.robot.Drivetrain.Drivetrain;
-import frc.robot.Drivetrain.DrivetrainClosedLoopTestVectors;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
@@ -88,7 +87,6 @@ public class Robot extends TimedRobot {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void robotInit() {
-    DrivetrainClosedLoopTestVectors.getInstance();
     
     CrashTracker.logRobotInit();
 
@@ -217,7 +215,6 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     
     loopTiming.markLoopStart();
-    DrivetrainClosedLoopTestVectors.getInstance().update();
     CrashTracker.logAutoPeriodic();
 
     ledController.setPattern(LEDPatterns.Pattern2);
@@ -259,7 +256,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     loopTiming.markLoopStart();
-    DrivetrainClosedLoopTestVectors.getInstance().update();
     CrashTracker.logTeleopPeriodic();
 
     ledController.setPattern(LEDPatterns.Pattern1);
