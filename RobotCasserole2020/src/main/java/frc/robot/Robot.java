@@ -27,6 +27,7 @@ import frc.robot.ControlPanel.ControlPanelStateMachine;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
+import frc.robot.HumanInterface.PlayerFeedback;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.VisionProc.CasseroleVision;
@@ -79,6 +80,7 @@ public class Robot extends TimedRobot {
 
   //Misc.
   Calibration snailModeLimitRPM;
+  PlayerFeedback pfb;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,6 +137,8 @@ public class Robot extends TimedRobot {
     ControlPanelStateMachine.getInstance();
 
     snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
+
+    pfb = PlayerFeedback.getInstance();
 
     /* Website Setup */
     initDriverView();
@@ -193,6 +197,8 @@ public class Robot extends TimedRobot {
     drivetrain.updateGains(false);
     drivetrain.update();
 
+    pfb.update();
+
     updateDriverView();
     telemetryUpdate();
     loopTiming.markLoopEnd();
@@ -236,6 +242,8 @@ public class Robot extends TimedRobot {
 
     updateDriverView();
     telemetryUpdate();
+
+    pfb.update();
 
     // put all code before this
     loopTiming.markLoopEnd();
@@ -316,6 +324,9 @@ public class Robot extends TimedRobot {
     updateDriverView();
     telemetryUpdate();
 
+    pfb.update();
+
+
     // put all code before this 
     loopTiming.markLoopEnd();
     
@@ -356,6 +367,8 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
     CasseroleDriverView.setSoundWidget("High Ground Acqd",false); //TODO
   }
+
+  
   public void updateLEDpattern(){
     //Peter will work on this later...rn hes kinda tired, ngl
   }

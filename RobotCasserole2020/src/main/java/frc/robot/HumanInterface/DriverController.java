@@ -2,6 +2,7 @@ package frc.robot.HumanInterface;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.Drivetrain.Utils;
@@ -120,6 +121,13 @@ public class DriverController {
 
     public boolean getSnailModeDesired(){
         return snailModeCmd;
+    }
+
+    
+
+    void rumble(double strength) {
+        driverController.setRumble(RumbleType.kLeftRumble, strength);
+        driverController.setRumble(RumbleType.kRightRumble, strength);
     }
 
     

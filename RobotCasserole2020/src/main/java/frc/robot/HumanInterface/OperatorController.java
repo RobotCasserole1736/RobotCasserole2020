@@ -3,6 +3,7 @@ package frc.robot.HumanInterface;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 /*
  *******************************************************************************************
@@ -107,6 +108,12 @@ public class OperatorController {
     public boolean createSound(){
         return operaterController.getStickButton(Hand.kLeft);
     }
+
+    public void rumble(double strength) {
+        operaterController.setRumble(RumbleType.kLeftRumble, strength);
+        operaterController.setRumble(RumbleType.kRightRumble, strength);
+    }
+
     
 
 }

@@ -8,6 +8,7 @@ import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.Drivetrain.RealDrivetrain;
+import frc.robot.VisionProc.CasseroleVision;
 import frc.robot.VisionProc.JeVoisInterface;
 
 /*
@@ -49,7 +50,7 @@ public class PlayerFeedback {
 
     // This is the private constructor that will be called once by getInstance() and
     // it should instantiate anything that will be required by the class
-    public PlayerFeedback() {
+    private PlayerFeedback() {
         minShooterRPM = new Calibration("Minimum Shooter RPM for Rumble", 6000);
     }
 
@@ -59,35 +60,32 @@ public class PlayerFeedback {
         
         //Makes the operator controller rumble when the robot is preparing to shoot and for each ball that is shot
         if((currentShooterCtrlMode == ShooterCtrlMode.SpoolUp || currentShooterCtrlMode == ShooterCtrlMode.HoldSpeed) && actualShooterRPM < minShooterRPM.get()){
-            operatorControllerRumble(0.4);
+            OperatorController.getInstance().rumble(0.4);
         }else{
-            operatorControllerRumble(0);
+            OperatorController.getInstance().rumble(0);
         }
 
         //2 is the allowable angle error. It should be equal to AutoEventTurnToVisionTarget's variable.
         if(DriverController.getInstance().autoAlignCmd && RealDrivetrain.getInstance().getTurnToAngleErrDeg() < 2){
-            driverControllerRumble(0.3);
-        }else if(DriverController.getInstance().autoAlignCmd && (JeVoisInterface.getInstance().isVisionOnline() == false || JeVoisInterface.getInstance().isTgtVisible() == false)){
+            DriverController.getInstance().rumble(0.3);
+        }else if(DriverController.getInstance().autoAlignCmd && (CasseroleVision.getInstance().isVisionOnline() == false || CasseroleVision.getInstance().isTgtVisible() == false)){
             //Makes the controller rumble every 5 loops so it pulses instead of being constant
-            if(loopCounter == 5){
-                driverControllerRumble(0.8);
+            if(loopCounter == 10){
                 loopCounter = 0;
+            } else {
+                loopCounter++;
             }
-            loopCounter++;
+
+            if(loopCounter < 5){
+                DriverController.getInstance().rumble(0.8);
+            } else {
+                DriverController.getInstance().rumble(0);
+            }
+
         }else{
-            driverControllerRumble(0);
+            DriverController.getInstance().rumble(0);
         }
 
-    }
-
-    void operatorControllerRumble(double strength) {
-        operatorController.setRumble(RumbleType.kLeftRumble, strength);
-        operatorController.setRumble(RumbleType.kRightRumble, strength);
-    }
-
-    void driverControllerRumble(double strength) {
-        driverController.setRumble(RumbleType.kLeftRumble, strength);
-        driverController.setRumble(RumbleType.kRightRumble, strength);
     }
 	
 }
