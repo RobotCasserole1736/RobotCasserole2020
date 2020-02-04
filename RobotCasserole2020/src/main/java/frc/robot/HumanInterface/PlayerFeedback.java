@@ -1,13 +1,14 @@
 package frc.robot.HumanInterface;
 
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.lib.Calibration.Calibration;
 import frc.robot.ShooterControl.RealShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.HumanInterface.OperatorController;
+import frc.robot.HumanInterface.DriverController;
+import frc.robot.Drivetrain.RealDrivetrain;
+import frc.robot.VisionProc.JeVoisInterface;
 
 /*
  *******************************************************************************************
@@ -31,13 +32,6 @@ import frc.robot.HumanInterface.OperatorController;
 
 public class PlayerFeedback {
 
-    Calibration minShooterRPM;
-
-    XboxController operatorController = OperatorController.getInstance().operaterController;
-    XboxController driverController = DriverController.getInstance().driverController;
-
-    private Joystick joystick;
-
     private static PlayerFeedback empty = null;
 
     public static synchronized PlayerFeedback getInstance() {
@@ -45,6 +39,13 @@ public class PlayerFeedback {
             empty = new PlayerFeedback();
         return empty;
     }
+
+    Calibration minShooterRPM;
+
+    XboxController operatorController = OperatorController.getInstance().operaterController;
+    XboxController driverController = DriverController.getInstance().driverController;
+
+    int loopCounter = 0;
 
     // This is the private constructor that will be called once by getInstance() and
     // it should instantiate anything that will be required by the class
@@ -61,6 +62,20 @@ public class PlayerFeedback {
             operatorControllerRumble(0.4);
         }else{
             operatorControllerRumble(0);
+        }
+
+        //2 is the allowable angle error. It should be equal to AutoEventTurnToVisionTarget's variable.
+        if(DriverController.getInstance().autoAlignCmd && RealDrivetrain.getInstance().getTurnToAngleErrDeg() < 2){
+            driverControllerRumble(0.3);
+        }else if(DriverController.getInstance().autoAlignCmd && (JeVoisInterface.getInstance().isVisionOnline() == false || JeVoisInterface.getInstance().isTgtVisible() == false)){
+            //Makes the controller rumble every 5 loops so it pulses instead of being constant
+            if(loopCounter == 5){
+                driverControllerRumble(0.8);
+                loopCounter = 0;
+            }
+            loopCounter++;
+        }else{
+            driverControllerRumble(0);
         }
 
     }
