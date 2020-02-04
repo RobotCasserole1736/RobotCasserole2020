@@ -19,20 +19,20 @@ public class AutoEventPrepToShoot extends AutoEvent {
 	public void userStart() {
 		endTime = Timer.getFPGATimestamp() + duration_s;
         completed = false;
-		Superstructure.getInstance().setIntakeDesired(true);
+		Superstructure.getInstance().setPrepToShootDesired(true);;
 	}
 	
 	@Override
 	public void userUpdate() {
 		completed = (Timer.getFPGATimestamp() > endTime);
 		if (completed){
-			Superstructure.getInstance().setIntakeDesired(false);
+			Superstructure.getInstance().setPrepToShootDesired(false);;
 		}
 	}
 
 	@Override
 	public void userForceStop() {
-		Superstructure.getInstance().setIntakeDesired(false);
+		Superstructure.getInstance().setPrepToShootDesired(false);
 	}
 
 	@Override
