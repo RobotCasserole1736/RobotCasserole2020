@@ -64,9 +64,17 @@ public class Climber{
         boolean canClimb = !upperLimitSwitchFaulted && !lowerLimitSwitchFaulted;
 
         if(climbEnabled && canClimb){
+            
             climbLocker.set(true);
             motorCmd = 0;
+        
         }else{
+            double loopCounter = 0;
+            if(loopCounter < 4) {
+                motorCmd = -0.5;
+                loopCounter++;
+            } else {
+
             climbLocker.set(false);
             if (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed){
                 motorCmd = Math.min(0,climbCMD);
@@ -76,6 +84,7 @@ public class Climber{
                 motorCmd = climbCMD;
             }
             motorCmd *= climberSpeed.get();
+            }
         }
 
         climberMotor.set(motorCmd);
