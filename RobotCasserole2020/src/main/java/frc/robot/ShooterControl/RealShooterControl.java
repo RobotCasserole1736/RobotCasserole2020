@@ -213,6 +213,8 @@ public class RealShooterControl extends ShooterControl {
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, shooterSetpointRPM);
         rpmActualSig.addSample(sampleTimeMS, shooterActualSpeed_rpm);
+        motor1SpeedSig.addSample(sampleTimeMS, shooterMotor1Speed_rpm);
+        motor2SpeedSig.addSample(sampleTimeMS, shooterMotor2Speed_rpm);
         isUnderLoadSig.addSample(sampleTimeMS, underLoad);
         shooterStateCommandSig.addSample(sampleTimeMS, run.value);
         shooterControlModeSig.addSample(sampleTimeMS, currentStateShooter.value);
