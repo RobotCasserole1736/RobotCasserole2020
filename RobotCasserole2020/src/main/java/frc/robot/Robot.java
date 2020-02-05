@@ -30,6 +30,7 @@ import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.LEDController.LEDPatterns;
+import frc.robot.ControlPanel.ControlPanelManipulator;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -271,7 +272,6 @@ public class Robot extends TimedRobot {
     climber.update();
     hopper.update();
     ctrlPanel.update();
-    ledController.update();
 
     if(auto.isActive()){
       //Nothing to do, expect that auto sequencer will provide drivetrain comands
@@ -285,6 +285,8 @@ public class Robot extends TimedRobot {
 
     updateDriverView();
     telemetryUpdate();
+
+    ledUpdater();
 
     // put all code before this 
     loopTiming.markLoopEnd();
@@ -322,13 +324,16 @@ public class Robot extends TimedRobot {
   }
 
     public void ledUpdater(){
+      boolean isRotationComplete;
       double timeLeft;
       timeLeft = DriverStation.getInstance().getMatchTime();
-      if (timeLeft <= 15, OperatorController.getInstance().getclimbEnabled = true,){
+      if (timeLeft <= 15 && OperatorController.getInstance().getclimbEnabled = true){
         ledController.setPattern(LEDPatterns.Pattern6);
       }
-      else if(){
+      else if(isRotationComplete == true){
+        ledController.setPattern(LEDPatterns.Pattern6);
       }
+      else if()
     }
 
 
