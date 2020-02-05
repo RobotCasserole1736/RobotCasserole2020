@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -23,6 +24,8 @@ import frc.robot.Autonomous.Autonomous;
 import frc.robot.BallHandling.BallDistanceSensor;
 import frc.robot.BallHandling.Hopper;
 import frc.robot.BallHandling.IntakeControl;
+import frc.robot.ControlPanel.ControlPanelColor;
+import frc.robot.ControlPanel.ControlPanelManipulator;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
@@ -335,6 +338,8 @@ public class Robot extends TimedRobot {
 
     pfb.update();
 
+    ledUpdater();
+    ledController.update();
 
     // put all code before this 
     loopTiming.markLoopEnd();
@@ -377,10 +382,34 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setSoundWidget("High Ground Acqd",false); //TODO
   }
 
-
-  public void updateLEDpattern(){
-    //Peter will work on this later...rn hes kinda tired, ngl
-  }
+    public void ledUpdater(){
+      double timeLeft;
+      timeLeft = DriverStation.getInstance().getMatchTime();
+      if (timeLeft <= 15 && Climber.getInstance().climbEnabled == true){
+        ledController.setPattern(LEDPatterns.Pattern6);
+      }
+      else if(ControlPanelManipulator.getInstance().isRotationCompleted() == true){
+        ledController.setPattern(LEDPatterns.Pattern6);
+      }
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
+        ledController.setPattern(LEDPatterns.Pattern0);
+      }
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kBLUE){
+        ledController.setPattern(LEDPatterns.Pattern1);
+      }
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kYELLOW){
+        ledController.setPattern(LEDPatterns.Pattern3);
+      }
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kGREEN){
+        ledController.setPattern(LEDPatterns.Pattern2);
+      }
+      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
+      ledController.setPattern(LEDPatterns.Pattern4);
+      }
+      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red);{
+        ledController.setPattern(LEDPatterns.Pattern5);
+      }
+    }
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
