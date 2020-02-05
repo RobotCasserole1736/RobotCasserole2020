@@ -73,12 +73,12 @@ public class BallCounter {
     
     private BallCounter() {
         
-        ballMinThicknessCal = new Calibration("Ball Is too Short", 1);
-        ballMaxThicknessCal = new Calibration("Thick Side of Ball", 5);
+        ballMinThicknessCal = new Calibration("Ball Counter Empty-Short Thresh Inches", 6);
+        ballMaxThicknessCal = new Calibration("Ball Counter Short-Apex Thresh Inches", 2);
         
-        ballCountSig = new Signal("How many balls are in the Conveyor", "balls");
-        howFarFromSensorSig = new Signal("Distance From Ball to Sensor", "inches");
-        whatHeightWeSaySig = new Signal("What Are We Calling The Measurement", "NameOfState");
+        ballCountSig = new Signal("Ball Counter Ball Count", "count");
+        howFarFromSensorSig = new Signal("Ball Counter Sensor Distance", "in");
+        whatHeightWeSaySig = new Signal("Ball Counter Ball Height State", "heightState");
 
     }
     public void update() {
@@ -128,8 +128,11 @@ public class BallCounter {
 
 
     public int getBallCount() {
-        
         return ballsInConveyor;
+    }
+
+    public boolean isBallPresent(){
+        return curBallHeight != BallHeight.Empty;
     }
 }
 
