@@ -125,9 +125,9 @@ public class ControlPanelStateMachine{
     }
 
 
-    // public int getdegreesToRotateThreeToFive(){
-    //    return this.degreesToRotateThreeToFive;
-    // }
+    public ControlPanelColor getGameDataColor(){
+       return this.gameDataColor;
+    }
 
     // public int getdegreesToRotateColor(){
     //    return this.degreesToRotateColor;

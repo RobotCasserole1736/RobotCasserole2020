@@ -31,7 +31,6 @@ void setup() {
   FastLED.show(); //Ensure we get one LED update in prior to periodic - should blank out all LED's
 }
 
-
 /**
  * Periodic call. Will be called again and again.
  */
@@ -57,13 +56,14 @@ void loop()
   else if ((pulseLen_us >= 1300) && (pulseLen_us <= 1449))
   {
     //TODO - Call periodic update for pattern 2
-    Fire(55,120,15);
+    ColorSparkle_update(0, 255, 255);
+    //purple color sparkle
   }
   else if ((pulseLen_us >= 1450) && (pulseLen_us <= 1499))
   {
     //TODO - Call periodic update for pattern 3
-    ColorSparkle_update(0, 255, 0);
-    //green color sparkle
+    ColorSparkle_update(255, 255, 0);
+    //yellow color sparkle
   }
   else if ((pulseLen_us >= 1600) && (pulseLen_us <= 1699))
   {

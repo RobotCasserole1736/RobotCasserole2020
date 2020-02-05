@@ -30,6 +30,7 @@ import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.LEDController.LEDPatterns;
+import frc.robot.ControlPanel.ControlPanelColor;
 import frc.robot.ControlPanel.ControlPanelManipulator;
 
 /**
@@ -324,16 +325,32 @@ public class Robot extends TimedRobot {
   }
 
     public void ledUpdater(){
-      boolean isRotationComplete;
       double timeLeft;
       timeLeft = DriverStation.getInstance().getMatchTime();
-      if (timeLeft <= 15 && OperatorController.getInstance().getclimbEnabled = true){
+      if (timeLeft <= 15 && Climber.getInstance().climbEnabled == true){
         ledController.setPattern(LEDPatterns.Pattern6);
       }
-      else if(isRotationComplete == true){
+      else if(ControlPanelManipulator.getInstance().isRotationCompleted() == true){
         ledController.setPattern(LEDPatterns.Pattern6);
       }
-      else if()
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
+        ledController.setPattern(LEDPatterns.Pattern0);
+      }
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kBLUE){
+        ledController.setPattern(LEDPatterns.Pattern1);
+      }
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kYELLOW){
+        ledController.setPattern(LEDPatterns.Pattern3);
+      }
+      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kGREEN){
+        ledController.setPattern(LEDPatterns.Pattern2);
+      }
+      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
+      ledController.setPattern(LEDPatterns.Pattern4);
+      }
+      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red);{
+        ledController.setPattern(LEDPatterns.Pattern5);
+      }
     }
 
 
