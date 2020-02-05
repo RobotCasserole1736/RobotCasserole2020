@@ -379,7 +379,12 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
     CasseroleDriverView.setBoolean("Climber Upper SW Fault", climber.isUpperLimitSwitchFaulted());
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
-    CasseroleDriverView.setSoundWidget("High Ground Acqd",false); //TODO
+    
+    if (DriverStation.getInstance().getMatchTime() <= 15 & Climber.getInstance().climbEnabled == false){
+      CasseroleDriverView.setSoundWidget("High Ground Acqd",true);
+    }else{
+      CasseroleDriverView.setSoundWidget("High Ground Acqd",false); 
+    }
   }
 
     public void ledUpdater(){
