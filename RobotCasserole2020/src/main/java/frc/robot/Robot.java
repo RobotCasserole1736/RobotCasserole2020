@@ -288,6 +288,7 @@ public class Robot extends TimedRobot {
     telemetryUpdate();
 
     ledUpdater();
+    ledController.update();
 
     // put all code before this 
     loopTiming.markLoopEnd();
