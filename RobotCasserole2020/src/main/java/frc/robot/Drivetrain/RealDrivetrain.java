@@ -132,10 +132,10 @@ public class RealDrivetrain extends Drivetrain {
         leftMotorOutput  = new Signal("Drivetrain Left Motor output Duty Cycle", "pct");
         opModeSig = new Signal("Drivetrain Op Mode", "mode");
 
-        currentL1Sig = new Signal("Left Master Moter Current", "Amps");
-        currentL2Sig = new Signal("Left Intern Moter Current", "Amps");
-        currentR1Sig = new Signal("Right Master Moter Current", "Amps");
-        currentR2Sig = new Signal("Right Intern Moter Current", "Amps");
+        currentL1Sig = new Signal("Left Master Moter Current", "A");
+        currentL2Sig = new Signal("Left Intern Moter Current", "A");
+        currentR1Sig = new Signal("Right Master Moter Current", "A");
+        currentR2Sig = new Signal("Right Intern Moter Current", "A");
 
         kP = new Calibration("Drivetrain P Value", 0.006);
         kI = new Calibration("Drivetrain I Value", 0);

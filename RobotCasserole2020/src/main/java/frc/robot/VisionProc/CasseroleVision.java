@@ -48,12 +48,12 @@ public class CasseroleVision extends VisionCamera {
         targetAngle_deg_nt = table.getEntry("targetAngle_deg");
         targetPosStable_nt = table.getEntry("targetPosStable");
 
-        targetAngleSignal= new Signal("Raspberry Pi Angle","deg");
-        targetVisibleSignal= new Signal("Raspberry Pi Visible Target","boolean");
-        targetStableSignal= new Signal("Raspberry Pi Stable Target","boolean");
-        cameraFramerateSignal= new Signal("Raspberry Pi Framerate","fps");
-        cameraDurationSignal= new Signal("Raspberry Pi Duration","sec");
-        visionOnlineSignal= new Signal("Raspberry Pi Vision System Online","bool");
+        targetAngleSignal= new Signal("Vision Raspberry Pi Angle","deg");
+        targetVisibleSignal= new Signal("Vision Raspberry Pi Visible Target","bool");
+        targetStableSignal= new Signal("Vision Raspberry Pi Stable Target","bool");
+        cameraFramerateSignal= new Signal("Vision Raspberry Pi Framerate","fps");
+        cameraDurationSignal= new Signal("Vision Raspberry Pi Duration","sec");
+        visionOnlineSignal= new Signal("Vision Raspberry Pi Vision System Online","bool");
     }
 
     @Override

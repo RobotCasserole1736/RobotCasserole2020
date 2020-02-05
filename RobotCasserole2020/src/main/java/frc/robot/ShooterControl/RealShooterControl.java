@@ -107,7 +107,7 @@ public class RealShooterControl extends ShooterControl {
         rpmActualSig = new Signal("Shooter Actual Speed", "RPM");
         motor1SpeedSig = new Signal("Shooter Motor 1 Speed", "RPM");
         motor2SpeedSig = new Signal("Shooter Motor 2 Speed", "RPM");
-        isUnderLoadSig = new Signal("Shooter Under Load","boolean");
+        isUnderLoadSig = new Signal("Shooter Under Load","bool");
         shooterMotor1CurrentSig = new Signal("Shooter Motor 1 Current","A");
         shooterMotor2CurrentSig = new Signal("Shooter Motor 2 Current","A");
         shooterStateCommandSig = new Signal("Shooter State Command", "state");

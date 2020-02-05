@@ -75,7 +75,6 @@ public class IntakeControl {
 		posStateSig = new Signal("Intake Position State", "state");
 		spdStateSig = new Signal("Intake Speed State", "state");
 		motorCurrentSig = new Signal("Intake Motor Current", "A");
-		//TODO
 	}
 
 	public void update(){

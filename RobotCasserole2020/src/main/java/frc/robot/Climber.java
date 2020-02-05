@@ -28,7 +28,6 @@ public class Climber{
     Signal climberCMDSignal;
     Signal climberMotorCmdSignal;
     Signal climbMotorCurrentSignal;
-    Signal climberRightCurrentSignal;
     Signal climberUpperLimitSignal;
     Signal climberLowerLimitSignal;
     Signal limitSwitchesReadingRightSig;
@@ -50,10 +49,9 @@ public class Climber{
         climberSpeedOffset=new Calibration("Climber Stopped Motor Offset Speed", 0.0, 0, 1);
         climberCMDSignal= new Signal("Climber Input Command","cmd");
         climberMotorCmdSignal= new Signal("Climber Motor Command","cmd");
-        climbMotorCurrentSignal= new Signal("Left Climber Current","Amp");
-        climberRightCurrentSignal= new Signal("Right Climber Current","Amp");
-        climberUpperLimitSignal= new Signal("Climber Upper Limit Switch","boolean");
-        climberLowerLimitSignal= new Signal("Climber Lower Limit Switch","boolean");
+        climbMotorCurrentSignal= new Signal("Climber Motor Current","A");
+        climberUpperLimitSignal= new Signal("Climber Upper Limit Switch","state");
+        climberLowerLimitSignal= new Signal("Climber Lower Limit Switch","state");
     }
 
     public void update(){

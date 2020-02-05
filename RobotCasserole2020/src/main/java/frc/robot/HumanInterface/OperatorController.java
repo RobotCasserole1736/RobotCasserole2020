@@ -88,7 +88,7 @@ public class OperatorController {
         ctrlPanelThreeRotationsDesired = operaterController.getYButton();
         ctrlPanelSeekToColorDesired = operaterController.getBButton();
 
-        double time_in_ms = LoopTiming.getInstance().getLoopStartTimeSec();
+        double time_in_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         shootCmdSig.addSample(time_in_ms, shootCmd);
         prepToShootCmdSig.addSample(time_in_ms, prepToShootCmd);
         intakeDesiredSig.addSample(time_in_ms, intakeDesired);

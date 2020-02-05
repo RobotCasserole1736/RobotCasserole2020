@@ -33,7 +33,7 @@ public class PhotonCannonControl {
         photonRelayOutput.set(!curCannonState);
         prevCannonState = curCannonState;
 
-        double sample_time_ms = Timer.getFPGATimestamp()*1000;
+        double sample_time_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         photonCannonSignal.addSample(sample_time_ms, curCannonState);
     }
 

@@ -52,10 +52,10 @@ public class Hopper{
         HopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
         HopperFWDSpeed = new Calibration("Hopper Forward Speed", 1);
         HopperBWDSpeed = new Calibration("Hopper Backwards Speed", -1);
-        HopperSparkLeftCurrentSignal =new Signal("Hopper Spark Left Current","Amp");
-        HopperSparkRightCurrentSignal =new Signal("Hopper Spark Right Current","Amp");
-        HopperSparkLeftCmdSignal =new Signal("Hopper Spark Left Cmd","Cmd");
-        HopperSparkRightCmdSignal =new Signal("Hopper Spark Right Cmd","Cmd");
+        HopperSparkLeftCurrentSignal =new Signal("Hopper Motor Left Current","A");
+        HopperSparkRightCurrentSignal =new Signal("Hopper Motor Right Current","A");
+        HopperSparkLeftCmdSignal =new Signal("Hopper Motor Left Cmd","cmd");
+        HopperSparkRightCmdSignal =new Signal("Hopper Motor Right Cmd","cmd");
     }
 
     public void update(){
@@ -77,6 +77,7 @@ public class Hopper{
         }
         HopperSparkLeft.set(HopperSparkLeftCmd);
         HopperSparkRight.set(HopperSparkRightCmd);
+        
         HopperSparkLeftCmdSignal.addSample(sampleTimeMs, HopperSparkLeftCmd);
         HopperSparkRightCmdSignal.addSample(sampleTimeMs, HopperSparkRightCmd);
         HopperSparkLeftCurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.HOPPER_SPARK_LEFT_PDP_ID));

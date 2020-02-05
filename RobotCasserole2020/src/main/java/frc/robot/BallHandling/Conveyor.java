@@ -82,7 +82,7 @@ public class Conveyor{
         conveyorReverseCal = new Calibration("EmptyTheRobot", 0.6);
 
         convMotorSpeedCmdSig = new Signal("Conveyor Motor Speed Command", "pct");
-        motorCurrentSig = new Signal("Conveyor Motor Current", "Amps");
+        motorCurrentSig = new Signal("Conveyor Motor Current", "A");
         shooterEndSensorSig = new Signal("Conveyor Shooter End Ball Present", "bool");
         intakeEndSensorSig = new Signal("Conveyor Intake End Ball Present", "bool");
     }
