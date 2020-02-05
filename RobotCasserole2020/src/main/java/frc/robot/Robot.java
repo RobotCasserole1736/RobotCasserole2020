@@ -272,7 +272,16 @@ public class Robot extends TimedRobot {
     OperatorController.getInstance().update();
 
     //Based on operator commands, change which photon source we use.
-    if(OperatorController.getInstance().getPhotonCannonCmd()){
+    //Photon Cannon can be activated by driver or operator, but only if
+    // we're not attempting to vision align.
+    if(
+        (
+          OperatorController.getInstance().getPhotonCannonCmd() || 
+          DriverController.getInstance().getPhotonCannonInput()
+        ) 
+        && 
+        !DriverController.getInstance().getAutoHighGoalAlignDesired()
+      ){
       photonCannon.setPhotonCannonState(true);
       eyeOfVeganSauron.setLEDRingState(false);
     } else {
@@ -368,7 +377,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setSoundWidget("High Ground Acqd",false); //TODO
   }
 
-  
+
   public void updateLEDpattern(){
     //Peter will work on this later...rn hes kinda tired, ngl
   }

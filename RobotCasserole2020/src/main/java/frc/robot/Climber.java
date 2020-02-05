@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
+import frc.robot.HumanInterface.OperatorController;
 
 
 public class Climber{
@@ -22,6 +23,7 @@ public class Climber{
     boolean climbEnabled;
     double climbCMD=0;
     Calibration climberSpeed;
+    Calibration climberSpeedOffset;
 
     Signal climberCMDSignal;
     Signal climberMotorCmdSignal;
@@ -45,6 +47,7 @@ public class Climber{
         lowerLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_LOWER_NO_ID, RobotConstants.CLIMBER_LIMIT_LOWER_NC_ID);
         climbLocker = new Solenoid(RobotConstants.CLIMBER_SOLENOID_ID);
         climberSpeed=new Calibration("Climber Max Speed", 1, 0, 1);
+        climberSpeedOffset=new Calibration("Climber Stopped Motor Offset Speed", 0.0, 0, 1);
         climberCMDSignal= new Signal("Climber Input Command","cmd");
         climberMotorCmdSignal= new Signal("Climber Motor Command","cmd");
         climbMotorCurrentSignal= new Signal("Left Climber Current","Amp");
@@ -56,6 +59,9 @@ public class Climber{
     public void update(){
         double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
         double motorCmd = 0;
+
+        climbEnabled = OperatorController.getInstance().getClimbEnableCmd();
+        climbCMD = OperatorController.getInstance().getClimbSpeedCmd();
 
         upperLSVal = upperLimitSwitch.get();
         lowerLSVal = lowerLimitSwitch.get();
@@ -90,6 +96,7 @@ public class Climber{
                 }
 
                 motorCmd *= climberSpeed.get();
+                motorCmd += climberSpeedOffset.get();
                 
             }
         }
@@ -102,15 +109,6 @@ public class Climber{
         climberUpperLimitSignal.addSample(sampleTimeMs, upperLimitSwitch.get().value);
         climberLowerLimitSignal.addSample(sampleTimeMs, lowerLimitSwitch.get().value);
 
-    }
-    
-    public void setSpeed(double cmd){
-        //Positive means "climb up", negative means climb down
-        climbCMD=cmd;
-    }
-
-    public void setClimberEnable(boolean enabled){
-        climbEnabled = enabled;
     }
 
     public boolean isLowerLimitSwitchFaulted(){
