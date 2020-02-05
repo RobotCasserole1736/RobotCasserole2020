@@ -135,7 +135,7 @@ public class Robot extends TimedRobot {
 
     loopTiming = LoopTiming.getInstance();
 
-    // supperstructure = Supperstructure.getInstance();
+    supperstructure = Supperstructure.getInstance();
 
     ControlPanelStateMachine.getInstance();
 
