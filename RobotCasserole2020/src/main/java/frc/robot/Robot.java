@@ -191,7 +191,7 @@ public class Robot extends TimedRobot {
 
     ctrlPanel.update();
 
-    // supperstructure.update();
+    supperstructure.update();
 
     drivetrain.setOpenLoopCmd(0, 0);
     drivetrain.updateGains(false);
@@ -296,17 +296,17 @@ public class Robot extends TimedRobot {
     auto.sampleOperatorCommands();
     auto.update();
 
-    // supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
-    // supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
-    // supperstructure.setEstopDesired(false); //TODO
-    // supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
+    supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
+    supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
+    supperstructure.setEstopDesired(false); //TODO
+    supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
 
     if(auto.isActive()){
       //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
     } else {
       //Driver & operator control in manual
-      // supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
-      // supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
+      supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
+      supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
 
       if(DriverController.getInstance().getSnailModeDesired()){
         //Closed-loop, fine movement mode
@@ -324,7 +324,7 @@ public class Robot extends TimedRobot {
     }
 
     drivetrain.update();
-    // supperstructure.update();
+    supperstructure.update();
  
     climber.update();
     ctrlPanel.update();

@@ -141,8 +141,6 @@ public class Autonomous {
     public void sampleOperatorCommands(){
         delayTime_s = 0; //Never delay while operator triggers auto modes
 
-        //TODO - read driver & operator controls, and set the mode command to something meaningful
-
         boolean tmp = DriverController.getInstance().getAutoHighGoalAlignDesired();
         if(tmp){
             if(driverVisionAlignButtonReleased==true){
