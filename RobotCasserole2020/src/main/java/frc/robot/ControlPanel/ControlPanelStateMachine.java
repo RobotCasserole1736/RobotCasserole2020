@@ -142,7 +142,4 @@ public class ControlPanelStateMachine{
        return this.gameDataColor;
     }
 
-    // public int getdegreesToRotateColor(){
-    //    return this.degreesToRotateColor;
-    // }
 }
