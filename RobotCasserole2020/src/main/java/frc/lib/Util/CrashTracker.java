@@ -1,7 +1,9 @@
 package frc.lib.Util;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,6 +19,40 @@ public class CrashTracker {
     private static final UUID RUN_INSTANCE_UUID = UUID.randomUUID();
     
     static boolean hasLogged = false;
+
+    static PrintStream teeStdOut;
+    static PrintStream teeStdErr;
+
+    public static void init(){
+
+        String crashTrackerFile = "";
+        //Check if the path for resources expected on the roboRIO exists. 
+        if(Files.exists(Paths.get(logFilePathRIO))){
+            //If RIO path takes priority (aka we're running on a roborio) this path takes priority
+            crashTrackerFile = logFilePathRIO + crashTrackFname;
+        } else {
+            //Otherwise use a local path, like we're running on a local machine.
+            crashTrackerFile = logFilePathLocal + crashTrackFname;
+        }
+
+        try{
+            writer = new PrintStream(new File(crashTrackerFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        PrintStream teeStdOut = new TeeStream(System.out, writer);
+        PrintStream teeStdErr = new TeeStream(System.err, writer);
+        
+        System.setOut(teeStdOut);
+        System.setErr(teeStdErr);
+    }
+
+    public static void close(){
+        if(writer != null){
+            writer.close();
+        }
+    }
     
     private static String getMatchString() {
         String retval= "";
@@ -38,6 +74,8 @@ public class CrashTracker {
     }
     
     public static void logMatchInfo() {
+        logMarker("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        logMarker("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         logMarker("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ START MATCH " + getMatchString() + "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
     }
     
@@ -46,41 +84,41 @@ public class CrashTracker {
     }
     
     public static void logRobotInit() {
-        logMarker("robot init");
+        logMarker("~~~~~~~~~~ ROBOT INIT ~~~~~~~~~~");
     }
     
     public static void logDisabledInit() {
-        logMarker("disabled init");
+        logMarker("~~~~~~~~~~ DISABLED INIT ~~~~~~~~~~");
         hasLogged = false;
     }
     
     public static void logDisabledPeriodic() {
         if(hasLogged = false) {
-            logMarker("disabled periodic");
+            logMarker("~~~~~~~~~~ DISABLED PERIODIC ~~~~~~~~~~");
             hasLogged = true;
         }
     }
     
     public static void logAutoInit() {
-        logMarker("auto init");
+        logMarker("~~~~~~~~~~ AUTO INIT ~~~~~~~~~~");
         hasLogged = false;
     }
     
     public static void logAutoPeriodic() {
         if(hasLogged = false) {
-            logMarker("auto periodic");
+            logMarker("~~~~~~~~~~ AUTO PERIODIC ~~~~~~~~~~");
             hasLogged = true;
         }
     }
     
     public static void logTeleopInit() {
-        logMarker("teleop init");
+        logMarker("~~~~~~~~~~ TELEOP INIT ~~~~~~~~~~");
         hasLogged = false; 
     }
     
     public static void logTeleopPeriodic() {
         if(hasLogged = false) {
-            logMarker("teleop periodic");
+            logMarker("~~~~~~~~~~ TELEOP PERIODIC ~~~~~~~~~~");
             hasLogged = true;
         }
     }
@@ -114,20 +152,11 @@ public class CrashTracker {
     final static String logFilePathLocal = "./";
     final static String logFilePathRIO = "/home/lvuser/";
     final static String crashTrackFname = "crash_tracking.txt";
+    static PrintStream writer = null;
     
     private static void logMarker(String mark, Throwable nullableException) {
 
-            String crashTrackerFile = "";
-            //Check if the path for resources expected on the roboRIO exists. 
-            if(Files.exists(Paths.get(logFilePathRIO))){
-                //If RIO path takes priority (aka we're running on a roborio) this path takes priority
-                crashTrackerFile = logFilePathRIO + crashTrackFname;
-            } else {
-                //Otherwise use a local path, like we're running on a local machine.
-                crashTrackerFile = logFilePathLocal + crashTrackFname;
-            }
-    
-            try (PrintWriter writer = new PrintWriter(new FileWriter(crashTrackerFile, true))) {
+        if(writer != null){
                 writer.print("[" + getDateTimeString() + "]");
                 writer.print(" ");
                 writer.print(mark);
@@ -139,10 +168,9 @@ public class CrashTracker {
                 }
 
                 writer.println();
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                writer.flush();
             }
+
     }
 
     private static String getDateTimeString() {

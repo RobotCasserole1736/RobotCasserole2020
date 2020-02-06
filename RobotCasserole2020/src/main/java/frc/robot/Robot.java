@@ -169,46 +169,56 @@ public class Robot extends TimedRobot {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void disabledInit() {
-    CrashTracker.logDisabledInit();
-    dataServer.logger.stopLogging();
-    auto.reset();
+    try {
+      CrashTracker.logDisabledInit();
+      dataServer.logger.stopLogging();
+      auto.reset();
+    } catch(Throwable t) {
+      CrashTracker.logThrowableCrash(t);
+      throw t;
+    }
 
   }
 
   @Override
   public void disabledPeriodic() {
-    loopTiming.markLoopStart();
-    CrashTracker.logDisabledPeriodic();
+    try {
+      loopTiming.markLoopStart();
+      CrashTracker.logDisabledPeriodic();
 
-    ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
+      ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
 
-    thbbtbbtbbtbbt.update();
-    eyeOfVeganSauron.setLEDRingState(false);
-    photonCannon.setPhotonCannonState(false);
-    photonCannon.update();
-    cam.update();
-    
-    auto.sampleDashboardSelector();
+      thbbtbbtbbtbbt.update();
+      eyeOfVeganSauron.setLEDRingState(false);
+      photonCannon.setPhotonCannonState(false);
+      photonCannon.update();
+      cam.update();
+      
+      auto.sampleDashboardSelector();
 
-    ctrlPanel.update();
+      ctrlPanel.update();
 
-    supperstructure.setClearJamDesired(false);
-    supperstructure.setEjectDesired(false);
-    supperstructure.setEstopDesired(false);
-    supperstructure.setIntakeDesired(false);
-    supperstructure.setPrepToShootDesired(false);
-    supperstructure.setShootDesired(false);
-    supperstructure.update();
+      supperstructure.setClearJamDesired(false);
+      supperstructure.setEjectDesired(false);
+      supperstructure.setEstopDesired(false);
+      supperstructure.setIntakeDesired(false);
+      supperstructure.setPrepToShootDesired(false);
+      supperstructure.setShootDesired(false);
+      supperstructure.update();
 
-    drivetrain.setOpenLoopCmd(0, 0);
-    drivetrain.updateGains(false);
-    drivetrain.update();
+      drivetrain.setOpenLoopCmd(0, 0);
+      drivetrain.updateGains(false);
+      drivetrain.update();
 
-    pfb.update();
+      pfb.update();
 
-    updateDriverView();
-    telemetryUpdate();
-    loopTiming.markLoopEnd();
+      updateDriverView();
+      telemetryUpdate();
+      loopTiming.markLoopEnd();
+    } catch(Throwable t) {
+      CrashTracker.logThrowableCrash(t);
+      throw t;
+    }
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -218,43 +228,57 @@ public class Robot extends TimedRobot {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void autonomousInit() {
-    CrashTracker.logAutoInit();
-    dataServer.logger.startLoggingAuto();
-    auto.sampleDashboardSelector();
-    auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
+    try {
+
+      CrashTracker.logAutoInit();
+      dataServer.logger.startLoggingAuto();
+      auto.sampleDashboardSelector();
+      auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
+
+    } catch(Throwable t) {
+      CrashTracker.logThrowableCrash(t);
+      throw t;
+    }
   }
 
   @Override
   public void autonomousPeriodic() {
     
-    loopTiming.markLoopStart();
-    CrashTracker.logAutoPeriodic();
+    try{
+      loopTiming.markLoopStart();
+      CrashTracker.logAutoPeriodic();
+      //Put all auto periodic code after this
 
-    ledController.setPattern(LEDPatterns.Pattern2);
- 
-    thbbtbbtbbtbbt.update();
-    eyeOfVeganSauron.setLEDRingState(true);
-    photonCannon.setPhotonCannonState(false);
-    photonCannon.update();
-    cam.update();
+      ledController.setPattern(LEDPatterns.Pattern2);
+  
+      thbbtbbtbbtbbt.update();
+      eyeOfVeganSauron.setLEDRingState(true);
+      photonCannon.setPhotonCannonState(false);
+      photonCannon.update();
+      cam.update();
 
-    auto.update();
+      auto.update();
 
-    ctrlPanel.update();
-    climber.update();
+      ctrlPanel.update();
+      climber.update();
 
-    drivetrain.update();
-    supperstructure.update();
+      drivetrain.update();
+      supperstructure.update();
 
-    ledController.update();
+      ledController.update();
 
-    updateDriverView();
-    telemetryUpdate();
+      updateDriverView();
+      telemetryUpdate();
 
-    pfb.update();
+      pfb.update();
 
-    // put all code before this
-    loopTiming.markLoopEnd();
+      // put all auto periodic code before this
+      loopTiming.markLoopEnd();
+
+    } catch(Throwable t) {
+      CrashTracker.logThrowableCrash(t);
+      throw t;
+    }
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -265,89 +289,100 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    CrashTracker.logTeleopInit();
-    dataServer.logger.startLoggingTeleop();
+    try {   
+      CrashTracker.logTeleopInit();
+      dataServer.logger.startLoggingTeleop();
+    } catch(Throwable t) {
+      CrashTracker.logThrowableCrash(t);
+      throw t;
+    }
   }
 
   @Override
   public void teleopPeriodic() {
-    loopTiming.markLoopStart();
-    CrashTracker.logTeleopPeriodic();
+    try {
+      loopTiming.markLoopStart();
+      CrashTracker.logTeleopPeriodic();
+      //Put all teleop periodic code after this
 
-    ledController.setPattern(LEDPatterns.Pattern1);
+      ledController.setPattern(LEDPatterns.Pattern1);
 
-    DriverController.getInstance().update();
-    OperatorController.getInstance().update();
+      DriverController.getInstance().update();
+      OperatorController.getInstance().update();
 
-    //Based on operator commands, change which photon source we use.
-    //Photon Cannon can be activated by driver or operator, but only if
-    // we're not attempting to vision align.
-    if(
-        (
-          OperatorController.getInstance().getPhotonCannonCmd() || 
-          DriverController.getInstance().getPhotonCannonInput()
-        ) 
-        && 
-        !DriverController.getInstance().getAutoHighGoalAlignDesired()
-      ){
-      photonCannon.setPhotonCannonState(true);
-      eyeOfVeganSauron.setLEDRingState(false);
-    } else {
-      photonCannon.setPhotonCannonState(false);
-      eyeOfVeganSauron.setLEDRingState(true);
-    }
-    photonCannon.update();
-    cam.update();
-
-    thbbtbbtbbtbbt.update();
-
-    auto.sampleOperatorCommands();
-    auto.update();
-
-    supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
-    supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
-    supperstructure.setEstopDesired(false); //TODO
-    supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
-
-    if(auto.isActive()){
-      //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
-    } else {
-      //Driver & operator control in manual
-      supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
-      supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
-
-      if(DriverController.getInstance().getSnailModeDesired()){
-        //Closed-loop, fine movement mode
-        double spd = snailModeLimitRPM.get();
-        double leftCmdRPM  = spd*(DriverController.getInstance().getFwdRevCmd() - DriverController.getInstance().getRotateCmd());
-        double rightCmdRPM = spd*(DriverController.getInstance().getFwdRevCmd() + DriverController.getInstance().getRotateCmd());
-        drivetrain.setClosedLoopSpeedCmd(leftCmdRPM, rightCmdRPM);
+      //Based on operator commands, change which photon source we use.
+      //Photon Cannon can be activated by driver or operator, but only if
+      // we're not attempting to vision align.
+      if(
+          (
+            OperatorController.getInstance().getPhotonCannonCmd() || 
+            DriverController.getInstance().getPhotonCannonInput()
+          ) 
+          && 
+          !DriverController.getInstance().getAutoHighGoalAlignDesired()
+        ){
+        photonCannon.setPhotonCannonState(true);
+        eyeOfVeganSauron.setLEDRingState(false);
       } else {
-        //Open loop control of motors
-        drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
-                                  DriverController.getInstance().getRotateCmd());
+        photonCannon.setPhotonCannonState(false);
+        eyeOfVeganSauron.setLEDRingState(true);
+      }
+      photonCannon.update();
+      cam.update();
+
+      thbbtbbtbbtbbt.update();
+
+      auto.sampleOperatorCommands();
+      auto.update();
+
+      supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
+      supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
+      supperstructure.setEstopDesired(false); //TODO
+      supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
+
+      if(auto.isActive()){
+        //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
+      } else {
+        //Driver & operator control in manual
+        supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
+        supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
+
+        if(DriverController.getInstance().getSnailModeDesired()){
+          //Closed-loop, fine movement mode
+          double spd = snailModeLimitRPM.get();
+          double leftCmdRPM  = spd*(DriverController.getInstance().getFwdRevCmd() - DriverController.getInstance().getRotateCmd());
+          double rightCmdRPM = spd*(DriverController.getInstance().getFwdRevCmd() + DriverController.getInstance().getRotateCmd());
+          drivetrain.setClosedLoopSpeedCmd(leftCmdRPM, rightCmdRPM);
+        } else {
+          //Open loop control of motors
+          drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
+                                    DriverController.getInstance().getRotateCmd());
+        }
+
+
       }
 
+      drivetrain.update();
+      supperstructure.update();
+  
+      climber.update();
+      ctrlPanel.update();
+      ledController.update();
 
+      updateDriverView();
+      telemetryUpdate();
+
+      pfb.update();
+
+      ledUpdater();
+      ledController.update();
+
+      // put all teleop periodic code before this 
+      loopTiming.markLoopEnd();
+    } catch(Throwable t) {
+      CrashTracker.logThrowableCrash(t);
+      throw t;
     }
-
-    drivetrain.update();
-    supperstructure.update();
- 
-    climber.update();
-    ctrlPanel.update();
-    ledController.update();
-
-    updateDriverView();
-    telemetryUpdate();
-
-    pfb.update();
-
-    ledUpdater();
-    ledController.update();
-
-    // put all code before this 
-    loopTiming.markLoopEnd();
     
   }
 

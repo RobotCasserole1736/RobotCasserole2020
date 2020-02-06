@@ -65,6 +65,8 @@ public class BallCounter {
     }
 
     private BallCounter() {
+        //Ensure sensor gets instantiated.
+        BallDistanceSensor.getInstance();
 
         ballMinThicknessCal = new Calibration("Ball Counter Empty-Short Thresh Inches", 6);
         ballMaxThicknessCal = new Calibration("Ball Counter Short-Apex Thresh Inches", 2);

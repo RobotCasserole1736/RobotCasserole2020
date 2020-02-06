@@ -209,7 +209,7 @@ public class SignalFileLogger {
                 logLine[idx] = Double.toString(val);
             }
         } else {
-            System.out.println("Developer Error - Attempt to log value from signal which was not instantiated when the log was opened. It is not allowed to instantiate new signals while a log is being recorded!");
+            System.out.println("Developer Error - Attempt to log value from signal \"" + samp_in.getParentSignal().display_name + "\", which was not instantiated prior to opening the log. It is not allowed to instantiate new signals while a log is being recorded!");
         }
     }
 
