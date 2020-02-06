@@ -76,6 +76,7 @@ public class BallCounter {
     }
 
     public void update() {
+        BallDistanceSensor.getInstance().update();
         setBallHeight();
         setConveyorDirection();
 

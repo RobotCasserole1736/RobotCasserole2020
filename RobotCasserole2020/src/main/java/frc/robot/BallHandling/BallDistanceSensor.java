@@ -2,7 +2,6 @@ package frc.robot.BallHandling;
 
 import com.playingwithfusion.TimeOfFlight;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
 import frc.robot.LoopTiming;

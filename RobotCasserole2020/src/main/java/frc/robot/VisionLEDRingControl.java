@@ -37,7 +37,7 @@ import edu.wpi.first.wpilibj.DigitalOutput;
     DigitalOutput ringRelayOutput;
 
     private VisionLEDRingControl(){
-        ringRelayOutput = new DigitalOutput(RobotConstants.VISON_LED_RING_PORT);
+        ringRelayOutput = new DigitalOutput(RobotConstants.VISON_LED_RING_RELAY_DIO_PORT);
     }
 
     public void setLEDRingState(boolean enabled){

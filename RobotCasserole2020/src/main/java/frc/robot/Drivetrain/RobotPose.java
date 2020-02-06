@@ -97,7 +97,7 @@ public class RobotPose {
 
     //Simulation Timing
     double prevLoopTime = 0;
-    double delta_t_sec = RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+    double delta_t_sec = RobotConstants.MAIN_LOOP_Ts;
     
     //Model Controls
     Calibration resetPos;

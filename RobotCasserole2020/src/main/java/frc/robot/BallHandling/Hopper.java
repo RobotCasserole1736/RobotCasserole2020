@@ -1,12 +1,10 @@
 package frc.robot.BallHandling;
-import edu.wpi.first.wpilibj.Spark;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
-import frc.robot.CasserolePDP;
 
 public class Hopper{
 
@@ -18,19 +16,19 @@ public class Hopper{
         return inst;
     }
     HopperOpMode hopperOpMode;
-    CANSparkMax HopperSparkLeft;
-    CANSparkMax HopperSparkRight;
+    CANSparkMax hopperSparkLeft;
+    CANSparkMax hopperSparkRight;
     int counter=0;
     int timer=30; //completely arbitrary number of loops to switch
     double randCmd=0;
     double HopperSparkLeftCmd=0;
     double HopperSparkRightCmd=0;
-    Signal HopperSparkLeftCurrentSignal;
-    Signal HopperSparkRightCurrentSignal;
-    Signal HopperSparkLeftCmdSignal;
-    Signal HopperSparkRightCmdSignal;
-    Calibration HopperFWDSpeed;
-    Calibration HopperBWDSpeed;
+    Signal hopperSparkLeftCurrentSignal;
+    Signal hopperSparkRightCurrentSignal;
+    Signal hopperSparkLeftCmdSignal;
+    Signal hopperSparkRightCmdSignal;
+    Calibration hopperFWDSpeed;
+    Calibration hopperBWDSpeed;
 
     /* All possible intake speed commands*/
     public enum HopperOpMode {
@@ -48,14 +46,19 @@ public class Hopper{
 
 
     private Hopper(){
-        HopperSparkLeft= new CANSparkMax(RobotConstants.HOPPER_NEO_LEFT_CAN_ID, MotorType.kBrushless);
-        HopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
-        HopperFWDSpeed = new Calibration("Hopper Forward Speed", 1);
-        HopperBWDSpeed = new Calibration("Hopper Backwards Speed", -1);
-        HopperSparkLeftCurrentSignal =new Signal("Hopper Motor Left Current","A");
-        HopperSparkRightCurrentSignal =new Signal("Hopper Motor Right Current","A");
-        HopperSparkLeftCmdSignal =new Signal("Hopper Motor Left Cmd","cmd");
-        HopperSparkRightCmdSignal =new Signal("Hopper Motor Right Cmd","cmd");
+        hopperSparkLeft= new CANSparkMax(RobotConstants.HOPPER_NEO_LEFT_CAN_ID, MotorType.kBrushless);
+        hopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
+        hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.25, 0, 1);
+        hopperBWDSpeed = new Calibration("Hopper Backwards Speed", -75, -1, 0);
+        hopperSparkLeftCurrentSignal =new Signal("Hopper Motor Left Current","A");
+        hopperSparkRightCurrentSignal =new Signal("Hopper Motor Right Current","A");
+        hopperSparkLeftCmdSignal =new Signal("Hopper Motor Left Cmd","cmd");
+        hopperSparkRightCmdSignal =new Signal("Hopper Motor Right Cmd","cmd");
+
+        hopperSparkLeft.setSmartCurrentLimit(30);
+        hopperSparkRight.setSmartCurrentLimit(30);
+        
+        hopperSparkRight.setInverted(true);
     }
 
     public void update(){
@@ -65,23 +68,23 @@ public class Hopper{
             HopperSparkLeftCmd=0;
             HopperSparkRightCmd=0;
         }else if(hopperOpMode==HopperOpMode.Injest){
-            HopperSparkLeftCmd=HopperFWDSpeed.get();
-            HopperSparkRightCmd=HopperFWDSpeed.get();
+            HopperSparkLeftCmd=hopperFWDSpeed.get();
+            HopperSparkRightCmd=hopperFWDSpeed.get();
         }else if(hopperOpMode==HopperOpMode.ClearJam){
             //TODO test this
             counter++;
             clearJamMethod1();
         }else if(hopperOpMode==HopperOpMode.Reverse){
-            HopperSparkLeftCmd=HopperBWDSpeed.get();
-            HopperSparkRightCmd=HopperBWDSpeed.get();
+            HopperSparkLeftCmd=hopperBWDSpeed.get();
+            HopperSparkRightCmd=hopperBWDSpeed.get();
         }
-        HopperSparkLeft.set(HopperSparkLeftCmd);
-        HopperSparkRight.set(HopperSparkRightCmd);
-        
-        HopperSparkLeftCmdSignal.addSample(sampleTimeMs, HopperSparkLeftCmd);
-        HopperSparkRightCmdSignal.addSample(sampleTimeMs, HopperSparkRightCmd);
-        HopperSparkLeftCurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.HOPPER_SPARK_LEFT_PDP_ID));
-        HopperSparkRightCurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.HOPPER_SPARK_RIGHT_PDP_ID));
+        hopperSparkLeft.set(HopperSparkLeftCmd);
+        hopperSparkRight.set(HopperSparkRightCmd);
+
+        hopperSparkLeftCmdSignal.addSample(sampleTimeMs, HopperSparkLeftCmd);
+        hopperSparkRightCmdSignal.addSample(sampleTimeMs, HopperSparkRightCmd);
+        hopperSparkLeftCurrentSignal.addSample(sampleTimeMs, hopperSparkLeft.getOutputCurrent());
+        hopperSparkRightCurrentSignal.addSample(sampleTimeMs, hopperSparkRight.getOutputCurrent());
     }
 
     //Pass in the desired hopper operation mode
@@ -89,12 +92,12 @@ public class Hopper{
         hopperOpMode=cmd;
     }
     public void clearJamMethod1(){
-        HopperSparkLeftCmd=HopperFWDSpeed.get();
-        HopperSparkRightCmd=HopperBWDSpeed.get();
+        HopperSparkLeftCmd=hopperFWDSpeed.get();
+        HopperSparkRightCmd=hopperBWDSpeed.get();
     }
     public void clearJamMethod2(){
-        HopperSparkLeftCmd=HopperBWDSpeed.get();
-        HopperSparkRightCmd=HopperFWDSpeed.get();
+        HopperSparkLeftCmd=hopperBWDSpeed.get();
+        HopperSparkRightCmd=hopperFWDSpeed.get();
     }
     public void clearJamMethod3(){
         if (counter%timer==0){

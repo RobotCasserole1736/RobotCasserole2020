@@ -236,7 +236,7 @@ public class RealDrivetrain extends Drivetrain {
             }
 
             if(turnToAngleCurSpeedLimit < turnToAngleMaxRPM.get()){
-                turnToAngleCurSpeedLimit += turnToAngleMaxRPMPerSec.get() * 0.02;//Assume 20ms loop
+                turnToAngleCurSpeedLimit += turnToAngleMaxRPMPerSec.get() * RobotConstants.MAIN_LOOP_Ts;
             }
 
             //Rate-limited KI control of robot angle

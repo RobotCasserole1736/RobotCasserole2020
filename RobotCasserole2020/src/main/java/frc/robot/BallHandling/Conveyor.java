@@ -1,9 +1,6 @@
 package frc.robot.BallHandling;
 
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Spark;
-
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.CasserolePDP;
 import frc.robot.LoopTiming;
@@ -72,7 +69,7 @@ public class Conveyor{
     private Conveyor(){
         //Physical Devices
         conveyorMotor = new Spark(RobotConstants.CONVEYOR_MOTOR);
-        shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_DIO_PORT);
+        shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_SENSOR_DIO_PORT);
         intakeEndSensor = BallCounter.getInstance();
 
         //Calibrations

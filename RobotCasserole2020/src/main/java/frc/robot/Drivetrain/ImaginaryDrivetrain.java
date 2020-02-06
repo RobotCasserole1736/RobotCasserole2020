@@ -3,6 +3,7 @@ package frc.robot.Drivetrain;
 
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
+import frc.robot.RobotConstants;
 
 
 public class ImaginaryDrivetrain extends Drivetrain{
@@ -99,7 +100,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
     private double simMotor(double actSpeedRPM, double desSpeedRPM){
 
-        double accelFactor = Utils.FT_PER_SEC_TO_RPM( DT_MAX_ACCEL_FT_PER_SEC_PER_SEC * 0.02);
+        double accelFactor = Utils.FT_PER_SEC_TO_RPM( DT_MAX_ACCEL_FT_PER_SEC_PER_SEC * RobotConstants.MAIN_LOOP_Ts);
         double maxSpd = Utils.FT_PER_SEC_TO_RPM(DT_MAX_SPEED_FT_PER_SEC);
 
         double delta = actSpeedRPM - desSpeedRPM ;

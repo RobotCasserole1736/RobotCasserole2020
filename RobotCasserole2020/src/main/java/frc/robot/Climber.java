@@ -15,7 +15,8 @@ public class Climber{
         return inst;
     }
 
-
+    //Climber uses one PWM port, split into two physical sparks.
+    //This means one output, but two current measurements
     Spark climberMotor;
     TwoWireParitySwitch upperLimitSwitch;
     TwoWireParitySwitch lowerLimitSwitch;
@@ -27,7 +28,8 @@ public class Climber{
 
     Signal climberCMDSignal;
     Signal climberMotorCmdSignal;
-    Signal climbMotorCurrentSignal;
+    Signal climbMotor1CurrentSignal;
+    Signal climbMotor2CurrentSignal;
     Signal climberUpperLimitSignal;
     Signal climberLowerLimitSignal;
     Signal limitSwitchesReadingRightSig;
@@ -41,15 +43,16 @@ public class Climber{
     double initialPulseCounter;
 
     public Climber(){
-        climberMotor = new Spark(RobotConstants.CLIMBER_SPARK_LEFT_ID);
-        upperLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_UPPER_NO_ID, RobotConstants.CLIMBER_LIMIT_UPPER_NC_ID);
-        lowerLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_LOWER_NO_ID, RobotConstants.CLIMBER_LIMIT_LOWER_NC_ID);
-        climbLocker = new Solenoid(RobotConstants.CLIMBER_SOLENOID_ID);
+        climberMotor = new Spark(RobotConstants.CLIMBER_SPARK_PORT);
+        upperLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_UPPER_NO_DIO_PORT, RobotConstants.CLIMBER_LIMIT_UPPER_NC_DIO_PORT);
+        lowerLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_LOWER_NO_DIO_PORT, RobotConstants.CLIMBER_LIMIT_LOWER_NC_DIO_PORT);
+        climbLocker = new Solenoid(RobotConstants.CLIMBER_SOLENOID_PCM_PORT);
         climberSpeed=new Calibration("Climber Max Speed", 1, 0, 1);
         climberSpeedOffset=new Calibration("Climber Stopped Motor Offset Speed", 0.0, 0, 1);
         climberCMDSignal= new Signal("Climber Input Command","cmd");
         climberMotorCmdSignal= new Signal("Climber Motor Command","cmd");
-        climbMotorCurrentSignal= new Signal("Climber Motor Current","A");
+        climbMotor1CurrentSignal= new Signal("Climber Motor 1 Current","A");
+        climbMotor2CurrentSignal= new Signal("Climber Motor 2 Current","A");
         climberUpperLimitSignal= new Signal("Climber Upper Limit Switch","state");
         climberLowerLimitSignal= new Signal("Climber Lower Limit Switch","state");
     }
@@ -103,7 +106,8 @@ public class Climber{
 
         climberCMDSignal.addSample(sampleTimeMs, climbCMD);
         climberMotorCmdSignal.addSample(sampleTimeMs, motorCmd);
-        climbMotorCurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_LEFT_PDP_ID));
+        climbMotor1CurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_1_PDP_CHANNEL));
+        climbMotor2CurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_2_PDP_CHANNEL));
         climberUpperLimitSignal.addSample(sampleTimeMs, upperLimitSwitch.get().value);
         climberLowerLimitSignal.addSample(sampleTimeMs, lowerLimitSwitch.get().value);
 

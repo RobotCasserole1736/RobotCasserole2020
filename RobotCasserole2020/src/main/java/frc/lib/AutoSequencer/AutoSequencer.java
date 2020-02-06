@@ -174,7 +174,7 @@ public class AutoSequencer {
             }
             
 	        if(globalUpdateCount % 50 == 0){
-	        	CrashTracker.logAndPrint("["+name+"] Running. timestep = " + Double.toString(globalUpdateCount*RobotConstants.MAIN_LOOP_SAMPLE_RATE_S) + "s | ActualTime = " + Double.toString(Timer.getFPGATimestamp()));
+	        	CrashTracker.logAndPrint("["+name+"] Running. timestep = " + Double.toString(globalUpdateCount*RobotConstants.MAIN_LOOP_Ts) + "s | ActualTime = " + Double.toString(Timer.getFPGATimestamp()));
 	        }
 
         }

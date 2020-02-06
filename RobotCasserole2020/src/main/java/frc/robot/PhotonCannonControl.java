@@ -21,7 +21,7 @@ public class PhotonCannonControl {
     Signal photonCannonSignal;
 
     private PhotonCannonControl(){
-        photonRelayOutput = new DigitalOutput(RobotConstants.PHOTON_CANNON_PORT);
+        photonRelayOutput = new DigitalOutput(RobotConstants.PHOTON_CANNON_RELAY_DIO_PORT);
         photonCannonSignal = new Signal("Photon Cannon State", "bool");
     }
 

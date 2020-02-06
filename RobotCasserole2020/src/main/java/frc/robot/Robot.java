@@ -180,9 +180,7 @@ public class Robot extends TimedRobot {
     loopTiming.markLoopStart();
     CrashTracker.logDisabledPeriodic();
 
-
-    BallDistanceSensor.getInstance().update();
-    ledController.setPattern(LEDPatterns.Pattern0);
+    ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
 
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(false);
@@ -194,6 +192,12 @@ public class Robot extends TimedRobot {
 
     ctrlPanel.update();
 
+    supperstructure.setClearJamDesired(false);
+    supperstructure.setEjectDesired(false);
+    supperstructure.setEstopDesired(false);
+    supperstructure.setIntakeDesired(false);
+    supperstructure.setPrepToShootDesired(false);
+    supperstructure.setShootDesired(false);
     supperstructure.update();
 
     drivetrain.setOpenLoopCmd(0, 0);
@@ -240,6 +244,7 @@ public class Robot extends TimedRobot {
     climber.update();
 
     drivetrain.update();
+    supperstructure.update();
 
     ledController.update();
 
