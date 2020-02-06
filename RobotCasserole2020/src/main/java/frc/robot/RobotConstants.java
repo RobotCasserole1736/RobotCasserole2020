@@ -110,7 +110,7 @@ public class RobotConstants {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     // Robot Physical Parameters
-	static public final double WHEEL_RADIUS_FT = 3.0/12.0;
+	static public final double WHEEL_ROLLING_RADIUS_FT = 3.0/12.0;
 	static public final double ROBOT_TRACK_WIDTH_FT = 23.0/12.0;
     static public final double MAIN_LOOP_Ts = 0.02; //Nominal. Meh.
     static public final double SHOOTER_GEAR_RATIO = 1.0;

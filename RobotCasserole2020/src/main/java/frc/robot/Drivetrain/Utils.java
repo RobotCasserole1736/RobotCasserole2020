@@ -59,11 +59,11 @@ public class Utils {
 
 
     public static double RPM_TO_FT_PER_SEC(double rpm_in){
-        return 2*Math.PI*RobotConstants.WHEEL_RADIUS_FT / 60 * rpm_in;
+        return 2*Math.PI*RobotConstants.WHEEL_ROLLING_RADIUS_FT / 60 * rpm_in;
     }
 
     public static double FT_PER_SEC_TO_RPM(double fps_in){
-        return fps_in / (2*Math.PI*RobotConstants.WHEEL_RADIUS_FT / 60) ;
+        return fps_in / (2*Math.PI*RobotConstants.WHEEL_ROLLING_RADIUS_FT / 60) ;
     }
 
     public static double capMotorCmd(double in){
