@@ -41,13 +41,20 @@ public class RobotTilt {
 
     public void update(){
         double forceInXDirection;
-        double forceInYDirection;
+        double forceInZDirection;
 
         forceInXDirection = onboardAccel.getX();
-        forceInYDirection = onboardAccel.getY();
+        forceInZDirection = onboardAccel.getZ();
+
+        System.out.println("The force in the x direction is "+forceInXDirection);
+        System.out.println("The force in the y direction is "+forceInZDirection);
         
         //Calculates the angle our robot is at by doing the arc tan of the force in the y direction over the force in the x direction
-        robotAngle = Math.atan2(forceInYDirection, forceInXDirection);
+        robotAngle = Math.atan2(forceInZDirection, forceInXDirection);
+        //adding 180 is to make it positive
+        robotAngle = Math.toDegrees(robotAngle)+180;
+
+        System.out.println("Robot angle is " + robotAngle);
     }
     
     public double getRobotAngle(){

@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
   Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
+  RobotTilt robotTilt;
   
   LEDController ledController;
   Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is baked into _even_ our source code.
@@ -139,6 +140,8 @@ public class Robot extends TimedRobot {
 
     ControlPanelStateMachine.getInstance();
 
+    robotTilt = RobotTilt.getInstance();
+
     snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
 
     pfb = PlayerFeedback.getInstance();
@@ -200,6 +203,8 @@ public class Robot extends TimedRobot {
     drivetrain.updateGains(false);
     drivetrain.update();
 
+    robotTilt.update();
+
     pfb.update();
 
     updateDriverView();
@@ -242,6 +247,8 @@ public class Robot extends TimedRobot {
     drivetrain.update();
 
     ledController.update();
+
+    robotTilt.update();
 
     updateDriverView();
     telemetryUpdate();
@@ -333,6 +340,8 @@ public class Robot extends TimedRobot {
     ctrlPanel.update();
     ledController.update();
 
+    robotTilt.update();
+
     updateDriverView();
     telemetryUpdate();
 
@@ -357,6 +366,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
     CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
     CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
+    CasseroleDriverView.newDial("Robot Angle (degrees)", 0, 270, 68, 110, 130);
     CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
@@ -374,6 +384,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
+    CasseroleDriverView.setDialValue("Robot Angle (degrees)", robotTilt.getRobotAngle());
     CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
