@@ -17,8 +17,9 @@ public class AutoEventCollectSteak extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(9,  -13.2,  Pathfinder.d2r(0)),
-        new Waypoint(16, -13.2,  Pathfinder.d2r(0)),
+        new Waypoint(0,      0,  Pathfinder.d2r(45)),
+        new Waypoint(0,  -11.2,  Pathfinder.d2r(0)),
+        new Waypoint(13, -11.2,  Pathfinder.d2r(0)),
     };
 
     public AutoEventCollectSteak() {

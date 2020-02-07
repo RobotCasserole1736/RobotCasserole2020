@@ -1,5 +1,7 @@
 package frc.robot.Autonomous;
 
+import javax.sound.midi.Sequence;
+
 import frc.lib.AutoSequencer.AutoSequencer;
 import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleDriverView;
@@ -7,8 +9,12 @@ import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventCollectSteak;
 import frc.robot.Autonomous.Events.AutoEventShootFromCollectSteak;
 import frc.robot.Autonomous.Events.AutoEventStopRobot;
+import frc.robot.Autonomous.Events.AutoEventSteakAuto;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
+import frc.robot.Autonomous.Events.AutoEventIntake;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
+import frc.robot.Autonomous.Events.AutoEventPrepToShoot;
+import frc.robot.Autonomous.Events.AutoEventShoot;
 import frc.robot.Autonomous.Events.AutoEventTurn;
 import frc.robot.Autonomous.Events.AutoEventTurnToVisionTarget;
 import frc.robot.Autonomous.Events.AutoEventWait;
@@ -51,6 +57,7 @@ public class Autonomous {
         BallThief(4),
         ShootSteak(5),
         VisionAlignOnly(6),
+        SteakAuto(7),
         Inactive(-1); 
 
         public final int value;
@@ -84,8 +91,9 @@ public class Autonomous {
                                                               "Drive Forward", 
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
-                                                              "Ball Thief",                                              
-                                                              "ShootSteak"};
+                                                              "Ball Thief", 
+                                                              "ShootSteak",                                            
+                                                              "SteakAuto"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
                                                               "3s", 
@@ -130,6 +138,8 @@ public class Autonomous {
 			modeCmd = AutoMode.BallThief;
 		} else if (actionStr.compareTo(ACTION_MODES[5]) == 0) { 
 			modeCmd = AutoMode.ShootSteak;
+		} else if (actionStr.compareTo(ACTION_MODES[6]) == 0) { 
+			modeCmd = AutoMode.SteakAuto;
 		} else { 
 			modeCmd = AutoMode.Inactive;
         }
@@ -153,18 +163,18 @@ public class Autonomous {
             }
         } else {
             driverVisionAlignButtonReleased = true;
-            modeCmd = AutoMode.Inactive;
-            autoModeName = "Inactive";
-        }
-
-
-        if(modeCmd != modeCmdPrev){
-            //Load/run the command imedeately.
-            loadSequencer(false);
-            startSequencer();
-        }
-
+        modeCmd = AutoMode.Inactive;
+                    autoModeName = "Inactive";
     }
+
+
+    if(modeCmd != modeCmdPrev){
+        //Load/run the command imedeately.
+        loadSequencer(false);
+        startSequencer();
+    }
+    
+}
 
 
     public void startSequencer(){
@@ -172,6 +182,8 @@ public class Autonomous {
             seq.start();
         }
     }
+
+    double duration_s_in;
 
     public void loadSequencer(boolean resetPose){
         
@@ -241,15 +253,28 @@ public class Autonomous {
                 break;
 
                 case ShootSteak:
+                    Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
                     seq.addEvent(new AutoEventDriveToBallThief());
                     //some event to run intake
                     seq.addEvent(new AutoEventBackUpFromBallThief());
+                    seq.addEvent(new AutoEventSteakAuto());
                     //some event to shoot balls
                     seq.addEvent(new AutoEventCollectSteak());
                     seq.addEvent(new AutoEventShootFromCollectSteak());
                     //shoot balls from 3 point spot
                 break;
 
+                case SteakAuto:
+                    Drivetrain.getInstance().setInitialPose(11, 10, 90.0);
+                    seq.addEvent(new AutoEventDriveToBallThief());
+                    seq.addEvent(new AutoEventIntake(duration_s_in));
+                    seq.addEvent(new AutoEventBackUpFromBallThief());
+                    seq.addEvent(new AutoEventPrepToShoot(duration_s_in));
+                    seq.addEvent(new AutoEventShoot(duration_s_in));
+                    seq.addEvent(new AutoEventCollectSteak());
+                    seq.addEvent(new AutoEventShootFromCollectSteak());
+                    seq.addEvent(new AutoEventPrepToShoot(duration_s_in));
+                    seq.addEvent(new AutoEventShoot(duration_s_in));
             }
             modeCmdPrev = modeCmd;
             actualMode = modeCmd;
