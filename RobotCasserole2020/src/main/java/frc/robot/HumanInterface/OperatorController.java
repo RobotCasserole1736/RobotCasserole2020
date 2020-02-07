@@ -78,7 +78,7 @@ public class OperatorController {
 
     public void update(){
         shootCmd = (operaterController.getTriggerAxis(Hand.kRight) > 0.2);
-        prepToShootCmd = operaterController.getBumper(Hand.kLeft);
+        prepToShootCmd = operaterController.getBumper(Hand.kRight);
         intakeDesired = (operaterController.getTriggerAxis(Hand.kLeft) > 0.2);
         unjamCmd = operaterController.getBumper(Hand.kLeft);
         ejectDesired = operaterController.getBackButton(); 

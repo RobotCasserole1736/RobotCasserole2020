@@ -28,8 +28,8 @@ public class Conveyor{
 
 
     //State Data
-    ConveyerOpMode opMode = ConveyerOpMode.Stop;
-    ConveyerOpMode prevOpMode = ConveyerOpMode.Stop;
+    ConveyorOpMode opMode = ConveyorOpMode.Stop;
+    ConveyorOpMode prevOpMode = ConveyorOpMode.Stop;
     boolean shooterEndSensorTriggered = false;
     boolean intakeEndSensorTriggered = false;
     double motorCurrent;
@@ -49,8 +49,8 @@ public class Conveyor{
     }
 
 
-    /* All possible conveyer operational modes*/
-    public enum ConveyerOpMode {
+    /* All possible Conveyor operational modes*/
+    public enum ConveyorOpMode {
         Stop(0),               //No Motion
         AdvanceFromHopper(1),  //Pull any available ball in from the hopper, no motion otherwise. Don't push any balls past the shooter sensor.
         AdvanceToShooter(2),   //Run forward until the conveyor->shooter sensor sees the first ball, but no further.
@@ -59,7 +59,7 @@ public class Conveyor{
 
         public final int value;
 
-        private ConveyerOpMode(int value) {
+        private ConveyorOpMode(int value) {
             this.value = value;
         }
     }
@@ -135,12 +135,12 @@ public class Conveyor{
 
     
     }
-    public void setOpMode(ConveyerOpMode opMode_in) {
+    public void setOpMode(ConveyorOpMode opMode_in) {
         opMode = opMode_in;
     }
     
 
-    // Pass in the desired conveyer operational mode
+    // Pass in the desired Conveyor operational mode
     // AdvanceFromHopper(1),  //Pull any available ball in from the hopper, no motion otherwise. Don't push any balls past the shooter sensor.
     //     AdvanceToShooter(2),   //Run forward until the conveyor->shooter sensor sees the first ball, but no further.
     //     InjectIntoSHooter(3),  //Run forward continuously, pushing balls up into the shooter wheel
@@ -155,7 +155,7 @@ public class Conveyor{
         // return true if the conveyor->shooter sensor sees a ball, false otherwise
         return shooterEndSensorTriggered;
     }
-    public ConveyerOpMode getOpMode() {
+    public ConveyorOpMode getOpMode() {
         return opMode;
     }
 
