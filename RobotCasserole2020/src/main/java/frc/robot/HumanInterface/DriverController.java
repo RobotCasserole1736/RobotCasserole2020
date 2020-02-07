@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.Drivetrain.Utils;
-
 import edu.wpi.first.wpilibj.GenericHID;
 
 /*
@@ -39,11 +38,13 @@ public class DriverController {
     double rotCmd = 0;
     boolean autoAlignCmd = false;
     boolean snailModeCmd = false;
+    boolean reverseModeCmd = false;
 
     Signal fwdRevCmdSig;
     Signal rotCmdSig;
     Signal autoAlignCmdSig;
     Signal snailModeCmdSig;
+    Signal reverseModeSig;
 
     
     public static synchronized DriverController getInstance() {
@@ -60,6 +61,7 @@ public class DriverController {
         rotCmdSig       = new Signal("Driver Rotate Command", "cmd");
         autoAlignCmdSig = new Signal("Driver Auto Align Command", "bool");
         snailModeCmdSig = new Signal("Driver Snail Mode Command", "bool");
+        reverseModeSig  = new Signal("Driver Flip Front/Back Command", "bool");
     }
 
     public void update(){
@@ -74,17 +76,32 @@ public class DriverController {
             compressorDisableReq = false;
         }
 
-        fwdRevCmd =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.15);
-        rotCmd =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 5.0, 0.15);
+        if(driverController.getBumper(Hand.kLeft)){
+            reverseModeCmd = true;
+        }else{
+            reverseModeCmd = false;
+        }
+
+        //Flips which side is the front and back in regards to driving
+        if(reverseModeCmd){
+            //The two -1 multiplications are because one would flip the joy sticks into the orientation for the robot 
+            //while the other one flips it to the reverse orientation
+            fwdRevCmd =  Utils.ctrlAxisScale(-1.0*(-1.0*driverController.getY(GenericHID.Hand.kLeft)), 4.0, 0.15);
+            rotCmd =  Utils.ctrlAxisScale(-1.0*(1.0*driverController.getX(GenericHID.Hand.kRight)), 5.0, 0.15);
+        }else{
+            fwdRevCmd =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.15);
+            rotCmd =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 5.0, 0.15);
+        }
+        
         autoAlignCmd = driverController.getXButton();
-        snailModeCmd = driverController.getBumper(Hand.kLeft);
+        snailModeCmd = driverController.getBumper(Hand.kRight);
 
         double time_in_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         fwdRevCmdSig.addSample(time_in_ms, fwdRevCmd);
         rotCmdSig.addSample(time_in_ms, rotCmd);      
         autoAlignCmdSig.addSample(time_in_ms, autoAlignCmd);
         snailModeCmdSig.addSample(time_in_ms, snailModeCmd);
-
+        reverseModeSig.addSample(time_in_ms, reverseModeCmd);
     }
 
     public boolean getCompressorDisableReq() {
@@ -123,7 +140,9 @@ public class DriverController {
         return snailModeCmd;
     }
 
-    
+    public boolean getReverseModeDesired(){
+        return reverseModeCmd;
+    }
 
     void rumble(double strength) {
         driverController.setRumble(RumbleType.kLeftRumble, strength);
