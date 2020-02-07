@@ -27,29 +27,33 @@ public class CasseroleVision extends VisionCamera {
     double targetAngle_deg;
     boolean targetVisible;
     boolean targetPosStable;
+    boolean visionOnline;
+    long visionUpdatedTime;
 
     Signal targetAngleSignal;
     Signal targetVisibleSignal;
     Signal targetStableSignal;
     Signal cameraFramerateSignal;
     Signal cameraDurationSignal;
+    Signal visionOnlineSignal;
 
-    boolean visionOnline;
-    long visionUpdatedTime;
+
 
     private CasseroleVision(){
-        NetworkTableInstance.getDefault().setUpdateRate(0.01);
+        NetworkTableInstance.getDefault().setUpdateRate(0.01); //SPEEEEEEEEEEED
         NetworkTable table = NetworkTableInstance.getDefault().getTable("VisionData");
         proc_duration_sec_nt = table.getEntry("proc_duration_sec");
         framerate_fps_nt = table.getEntry("framerate_fps");
         targetVisible_nt = table.getEntry("targetVisible");
         targetAngle_deg_nt = table.getEntry("targetAngle_deg");
         targetPosStable_nt = table.getEntry("targetPosStable");
-        targetAngleSignal= new Signal("Raspberry Pi Angle","deg");
-        targetVisibleSignal= new Signal("Raspberry Pi Visible Target","boolean");
-        targetStableSignal= new Signal("Raspberry Pi Stable Target","boolean");
-        cameraFramerateSignal= new Signal("Raspberry Pi Framerate","fps");
-        cameraDurationSignal= new Signal("Raspberry Pi Duration","sec");
+
+        targetAngleSignal= new Signal("Vision Raspberry Pi Angle","deg");
+        targetVisibleSignal= new Signal("Vision Raspberry Pi Visible Target","bool");
+        targetStableSignal= new Signal("Vision Raspberry Pi Stable Target","bool");
+        cameraFramerateSignal= new Signal("Vision Raspberry Pi Framerate","fps");
+        cameraDurationSignal= new Signal("Vision Raspberry Pi Duration","sec");
+        visionOnlineSignal= new Signal("Vision Raspberry Pi Vision System Online","bool");
     }
 
     @Override
@@ -62,18 +66,22 @@ public class CasseroleVision extends VisionCamera {
         targetPosStable = convertDoubletoBoolean(targetPosStable_nt.getDouble(0.0));
         targetAngle_deg = targetAngle_deg_nt.getDouble(-1.0);
         visionUpdatedTime = targetAngle_deg_nt.getLastChange();
-        targetAngleSignal.addSample(sampleTimeMs, targetAngle_deg);
-        targetVisibleSignal.addSample(sampleTimeMs, targetVisible);
-        targetStableSignal.addSample(sampleTimeMs, targetPosStable);
-        cameraFramerateSignal.addSample(sampleTimeMs, framerate_fps);
-        cameraDurationSignal.addSample(sampleTimeMs, proc_duration_sec);
-        
+
         if(framerate_fps == -1.0){
             visionOnline = false;
             targetVisible = false;
         } else {
             visionOnline = true;
         }
+
+        targetAngleSignal.addSample(sampleTimeMs, targetAngle_deg);
+        targetVisibleSignal.addSample(sampleTimeMs, targetVisible);
+        targetStableSignal.addSample(sampleTimeMs, targetPosStable);
+        cameraFramerateSignal.addSample(sampleTimeMs, framerate_fps);
+        cameraDurationSignal.addSample(sampleTimeMs, proc_duration_sec);
+        visionOnlineSignal.addSample(sampleTimeMs, visionOnline);
+        
+
     }
 
     private boolean convertDoubletoBoolean(double inDouble){

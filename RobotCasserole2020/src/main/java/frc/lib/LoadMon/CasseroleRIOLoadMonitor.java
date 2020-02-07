@@ -117,9 +117,9 @@ public class CasseroleRIOLoadMonitor {
 	        }
 		});
 		
-		rioCPULoad = new Signal("roboRIO CPU Load", "Pct");
-        rioMemLoad = new Signal("roboRIO Sys Memory Load", "Pct"); 
-        rioJVMMemLoad = new Signal("roboRIO JVM Memory Load", "Pct"); 
+		rioCPULoad = new Signal("roboRIO CPU Load", "pct");
+        rioMemLoad = new Signal("roboRIO Sys Memory Load", "pct"); 
+        rioJVMMemLoad = new Signal("roboRIO JVM Memory Load", "pct"); 
 	    
 	    //Set up thread properties and start it off
 	    monitorThread.setName("CasseroleRIOLoadMonitor");

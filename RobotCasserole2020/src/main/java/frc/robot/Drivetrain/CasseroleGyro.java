@@ -30,18 +30,34 @@ public class CasseroleGyro {
     ADIS16448_IMU imu;
 
     Signal poseAngleSig;
+    Signal compXAngleSig;
+    Signal compYAngleSig;
+    Signal filteredXAngleSig;
+    Signal filteredYAngleSig;
 
     double angle_deg = 0;
     double angle_offset = 0;
     
     public CasseroleGyro(){
         imu = new ADIS16448_IMU();
-        poseAngleSig = new Signal("DT_Pose_Angle", "deg");
+        poseAngleSig      = new Signal("Drivetrain Pose Angle", "deg");
+        compXAngleSig     = new Signal("IMU Comp X Angle", "deg");
+        compYAngleSig     = new Signal("IMU Comp Y Angle", "deg");
+        filteredXAngleSig = new Signal("IMU Filtered X Angle", "deg");
+        filteredYAngleSig = new Signal("IMU Filtered Y Angle", "deg");
     }
 
     public void update(){
-        angle_deg = imu.getAngle() + angle_offset;
-        poseAngleSig.addSample(LoopTiming.getInstance().getLoopStartTimeSec()*1000, angle_deg);
+        angle_deg = (-1*imu.getAngle()) + angle_offset;
+        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
+        poseAngleSig.addSample(sampleTimeMs, angle_deg);
+
+        //Not 100% sure if these are useful, but they look nifty. Log them to see how they act during matches.
+        // Maybe we'll pull them in later...
+        compXAngleSig.addSample(sampleTimeMs, imu.getXComplementaryAngle());     
+        compYAngleSig.addSample(sampleTimeMs, imu.getYComplementaryAngle());     
+        filteredXAngleSig.addSample(sampleTimeMs, imu.getXFilteredAccelAngle()); 
+        filteredYAngleSig.addSample(sampleTimeMs, imu.getYFilteredAccelAngle()); 
     }
 
     public void calibrate(){

@@ -38,9 +38,9 @@ public class ControlPanelStateMachine{
 
     private ControlPanelStateMachine(){
         colorSensor = CasseroleColorSensor.getInstance();
-        degreesToRotateStaticSig = new Signal("Panel 3.25 spin","degrees");
-        degreesToColorSig = new Signal("Rotate to Color","degrees");
-        colorNeededSig = new Signal("Color Needed","Color");
+        degreesToRotateStaticSig = new Signal("Control Panel State Machine 3.25 spin","degrees");
+        degreesToColorSig = new Signal("Control Panel State Machine Rotate to Color","degrees");
+        colorNeededSig = new Signal("Control Panel State Machine Game Data Color Command","color");
     }
 
     public void update(){
@@ -138,11 +138,8 @@ public class ControlPanelStateMachine{
     }
 
 
-    // public int getdegreesToRotateThreeToFive(){
-    //    return this.degreesToRotateThreeToFive;
-    // }
+    public ControlPanelColor getGameDataColor(){
+       return this.gameDataColor;
+    }
 
-    // public int getdegreesToRotateColor(){
-    //    return this.degreesToRotateColor;
-    // }
 }

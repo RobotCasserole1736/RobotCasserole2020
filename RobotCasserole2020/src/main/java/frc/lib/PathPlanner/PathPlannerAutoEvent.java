@@ -49,7 +49,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
     Trajectory trj_right;
 
     private int timestep;
-    private double taskRate = RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+    private double taskRate = RobotConstants.MAIN_LOOP_Ts;
     private final double DT_TRACK_WIDTH_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT; //Width in Feet
     
     //Special mode for supporting two-cube auto
@@ -114,6 +114,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
 
         if(trj_center == null){
             done = true;
+            Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
             return; //no path, nothing to do.
         }
 
@@ -127,6 +128,8 @@ public class PathPlannerAutoEvent extends AutoEvent {
         if(timestep >= maxTimestep) {
             timestep = (maxTimestep - 1);
             done = true;
+            
+
         }
 
         if(timestep == 0){
@@ -161,11 +164,14 @@ public class PathPlannerAutoEvent extends AutoEvent {
 
         //Rotate to the reference frame where we started the path plan event
         poseCommand_deg += startPoseAngle;
-
-        if(useFixedHeadingMode) {
-            Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, userManualHeadingDesired);
-        } else {
-            Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, poseCommand_deg);
+        if(!done){
+            if(useFixedHeadingMode) {
+                Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, userManualHeadingDesired);
+            } else {
+                Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, poseCommand_deg);
+            }
+        }else{
+            Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
         }
 
         Drivetrain.getInstance().dtPose.setDesiredPose( desX + desStartX, 

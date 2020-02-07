@@ -63,7 +63,7 @@ import frc.robot.RobotConstants;
 public class RobotPose {
 
     //Robot Physical Constants
-    final double wheelRadius_In = RobotConstants.WHEEL_RADIUS_FT*12.0;
+    final double wheelRadius_In = RobotConstants.WHEEL_ROLLING_RADIUS_FT*12.0;
     final double BUMPER_WIDTH_FT = 2.0;
     final double SIDE_LINEAR_DISTANCE_PER_ROBOT_ROTATION_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT*Math.PI; //account for wheel scrub on rotation here.
     final double BUMPER_LENGTH_FT = 2.5;
@@ -97,7 +97,7 @@ public class RobotPose {
 
     //Simulation Timing
     double prevLoopTime = 0;
-    double delta_t_sec = RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+    double delta_t_sec = RobotConstants.MAIN_LOOP_Ts;
     
     //Model Controls
     Calibration resetPos;

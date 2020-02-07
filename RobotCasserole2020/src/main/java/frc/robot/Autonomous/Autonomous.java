@@ -13,8 +13,12 @@ import frc.robot.Autonomous.Events.AutoEventSteakAuto;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventIntake;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
+<<<<<<< HEAD
 import frc.robot.Autonomous.Events.AutoEventPrepToShoot;
 import frc.robot.Autonomous.Events.AutoEventShoot;
+=======
+import frc.robot.Autonomous.Events.AutoEventReversePathPlanTest;
+>>>>>>> origin/master
 import frc.robot.Autonomous.Events.AutoEventTurn;
 import frc.robot.Autonomous.Events.AutoEventTurnToVisionTarget;
 import frc.robot.Autonomous.Events.AutoEventWait;
@@ -150,8 +154,6 @@ public class Autonomous {
     public void sampleOperatorCommands(){
         delayTime_s = 0; //Never delay while operator triggers auto modes
 
-        //TODO - read driver & operator controls, and set the mode command to something meaningful
-
         boolean tmp = DriverController.getInstance().getAutoHighGoalAlignDesired();
         if(tmp){
             if(driverVisionAlignButtonReleased==true){
@@ -228,6 +230,8 @@ public class Autonomous {
                 case DriveFwd:
                     //seq.addEvent(new AutoEventDriveForTime(2, 0.25));
                     seq.addEvent(new AutoEventPathPlanTest());
+                    seq.addEvent(new AutoEventReversePathPlanTest());
+                    seq.addEvent(new AutoEventStopRobot());
                 break;
 
                 case ShootOnly:

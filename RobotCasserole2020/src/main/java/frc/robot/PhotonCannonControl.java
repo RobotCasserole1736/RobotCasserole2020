@@ -21,7 +21,7 @@ public class PhotonCannonControl {
     Signal photonCannonSignal;
 
     private PhotonCannonControl(){
-        photonRelayOutput = new DigitalOutput(RobotConstants.PHOTON_CANNON_PORT);
+        photonRelayOutput = new DigitalOutput(RobotConstants.PHOTON_CANNON_RELAY_DIO_PORT);
         photonCannonSignal = new Signal("Photon Cannon State", "bool");
     }
 
@@ -30,10 +30,10 @@ public class PhotonCannonControl {
     }
     
     public void update(){
-        photonRelayOutput.set(curCannonState);
+        photonRelayOutput.set(!curCannonState);
         prevCannonState = curCannonState;
 
-        double sample_time_ms = Timer.getFPGATimestamp()*1000;
+        double sample_time_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         photonCannonSignal.addSample(sample_time_ms, curCannonState);
     }
 
