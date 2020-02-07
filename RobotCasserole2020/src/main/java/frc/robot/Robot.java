@@ -403,7 +403,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
     CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
     CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
-    CasseroleDriverView.newDial("Robot Angle (degrees)", 0, 270, 68, 110, 130);
+    CasseroleDriverView.newDial("Robot Angle (degrees)", -180, 180, 45, -10, 10);
     CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
