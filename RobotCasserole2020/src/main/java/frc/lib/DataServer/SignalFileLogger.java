@@ -248,7 +248,10 @@ public class SignalFileLogger {
             String folderName;
             // Determine a unique file name
             if(Robot.isReal()){
-                log_name = OUTPUT_DIR_RIO + "log_" +  getDateTimeString() + "_" + logPrefix + ".csv";
+                log_name = OUTPUT_DIR_RIO + "log_" +DriverStation.getInstance().getEventName()+"_"
+                +DriverStation.getInstance().getMatchType()+"_"
+                +Integer.toString(DriverStation.getInstance().getMatchNumber())+"_"
+                +  getDateTimeString() + "_" + logPrefix + ".csv";
                 folderName = OUTPUT_DIR_RIO;
             } else {
                 log_name = OUTPUT_DIR_LOCAL + "log_" +  getDateTimeString() + "_" + logPrefix + ".csv";
