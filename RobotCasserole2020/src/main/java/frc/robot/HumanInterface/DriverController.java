@@ -76,11 +76,7 @@ public class DriverController {
             compressorDisableReq = false;
         }
 
-        if(driverController.getBumper(Hand.kLeft)){
-            reverseModeCmd = true;
-        }else{
-            reverseModeCmd = false;
-        }
+        reverseModeCmd = driverController.getBumper(Hand.kLeft);
 
         //Flips which side is the front and back in regards to driving
         if(reverseModeCmd){
