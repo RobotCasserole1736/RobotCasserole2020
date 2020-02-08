@@ -327,10 +327,9 @@ public class Robot extends TimedRobot {
   }
 
     public void ledUpdater(){
-      double timeLeft;
-      timeLeft = DriverStation.getInstance().getMatchTime();
-      if (timeLeft <= 15 && Climber.getInstance().climbEnabled == true){
+      if (DriverStation.getInstance().getMatchTime() <= 120 && Climber.getInstance().climbEnabled == true){
         ledController.setPattern(LEDPatterns.Pattern6);
+        System.out.println("Howdy partner");
       }
       else if(ControlPanelManipulator.getInstance().isRotationCompleted() == true){
         ledController.setPattern(LEDPatterns.Pattern6);
