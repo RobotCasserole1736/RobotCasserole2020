@@ -211,6 +211,7 @@ public class Robot extends TimedRobot {
 
     thbbtbbtbbtbbt.update();
     eyeOfVeganSauron.setLEDRingState(true);
+    ledUpdater();
     photonCannon.setPhotonCannonState(false);
     photonCannon.update();
     cam.update();
@@ -286,7 +287,7 @@ public class Robot extends TimedRobot {
 
     updateDriverView();
     telemetryUpdate();
-
+    
     ledUpdater();
     ledController.update();
 
@@ -347,10 +348,20 @@ public class Robot extends TimedRobot {
         ledController.setPattern(LEDPatterns.Pattern2);
       }
       else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
-      ledController.setPattern(LEDPatterns.Pattern4);
+        if(DriverStation.getInstance().isAutonomous() == true){
+          ledController.setPattern(LEDPatterns.Pattern1);
+        }
+        else{
+          ledController.setPattern(LEDPatterns.Pattern4);
+        }
       }
-      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red);{
-        ledController.setPattern(LEDPatterns.Pattern5);
+      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
+        if(DriverStation.getInstance().isAutonomous() == true){
+          ledController.setPattern(LEDPatterns.Pattern0);
+        }
+        else{
+          ledController.setPattern(LEDPatterns.Pattern5);
+        }
       }
     }
 

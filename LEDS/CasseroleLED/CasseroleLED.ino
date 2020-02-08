@@ -39,9 +39,7 @@ void loop()
   if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
   {
     //Disabled Pattern
-    //CasseroleColorStripeChase_update();
-    //Rainbow_Fade_Chase();
-    blueFade();
+    CasseroleColorStripeChase_update();
   }
   else if ((pulseLen_us >= 900) && (pulseLen_us <= 1000))
   {
@@ -75,7 +73,7 @@ void loop()
   else if ((pulseLen_us >= 1700) && (pulseLen_us <= 1799))
   {
     //TODO - Call periodic update for pattern 5
-    //redFade();
+    redFade();
   }
   else if ((pulseLen_us >= 1901) && (pulseLen_us <= 2000))
   {
@@ -154,7 +152,6 @@ void ColorSparkle_update(int red, int grn, int blu)
     }
   }
 }
-
 //**************************************************************
 // Pattern: Rainbow Fade Chase
 //**************************************************************
@@ -189,67 +186,61 @@ void Rainbow_Fade_Chase()
 //**************************************************************
 // Pattern:Blue Fade
 //**************************************************************
-void Blue_Mode_Maker()
-{
+void Blue_Mode_Maker(){
   static int b = 0;
   static int mode = 0;
   b++;
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    if (b == 255)
-    {
+  for (int i = 0; i < NUM_LEDS; i++){
+    if (b == 255){
       mode = 1;
     }
-    else if (b == 510)
-    {
+    else if (b == 510){
       mode = 0;
     }
-    if (b >= 511)
-    {
+    if (b >= 511){
       b = 0;
     }
-    if (mode == 1)
-    {
-      //blue
+    if (mode == 1){
       led[i] = CRGB(0, 0, b);
     }
-    else if (mode == 0)
-    {
-      //white
+    else if (mode == 0){
       led[i] = CRGB(b, b, b);
     }
   }
 }
-void blueFade()
-{
+void blueFade(){
   Blue_Mode_Maker();
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    led[i].nscale8(250);
+  fadeall();
   }
-}
 //**************************************************************
 // Pattern:Red Fade
 //**************************************************************
-void setRed(int val)
-{
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    led[i] = CRGB(val, 0, 0);
+void Red_Mode_Maker(){
+  static int r = 0;
+  static int mode = 0;
+  r++;
+  for (int i = 0; i < NUM_LEDS; i++){
+    if (r == 255){
+      mode = 1;
+    }
+    else if (r == 510){
+      mode = 0;
+    }
+    if (r >= 511){
+      r = 0;
+    }
+    if (mode == 1){
+      led[i] = CRGB(r, 0, 0);
+    }
+    else if (mode == 0){
+      led[i] = CRGB(r, r, r);
+    }
   }
-  FastLED.show();
 }
-
-/*void redFade(){
-for (int i = 0; i < 196; i++){
-  setRed(i);}
- for (int i = 195; i > 0; i--){
-  setRed(i);}
-for (int i = 0; i < 256; i++){
-  setWhite(i);}
- for (int i = 255; i > 0; i--){
-  setWhite(i);}
-}*/
+void redFade(){
+  Red_Mode_Maker();
+  fadeall();
+  }
 
 //**************************************************************
 // Utilities
@@ -261,10 +252,8 @@ void setPixel(int Pixel, byte red, byte green, byte blue)
   led[Pixel].g = green;
   led[Pixel].b = blue;
 }
-void fadeall()
-{
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    led[i].nscale8(250);
+void fadeall(){
+  for (int i = 0; i < NUM_LEDS; i++){
+    led[i].nscale8(255);
   }
 }
