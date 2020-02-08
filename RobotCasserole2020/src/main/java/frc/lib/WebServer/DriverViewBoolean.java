@@ -22,13 +22,13 @@ public class DriverViewBoolean extends DriverViewObject {
 
         // Create new objects
         boolJsonInitObj = new JSONObject();
-        boolJsonInitObj.put("type", "bool");
+        boolJsonInitObj.put("type", "boolean");
         boolJsonInitObj.put("name", name);
         boolJsonInitObj.put("displayName", name_in);
         boolJsonInitObj.put("color", color_in);
 
         boolJsonUpdateObj = new JSONObject();
-        boolJsonUpdateObj.put("type", "bool");
+        boolJsonUpdateObj.put("type", "boolean");
         boolJsonUpdateObj.put("name", name);
         boolJsonUpdateObj.put("value", "False");
 
