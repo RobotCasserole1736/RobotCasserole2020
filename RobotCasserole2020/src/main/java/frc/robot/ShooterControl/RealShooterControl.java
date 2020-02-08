@@ -76,15 +76,17 @@ public class RealShooterControl extends ShooterControl {
 
         shooterMotor1.getEncoder().setVelocityConversionFactor(RobotConstants.SHOOTER_GEAR_RATIO);
 
-        shooterMotor1.setSmartCurrentLimit(30);
-        shooterMotor2.setSmartCurrentLimit(30);
+        shooterMotor1.setSmartCurrentLimit(60);
+        shooterMotor2.setSmartCurrentLimit(60);
 
-        shooterMotor2.follow(shooterMotor1);
+        shooterMotor2.follow(shooterMotor1, true);
+        
+        
 
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 2000);
-        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 1500);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
+        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 5000);
         shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 500);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 100);
@@ -237,4 +239,5 @@ public class RealShooterControl extends ShooterControl {
     public ShooterCtrlMode getShooterCtrlMode(){
         return currentStateShooter;
     }
+  
 }
