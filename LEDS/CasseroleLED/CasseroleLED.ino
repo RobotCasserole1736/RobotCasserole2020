@@ -157,6 +157,11 @@ void ColorSparkle_update(int red, int grn, int blu)
 //**************************************************************
 void Rainbow_Fade_Chase()
 {
+  /*you must set all LEDS to black so the effect works properly
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
+    led[i] = CRGB(0, 0, 0);
+  }*/
   static uint8_t hue = 0;
   //establish a counter
   static int counter = 0;
@@ -254,6 +259,6 @@ void setPixel(int Pixel, byte red, byte green, byte blue)
 }
 void fadeall(){
   for (int i = 0; i < NUM_LEDS; i++){
-    led[i].nscale8(255);
+    led[i].nscale8(250);
   }
 }

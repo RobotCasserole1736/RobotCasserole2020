@@ -257,12 +257,20 @@ public class Robot extends TimedRobot {
   
       thbbtbbtbbtbbt.update();
       eyeOfVeganSauron.setLEDRingState(true);
-    ledUpdater();
       photonCannon.setPhotonCannonState(false);
       photonCannon.update();
       cam.update();
 
+<<<<<<< HEAD
+    thbbtbbtbbtbbt.update();
+    eyeOfVeganSauron.setLEDRingState(true);
+    ledUpdater();
+    photonCannon.setPhotonCannonState(false);
+    photonCannon.update();
+    cam.update();
+=======
       auto.update();
+>>>>>>> origin/master
 
       ctrlPanel.update();
       climber.update();
@@ -378,11 +386,19 @@ public class Robot extends TimedRobot {
       robotTilt.update();
       updateDriverView();
       telemetryUpdate();
+
+<<<<<<< HEAD
+    updateDriverView();
+    telemetryUpdate();
     
+    ledUpdater();
+    ledController.update();
+=======
       pfb.update();
 
       ledUpdater();
       ledController.update();
+>>>>>>> origin/master
 
       // put all teleop periodic code before this 
       loopTiming.markLoopEnd();
@@ -437,8 +453,9 @@ public class Robot extends TimedRobot {
   }
 
     public void ledUpdater(){
-      if (DriverStation.getInstance().getMatchTime() <= 130 && Climber.getInstance().climbEnabled == true){
+      if (DriverStation.getInstance().getMatchTime() <= 120 && Climber.getInstance().climbEnabled == true){
         ledController.setPattern(LEDPatterns.Pattern6);
+        System.out.println("Howdy partner");
       }
       else if(ControlPanelManipulator.getInstance().isRotationCompleted() == true){
         ledController.setPattern(LEDPatterns.Pattern6);
