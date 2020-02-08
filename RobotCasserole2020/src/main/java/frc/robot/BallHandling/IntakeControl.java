@@ -17,6 +17,8 @@ public class IntakeControl {
 	double endTimeRet;
 	double duration_s;
 
+	double intkCommand = 0;
+
 	CANSparkMax intakeMotor;
 	Solenoid intakeSolenoid;
 
@@ -32,6 +34,7 @@ public class IntakeControl {
 	Signal posStateSig;
 	Signal spdStateSig;
 	Signal motorCurrentSig;
+	Signal intkSpdCmdSig;
 
     private static IntakeControl instance = null;
 	public static synchronized IntakeControl getInstance() {
@@ -79,6 +82,7 @@ public class IntakeControl {
 		posStateSig = new Signal("Intake Position State", "state");
 		spdStateSig = new Signal("Intake Speed State", "state");
 		motorCurrentSig = new Signal("Intake Motor Current", "A");
+		intkSpdCmdSig = new Signal("Intake Speed Command", "cmd");
 	}
 
 	public void update(){
@@ -95,19 +99,23 @@ public class IntakeControl {
 		switch(spdState){
 			case Eject:
 				intakeMotor.set(ejectSpeedCmd.get());
+				intkCommand = 0;
 			break;
 			case Stop:
 				intakeMotor.set(0);
+				intkCommand = 0;
 			break;
 			case Intake:
 				intakeMotor.set(intakeSpeedCmd.get());
+				intkCommand = intakeSpeedCmd.get();
 			break; 
 		}
 		
-		double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec();
+		double sampleTimeMs = (LoopTiming.getInstance().getLoopStartTimeSec() * 1000);
 		posStateSig.addSample(sampleTimeMs, posState.value);
 		spdStateSig.addSample(sampleTimeMs, spdState.value);
 		motorCurrentSig.addSample(sampleTimeMs, intakeMotor.getOutputCurrent());
+		intkSpdCmdSig.addSample(sampleTimeMs, intkCommand);
 
 	}
 

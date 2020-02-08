@@ -66,9 +66,9 @@ public class Supperstructure {
         if(Robot.isReal()){
             conv.update(); //No valid sim behavior defined for these guys yet. wop wop.
             hopp.update();
-            intk.update();
         }
         shoot.update();
+        intk.update();
 
         if(stopDes){
             opMode = SupperstructureOpMode.Stop;
@@ -169,6 +169,10 @@ public class Supperstructure {
 
     public void setClearJamDesired(boolean cmd){
         clearJamDes = cmd;
+    }
+
+    public SupperstructureOpMode getOpMode(){
+        return opMode;
     }
 
 
