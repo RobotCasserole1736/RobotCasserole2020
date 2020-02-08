@@ -68,7 +68,7 @@ import com.revrobotics.ColorMatch;
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private CasseroleColorSensor() {
 		
-		controlPanelColor = controlPanelColor.kUNKNOWN;
+		controlPanelColor = ControlPanelColor.kUNKNOWN;
 
 		//Configure color sensor
 		i2cPort = I2C.Port.kOnboard;
@@ -77,9 +77,9 @@ import com.revrobotics.ColorMatch;
 		//Init color match algorithm
 		m_colorMatcher = new ColorMatch();
 		 
-		sensorRedSig   = new Signal("Color Sensor Red Intensity", "intensity");
-		sensorGrnSig   = new Signal("Color Sensor Green Intensity", "intensity");
-		sensorBluSig   = new Signal("Color Sensor Blue Intensity", "intensity");
+		sensorRedSig   = new Signal("Color Sensor Red Intensity", "sat");
+		sensorGrnSig   = new Signal("Color Sensor Green Intensity", "sat");
+		sensorBluSig   = new Signal("Color Sensor Blue Intensity", "sat");
 		matchResultSig = new Signal("Color Sensor Match Color", "color");
 	}
 	

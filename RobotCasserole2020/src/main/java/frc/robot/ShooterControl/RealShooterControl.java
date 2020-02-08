@@ -30,7 +30,9 @@ public class RealShooterControl extends ShooterControl {
     ShooterCtrlMode currentStateShooter;
     double timer = 0;
     double outputTime;
-    double shooterActualSpeed_rpm;
+    double shooterActualSpeed_rpm; //Arbitrated shooter wheel speed
+    double shooterMotor1Speed_rpm; //Motor 1 measured speed
+    double shooterMotor2Speed_rpm; //Motor 2 measured speed - Ideally this should be same as 1, but maybe not if faulted
 
     Calibration shooterMaxHoldErrorRPM;
 
@@ -53,6 +55,8 @@ public class RealShooterControl extends ShooterControl {
 
     Signal rpmDesiredSig;
     Signal rpmActualSig;
+    Signal motor1SpeedSig;
+    Signal motor2SpeedSig;
     Signal isUnderLoadSig;
     Signal shooterStateCommandSig;
     Signal shooterControlModeSig;
@@ -71,6 +75,9 @@ public class RealShooterControl extends ShooterControl {
         shooterMotor2.restoreFactoryDefaults();
 
         shooterMotor1.getEncoder().setVelocityConversionFactor(RobotConstants.SHOOTER_GEAR_RATIO);
+
+        shooterMotor1.setSmartCurrentLimit(30);
+        shooterMotor2.setSmartCurrentLimit(30);
 
         shooterMotor2.follow(shooterMotor1);
 
@@ -96,9 +103,11 @@ public class RealShooterControl extends ShooterControl {
         unloadedDebounceCal = new Calibration("Shooter Unloaded Timer S", 2);
 
         //Data Logging
-        rpmDesiredSig = new Signal("Shooter Desired RPM", "RPM");
-        rpmActualSig = new Signal("Shooter Actual RPM", "RPM");
-        isUnderLoadSig = new Signal("Shooter Under Load","boolean");
+        rpmDesiredSig = new Signal("Shooter Desired Speed", "RPM");
+        rpmActualSig = new Signal("Shooter Actual Speed", "RPM");
+        motor1SpeedSig = new Signal("Shooter Motor 1 Speed", "RPM");
+        motor2SpeedSig = new Signal("Shooter Motor 2 Speed", "RPM");
+        isUnderLoadSig = new Signal("Shooter Under Load","bool");
         shooterMotor1CurrentSig = new Signal("Shooter Motor 1 Current","A");
         shooterMotor2CurrentSig = new Signal("Shooter Motor 2 Current","A");
         shooterStateCommandSig = new Signal("Shooter State Command", "state");
@@ -137,7 +146,7 @@ public class RealShooterControl extends ShooterControl {
 
     public void update() {
 
-        //Calc Motor's RPM
+        //Calc desired shooter speed
         double shooterSetpointRPM = 0;
         if(run == ShooterRunCommand.ShotClose) {
             shooterSetpointRPM = shooterRPMSetpointClose.get();
@@ -147,8 +156,12 @@ public class RealShooterControl extends ShooterControl {
             shooterSetpointRPM = 0;
         }
 
+        //Calcualte actual speed from both motors for redundancy
+        shooterMotor1Speed_rpm = shooterMotor1.getEncoder().getVelocity();
+        shooterMotor2Speed_rpm = shooterMotor2.getEncoder().getVelocity();
+        shooterActualSpeed_rpm = Math.max(shooterMotor1Speed_rpm, shooterMotor2Speed_rpm); //Arbitrarte actual speed as max of both motors
+
         //Switch Control Mode
-        shooterActualSpeed_rpm = shooterMotor1.getEncoder().getVelocity();
         if(run == ShooterRunCommand.Stop){
             currentStateShooter = ShooterCtrlMode.Stop;
         } else {
@@ -166,7 +179,7 @@ public class RealShooterControl extends ShooterControl {
         } else if(currentStateShooter == ShooterCtrlMode.SpoolUp){
             shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, SPOOLUP_PID_SLOT_ID);
         } else {
-            shooterPIDCtrl.setReference(0, ControlType.kVelocity, SPOOLUP_PID_SLOT_ID);
+            shooterPIDCtrl.setReference(0, ControlType.kVoltage);
         }
 
 
@@ -200,6 +213,8 @@ public class RealShooterControl extends ShooterControl {
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, shooterSetpointRPM);
         rpmActualSig.addSample(sampleTimeMS, shooterActualSpeed_rpm);
+        motor1SpeedSig.addSample(sampleTimeMS, shooterMotor1Speed_rpm);
+        motor2SpeedSig.addSample(sampleTimeMS, shooterMotor2Speed_rpm);
         isUnderLoadSig.addSample(sampleTimeMS, underLoad);
         shooterStateCommandSig.addSample(sampleTimeMS, run.value);
         shooterControlModeSig.addSample(sampleTimeMS, currentStateShooter.value);

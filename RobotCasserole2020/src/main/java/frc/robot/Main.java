@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;
+import frc.lib.Util.CrashTracker;
 
 /**
  * Do NOT add any static variables to this class, or any initialization at all.
@@ -24,6 +25,8 @@ public final class Main {
    * <p>If you change your main robot class, change the parameter type.
    */
   public static void main(String... args) {
+    CrashTracker.init();
     RobotBase.startRobot(Robot::new);
+    CrashTracker.close();
   }
 }

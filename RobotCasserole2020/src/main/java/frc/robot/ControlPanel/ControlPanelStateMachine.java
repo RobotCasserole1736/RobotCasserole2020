@@ -5,6 +5,7 @@ import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.HumanInterface.OperatorController;
 import frc.lib.DataServer.Signal;
+import frc.robot.ControlPanel.ControlPanelManipulator;
 
 public class ControlPanelStateMachine{
 
@@ -37,9 +38,9 @@ public class ControlPanelStateMachine{
 
     private ControlPanelStateMachine(){
         colorSensor = CasseroleColorSensor.getInstance();
-        degreesToRotateStaticSig = new Signal("Panel 3.25 spin","degrees");
-        degreesToColorSig = new Signal("Rotate to Color","degrees");
-        colorNeededSig = new Signal("Color Needed","Color");
+        degreesToRotateStaticSig = new Signal("Control Panel State Machine 3.25 spin","degrees");
+        degreesToColorSig = new Signal("Control Panel State Machine Rotate to Color","degrees");
+        colorNeededSig = new Signal("Control Panel State Machine Game Data Color Command","color");
     }
 
     public void update(){
@@ -69,9 +70,16 @@ public class ControlPanelStateMachine{
             degreesToRotateColor= 0;
         }
 
-    
         prevRotate3To5State=rotate3to5Activated;
         prevGoToColorState=rotateToSpecificColorActivated;
+
+        if(degreesToRotateThreeToFive != 0 && degreesToRotateColor == 0){
+            ControlPanelManipulator.getInstance().sendRotationCommand(degreesToRotateThreeToFive);
+        }else if(degreesToRotateColor != 0 && degreesToRotateThreeToFive == 0){
+            ControlPanelManipulator.getInstance().sendRotationCommand(degreesToRotateColor);
+        }else{
+            ControlPanelManipulator.getInstance().sendRotationCommand(0);
+        }
 
         degreesToRotateStaticSig.addSample(sampleTimeMS, degreesToRotateThreeToFive);
         degreesToColorSig.addSample(sampleTimeMS, degreesToRotateColor);
@@ -98,10 +106,15 @@ public class ControlPanelStateMachine{
 
         //Changes the gameData color to something in our orientation since the panel color sensor
         //is off to the side and not where we are (90 degree transformation)
-        // if(gameDataColor != ControlPanelColor.kUNKNOWN){
-        //     ControlPanelColor colorActual;
-        //     colorActual = 
-        // }
+        if(gameDataColor != ControlPanelColor.kUNKNOWN){
+            int colorRotation;
+            ControlPanelColor colorActual;
+            //The -2 signifies going to 2 index values before what we are currently at
+            //this is effectively a 90 degree rotation
+            colorRotation = gameDataColor.value-2;
+            //this function returns the color we need to be at from the index we gave it
+            colorActual = ControlPanelColor.getColorFromInt(colorRotation);
+        }
     }
 
     public int degreesToTurn(ControlPanelColor colorOnWheel){
@@ -129,7 +142,4 @@ public class ControlPanelStateMachine{
        return this.gameDataColor;
     }
 
-    // public int getdegreesToRotateColor(){
-    //    return this.degreesToRotateColor;
-    // }
 }

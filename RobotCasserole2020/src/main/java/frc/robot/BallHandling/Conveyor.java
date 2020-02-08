@@ -1,16 +1,12 @@
 package frc.robot.BallHandling;
 
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.Spark;
-
-
 import edu.wpi.first.wpilibj.DigitalInput;
 import frc.robot.CasserolePDP;
+import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
-import frc.robot.Superstructure.SuperstructureOpMode;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
-import edu.wpi.first.hal.PDPJNI;
 import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
 
 
@@ -20,7 +16,7 @@ public class Conveyor{
 
     Spark conveyorMotor;
     DigitalInput shooterEndSensor;
-    DigitalInput intakeEndSensor;
+    BallCounter intakeEndSensor;
     PDPDataJNI pdp;
     
     
@@ -32,9 +28,8 @@ public class Conveyor{
 
 
     //State Data
-    Double sampleTimeMS;
-    ConveyerOpMode opMode;
-    ConveyerOpMode prevOpMode;
+    ConveyerOpMode opMode = ConveyerOpMode.Stop;
+    ConveyerOpMode prevOpMode = ConveyerOpMode.Stop;
     boolean shooterEndSensorTriggered = false;
     boolean intakeEndSensorTriggered = false;
     double motorCurrent;
@@ -74,8 +69,8 @@ public class Conveyor{
     private Conveyor(){
         //Physical Devices
         conveyorMotor = new Spark(RobotConstants.CONVEYOR_MOTOR);
-        shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_DIO_PORT);
-        intakeEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_INTAKE_DIO_PORT);
+        shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_SENSOR_DIO_PORT);
+        intakeEndSensor = BallCounter.getInstance();
 
         //Calibrations
         conveyorLoadingSpeedCal = new Calibration("Default Calibration for Loading from Hopper to Conveyor", 0.5);
@@ -83,13 +78,15 @@ public class Conveyor{
         conveyorFullSendCal = new Calibration("Full Send", 0.85);
         conveyorReverseCal = new Calibration("EmptyTheRobot", 0.6);
 
-        convMotorSpeedCmdSig = new Signal("Speed Command for the Conveyor Motor", "%");
-        motorCurrentSig = new Signal("Conveyor Motor Current", "Amps");
-        shooterEndSensorSig = new Signal("Is there a Ball at the Shooter End Conveyor", "Boolean");
-        intakeEndSensorSig = new Signal("Is there a ball at the Intake End of the Conveyor", "Boolean");
+        convMotorSpeedCmdSig = new Signal("Conveyor Motor Speed Command", "pct");
+        motorCurrentSig = new Signal("Conveyor Motor Current", "A");
+        shooterEndSensorSig = new Signal("Conveyor Shooter End Ball Present", "bool");
+        intakeEndSensorSig = new Signal("Conveyor Intake End Ball Present", "bool");
     }
+
     public void sampleSensors() {
-        intakeEndSensorTriggered = intakeEndSensor.get();
+        intakeEndSensor.update();
+        intakeEndSensorTriggered = intakeEndSensor.isBallPresent();
         shooterEndSensorTriggered = shooterEndSensor.get();
         
         motorCurrent = CasserolePDP.getInstance().getCurrent(RobotConstants.CONVEYOR_MOTOR_PDP_CHANNEL);
@@ -130,6 +127,7 @@ public class Conveyor{
         }
         prevOpMode = opMode;
         
+        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
         motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
         shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggered);
@@ -138,7 +136,7 @@ public class Conveyor{
     
     }
     public void setOpMode(ConveyerOpMode opMode_in) {
-        opMode_in = opMode;
+        opMode = opMode_in;
     }
     
 

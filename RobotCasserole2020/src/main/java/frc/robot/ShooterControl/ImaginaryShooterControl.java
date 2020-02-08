@@ -35,9 +35,9 @@ public class ImaginaryShooterControl extends ShooterControl {
         }
 
         if(speed_rpm < des_speed_rpm){
-            speed_rpm += SHOOTER_ACCEL_RPM_PER_SEC*RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+            speed_rpm += SHOOTER_ACCEL_RPM_PER_SEC*RobotConstants.MAIN_LOOP_Ts;
         } else if(speed_rpm > des_speed_rpm){
-            speed_rpm -= SHOOTER_DECEL_RPM_PER_SEC*RobotConstants.MAIN_LOOP_SAMPLE_RATE_S;
+            speed_rpm -= SHOOTER_DECEL_RPM_PER_SEC*RobotConstants.MAIN_LOOP_Ts;
         }
     }
 

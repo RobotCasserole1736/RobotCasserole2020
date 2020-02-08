@@ -11,13 +11,15 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
     private double startAngle;
     private double desAngle;
     private boolean weAreDone = false;
-    private double currentTime = 0.0;
     private double startTime = 0.0;
     private double elapsedTime = 0.0;
     
-    final double TURN_SPEED_RPM = 100;
+    final double TURN_SPEED_RPM = 50;
     final double TIMEOUT_S = 5.0;
     final double ALLOWABLE_ANGLE_ERR_DEG = 2.0;
+    final double DT_ANGLE_STABLE_DEBOUNCE_SEC = 0.5;
+
+    double dtStableEndTime = 0;
 
     private boolean stableTargetSeen = false;
 
@@ -57,23 +59,20 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
                 if(cam.isTargetStable()){
                     desAngle = Drivetrain.getInstance().getGyroAngle() + cam.getTgtGeneralAngle(); //Calcuate what angle to turn toward
                     startTime = Timer.getFPGATimestamp(); //Restart timer
+                    dtStableEndTime = Timer.getFPGATimestamp() + DT_ANGLE_STABLE_DEBOUNCE_SEC;
                     stableTargetSeen = true;
                 } else {
                     //Wait for camera to report a stable target
                 }
             } else {
-                double angleErr = Drivetrain.getInstance().getGyroAngle() - desAngle;
 
-                //Bang-bang control of robot angle
-                if(angleErr > 0){
-                    //Angle error positive, turn toward the left to correct
-                    Drivetrain.getInstance().setClosedLoopSpeedCmd((-1*TURN_SPEED_RPM), (TURN_SPEED_RPM));
-                } else {
-                    //Angle error negative, turn toward the right to correct
-                    Drivetrain.getInstance().setClosedLoopSpeedCmd((TURN_SPEED_RPM), (-1*TURN_SPEED_RPM));
+                Drivetrain.getInstance().setTurnToAngleCmd(desAngle);
+
+                if(Math.abs(Drivetrain.getInstance().getTurnToAngleErrDeg()) > ALLOWABLE_ANGLE_ERR_DEG) {
+                    dtStableEndTime = Timer.getFPGATimestamp() + DT_ANGLE_STABLE_DEBOUNCE_SEC;
                 }
 
-                if(Math.abs(angleErr) < ALLOWABLE_ANGLE_ERR_DEG) {
+                if(Timer.getFPGATimestamp() > dtStableEndTime){
                     weAreDone = true;
                 }else {
                     weAreDone = false;
