@@ -6,7 +6,7 @@ public class CasserolePDP{
     private static PowerDistributionPanel casserolePDP = null;
     public static synchronized PowerDistributionPanel getInstance() {
         if (casserolePDP == null)
-            casserolePDP = new PowerDistributionPanel(RobotConstants.POWER_DISTRIBUTION_PANEL_CANID);
+            casserolePDP = new PowerDistributionPanel(RobotConstants.POWER_DISTRIBUTION_PANEL_CAN_ID);
         return casserolePDP;
     }
 }

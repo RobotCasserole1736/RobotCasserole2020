@@ -100,13 +100,13 @@ public class RealDrivetrain extends Drivetrain {
     public RealDrivetrain(){
         dtPose = new RobotPose();
 
-        dtLeftMaster = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CANID, MotorType.kBrushless);
+        dtLeftMaster = new CANSparkMax(RobotConstants.DT_LEFT_NEO_1_CAN_ID, MotorType.kBrushless);
         dtLeftMaster.restoreFactoryDefaults();
-        dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CANID, MotorType.kBrushless);
+        dtLeftIntern = new CANSparkMax(RobotConstants.DT_LEFT_NEO_2_CAN_ID, MotorType.kBrushless);
         dtLeftIntern.restoreFactoryDefaults();
-        dtRightMaster = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_1_CANID, MotorType.kBrushless);
+        dtRightMaster = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_1_CAN_ID, MotorType.kBrushless);
         dtRightMaster.restoreFactoryDefaults();
-        dtRightIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CANID, MotorType.kBrushless);
+        dtRightIntern = new CANSparkMax(RobotConstants.DT_RIGHT_NEO_2_CAN_ID, MotorType.kBrushless);
         dtRightIntern.restoreFactoryDefaults();
 
         dtLeftMaster.setInverted(true);

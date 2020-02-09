@@ -49,7 +49,7 @@ public class PneumaticsControl {
     }
 
     private PneumaticsControl() {
-        compressor = new Compressor(RobotConstants.PNEUMATICS_CONTROL_MODULE_CANID);
+        compressor = new Compressor(RobotConstants.PNEUMATICS_CONTROL_MODULE_CAN_ID);
         pressureSensor = new AnalogInput(RobotConstants.ANALOG_PRESSURE_SENSOR_PORT);
         pressSig = new Signal("Pneumatics Main System Pressure", "psi");
         pressSwVallSig = new Signal("Pneumatics Cutoff Switch State", "bool");

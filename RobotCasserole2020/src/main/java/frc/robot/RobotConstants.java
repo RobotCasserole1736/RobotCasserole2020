@@ -9,8 +9,8 @@ public class RobotConstants {
 
     //////////////////////////////////////////////////////////////////////////////////////////////////
     //CAN ID's - MISC
-    static public final int POWER_DISTRIBUTION_PANEL_CANID = 0; 
-    static public final int PNEUMATICS_CONTROL_MODULE_CANID = 0;
+    static public final int POWER_DISTRIBUTION_PANEL_CAN_ID = 0; 
+    static public final int PNEUMATICS_CONTROL_MODULE_CAN_ID = 0;
     static public final int TOF_CAN_ID = 16; //UNKNOWN
 
 
@@ -19,22 +19,22 @@ public class RobotConstants {
     //CAN ID's - Spark MAX's
     //static public final int RESERVED_DO_NOT_USE = 0;
     //static public final int UNUSED = 1;
-    static public final int DT_LEFT_NEO_1_CANID = 2;
-    static public final int DT_RIGHT_NEO_1_CANID = 3;
-    static public final int HOPPER_NEO_RIGHT_CAN_ID=4; //UNKNOWN
-    //static public final int UNUSED = 5;
-    static public final int DT_LEFT_NEO_2_CANID = 6;
+    static public final int DT_LEFT_NEO_1_CAN_ID = 2;
+    static public final int DT_RIGHT_NEO_1_CAN_ID = 3;
+    static public final int HOPPER_NEO_LEFT_CAN_ID=4; //AKA Hopper 2
+    static public final int INTAKE_MOTOR_CAN_ID = 5;
+    static public final int DT_LEFT_NEO_2_CAN_ID = 6;
     //static public final int UNUSED = 7;
-    static public final int DT_RIGHT_NEO_2_CANID = 8;
-    static public final int HOPPER_NEO_LEFT_CAN_ID=9; //UNKNOWN
-    //static public final int UNUSED = 10;
-    //static public final int UNUSED = 11;
-    //static public final int UNUSED = 12;
+    static public final int DT_RIGHT_NEO_2_CAN_ID = 8;
+    static public final int HOPPER_NEO_RIGHT_CAN_ID=9; //AKA Hopper 1
+    static public final int SHOOTER_MOTOR_2 = 10;
+    static public final int SHOOTER_MOTOR_1 = 11;
+    static public final int CONTROL_PANEL_MANIPULATOR_CAN_ID = 12;
     //static public final int UNUSED = 13;
-    static public final int SHOOTER_MOTOR_1 = 14; //UNKNOWN
-    static public final int SHOOTER_MOTOR_2 = 15; //UNKNOWN
+    //static public final int UNUSED = 14; 
+    //static public final int UNUSED = 15; 
     //static public final int UNUSED = 16;
-    static public final int INTAKE_MOTOR_CAN_ID = 17; //UNKNOWN
+    //static public final int UNUSED = 17; 
     //static public final int UNUSED = 18;
     //static public final int UNUSED = 19;
     //static public final int UNUSED = 20;
