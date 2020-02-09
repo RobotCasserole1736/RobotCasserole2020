@@ -5,6 +5,7 @@ import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
+import frc.robot.Robot;
 
 public class Hopper{
 
@@ -18,9 +19,7 @@ public class Hopper{
     HopperOpMode hopperOpMode;
     CANSparkMax hopperSparkLeft;
     CANSparkMax hopperSparkRight;
-    int counter=0;
-    int timer=30; //completely arbitrary number of loops to switch
-    double randCmd=0;
+
     double HopperSparkLeftCmd=0;
     double HopperSparkRightCmd=0;
     Signal hopperSparkLeftCurrentSignal;
@@ -46,23 +45,26 @@ public class Hopper{
 
 
     private Hopper(){
-        hopperSparkLeft= new CANSparkMax(RobotConstants.HOPPER_NEO_LEFT_CAN_ID, MotorType.kBrushless);
-        hopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
+        if(Robot.isReal()){
+            //No REV support for sim :(
+            hopperSparkLeft= new CANSparkMax(RobotConstants.HOPPER_NEO_LEFT_CAN_ID, MotorType.kBrushless);
+            hopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
+            hopperSparkLeft.setSmartCurrentLimit(30);
+            hopperSparkRight.setSmartCurrentLimit(30);
+            hopperSparkRight.setInverted(true);
+        }
+
         hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.25, 0, 1);
-        hopperBWDSpeed = new Calibration("Hopper Backwards Speed", -75, -1, 0);
+        hopperBWDSpeed = new Calibration("Hopper Backwards Speed", -0.75, -1, 0);
         hopperSparkLeftCurrentSignal =new Signal("Hopper Motor Left Current","A");
         hopperSparkRightCurrentSignal =new Signal("Hopper Motor Right Current","A");
         hopperSparkLeftCmdSignal =new Signal("Hopper Motor Left Cmd","cmd");
         hopperSparkRightCmdSignal =new Signal("Hopper Motor Right Cmd","cmd");
 
-        hopperSparkLeft.setSmartCurrentLimit(30);
-        hopperSparkRight.setSmartCurrentLimit(30);
-        
-        hopperSparkRight.setInverted(true);
     }
 
     public void update(){
-        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
+
 
         if(hopperOpMode==HopperOpMode.Stop){
             HopperSparkLeftCmd=0;
@@ -71,26 +73,36 @@ public class Hopper{
             HopperSparkLeftCmd=hopperFWDSpeed.get();
             HopperSparkRightCmd=hopperFWDSpeed.get();
         }else if(hopperOpMode==HopperOpMode.ClearJam){
-            //TODO test this
-            counter++;
             clearJamMethod1();
         }else if(hopperOpMode==HopperOpMode.Reverse){
             HopperSparkLeftCmd=hopperBWDSpeed.get();
             HopperSparkRightCmd=hopperBWDSpeed.get();
         }
-        hopperSparkLeft.set(HopperSparkLeftCmd);
-        hopperSparkRight.set(HopperSparkRightCmd);
 
+        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
+        
+        if(Robot.isReal()){
+            hopperSparkLeft.set(HopperSparkLeftCmd);
+            hopperSparkRight.set(HopperSparkRightCmd);
+            hopperSparkLeftCurrentSignal.addSample(sampleTimeMs, hopperSparkLeft.getOutputCurrent());
+            hopperSparkRightCurrentSignal.addSample(sampleTimeMs, hopperSparkRight.getOutputCurrent());
+        }
         hopperSparkLeftCmdSignal.addSample(sampleTimeMs, HopperSparkLeftCmd);
         hopperSparkRightCmdSignal.addSample(sampleTimeMs, HopperSparkRightCmd);
-        hopperSparkLeftCurrentSignal.addSample(sampleTimeMs, hopperSparkLeft.getOutputCurrent());
-        hopperSparkRightCurrentSignal.addSample(sampleTimeMs, hopperSparkRight.getOutputCurrent());
+
     }
 
     //Pass in the desired hopper operation mode
     public void setOpMode(HopperOpMode cmd){
         hopperOpMode=cmd;
     }
+
+    //Various dances of the antsy jammed up hopper people.
+
+    int counter=0;
+    final int TIMER_LIMIT_LOOPS=30; //completely arbitrary number of loops to switch
+    double randCmd=0;
+
     public void clearJamMethod1(){
         HopperSparkLeftCmd=hopperFWDSpeed.get();
         HopperSparkRightCmd=hopperBWDSpeed.get();
@@ -100,14 +112,16 @@ public class Hopper{
         HopperSparkRightCmd=hopperFWDSpeed.get();
     }
     public void clearJamMethod3(){
-        if (counter%timer==0){
+        counter++;
+        if (counter%TIMER_LIMIT_LOOPS==0){
             randCmd=Math.random();
         }
         HopperSparkLeftCmd=randCmd;
         HopperSparkRightCmd=-randCmd;
     }
     public void clearJamMethod4(){
-        if (counter%timer==0){
+        counter++;
+        if (counter%TIMER_LIMIT_LOOPS==0){
             randCmd=Math.random();
         }
         HopperSparkLeftCmd=randCmd;

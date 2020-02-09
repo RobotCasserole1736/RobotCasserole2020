@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
+import frc.robot.Robot;
 import frc.robot.RobotConstants;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -35,6 +36,7 @@ public class IntakeControl {
 	Signal spdStateSig;
 	Signal motorCurrentSig;
 	Signal intkSpdCmdSig;
+	Signal intkSolCmdSig;
 
     private static IntakeControl instance = null;
 	public static synchronized IntakeControl getInstance() {
@@ -68,10 +70,15 @@ public class IntakeControl {
 
 
 	private IntakeControl(){
-		intakeMotor = new CANSparkMax(RobotConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushed);
+		if(Robot.isReal()){
+			//No REV support for sim :(
+			intakeMotor = new CANSparkMax(RobotConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushed);
+			intakeMotor.setSmartCurrentLimit(30); //30A limit
+		}
+
 		intakeSolenoid = new Solenoid(RobotConstants.INTAKE_SOLENOID_PCM_PORT);
 
-		intakeMotor.setSmartCurrentLimit(30); //30A limit
+
 		
 		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.5);
 		ejectSpeedCmd = new Calibration("Eject Speed Cmd", -0.5); 
@@ -83,39 +90,47 @@ public class IntakeControl {
 		spdStateSig = new Signal("Intake Speed State", "state");
 		motorCurrentSig = new Signal("Intake Motor Current", "A");
 		intkSpdCmdSig = new Signal("Intake Speed Command", "cmd");
+		intkSolCmdSig = new Signal("Intake Solenoid Command", "bool");
 	}
 
 	public void update(){
+		boolean intake_solenoid_cmd = false;
+
 		switch(posState){
 			case Retracted:
-				intakeSolenoid.set(INTAKE_RETRACTED);
+				intake_solenoid_cmd = INTAKE_RETRACTED;
 				prevTimeRet = Timer.getFPGATimestamp();
 			break;
 			case Extended:
-				intakeSolenoid.set(INTAKE_EXTENDED);
+				intake_solenoid_cmd = INTAKE_EXTENDED;
 				prevTimeExt = Timer.getFPGATimestamp();
 			break;
 		}
+
 		switch(spdState){
 			case Eject:
-				intakeMotor.set(ejectSpeedCmd.get());
-				intkCommand = 0;
+				intkCommand = ejectSpeedCmd.get();
 			break;
 			case Stop:
-				intakeMotor.set(0);
 				intkCommand = 0;
 			break;
 			case Intake:
-				intakeMotor.set(intakeSpeedCmd.get());
 				intkCommand = intakeSpeedCmd.get();
 			break; 
 		}
-		
+
 		double sampleTimeMs = (LoopTiming.getInstance().getLoopStartTimeSec() * 1000);
+
+		intakeSolenoid.set(intake_solenoid_cmd);
+		if(Robot.isReal()){
+			intakeMotor.set(0);
+			motorCurrentSig.addSample(sampleTimeMs, intakeMotor.getOutputCurrent());
+		}
+		
 		posStateSig.addSample(sampleTimeMs, posState.value);
 		spdStateSig.addSample(sampleTimeMs, spdState.value);
-		motorCurrentSig.addSample(sampleTimeMs, intakeMotor.getOutputCurrent());
 		intkSpdCmdSig.addSample(sampleTimeMs, intkCommand);
+		intkSpdCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
 
 	}
 

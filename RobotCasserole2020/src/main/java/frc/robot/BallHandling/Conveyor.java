@@ -81,10 +81,10 @@ public class Conveyor{
         intakeEndSensor = BallCounter.getInstance();
         
         //Calibrations
-        conveyorLoadingSpeedCal = new Calibration("Default Calibration for Loading from Hopper to Conveyor", 0.5);
-        conveyorPrepToShootCal = new Calibration("Operator Says Stop Loading and Shoot", 0.5);
-        conveyorFullSendCal = new Calibration("Full Send", 0.85);
-        conveyorReverseCal = new Calibration("EmptyTheRobot", 0.6);
+        conveyorLoadingSpeedCal = new Calibration("Conveyor Speed for Loading from Hopper to Conveyor", 0.5);
+        conveyorPrepToShootCal = new Calibration("Conveyor Speed Operator Says Stop Loading and Shoot", 0.5);
+        conveyorFullSendCal = new Calibration("Conveyor Speed for Full Send", 0.85);
+        conveyorReverseCal = new Calibration("Conveyor Speed for EmptyTheRobot", 0.6);
 
         convMotorSpeedCmdSig = new Signal("Conveyor Motor Speed Command", "pct");
         motorCurrentSig = new Signal("Conveyor Motor Current", "A");

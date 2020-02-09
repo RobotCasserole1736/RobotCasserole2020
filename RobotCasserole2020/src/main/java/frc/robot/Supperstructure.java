@@ -63,10 +63,9 @@ public class Supperstructure {
     }
 
     public void update(){
-        if(Robot.isReal()){
-            conv.update(); //No valid sim behavior defined for these guys yet. wop wop.
-            hopp.update();
-        }
+        
+        conv.update(); 
+        hopp.update();
         shoot.update();
         intk.update();
 
