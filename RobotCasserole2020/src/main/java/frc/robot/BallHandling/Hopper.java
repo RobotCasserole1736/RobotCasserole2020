@@ -1,5 +1,6 @@
 package frc.robot.BallHandling;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
@@ -51,6 +52,8 @@ public class Hopper{
             hopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
             hopperSparkLeft.restoreFactoryDefaults();
             hopperSparkRight.restoreFactoryDefaults();
+            hopperSparkLeft.setIdleMode(IdleMode.kCoast);
+            hopperSparkLeft.setIdleMode(IdleMode.kCoast);
             hopperSparkLeft.setSmartCurrentLimit(30);
             hopperSparkRight.setSmartCurrentLimit(30);
             hopperSparkRight.setInverted(true);

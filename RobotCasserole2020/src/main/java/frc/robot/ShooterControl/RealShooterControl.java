@@ -10,6 +10,7 @@ package frc.robot.ShooterControl;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -70,6 +71,10 @@ public class RealShooterControl extends ShooterControl {
         shooterMotor1.restoreFactoryDefaults();
         shooterMotor2 = new CANSparkMax(RobotConstants.SHOOTER_MOTOR_2, MotorType.kBrushless); 
         shooterMotor2.restoreFactoryDefaults();
+
+        shooterMotor1.setIdleMode(IdleMode.kCoast);
+        shooterMotor2.setIdleMode(IdleMode.kCoast);
+        
 
         shooterMotor1.getEncoder().setVelocityConversionFactor(RobotConstants.SHOOTER_GEAR_RATIO);
 

@@ -9,6 +9,7 @@ import frc.robot.LoopTiming;
 import frc.robot.Robot;
 import frc.robot.RobotConstants;
 import edu.wpi.first.wpilibj.Timer;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 public class IntakeControl {
 
@@ -74,6 +75,9 @@ public class IntakeControl {
 			//No REV support for sim :(
 			intakeMotor = new CANSparkMax(RobotConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushed);
 			intakeMotor.setSmartCurrentLimit(30); //30A limit
+			intakeMotor.restoreFactoryDefaults();
+			intakeMotor.setIdleMode(IdleMode.kCoast);
+        
 		}
 
 		intakeSolenoid = new Solenoid(RobotConstants.INTAKE_SOLENOID_PCM_PORT);
