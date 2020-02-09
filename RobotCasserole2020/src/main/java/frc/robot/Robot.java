@@ -436,11 +436,11 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
     CasseroleDriverView.newBoolean("Climber Upper SW Fault", "red");
-    CasseroleDriverView.newBoolean("Climber Upper LS Pressed", "yellow");
-    CasseroleDriverView.newBoolean("Climber Lower LS Pressed", "yellow");
-    CasseroleDriverView.newBoolean("Climber Lower LS Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Climber Upper SW Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Climber Lower SW Pressed", "yellow");
     CasseroleDriverView.newBoolean("Conveyor Full", "green");
     CasseroleDriverView.newBoolean("Pnuematic Pressure", "red");
+    CasseroleDriverView.newBoolean("Shooter Spoolup", "yellow");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -458,8 +458,8 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
     CasseroleDriverView.setBoolean("Climber Upper SW Fault", climber.isUpperLimitSwitchFaulted());
-    CasseroleDriverView.setBoolean("Climber Upper Limit Switch Pressed", climberUpperLSPressed);
-    CasseroleDriverView.setBoolean("Climber Lower Limit Switch Pressed", climberLowerLSPressed);
+    CasseroleDriverView.setBoolean("Climber Upper SW Pressed", climberUpperLSPressed);
+    CasseroleDriverView.setBoolean("Climber Lower SW Pressed", climberLowerLSPressed);
     CasseroleDriverView.setBoolean("Pnuematic Pressure", pneumaticPressureLow);
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));

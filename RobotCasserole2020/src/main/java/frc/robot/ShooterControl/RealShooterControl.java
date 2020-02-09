@@ -53,13 +53,9 @@ public class RealShooterControl extends ShooterControl {
 
     boolean calsUpdated;
 
-    Signal rpmDesiredSig;
-    Signal rpmActualSig;
     Signal motor1SpeedSig;
     Signal motor2SpeedSig;
     Signal isUnderLoadSig;
-    Signal shooterStateCommandSig;
-    Signal shooterControlModeSig;
     Signal shooterMotor1CurrentSig;
     Signal shooterMotor2CurrentSig;
 
@@ -105,15 +101,13 @@ public class RealShooterControl extends ShooterControl {
         unloadedDebounceCal = new Calibration("Shooter Unloaded Timer S", 2);
 
         //Data Logging
-        rpmDesiredSig = new Signal("Shooter Desired Speed", "RPM");
-        rpmActualSig = new Signal("Shooter Actual Speed", "RPM");
         motor1SpeedSig = new Signal("Shooter Motor 1 Speed", "RPM");
         motor2SpeedSig = new Signal("Shooter Motor 2 Speed", "RPM");
         isUnderLoadSig = new Signal("Shooter Under Load","bool");
         shooterMotor1CurrentSig = new Signal("Shooter Motor 1 Current","A");
         shooterMotor2CurrentSig = new Signal("Shooter Motor 2 Current","A");
-        shooterStateCommandSig = new Signal("Shooter State Command", "state");
-        shooterControlModeSig = new Signal("Shooter Control Mode", "state");
+
+        commonInit();
 
         updateGains(true);
 

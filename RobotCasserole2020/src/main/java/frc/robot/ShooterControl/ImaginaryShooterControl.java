@@ -8,6 +8,7 @@
 package frc.robot.ShooterControl;
 
 import frc.lib.Calibration.Calibration;
+import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 
 /**
@@ -18,11 +19,12 @@ public class ImaginaryShooterControl extends ShooterControl {
     double speed_rpm = 0;
     double des_speed_rpm = 0;
     final double SHOOTER_ACCEL_RPM_PER_SEC = 500;
-    final double SHOOTER_DECEL_RPM_PER_SEC = 200;
+    final double SHOOTER_DECEL_RPM_PER_SEC = 1000;
 
     public ImaginaryShooterControl() {
         shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 2000);
         shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 1500);
+        commonInit();
     }
 
     public void update() {
@@ -39,6 +41,13 @@ public class ImaginaryShooterControl extends ShooterControl {
         } else if(speed_rpm > des_speed_rpm){
             speed_rpm -= SHOOTER_DECEL_RPM_PER_SEC*RobotConstants.MAIN_LOOP_Ts;
         }
+
+
+        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
+        rpmDesiredSig.addSample(sampleTimeMS, des_speed_rpm);
+        rpmActualSig.addSample(sampleTimeMS, speed_rpm);
+        shooterStateCommandSig.addSample(sampleTimeMS, run.value);
+        shooterControlModeSig.addSample(sampleTimeMS, 0); //TODO expand sim to encompas this.
     }
 
     public boolean isUnderLoad(){

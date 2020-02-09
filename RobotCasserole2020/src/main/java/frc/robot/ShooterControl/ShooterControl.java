@@ -8,6 +8,7 @@
 package frc.robot.ShooterControl;
 
 import frc.lib.Calibration.Calibration;
+import frc.lib.DataServer.Signal;
 import frc.robot.RobotSimMode;
 
 /**
@@ -43,6 +44,11 @@ public abstract class ShooterControl {
     Calibration shooterRPMSetpointFar;
     Calibration shooterRPMSetpointClose;
 
+    Signal rpmDesiredSig;
+    Signal rpmActualSig;
+    Signal shooterStateCommandSig;
+    Signal shooterControlModeSig;
+
     private static ShooterControl instance = null;
 	public static synchronized ShooterControl getInstance() {
 		if(instance == null){
@@ -54,6 +60,13 @@ public abstract class ShooterControl {
             }
         }
 		return instance;
+    }
+
+    public void commonInit(){
+        rpmDesiredSig = new Signal("Shooter Desired Speed", "RPM");
+        rpmActualSig = new Signal("Shooter Actual Speed", "RPM");
+        shooterStateCommandSig = new Signal("Shooter State Command", "state");
+        shooterControlModeSig = new Signal("Shooter Control Mode", "state");
     }
 
     public void setRun(ShooterRunCommand runCmd) {
