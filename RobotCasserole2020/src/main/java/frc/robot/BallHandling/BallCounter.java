@@ -11,7 +11,7 @@ import org.eclipse.jetty.util.HttpCookieStore.Empty;
 
 import frc.lib.Calibration.Calibration;
 import frc.robot.LoopTiming;
-import frc.robot.BallHandling.Conveyor.ConveyerOpMode;
+import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
 import frc.lib.DataServer.Signal;
 
 public class BallCounter {
@@ -117,11 +117,11 @@ public class BallCounter {
     }
 
     public void setConveyorDirection() {
-        ConveyerOpMode convOpMode = Conveyor.getInstance().getOpMode();
-        if (convOpMode == ConveyerOpMode.AdvanceFromHopper || convOpMode == ConveyerOpMode.AdvanceToShooter
-                || convOpMode == ConveyerOpMode.InjectIntoShooter) {
+        ConveyorOpMode convOpMode = Conveyor.getInstance().getOpMode();
+        if (convOpMode == ConveyorOpMode.AdvanceFromHopper || convOpMode == ConveyorOpMode.AdvanceToShooter
+                || convOpMode == ConveyorOpMode.InjectIntoShooter) {
             curConveyorDirection = ConveyorDirection.Forward;
-        } else if (convOpMode == ConveyerOpMode.Reverse) {
+        } else if (convOpMode == ConveyorOpMode.Reverse) {
             curConveyorDirection = ConveyorDirection.Reverse;
         }
 

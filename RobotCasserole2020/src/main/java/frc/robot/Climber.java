@@ -67,8 +67,8 @@ public class Climber{
         upperLSVal = upperLimitSwitch.get();
         lowerLSVal = lowerLimitSwitch.get();
 
-        upperLimitSwitchFaulted = (upperLSVal == TwoWireParitySwitch.SwitchState.Broken) ;
-        lowerLimitSwitchFaulted = (lowerLSVal == TwoWireParitySwitch.SwitchState.Broken) ;
+        upperLimitSwitchFaulted = (upperLSVal == TwoWireParitySwitch.SwitchState.Broken);
+        lowerLimitSwitchFaulted = (lowerLSVal == TwoWireParitySwitch.SwitchState.Broken);
 
         boolean canClimb = !upperLimitSwitchFaulted && !lowerLimitSwitchFaulted;
 

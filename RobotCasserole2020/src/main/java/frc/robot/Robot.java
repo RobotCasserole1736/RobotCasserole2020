@@ -22,8 +22,10 @@ import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.LEDController.LEDPatterns;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.BallHandling.BallDistanceSensor;
+import frc.robot.BallHandling.Conveyor;
 import frc.robot.BallHandling.Hopper;
 import frc.robot.BallHandling.IntakeControl;
+import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
 import frc.robot.ControlPanel.ControlPanelColor;
 import frc.robot.ControlPanel.ControlPanelManipulator;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
@@ -80,11 +82,15 @@ public class Robot extends TimedRobot {
   RobotTilt robotTilt;
   
   LEDController ledController;
-  Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is baked into _even_ our source code.
+  Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is even baked into our source code.
 
   //Misc.
   Calibration snailModeLimitRPM;
   PlayerFeedback pfb;
+  boolean climberUpperLSPressed;
+  boolean climberLowerLSPressed;
+  boolean conveyorFull;
+  boolean pneumaticPressureLow;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -157,6 +163,21 @@ public class Robot extends TimedRobot {
   public void telemetryUpdate(){
     double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
 
+    climberUpperLSPressed = (climber.upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
+    climberLowerLSPressed = (climber.lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
+
+    if(Conveyor.getInstance().getUpperSensorValue() == true && Conveyor.getInstance().getOpMode() == ConveyorOpMode.AdvanceFromHopper){
+      conveyorFull = true;
+    }else{
+      conveyorFull = false;
+    }
+
+    if(PneumaticsControl.getInstance().getPressure() < 60){
+      pneumaticPressureLow = true;
+    }else{
+      pneumaticPressureLow = false;
+    }
+    
     rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
     rioCurrDrawLoadSig.addSample(sampleTimeMs, pdp.getTotalCurrent());
     rioBattVoltLoadSig.addSample(sampleTimeMs, pdp.getVoltage());  
@@ -408,7 +429,11 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
     CasseroleDriverView.newBoolean("Climber Upper SW Fault", "red");
-    CasseroleDriverView.newBoolean("Shooter Spoolup", "yellow");
+    CasseroleDriverView.newBoolean("Climber Upper LS Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Climber Lower LS Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Climber Lower LS Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Conveyor Full", "green");
+    CasseroleDriverView.newBoolean("Pnuematic Pressure", "red");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -426,6 +451,10 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
     CasseroleDriverView.setBoolean("Climber Upper SW Fault", climber.isUpperLimitSwitchFaulted());
+    CasseroleDriverView.setBoolean("Climber Upper Limit Switch Pressed", climberUpperLSPressed);
+    CasseroleDriverView.setBoolean("Climber Lower Limit Switch Pressed", climberLowerLSPressed);
+    CasseroleDriverView.setBoolean("Pnuematic Pressure", pneumaticPressureLow);
+    CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
     
     if (DriverStation.getInstance().getMatchTime() <= 15 & Climber.getInstance().climbEnabled == false){

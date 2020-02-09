@@ -3,7 +3,7 @@ package frc.robot;
 import frc.robot.BallHandling.Conveyor;
 import frc.robot.BallHandling.Hopper;
 import frc.robot.BallHandling.IntakeControl;
-import frc.robot.BallHandling.Conveyor.ConveyerOpMode;
+import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
 import frc.robot.BallHandling.Hopper.HopperOpMode;
 import frc.robot.BallHandling.IntakeControl.IntakePosition;
 import frc.robot.BallHandling.IntakeControl.IntakeSpeed;
@@ -23,7 +23,7 @@ public class Supperstructure {
     }
 
 
-    /* All possible conveyer operational modes*/
+    /* All possible Conveyor operational modes*/
     public enum SupperstructureOpMode {
         Normal(0),               //No intake, but advance balls from the hopper into the conveyor
         PrepToShoot(1),          //Run shooter wheel up to speed, and advance any balls in the system as close to the shooter as possible
@@ -102,30 +102,30 @@ public class Supperstructure {
             intk.setSpeedMode(IntakeSpeed.Stop);
             hopp.setOpMode(HopperOpMode.Injest);
             shoot.setRun(ShooterRunCommand.Stop);
-            conv.setOpMode(ConveyerOpMode.AdvanceFromHopper);
+            conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
             break;
             case PrepToShoot:
             intk.setSpeedMode(IntakeSpeed.Stop);
             hopp.setOpMode(HopperOpMode.Injest);
             shoot.setRun(ShooterRunCommand.ShotFar);
-            conv.setOpMode(ConveyerOpMode.AdvanceToShooter);
+            conv.setOpMode(ConveyorOpMode.AdvanceToShooter);
             break;
             case Shoot:
             intk.setSpeedMode(IntakeSpeed.Stop);
             hopp.setOpMode(HopperOpMode.Injest);
             shoot.setRun(ShooterRunCommand.ShotFar);
-            conv.setOpMode(ConveyerOpMode.InjectIntoShooter);
+            conv.setOpMode(ConveyorOpMode.InjectIntoShooter);
             break;
             case Intake:
             intk.setPosMode(IntakePosition.Extended);
             intk.setSpeedMode(IntakeSpeed.Intake);
             hopp.setOpMode(HopperOpMode.Injest);
-            conv.setOpMode(ConveyerOpMode.AdvanceFromHopper);
+            conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
             shoot.setRun(ShooterRunCommand.Stop);
             break;
             case Eject:
             shoot.setRun(ShooterRunCommand.Stop);
-            conv.setOpMode(ConveyerOpMode.Reverse);
+            conv.setOpMode(ConveyorOpMode.Reverse);
             hopp.setOpMode(HopperOpMode.Reverse);
             intk.setPosMode(IntakePosition.Extended);
             intk.setSpeedMode(IntakeSpeed.Eject);
@@ -133,13 +133,13 @@ public class Supperstructure {
             case Stop:
             intk.setSpeedMode(IntakeSpeed.Stop);
             hopp.setOpMode(HopperOpMode.Stop);
-            conv.setOpMode(ConveyerOpMode.Stop);
+            conv.setOpMode(ConveyorOpMode.Stop);
             shoot.setRun(ShooterRunCommand.Stop);
             break;
             case ClearJam:
             intk.setSpeedMode(IntakeSpeed.Stop);
             hopp.setOpMode(HopperOpMode.ClearJam);
-            conv.setOpMode(ConveyerOpMode.Stop);
+            conv.setOpMode(ConveyorOpMode.Stop);
             break;
         }
     }
