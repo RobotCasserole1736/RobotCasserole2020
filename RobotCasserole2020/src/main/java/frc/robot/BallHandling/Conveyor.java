@@ -76,6 +76,7 @@ public class Conveyor{
     private Conveyor(){
         //Physical Devices
         conveyorMotor = new Spark(RobotConstants.CONVEYOR_MOTOR);
+        conveyorMotor.setInverted(true);
         shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_SENSOR_DIO_PORT);
         conveyorEncoder = new Encoder(RobotConstants.CONVEYOR_ENCODER_A_DIO_PORT, RobotConstants.CONVEYOR_ENCODER_B_DIO_PORT);
         intakeEndSensor = BallCounter.getInstance();

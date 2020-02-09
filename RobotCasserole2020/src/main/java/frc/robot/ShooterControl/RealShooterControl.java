@@ -28,6 +28,7 @@ public class RealShooterControl extends ShooterControl {
     
     boolean underLoad = false;
     ShooterCtrlMode currentStateShooter;
+    ShooterCtrlMode previousStateShooter;
     double timer = 0;
     double outputTime;
     double shooterActualSpeed_rpm; //Arbitrated shooter wheel speed
@@ -75,24 +76,28 @@ public class RealShooterControl extends ShooterControl {
         shooterMotor1.setSmartCurrentLimit(60);
         shooterMotor2.setSmartCurrentLimit(60);
 
+        //Motors should be inverted to spin outward
+        shooterMotor1.setInverted(true);
+        //Additionally, 2 is mirrored in position from 1, so we'll want to invert it again.
         shooterMotor2.follow(shooterMotor1, true);
-        
-        
 
+        shooterMotor1.setClosedLoopRampRate(0.25);
+        
+        
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
         shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
         shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 5000);
         shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 500);
 
-        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 100);
+        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.00004);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
         shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0);
-        shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0);
-        shooterMotorP_hold    = new Calibration("Shooter Motor hold P", 100);
+        shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.0008);
+        shooterMotorP_hold    = new Calibration("Shooter Motor hold P", 0.00004);
         shooterMotorI_hold    = new Calibration("Shooter Motor hold I", 0);
         shooterMotorD_hold    = new Calibration("Shooter Motor hold D", 0);
-        shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0);
+        shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0.0008);
 
         //Shooter loaded calculation
         loadedThresholdShooter = new Calibration("Shooter Loaded Threshold A", 20);
@@ -110,6 +115,12 @@ public class RealShooterControl extends ShooterControl {
         commonInit();
 
         updateGains(true);
+
+        shooterMotor1.burnFlash();
+        shooterMotor2.burnFlash();
+
+        currentStateShooter = ShooterCtrlMode.Stop;
+        previousStateShooter = ShooterCtrlMode.Stop;
 
     }
 
@@ -169,6 +180,14 @@ public class RealShooterControl extends ShooterControl {
             }
         }
 
+        if(currentStateShooter != previousStateShooter){
+            if(currentStateShooter == ShooterCtrlMode.HoldSpeed){
+                shooterMotor1.setClosedLoopRampRate(0.0);
+            } else {
+                shooterMotor1.setClosedLoopRampRate(0.25);
+            }
+        }
+
         // Send commands to the motor
         if(currentStateShooter == ShooterCtrlMode.HoldSpeed){
             shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, HOLD_PID_SLOT_ID);
@@ -205,6 +224,8 @@ public class RealShooterControl extends ShooterControl {
         }else{
             underLoad = false;
         }
+
+        previousStateShooter = currentStateShooter;
 
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, shooterSetpointRPM);

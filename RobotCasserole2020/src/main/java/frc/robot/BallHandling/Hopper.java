@@ -49,9 +49,13 @@ public class Hopper{
             //No REV support for sim :(
             hopperSparkLeft= new CANSparkMax(RobotConstants.HOPPER_NEO_LEFT_CAN_ID, MotorType.kBrushless);
             hopperSparkRight= new CANSparkMax(RobotConstants.HOPPER_NEO_RIGHT_CAN_ID, MotorType.kBrushless);
+            hopperSparkLeft.restoreFactoryDefaults();
+            hopperSparkRight.restoreFactoryDefaults();
             hopperSparkLeft.setSmartCurrentLimit(30);
             hopperSparkRight.setSmartCurrentLimit(30);
             hopperSparkRight.setInverted(true);
+            hopperSparkLeft.burnFlash();
+            hopperSparkRight.burnFlash();
         }
 
         hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.25, 0, 1);
@@ -80,7 +84,7 @@ public class Hopper{
         }
 
         double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
-        
+
         if(Robot.isReal()){
             hopperSparkLeft.set(HopperSparkLeftCmd);
             hopperSparkRight.set(HopperSparkRightCmd);

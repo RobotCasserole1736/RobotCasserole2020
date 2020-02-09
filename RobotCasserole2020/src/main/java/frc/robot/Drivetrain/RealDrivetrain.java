@@ -157,6 +157,11 @@ public class RealDrivetrain extends Drivetrain {
         
         updateGains(true);
 
+        dtLeftMaster.burnFlash();
+        dtLeftIntern.burnFlash();
+        dtRightMaster.burnFlash();
+        dtRightIntern.burnFlash();
+
     }
 
     public void sampleSensors() {
