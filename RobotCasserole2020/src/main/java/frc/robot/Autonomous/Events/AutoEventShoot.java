@@ -20,6 +20,7 @@ public class AutoEventShoot extends AutoEvent {
 		endTime = Timer.getFPGATimestamp() + duration_s;
         completed = false;
 		Supperstructure.getInstance().setShootDesired(true);
+		Supperstructure.getInstance().setPrepToShootDesired(false); //because PrepToShoot overrides Shoot
 	}
 	
 	@Override
