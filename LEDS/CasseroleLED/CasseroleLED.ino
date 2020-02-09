@@ -7,9 +7,9 @@
 #define ROBORIO_DATA_PIN 9
 
 // Overall brigness control
-#define BRIGHTNESS          100
+#define BRIGHTNESS 70
 // Desired FPS for the strip
-#define FRAMES_PER_SECOND  120
+#define FRAMES_PER_SECOND 120
 
 //Buffer containing the desired color of each LED
 CRGB led[NUM_LEDS];
@@ -18,7 +18,8 @@ int pulseLen_us;
 /**
  * One-time Init, at startup
  */
-void setup() {
+void setup()
+{
   FastLED.setBrightness(BRIGHTNESS);
   FastLED.addLeds<NEOPIXEL, LED_PIN>(led, NUM_LEDS);
 
@@ -30,7 +31,6 @@ void setup() {
 
   FastLED.show(); //Ensure we get one LED update in prior to periodic - should blank out all LED's
 }
-
 /**
  * Periodic call. Will be called again and again.
  */
@@ -38,8 +38,8 @@ void loop()
 {
   if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
   {
-   //Disabled Pattern
-   CasseroleColorStripeChase_update();
+    //Disabled Pattern
+    CasseroleColorStripeChase_update();
   }
   else if ((pulseLen_us >= 900) && (pulseLen_us <= 1000))
   {
@@ -87,28 +87,30 @@ void loop()
   FastLED.delay(1000 / FRAMES_PER_SECOND);
 
   // do some periodic updates
-  EVERY_N_MILLISECONDS(200) {
+  EVERY_N_MILLISECONDS(200)
+  {
     pulseLen_us = pulseIn(ROBORIO_DATA_PIN, HIGH, 50000);
-   Serial.println(pulseLen_us);
+    Serial.println(pulseLen_us);
   }
 }
-
 
 //**************************************************************
 // Pattern: Casserole Color Stripes
 //**************************************************************
 #define STRIPE_WIDTH_PIXELS 10.0
 #define STRIPE_SPEED_PIXELS_PER_LOOP 0.01
-void CasseroleColorStripeChase_update() {
+void CasseroleColorStripeChase_update()
+{
   static double zeroPos = 0;
   zeroPos += STRIPE_SPEED_PIXELS_PER_LOOP;
-  for (int i = 0; i < NUM_LEDS; i++) {
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
 
     //Create a "bumpy" waveform that shifts down the strip over time
     //Output range shoudl be [0,1]
-    double pctDownStrip = (double)i/NUM_LEDS;
+    double pctDownStrip = (double)i / NUM_LEDS;
     double numCyclesOnStrip = (double)NUM_LEDS / (double)STRIPE_WIDTH_PIXELS / 2.0;
-    double colorBump = sin(2*PI*numCyclesOnStrip*(pctDownStrip - zeroPos))*0.5 + 0.5;
+    double colorBump = sin(2 * PI * numCyclesOnStrip * (pctDownStrip - zeroPos)) * 0.5 + 0.5;
 
     //Square the value so that the edge is sharper.
     colorBump *= colorBump;
@@ -117,9 +119,9 @@ void CasseroleColorStripeChase_update() {
     colorBump *= 255;
 
     //Set the pixel color
-    setPixel(i, 255, //Red
-           (int)colorBump, //Green
-           (int)colorBump); //Blue
+    setPixel(i, 255,          //Red
+             (int)colorBump,  //Green
+             (int)colorBump); //Blue
   }
 }
 
@@ -127,101 +129,136 @@ void CasseroleColorStripeChase_update() {
 // Pattern: Solid Color Sparkle
 //**************************************************************
 #define CYCLE_FREQ_LOOPS
-void ColorSparkle_update(int red, int grn, int blu) {
-  for (int i = 0; i < NUM_LEDS; i++) {
+void ColorSparkle_update(int red, int grn, int blu)
+{
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
 
     //Set all LED's to the input color, but
-    //Randomly set an LED to white. 
-    if(random(0,NUM_LEDS) <= 1){
+    //Randomly set an LED to white.
+    if (random(0, NUM_LEDS) <= 1)
+    {
       //shiny!
-      setPixel(i, 255, //Red
-            (int) 255, //Green
-            (int) 255); //Blue
-    } else {
-      //Normal Color
-      setPixel(i, red, //Red
-            (int) grn, //Green
-            (int) blu); //Blue
+      setPixel(i, 255,    //Red
+               (int)255,  //Green
+               (int)255); //Blue
     }
-
+    else
+    {
+      //Normal Color
+      setPixel(i, red,    //Red
+               (int)grn,  //Green
+               (int)blu); //Blue
+    }
   }
 }
-
 //**************************************************************
 // Pattern: Rainbow Fade Chase
 //**************************************************************
-void fadeall() { for(int i = 0; i < NUM_LEDS; i++) { led[i].nscale8(250); } }
-void Rainbow_Fade_Chase(){
+void Rainbow_Fade_Chase()
+{
+  /*you must set all LEDS to black so the effect works properly
+  for (int i = 0; i < NUM_LEDS; i++)
+  {
+    led[i] = CRGB(0, 0, 0);
+  }*/
   static uint8_t hue = 0;
-  for (int i = 0; i < NUM_LEDS; i++){
-    //Sends a pulse down the strip that
-    //continously increases hue of the leds
-    led[i] = CHSV(hue++, 255, 255);
-    FastLED.show();
-    fadeall();
-    delay(7);
+  //establish a counter
+  static int counter = 0;
+  static boolean up;
+  if (counter == 0)
+  {
+    up = true;
   }
-  for (int i = (NUM_LEDS)-1; i >= 0; i--){
-    //Sends a pulse up the strip that
-    //increases hue of the leds
-    led[i] = CHSV(hue++, 255, 255);
-    FastLED.show();
-    fadeall();
-    delay(7);
+  else if (counter == NUM_LEDS)
+  {
+    up = false;
   }
+  if (up == true)
+  {
+    counter++;
+  }
+  else if (up == false)
+  {
+    counter--;
+  }
+  led[counter] = CHSV(hue++, 255, 255);
+  fadeall();
+  led[counter] = CHSV(hue++, 255, 255);
+  fadeall();
 }
 
 //**************************************************************
 // Pattern:Blue Fade
 //**************************************************************
-void setBlue(int val) {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    led[i] = CRGB(0, 0, val);}
-    FastLED.show();
-}
-void setWhite(int val){
+void Blue_Mode_Maker(){
+  static int b = 0;
+  static int mode = 0;
+  b++;
   for (int i = 0; i < NUM_LEDS; i++){
-    led[i] = CRGB(val, val, val);}
-    FastLED.show();
+    if (b == 255){
+      mode = 1;
+    }
+    else if (b == 510){
+      mode = 0;
+    }
+    if (b >= 511){
+      b = 0;
+    }
+    if (mode == 1){
+      led[i] = CRGB(0, 0, b);
+    }
+    else if (mode == 0){
+      led[i] = CRGB(b, b, b);
+    }
+  }
 }
-
 void blueFade(){
-for (int i = 0; i < 196; i++){
-  setBlue(i);}
- for (int i = 195; i > 0; i--){
-  setBlue(i);}
-for (int i = 0; i < 256; i++){
-  setWhite(i);}
- for (int i = 255; i > 0; i--){
-  setWhite(i);}
-}
-
+  Blue_Mode_Maker();
+  fadeall();
+  }
 //**************************************************************
 // Pattern:Red Fade
 //**************************************************************
-void setRed(int val) {
-  for (int i = 0; i < NUM_LEDS; i++) {
-    led[i] = CRGB(val, 0, 0);}
-    FastLED.show();
+void Red_Mode_Maker(){
+  static int r = 0;
+  static int mode = 0;
+  r++;
+  for (int i = 0; i < NUM_LEDS; i++){
+    if (r == 255){
+      mode = 1;
+    }
+    else if (r == 510){
+      mode = 0;
+    }
+    if (r >= 511){
+      r = 0;
+    }
+    if (mode == 1){
+      led[i] = CRGB(r, 0, 0);
+    }
+    else if (mode == 0){
+      led[i] = CRGB(r, r, r);
+    }
+  }
 }
-
 void redFade(){
-for (int i = 0; i < 196; i++){
-  setRed(i);}
- for (int i = 195; i > 0; i--){
-  setRed(i);}
-for (int i = 0; i < 256; i++){
-  setWhite(i);}
- for (int i = 255; i > 0; i--){
-  setWhite(i);}
-}
+  Red_Mode_Maker();
+  fadeall();
+  }
 
 //**************************************************************
 // Utilities
 //**************************************************************
-void setPixel(int Pixel, byte red, byte green, byte blue) {
+void setPixel(int Pixel, byte red, byte green, byte blue)
+{
   // FastLED
   led[Pixel].r = red;
   led[Pixel].g = green;
   led[Pixel].b = blue;
+}
+void fadeall(){
+  for (int i = 0; i < NUM_LEDS; i++){
+    led[i].nscale8(250);
+  }
 }
