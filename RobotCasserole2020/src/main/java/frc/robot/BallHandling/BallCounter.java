@@ -68,8 +68,8 @@ public class BallCounter {
         //Ensure sensor gets instantiated.
         BallDistanceSensor.getInstance();
 
-        ballMinThicknessCal = new Calibration("Ball Counter Empty-Short Thresh Inches", 6);
-        ballMaxThicknessCal = new Calibration("Ball Counter Short-Apex Thresh Inches", 2);
+        ballMinThicknessCal = new Calibration("Ball Counter Empty-Short Thresh Inches", 5);
+        ballMaxThicknessCal = new Calibration("Ball Counter Short-Apex Thresh Inches", 4);
 
         ballCountSig = new Signal("Ball Counter Ball Count", "count");
         howFarFromSensorSig = new Signal("Ball Counter Sensor Distance", "in");
@@ -108,11 +108,11 @@ public class BallCounter {
     public void setBallHeight() {
         ballHeightIn = BallDistanceSensor.getInstance().getDistance_in();
         if (ballHeightIn > ballMaxThicknessCal.get()) {
-            curBallHeight = BallHeight.Apex;
+            curBallHeight = BallHeight.Empty;
         } else if (ballHeightIn < ballMaxThicknessCal.get() && ballHeightIn > ballMinThicknessCal.get()) {
             curBallHeight = BallHeight.ShortButPresent;
         } else {
-            curBallHeight = BallHeight.Empty;
+            curBallHeight = BallHeight.Apex;
         }
     }
 
