@@ -74,9 +74,10 @@ public class IntakeControl {
 		if(Robot.isReal()){
 			//No REV support for sim :(
 			intakeMotor = new CANSparkMax(RobotConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushed);
-			intakeMotor.setSmartCurrentLimit(30); //30A limit
 			intakeMotor.restoreFactoryDefaults();
+			intakeMotor.setSmartCurrentLimit(30); //30A limit
 			intakeMotor.setIdleMode(IdleMode.kCoast);
+			intakeMotor.burnFlash();
         
 		}
 

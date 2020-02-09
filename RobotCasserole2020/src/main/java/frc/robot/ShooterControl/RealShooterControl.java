@@ -71,7 +71,6 @@ public class RealShooterControl extends ShooterControl {
         shooterMotor1.restoreFactoryDefaults();
         shooterMotor2 = new CANSparkMax(RobotConstants.SHOOTER_MOTOR_2, MotorType.kBrushless); 
         shooterMotor2.restoreFactoryDefaults();
-
         shooterMotor1.setIdleMode(IdleMode.kCoast);
         shooterMotor2.setIdleMode(IdleMode.kCoast);
         
