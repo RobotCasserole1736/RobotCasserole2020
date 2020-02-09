@@ -2,6 +2,7 @@ package frc.robot.BallHandling;
 
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 import frc.robot.CasserolePDP;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
@@ -18,7 +19,12 @@ public class Conveyor{
     DigitalInput shooterEndSensor;
     BallCounter intakeEndSensor;
     PDPDataJNI pdp;
+    Encoder conveyorEncoder;
     
+    double conveyorPosition;
+
+    //One revolution is equal to 8192 counts on the encoder.
+    int encoderCountsInOneRevolution = 8192;
     
     //Calibrations
     Calibration conveyorLoadingSpeedCal;
@@ -38,6 +44,7 @@ public class Conveyor{
     Signal motorCurrentSig;
     Signal shooterEndSensorSig;
     Signal intakeEndSensorSig;
+    Signal conveyorPositionSig;
     
     
     /* Singleton infratructure*/
@@ -70,8 +77,9 @@ public class Conveyor{
         //Physical Devices
         conveyorMotor = new Spark(RobotConstants.CONVEYOR_MOTOR);
         shooterEndSensor = new DigitalInput(RobotConstants.CONVEYOR_TO_SHOOTER_SENSOR_DIO_PORT);
+        conveyorEncoder = new Encoder(RobotConstants.CONVEYOR_ENCODER_A_DIO_PORT, RobotConstants.CONVEYOR_ENCODER_B_DIO_PORT);
         intakeEndSensor = BallCounter.getInstance();
-
+        
         //Calibrations
         conveyorLoadingSpeedCal = new Calibration("Default Calibration for Loading from Hopper to Conveyor", 0.5);
         conveyorPrepToShootCal = new Calibration("Operator Says Stop Loading and Shoot", 0.5);
@@ -82,6 +90,7 @@ public class Conveyor{
         motorCurrentSig = new Signal("Conveyor Motor Current", "A");
         shooterEndSensorSig = new Signal("Conveyor Shooter End Ball Present", "bool");
         intakeEndSensorSig = new Signal("Conveyor Intake End Ball Present", "bool");
+        conveyorPositionSig = new Signal("Conveyor Position", "feet");
     }
 
     public void sampleSensors() {
@@ -126,13 +135,17 @@ public class Conveyor{
             break;
         }
         prevOpMode = opMode;
+
+        //The conveyor's position is the number of revolutions of the encoder multiplied by pi (diameter is 1 so circumference is equal to pi), 
+        //and the ratio of the belt from the motor to the driving shaft of the roller. The multiplication of 12 is to make it in feet.
+        conveyorPosition = conveyorEncoder.get()*encoderCountsInOneRevolution*Math.PI*RobotConstants.CONVEYOR_BELT_RATIO*12;
         
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
         motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
         shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggered);
         intakeEndSensorSig.addSample(sampleTimeMS, intakeEndSensorTriggered);
-
+        conveyorPositionSig.addSample(sampleTimeMS, conveyorPosition);
     
     }
     public void setOpMode(ConveyorOpMode opMode_in) {

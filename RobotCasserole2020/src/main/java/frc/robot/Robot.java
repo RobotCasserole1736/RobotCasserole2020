@@ -62,6 +62,8 @@ public class Robot extends TimedRobot {
   Signal rioBattVoltLoadSig;
   Signal rioIsBrownoutSig;
   Signal rioCANBusUsagePctSig;
+  Signal pdpUpperBoardAuxCurrentSig;
+  Signal pdpCoolingFansCurrentSig;
 
   //Autonomous Control Utilities
   Autonomous auto;
@@ -117,6 +119,8 @@ public class Robot extends TimedRobot {
     rioDSLogQueueLenSig = new Signal("Dataserver File Logger Queue Length", "count");
     rioIsBrownoutSig = new Signal("Robot Brownout", "bool");
     rioCANBusUsagePctSig = new Signal("Robot CAN Bus Utilization", "pct");
+    pdpUpperBoardAuxCurrentSig = new Signal("PDP Upper Board Current", "A");
+    pdpCoolingFansCurrentSig = new Signal("PDP Cooling Fans Current", "A");
 
     thbbtbbtbbtbbt = PneumaticsControl.getInstance();
     eyeOfVeganSauron = VisionLEDRingControl.getInstance();
@@ -184,6 +188,8 @@ public class Robot extends TimedRobot {
     rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
     rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
     rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
+    pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));
+    pdpCoolingFansCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.COOLING_FANS_PDP_CHANNEL));
   }
     
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

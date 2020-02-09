@@ -114,7 +114,8 @@ public class RobotConstants {
 	static public final double ROBOT_TRACK_WIDTH_FT = 23.0/12.0;
     static public final double MAIN_LOOP_Ts = 0.02; //Nominal. Meh.
     static public final double SHOOTER_GEAR_RATIO = 1.0;
-    static public final double DRIVETRAIN_GEAR_RATIO = 1.0/10.0;
+    static public final double DRIVETRAIN_GEAR_RATIO = 1.0/1.0;
+    static public final double CONVEYOR_BELT_RATIO = 1.0/1.0;
     
 
 }
