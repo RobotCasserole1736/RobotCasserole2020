@@ -65,8 +65,8 @@ public abstract class ShooterControl {
     public void commonInit(){
         rpmDesiredSig = new Signal("Shooter Desired Speed", "RPM");
         rpmActualSig = new Signal("Shooter Actual Speed", "RPM");
-        shooterStateCommandSig = new Signal("Shooter State Command", "state");
-        shooterControlModeSig = new Signal("Shooter Control Mode", "state");
+        shooterStateCommandSig = new Signal("Shooter Input Mode Command", "state");
+        shooterControlModeSig = new Signal("Shooter Wheel Current Control Mode", "state");
     }
 
     public void setRun(ShooterRunCommand runCmd) {
