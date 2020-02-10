@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
+import frc.robot.Drivetrain.Utils;
 
 /*
  *******************************************************************************************
@@ -84,7 +85,7 @@ public class OperatorController {
         ejectDesired = operaterController.getBackButton(); 
         photonCannonCmd = operaterController.getAButton();
         climbEnabledCmd = operaterController.getStartButton();
-        climbSpeedCmd = operaterController.getY(GenericHID.Hand.kLeft);
+        climbSpeedCmd = Utils.ctrlAxisScale(operaterController.getY(GenericHID.Hand.kLeft), 4.0, 0.15);
         ctrlPanelThreeRotationsDesired = operaterController.getYButton();
         ctrlPanelSeekToColorDesired = operaterController.getBButton();
 

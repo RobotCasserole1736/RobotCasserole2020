@@ -77,16 +77,13 @@ public class DriverController {
         }
 
         reverseModeCmd = driverController.getBumper(Hand.kLeft);
+        fwdRevCmd =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.15);
+        rotCmd =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 5.0, 0.15);
 
         //Flips which side is the front and back in regards to driving
         if(reverseModeCmd){
-            //The two -1 multiplications are because one would flip the joy sticks into the orientation for the robot 
-            //while the other one flips it to the reverse orientation
-            fwdRevCmd =  Utils.ctrlAxisScale(-1.0*(-1.0*driverController.getY(GenericHID.Hand.kLeft)), 4.0, 0.15);
-            rotCmd =  Utils.ctrlAxisScale(-1.0*(1.0*driverController.getX(GenericHID.Hand.kRight)), 5.0, 0.15);
-        }else{
-            fwdRevCmd =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.15);
-            rotCmd =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 5.0, 0.15);
+            fwdRevCmd *= -1.0;
+            rotCmd *= -1.0;
         }
         
         autoAlignCmd = driverController.getXButton();
