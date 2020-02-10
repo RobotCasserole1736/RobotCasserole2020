@@ -34,8 +34,10 @@ public class RealShooterControl extends ShooterControl {
     double shooterActualSpeed_rpm; //Arbitrated shooter wheel speed
     double shooterMotor1Speed_rpm; //Motor 1 measured speed
     double shooterMotor2Speed_rpm; //Motor 2 measured speed - Ideally this should be same as 1, but maybe not if faulted
+    double shooterAtSteadyStateDebounceCounter;
 
     Calibration shooterMaxHoldErrorRPM;
+    Calibration shooterSpoolUpSteadyStateDbnc;
 
     Calibration shooterMotorP_spoolup;
     Calibration shooterMotorI_spoolup;
@@ -88,7 +90,8 @@ public class RealShooterControl extends ShooterControl {
 
         shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
         shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 5000);
-        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 500);
+        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 200);
+        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 25);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.00004);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
@@ -171,12 +174,31 @@ public class RealShooterControl extends ShooterControl {
         //Switch Control Mode
         if(run == ShooterRunCommand.Stop){
             currentStateShooter = ShooterCtrlMode.Stop;
+            shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
         } else {
+            //When commanded to run....
             double err = Math.abs(shooterActualSpeed_rpm - shooterSetpointRPM);
-            if(err < shooterMaxHoldErrorRPM.get()){
-                currentStateShooter = ShooterCtrlMode.HoldSpeed;
-            } else {
-                currentStateShooter = ShooterCtrlMode.SpoolUp;
+            if(currentStateShooter == ShooterCtrlMode.HoldSpeed){
+                if(err > shooterMaxHoldErrorRPM.get()){
+                    //Instantly drop to spoolup mode
+                    currentStateShooter = ShooterCtrlMode.SpoolUp;
+                } else {
+                    //Else, maintain state
+                    currentStateShooter = ShooterCtrlMode.HoldSpeed;
+                }
+
+            } else if(currentStateShooter == ShooterCtrlMode.SpoolUp){
+                if(err < shooterMaxHoldErrorRPM.get()){
+                    if(shooterAtSteadyStateDebounceCounter > 0){
+                        //Debounce being below the error threshold
+                        shooterAtSteadyStateDebounceCounter--;
+                    } else {
+                        currentStateShooter = ShooterCtrlMode.HoldSpeed;
+                    }
+                } else {
+                    //Reset counter to max
+                    shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
+                }
             }
         }
 
