@@ -106,7 +106,7 @@ public class RealShooterControl extends ShooterControl {
         shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.032);
         shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00018);
         shooterMotorP_hold    = new Calibration("Shooter Motor hold P", 0.001);
-        shooterMotorI_hold    = new Calibration("Shooter Motor hold I", 0);
+        shooterMotorI_hold    = new Calibration("Shooter Motor hold I", 0.000005);
         shooterMotorD_hold    = new Calibration("Shooter Motor hold D", 0.032);
         shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0.00018);
 
@@ -210,6 +210,7 @@ public class RealShooterControl extends ShooterControl {
             } else {
                 shooterMotor1.setClosedLoopRampRate(0.25);
             }
+            shooterPIDCtrl.setIAccum(0);
         }
 
         // Send commands to the motor

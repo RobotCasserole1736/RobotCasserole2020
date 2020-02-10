@@ -97,7 +97,7 @@ public class Conveyor{
     public void sampleSensors() {
         intakeEndSensor.update();
         intakeEndSensorTriggered = intakeEndSensor.isBallPresent();
-        shooterEndSensorTriggered = shooterEndSensor.get();
+        shooterEndSensorTriggered = !shooterEndSensor.get(); //Sensor state is inverted from digital input
         
         motorCurrent = CasserolePDP.getInstance().getCurrent(RobotConstants.CONVEYOR_MOTOR_PDP_CHANNEL);
     }
