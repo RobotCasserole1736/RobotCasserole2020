@@ -80,4 +80,6 @@ public abstract class ShooterControl {
     public abstract double getSpeedRPM();
 
     public abstract ShooterCtrlMode getShooterCtrlMode();
+
+    public abstract void updateGains(boolean forceChange);
 }

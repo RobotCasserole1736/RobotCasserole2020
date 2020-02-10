@@ -76,4 +76,10 @@ public class ImaginaryShooterControl extends ShooterControl {
     public ShooterCtrlMode getShooterCtrlMode(){
         return ctrlMode;
     }
+
+    @Override
+    public void updateGains(boolean forceChange) {
+        // TODO Auto-generated method stub
+
+    }
 }

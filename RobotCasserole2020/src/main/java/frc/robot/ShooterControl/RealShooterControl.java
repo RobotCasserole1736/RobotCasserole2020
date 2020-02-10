@@ -10,6 +10,7 @@ package frc.robot.ShooterControl;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -61,6 +62,10 @@ public class RealShooterControl extends ShooterControl {
     Signal isUnderLoadSig;
     Signal shooterMotor1CurrentSig;
     Signal shooterMotor2CurrentSig;
+    Signal shooterMotor1Percent;
+    Signal shooterMotor2Percent;
+    Signal shooterMotor1InVoltage;
+    Signal shooterMotor2InVoltage;
 
     CANSparkMax shooterMotor1; //Master
     CANSparkMax shooterMotor2; //Unpaid Intern
@@ -72,6 +77,9 @@ public class RealShooterControl extends ShooterControl {
         shooterMotor1.restoreFactoryDefaults();
         shooterMotor2 = new CANSparkMax(RobotConstants.SHOOTER_MOTOR_2, MotorType.kBrushless); 
         shooterMotor2.restoreFactoryDefaults();
+        shooterMotor1.setIdleMode(IdleMode.kCoast);
+        shooterMotor2.setIdleMode(IdleMode.kCoast);
+        
 
         shooterMotor1.getEncoder().setVelocityConversionFactor(RobotConstants.SHOOTER_GEAR_RATIO);
 
@@ -88,19 +96,19 @@ public class RealShooterControl extends ShooterControl {
         
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
-        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 5000);
-        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 200);
         shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 25);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3500);
+        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 3500);
+        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 200);
 
-        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.00004);
+        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.001);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
-        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0);
-        shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.0008);
-        shooterMotorP_hold    = new Calibration("Shooter Motor hold P", 0.00004);
+        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.0001);
+        shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00018);
+        shooterMotorP_hold    = new Calibration("Shooter Motor hold P", 0.001);
         shooterMotorI_hold    = new Calibration("Shooter Motor hold I", 0);
-        shooterMotorD_hold    = new Calibration("Shooter Motor hold D", 0);
-        shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0.0008);
+        shooterMotorD_hold    = new Calibration("Shooter Motor hold D", 0.0001);
+        shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0.00018);
 
         //Shooter loaded calculation
         loadedThresholdShooter = new Calibration("Shooter Loaded Threshold A", 20);
@@ -111,9 +119,13 @@ public class RealShooterControl extends ShooterControl {
         //Data Logging
         motor1SpeedSig = new Signal("Shooter Motor 1 Speed", "RPM");
         motor2SpeedSig = new Signal("Shooter Motor 2 Speed", "RPM");
+        shooterMotor1Percent = new Signal("Shooter Motor 1 Percent", "pct");
+        shooterMotor2Percent = new Signal("Shooter Motor 2 Percent", "pct");
         isUnderLoadSig = new Signal("Shooter Under Load","bool");
         shooterMotor1CurrentSig = new Signal("Shooter Motor 1 Current","A");
         shooterMotor2CurrentSig = new Signal("Shooter Motor 2 Current","A");
+        shooterMotor1InVoltage = new Signal("Shooter Motor 1 in Voltage", "V");
+        shooterMotor2InVoltage = new Signal("Shooter Motor 2 in Voltage", "V");;
 
         commonInit();
 
@@ -259,6 +271,10 @@ public class RealShooterControl extends ShooterControl {
         shooterControlModeSig.addSample(sampleTimeMS, currentStateShooter.value);
         shooterMotor1CurrentSig.addSample(sampleTimeMS, motor1Current);
         shooterMotor2CurrentSig.addSample(sampleTimeMS, motor2Current);
+        shooterMotor1Percent.addSample(sampleTimeMS, shooterMotor1.getAppliedOutput());
+        shooterMotor2Percent.addSample(sampleTimeMS, shooterMotor2.getAppliedOutput());
+        shooterMotor1InVoltage.addSample(sampleTimeMS, shooterMotor1.getBusVoltage());
+        shooterMotor2InVoltage.addSample(sampleTimeMS, shooterMotor2.getBusVoltage());
         
 
     }

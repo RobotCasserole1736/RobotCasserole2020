@@ -239,6 +239,7 @@ public class Robot extends TimedRobot {
       drivetrain.setOpenLoopCmd(0, 0);
       drivetrain.updateGains(false);
       drivetrain.update();
+      shooterCtrl.updateGains(false);
 
       pfb.update();
       robotTilt.update();
