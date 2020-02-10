@@ -190,26 +190,16 @@ public class RealShooterControl extends ShooterControl {
         } else {
             //When commanded to run....
             double err = Math.abs(shooterActualSpeed_rpm - shooterSetpointRPM);
-            if(currentStateShooter == ShooterCtrlMode.HoldSpeed){
-                if(err > shooterMaxHoldErrorRPM.get()){
-                    //Instantly drop to spoolup mode
-                    currentStateShooter = ShooterCtrlMode.SpoolUp;
-                } else {
-                    //Else, maintain state
-                    currentStateShooter = ShooterCtrlMode.HoldSpeed;
-                }
 
-            } else if(currentStateShooter == ShooterCtrlMode.SpoolUp){
-                if(err < shooterMaxHoldErrorRPM.get()){
-                    if(shooterAtSteadyStateDebounceCounter > 0){
-                        //Debounce being below the error threshold
-                        shooterAtSteadyStateDebounceCounter--;
-                    } else {
-                        currentStateShooter = ShooterCtrlMode.HoldSpeed;
-                    }
+            if(err > shooterMaxHoldErrorRPM.get()){
+                currentStateShooter = ShooterCtrlMode.SpoolUp;
+                shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
+            } else {
+                if(shooterAtSteadyStateDebounceCounter > 0){
+                    //Debounce being below the error threshold
+                    shooterAtSteadyStateDebounceCounter--;
                 } else {
-                    //Reset counter to max
-                    shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
+                    currentStateShooter = ShooterCtrlMode.HoldSpeed;
                 }
             }
         }
