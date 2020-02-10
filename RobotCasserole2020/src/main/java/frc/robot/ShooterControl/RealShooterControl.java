@@ -25,7 +25,7 @@ import frc.robot.RobotConstants;
 public class RealShooterControl extends ShooterControl {
 
     private final int SPOOLUP_PID_SLOT_ID = 0;
-    private final int HOLD_PID_SLOT_ID = 0;
+    private final int HOLD_PID_SLOT_ID = 1;
     
     boolean underLoad = false;
     ShooterCtrlMode currentStateShooter;
@@ -103,11 +103,11 @@ public class RealShooterControl extends ShooterControl {
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.001);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
-        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.0001);
+        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.032);
         shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00018);
         shooterMotorP_hold    = new Calibration("Shooter Motor hold P", 0.001);
         shooterMotorI_hold    = new Calibration("Shooter Motor hold I", 0);
-        shooterMotorD_hold    = new Calibration("Shooter Motor hold D", 0.0001);
+        shooterMotorD_hold    = new Calibration("Shooter Motor hold D", 0.032);
         shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0.00018);
 
         //Shooter loaded calculation
