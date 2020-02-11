@@ -128,8 +128,6 @@ public class PathPlannerAutoEvent extends AutoEvent {
         if(timestep >= maxTimestep) {
             timestep = (maxTimestep - 1);
             done = true;
-            
-
         }
 
         if(timestep == 0){
@@ -141,7 +139,6 @@ public class PathPlannerAutoEvent extends AutoEvent {
         double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading));
         double desX = trj_center.get(timestep).y; //Hurray for subtle and undocumented reference frame conversions.
         double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
-        double desT = Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading);
         
         //UMMMM I guess pathplanner freaks out every now and then?
         if(poseCommand_deg > 180.0){
@@ -174,9 +171,13 @@ public class PathPlannerAutoEvent extends AutoEvent {
             Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
         }
 
-        Drivetrain.getInstance().dtPose.setDesiredPose( desX + desStartX, 
-                                                        desY + desStartY, 
-                                                        desT + desStartT);
+        double simBotPoseT = poseCommand_deg;
+        double simBotPoseX = desStartX + (Math.sin(Math.toRadians(startPoseAngle))) * desX + (Math.cos(Math.toRadians(startPoseAngle)) * desY);
+        double simBotPoseY = desStartY - (Math.cos(Math.toRadians(startPoseAngle))) * desX + (Math.sin(Math.toRadians(startPoseAngle)) * desY);
+
+        Drivetrain.getInstance().dtPose.setDesiredPose( simBotPoseX,
+                                                        simBotPoseY, 
+                                                        simBotPoseT);
     }
 
 
