@@ -249,10 +249,9 @@ public class Autonomous {
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(8.0));
-                    seq.addEvent(new AutoEventTurn(180));
+                    seq.addEvent(new AutoEventShoot(0));
+                    seq.addEvent(new AutoEventTurn(135));
                     //seq.addEvent(new AutoEventIntake(4.0));
-                    seq.addEvent(new AutoEventTurn(-45));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
                     /*seq.addEvent(new AutoEventPrepToShoot(3.0));
                     seq.addEvent(new AutoEventShootFromCollectSteak());
