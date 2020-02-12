@@ -62,8 +62,6 @@ public class Robot extends TimedRobot {
   Signal rioBattVoltLoadSig;
   Signal rioIsBrownoutSig;
   Signal rioCANBusUsagePctSig;
-  Signal pdpUpperBoardAuxCurrentSig;
-  Signal pdpCoolingFansCurrentSig;
 
   //Autonomous Control Utilities
   Autonomous auto;
@@ -89,8 +87,6 @@ public class Robot extends TimedRobot {
   //Misc.
   Calibration snailModeLimitRPM;
   PlayerFeedback pfb;
-  boolean climberUpperLSPressed;
-  boolean climberLowerLSPressed;
   boolean conveyorFull;
   boolean pneumaticPressureLow;
 
@@ -119,8 +115,6 @@ public class Robot extends TimedRobot {
     rioDSLogQueueLenSig = new Signal("Dataserver File Logger Queue Length", "count");
     rioIsBrownoutSig = new Signal("Robot Brownout", "bool");
     rioCANBusUsagePctSig = new Signal("Robot CAN Bus Utilization", "pct");
-    pdpUpperBoardAuxCurrentSig = new Signal("PDP Upper Board Current", "A");
-    pdpCoolingFansCurrentSig = new Signal("PDP Cooling Fans Current", "A");
 
     thbbtbbtbbtbbt = PneumaticsControl.getInstance();
     eyeOfVeganSauron = VisionLEDRingControl.getInstance();
@@ -167,9 +161,6 @@ public class Robot extends TimedRobot {
   public void telemetryUpdate(){
     double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
 
-    climberUpperLSPressed = (climber.upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
-    climberLowerLSPressed = (climber.lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
-
     if(Conveyor.getInstance().getUpperSensorValue() == true && Conveyor.getInstance().getOpMode() == ConveyorOpMode.AdvanceFromHopper){
       conveyorFull = true;
     }else{
@@ -188,8 +179,6 @@ public class Robot extends TimedRobot {
     rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
     rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
     rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
-    pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));
-    pdpCoolingFansCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.COOLING_FANS_PDP_CHANNEL));
   }
     
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -228,6 +217,8 @@ public class Robot extends TimedRobot {
 
       ctrlPanel.update();
 
+      climber.update();
+
       supperstructure.setClearJamDesired(false);
       supperstructure.setEjectDesired(false);
       supperstructure.setEstopDesired(false);
@@ -239,7 +230,6 @@ public class Robot extends TimedRobot {
       drivetrain.setOpenLoopCmd(0, 0);
       drivetrain.updateGains(false);
       drivetrain.update();
-      shooterCtrl.updateGains(false);
 
       pfb.update();
       robotTilt.update();
@@ -285,7 +275,6 @@ public class Robot extends TimedRobot {
   
       thbbtbbtbbtbbt.update();
       eyeOfVeganSauron.setLEDRingState(true);
-    ledUpdater();
       photonCannon.setPhotonCannonState(false);
       photonCannon.update();
       cam.update();
@@ -406,7 +395,7 @@ public class Robot extends TimedRobot {
       robotTilt.update();
       updateDriverView();
       telemetryUpdate();
-    
+
       pfb.update();
 
       ledUpdater();
@@ -437,11 +426,11 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
     CasseroleDriverView.newBoolean("Climber Upper SW Fault", "red");
-    CasseroleDriverView.newBoolean("Climber Upper SW Pressed", "yellow");
-    CasseroleDriverView.newBoolean("Climber Lower SW Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Climber Upper LS Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Climber Lower LS Pressed", "yellow");
+    CasseroleDriverView.newBoolean("Climber Lower LS Pressed", "yellow");
     CasseroleDriverView.newBoolean("Conveyor Full", "green");
     CasseroleDriverView.newBoolean("Pnuematic Pressure", "red");
-    CasseroleDriverView.newBoolean("Shooter Spoolup", "yellow");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -459,8 +448,8 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
     CasseroleDriverView.setBoolean("Climber Upper SW Fault", climber.isUpperLimitSwitchFaulted());
-    CasseroleDriverView.setBoolean("Climber Upper SW Pressed", climberUpperLSPressed);
-    CasseroleDriverView.setBoolean("Climber Lower SW Pressed", climberLowerLSPressed);
+    CasseroleDriverView.setBoolean("Climber Upper Limit Switch Pressed", climberUpperLSPressed);
+    CasseroleDriverView.setBoolean("Climber Lower Limit Switch Pressed", climberLowerLSPressed);
     CasseroleDriverView.setBoolean("Pnuematic Pressure", pneumaticPressureLow);
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
@@ -473,7 +462,9 @@ public class Robot extends TimedRobot {
   }
 
     public void ledUpdater(){
-      if (DriverStation.getInstance().getMatchTime() <= 130 && Climber.getInstance().climbEnabled == true){
+      double timeLeft;
+      timeLeft = DriverStation.getInstance().getMatchTime();
+      if (timeLeft <= 15 && Climber.getInstance().climbEnabled == true){
         ledController.setPattern(LEDPatterns.Pattern6);
       }
       else if(ControlPanelManipulator.getInstance().isRotationCompleted() == true){
@@ -492,20 +483,10 @@ public class Robot extends TimedRobot {
         ledController.setPattern(LEDPatterns.Pattern2);
       }
       else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
-        if(DriverStation.getInstance().isAutonomous() == true){
-          ledController.setPattern(LEDPatterns.Pattern1);
-        }
-        else{
-          ledController.setPattern(LEDPatterns.Pattern4);
-        }
+      ledController.setPattern(LEDPatterns.Pattern4);
       }
-      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
-        if(DriverStation.getInstance().isAutonomous() == true){
-          ledController.setPattern(LEDPatterns.Pattern0);
-        }
-        else{
-          ledController.setPattern(LEDPatterns.Pattern5);
-        }
+      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red);{
+        ledController.setPattern(LEDPatterns.Pattern5);
       }
     }
 

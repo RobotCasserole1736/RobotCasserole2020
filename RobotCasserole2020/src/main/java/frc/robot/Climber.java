@@ -1,5 +1,6 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import frc.lib.Calibration.Calibration;
@@ -39,6 +40,8 @@ public class Climber{
 
     boolean lowerLimitSwitchFaulted;
     boolean upperLimitSwitchFaulted;
+    boolean climberUpperLSPressed;
+    boolean climberLowerLSPressed;
 
     double initialPulseCounter;
 
@@ -61,8 +64,12 @@ public class Climber{
         double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
         double motorCmd = 0;
 
-        climbEnabled = OperatorController.getInstance().getClimbEnableCmd();
-        climbCMD = OperatorController.getInstance().getClimbSpeedCmd();
+        if(DriverStation.getInstance().isDisabled()){
+            //do nothing 
+        }else{
+            climbEnabled = OperatorController.getInstance().getClimbEnableCmd();
+            climbCMD = OperatorController.getInstance().getClimbSpeedCmd();
+        }
 
         upperLSVal = upperLimitSwitch.get();
         lowerLSVal = lowerLimitSwitch.get();
@@ -71,6 +78,9 @@ public class Climber{
         lowerLimitSwitchFaulted = (lowerLSVal == TwoWireParitySwitch.SwitchState.Broken);
 
         boolean canClimb = !upperLimitSwitchFaulted && !lowerLimitSwitchFaulted;
+
+        climberUpperLSPressed = (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
+        climberLowerLSPressed = (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
 
         if(climbEnabled && canClimb){
             
@@ -118,6 +128,14 @@ public class Climber{
     }
 
     public boolean isUpperLimitSwitchFaulted(){
+        return upperLimitSwitchFaulted;
+    }
+
+    public boolean isUpperLimitSwitchPressed(){
+        return upperLimitSwitchFaulted;
+    }
+
+    public boolean isLowerLimitSwitchPressed(){
         return upperLimitSwitchFaulted;
     }
 
