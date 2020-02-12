@@ -40,8 +40,8 @@ public class Climber{
 
     boolean lowerLimitSwitchFaulted;
     boolean upperLimitSwitchFaulted;
-    boolean climberUpperLSPressed;
-    boolean climberLowerLSPressed;
+    boolean upperLimitSwitchPressed;
+    boolean lowerLimitSwitchPressed;
 
     double initialPulseCounter;
 
@@ -79,8 +79,8 @@ public class Climber{
 
         boolean canClimb = !upperLimitSwitchFaulted && !lowerLimitSwitchFaulted;
 
-        climberUpperLSPressed = (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
-        climberLowerLSPressed = (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
+        upperLimitSwitchPressed = (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
+        lowerLimitSwitchPressed = (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
 
         if(climbEnabled && canClimb){
             
@@ -132,11 +132,11 @@ public class Climber{
     }
 
     public boolean isUpperLimitSwitchPressed(){
-        return upperLimitSwitchFaulted;
+        return upperLimitSwitchPressed;
     }
 
     public boolean isLowerLimitSwitchPressed(){
-        return upperLimitSwitchFaulted;
+        return lowerLimitSwitchPressed;
     }
 
 }
