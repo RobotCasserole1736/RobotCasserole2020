@@ -13,7 +13,6 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
@@ -30,12 +29,11 @@ public class RealShooterControl extends ShooterControl {
     boolean underLoad = false;
     ShooterCtrlMode currentStateShooter;
     ShooterCtrlMode previousStateShooter;
-    double timer = 0;
-    double outputTime;
     double shooterActualSpeed_rpm; //Arbitrated shooter wheel speed
     double shooterMotor1Speed_rpm; //Motor 1 measured speed
     double shooterMotor2Speed_rpm; //Motor 2 measured speed - Ideally this should be same as 1, but maybe not if faulted
     double shooterAtSteadyStateDebounceCounter;
+    int shotCount=0;
 
     Calibration shooterMaxHoldErrorRPM;
     Calibration shooterSpoolUpSteadyStateDbnc;
@@ -50,16 +48,14 @@ public class RealShooterControl extends ShooterControl {
     Calibration shooterMotorD_hold;
     Calibration shooterMotorF_hold;
 
-    Calibration loadedThresholdShooter;
-    Calibration unloadedThresholdShooter;
-    Calibration loadedDebounceCal;
-    Calibration unloadedDebounceCal;
+    Calibration loadedDebounceRPMCal;
 
     boolean calsUpdated;
 
     Signal motor1SpeedSig;
     Signal motor2SpeedSig;
     Signal isUnderLoadSig;
+    Signal shotCountSig;
     Signal shooterMotor1CurrentSig;
     Signal shooterMotor2CurrentSig;
     Signal shooterMotor1Percent;
@@ -97,8 +93,8 @@ public class RealShooterControl extends ShooterControl {
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
         shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 25);
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3500);
-        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 3500);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
+        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 4500);
         shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 200);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.001);
@@ -111,10 +107,7 @@ public class RealShooterControl extends ShooterControl {
         shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0.00018);
 
         //Shooter loaded calculation
-        loadedThresholdShooter = new Calibration("Shooter Loaded Threshold A", 20);
-        unloadedThresholdShooter = new Calibration("Shooter Unloaded Threshold A", 10);
-        loadedDebounceCal = new Calibration("Shooter Loaded Timer S", 0.25);
-        unloadedDebounceCal = new Calibration("Shooter Unloaded Timer S", 2);
+        loadedDebounceRPMCal = new Calibration("Shooter Loaded Timer RPM", shooterRPMSetpointFar.get()-100);
 
         //Data Logging
         motor1SpeedSig = new Signal("Shooter Motor 1 Speed", "RPM");
@@ -122,6 +115,7 @@ public class RealShooterControl extends ShooterControl {
         shooterMotor1Percent = new Signal("Shooter Motor 1 Percent", "pct");
         shooterMotor2Percent = new Signal("Shooter Motor 2 Percent", "pct");
         isUnderLoadSig = new Signal("Shooter Under Load","bool");
+        shotCountSig = new Signal("Shots Taken","balls");
         shooterMotor1CurrentSig = new Signal("Shooter Motor 1 Current","A");
         shooterMotor2CurrentSig = new Signal("Shooter Motor 2 Current","A");
         shooterMotor1InVoltage = new Signal("Shooter Motor 1 in Voltage", "V");
@@ -224,33 +218,22 @@ public class RealShooterControl extends ShooterControl {
 
 
         //Determine if we're under load or not
-        double motor1Current = shooterMotor1.getOutputCurrent();
-        double motor2Current = shooterMotor2.getOutputCurrent();
-        if(currentStateShooter == ShooterCtrlMode.HoldSpeed){
-            if(motor1Current > loadedThresholdShooter.get()){
-                if (timer==0){
-                    timer=Timer.getFPGATimestamp();
+
+        if(currentStateShooter != ShooterCtrlMode.Stop){
+            if(currentStateShooter ==ShooterCtrlMode.HoldSpeed){
+                underLoad=false;
+            }else if(shooterActualSpeed_rpm < loadedDebounceRPMCal.get()){
+                if(!underLoad){
+                    shotCount++;
                 }
-                outputTime = Timer.getFPGATimestamp()-timer;
-                if(outputTime > loadedDebounceCal.get()){
-                    underLoad = true;
-                    timer = 0;
-                }
-            }else if((motor1Current< unloadedThresholdShooter.get())){
-                if (timer==0){
-                    timer=Timer.getFPGATimestamp();
-                }
-                outputTime = Timer.getFPGATimestamp()-timer;            
-                if(outputTime > unloadedDebounceCal.get()){
-                    underLoad = false;
-                    timer = 0;
-                }
+                underLoad=true;
             }
         }else{
-            underLoad = false;
+            underLoad=true;
         }
 
         previousStateShooter = currentStateShooter;
+
 
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, shooterSetpointRPM);
@@ -258,10 +241,11 @@ public class RealShooterControl extends ShooterControl {
         motor1SpeedSig.addSample(sampleTimeMS, shooterMotor1Speed_rpm);
         motor2SpeedSig.addSample(sampleTimeMS, shooterMotor2Speed_rpm);
         isUnderLoadSig.addSample(sampleTimeMS, underLoad);
+        shotCountSig.addSample(sampleTimeMS, shotCount);
         shooterStateCommandSig.addSample(sampleTimeMS, run.value);
         shooterControlModeSig.addSample(sampleTimeMS, currentStateShooter.value);
-        shooterMotor1CurrentSig.addSample(sampleTimeMS, motor1Current);
-        shooterMotor2CurrentSig.addSample(sampleTimeMS, motor2Current);
+        shooterMotor1CurrentSig.addSample(sampleTimeMS, shooterMotor1.getOutputCurrent());
+        shooterMotor2CurrentSig.addSample(sampleTimeMS, shooterMotor2.getOutputCurrent());
         shooterMotor1Percent.addSample(sampleTimeMS, shooterMotor1.getAppliedOutput());
         shooterMotor2Percent.addSample(sampleTimeMS, shooterMotor2.getAppliedOutput());
         shooterMotor1InVoltage.addSample(sampleTimeMS, shooterMotor1.getBusVoltage());
@@ -272,7 +256,11 @@ public class RealShooterControl extends ShooterControl {
 
     @Override
     public boolean isUnderLoad(){
-        return this.underLoad;
+        if(currentStateShooter!=ShooterCtrlMode.Stop){
+            return underLoad;
+        }else{
+            return false;
+        }
     }
 
     @Override
@@ -282,6 +270,10 @@ public class RealShooterControl extends ShooterControl {
 
     public ShooterCtrlMode getShooterCtrlMode(){
         return currentStateShooter;
+    }
+
+    public int shotCount(){
+        return shotCount;
     }
   
 }
