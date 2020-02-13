@@ -5,7 +5,7 @@ import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventCollectSteak;
-import frc.robot.Autonomous.Events.AutoEventShootFromCollectSteak;
+import frc.robot.Autonomous.Events.AutoEventDriveToShootFromSteakCollect;
 import frc.robot.Autonomous.Events.AutoEventStopRobot;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventIntake;
@@ -248,15 +248,13 @@ public class Autonomous {
                     Drivetrain.getInstance().setInitialPose(11.4, 10, 90);
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
-                    //seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(0));
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventShoot(5.0));
                     seq.addEvent(new AutoEventTurn(135));
-                    //seq.addEvent(new AutoEventIntake(4.0));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
-                    //seq.addEvent(new AutoEventPrepToShoot(3.0));
-                    seq.addEvent(new AutoEventShootFromCollectSteak());
-                    //seq.addEvent(new AutoEventTurnToVisionTarget());
-                    //seq.addEvent(new AutoEventShoot(8.0));
+                    seq.addEvent(new AutoEventDriveToShootFromSteakCollect());
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventShoot(8.0));
                 break;
 
             }

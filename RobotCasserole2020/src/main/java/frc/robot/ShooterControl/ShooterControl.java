@@ -82,4 +82,6 @@ public abstract class ShooterControl {
     public abstract ShooterCtrlMode getShooterCtrlMode();
 
     public abstract void updateGains(boolean forceChange);
+
+	public abstract int getShotCount();
 }

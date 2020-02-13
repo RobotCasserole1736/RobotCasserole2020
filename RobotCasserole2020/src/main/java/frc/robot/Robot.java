@@ -21,7 +21,6 @@ import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.WebServer.CasseroleWebServer;
 import frc.robot.LEDController.LEDPatterns;
 import frc.robot.Autonomous.Autonomous;
-import frc.robot.BallHandling.BallDistanceSensor;
 import frc.robot.BallHandling.Conveyor;
 import frc.robot.BallHandling.Hopper;
 import frc.robot.BallHandling.IntakeControl;
@@ -449,6 +448,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newBoolean("Conveyor Full", "green");
     CasseroleDriverView.newBoolean("Pnuematic Pressure", "red");
     CasseroleDriverView.newBoolean("Shooter Spoolup", "yellow");
+    CasseroleDriverView.newStringBox("Shots Taken");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -471,6 +471,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Pnuematic Pressure", pneumaticPressureLow);
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
+    CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
     
     if (DriverStation.getInstance().getMatchTime() <= 15 & Climber.getInstance().climbEnabled == false){
       CasseroleDriverView.setSoundWidget("High Ground Acqd",true);

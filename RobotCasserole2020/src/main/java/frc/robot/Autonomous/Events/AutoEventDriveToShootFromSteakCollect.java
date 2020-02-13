@@ -1,15 +1,15 @@
 package frc.robot.Autonomous.Events;
 
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.lib.PathPlanner.FalconPathPlanner;
 import frc.lib.PathPlanner.PathPlannerAutoEvent;
+import frc.robot.Supperstructure;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
 /**
  * drive straight and stuff. Step response check (with typical smoothing)
  */
-public class AutoEventShootFromCollectSteak extends AutoEvent {
+public class AutoEventDriveToShootFromSteakCollect extends AutoEvent {
     PathPlannerAutoEvent driveBackward;
 
     //Waypoints always start at (0,0), and are referenced relative to the robot's
@@ -17,22 +17,23 @@ public class AutoEventShootFromCollectSteak extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-7
-        , 0,  Pathfinder.d2r(0)),
+        new Waypoint(-7    , 0,  Pathfinder.d2r(0)),
     };
 
-    public AutoEventShootFromCollectSteak() {
+    public AutoEventDriveToShootFromSteakCollect() {
         driveBackward = new PathPlannerAutoEvent(waypoints_ft, true);
     }
 
     @Override
     public void userUpdate() {
         driveBackward.userUpdate();
+        Supperstructure.getInstance().setPrepToShootDesired(true);
     }
 
     @Override
     public void userForceStop() {
         driveBackward.userForceStop();
+        Supperstructure.getInstance().setPrepToShootDesired(false);
     }
 
     @Override
@@ -52,7 +53,7 @@ public class AutoEventShootFromCollectSteak extends AutoEvent {
     
     public static void main(String[] args) {
 		System.out.println("Starting path planner calculation...");
-        AutoEventShootFromCollectSteak autoEvent = new AutoEventShootFromCollectSteak();
+        AutoEventDriveToShootFromSteakCollect autoEvent = new AutoEventDriveToShootFromSteakCollect();
 		//TODO
 		System.out.println("Done");
     }

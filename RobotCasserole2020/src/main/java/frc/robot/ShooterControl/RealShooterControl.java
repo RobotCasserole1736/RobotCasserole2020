@@ -268,12 +268,14 @@ public class RealShooterControl extends ShooterControl {
         return shooterActualSpeed_rpm;
     }
 
+    @Override
     public ShooterCtrlMode getShooterCtrlMode(){
         return currentStateShooter;
     }
 
-    public int shotCount(){
+    @Override
+    public int getShotCount(){
         return shotCount;
     }
-  
+
 }

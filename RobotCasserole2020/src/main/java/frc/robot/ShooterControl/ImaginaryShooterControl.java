@@ -82,4 +82,9 @@ public class ImaginaryShooterControl extends ShooterControl {
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public int getShotCount() {
+        return 42;
+    }
 }
