@@ -65,7 +65,8 @@ public class Climber{
         double motorCmd = 0;
 
         if(DriverStation.getInstance().isDisabled()){
-            //do nothing 
+            climbEnabled = false;
+            climbCMD = 0;
         }else{
             climbEnabled = OperatorController.getInstance().getClimbEnableCmd();
             climbCMD = OperatorController.getInstance().getClimbSpeedCmd();
