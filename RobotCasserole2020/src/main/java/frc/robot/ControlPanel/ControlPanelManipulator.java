@@ -42,6 +42,10 @@ public class ControlPanelManipulator {
 
 
     private ControlPanelManipulator(){
+        kP = new Calibration("Control Panel P Value", 0);
+        kI = new Calibration("Control Panel I Value", 0);
+        kD = new Calibration("Control Panel D Value", 0);
+        kFF = new Calibration("Control Panel F Value", 0);
         if(Robot.isReal()){
             ControlPanelMotor= new CANSparkMax(RobotConstants.CONTROL_PANEL_MANIPULATOR_CAN_ID, MotorType.kBrushless);
             ControlPanelMotor.restoreFactoryDefaults();
@@ -50,10 +54,6 @@ public class ControlPanelManipulator {
             ControlPanelActualAngleSignal = new Signal("Control Panel Actual Angle","deg");
             controlPanelPID = new CANPIDController(ControlPanelMotor);
             ControlPanelMotor.getEncoder().setPositionConversionFactor(RobotConstants.CONTROL_PANEL_MANIPULATOR_RATIO);
-            kP = new Calibration("Control Panel P Value", 0);
-            kI = new Calibration("Control Panel I Value", 0);
-            kD = new Calibration("Control Panel D Value", 0);
-            kFF = new Calibration("Control Panel F Value", 0);
             updateGains(true);
             ControlPanelMotor.burnFlash();
         }

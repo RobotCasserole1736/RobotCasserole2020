@@ -81,6 +81,7 @@ public class Robot extends TimedRobot {
   Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
+  ControlPanelManipulator ctrlPanelManipulator;
   RobotTilt robotTilt;
   
   LEDController ledController;
@@ -131,6 +132,8 @@ public class Robot extends TimedRobot {
     OperatorController.getInstance();
     DriverController.getInstance();
     ctrlPanel = ControlPanelStateMachine.getInstance();
+
+    ctrlPanelManipulator=ControlPanelManipulator.getInstance();
 
     shooterCtrl = ShooterControl.getInstance();
 
@@ -238,6 +241,7 @@ public class Robot extends TimedRobot {
 
       drivetrain.setOpenLoopCmd(0, 0);
       drivetrain.updateGains(false);
+      ctrlPanelManipulator.updateGains(false);
       drivetrain.update();
 
       pfb.update();
@@ -296,6 +300,7 @@ public class Robot extends TimedRobot {
 
       drivetrain.update();
       supperstructure.update();
+      ctrlPanelManipulator.update();
 
       ledController.update();
 
@@ -364,6 +369,7 @@ public class Robot extends TimedRobot {
       cam.update();
 
       thbbtbbtbbtbbt.update();
+      ctrlPanelManipulator.update();
 
       auto.sampleOperatorCommands();
       auto.update();
@@ -475,7 +481,7 @@ public class Robot extends TimedRobot {
       if (DriverStation.getInstance().getMatchTime() <= 130 && Climber.getInstance().climbEnabled == true){
         ledController.setPattern(LEDPatterns.Pattern6);
       }
-      else if(ControlPanelManipulator.getInstance().isRotationCompleted() == true){
+      else if(ctrlPanelManipulator.isRotationCompleted() == true){
         ledController.setPattern(LEDPatterns.Pattern6);
       }
       else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
