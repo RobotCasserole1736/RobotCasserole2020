@@ -5,12 +5,11 @@ import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.robot.Autonomous.Events.AutoEventBackUpFromBallThief;
 import frc.robot.Autonomous.Events.AutoEventCollectSteak;
+import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveToShootFromSteakCollect;
 import frc.robot.Autonomous.Events.AutoEventStopRobot;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
-import frc.robot.Autonomous.Events.AutoEventIntake;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
-import frc.robot.Autonomous.Events.AutoEventPrepToShoot;
 import frc.robot.Autonomous.Events.AutoEventReversePathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventShoot;
 import frc.robot.Autonomous.Events.AutoEventTurn;
@@ -55,6 +54,7 @@ public class Autonomous {
         BallThief(4),
         Steak(5),
         VisionAlignOnly(6),
+        SWTest(7),
         Inactive(-1); 
 
         public final int value;
@@ -89,7 +89,8 @@ public class Autonomous {
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
                                                               "Ball Thief",                                              
-                                                              "Steak"};
+                                                              "Steak",
+                                                              "SW TEAM TEST ONLY"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
                                                               "3s", 
@@ -216,14 +217,17 @@ public class Autonomous {
                 break;
 
                 case DriveFwd:
-                    //seq.addEvent(new AutoEventDriveForTime(2, 0.25));
+                    seq.addEvent(new AutoEventDriveForTime(2, 0.25));
+                break;
+
+                case SWTest:
                     seq.addEvent(new AutoEventPathPlanTest());
                     seq.addEvent(new AutoEventReversePathPlanTest());
                     seq.addEvent(new AutoEventStopRobot());
                 break;
 
                 case ShootOnly:
-                    //TODO
+                    seq.addEvent(new AutoEventShoot(15.0));
                 break;
 
                 case VisionAlignOnly:
@@ -233,7 +237,8 @@ public class Autonomous {
                 break;
 
                 case VisionAlignShoot:
-                    //TODO
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventShoot(15.0));
                 break;
 
                 case BallThief:
