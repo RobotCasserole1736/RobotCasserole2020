@@ -227,6 +227,7 @@ public class Robot extends TimedRobot {
       auto.sampleDashboardSelector();
 
       ctrlPanel.update();
+      climber.update();
 
       supperstructure.setClearJamDesired(false);
       supperstructure.setEjectDesired(false);
@@ -459,8 +460,8 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
     CasseroleDriverView.setBoolean("Climber Upper SW Fault", climber.isUpperLimitSwitchFaulted());
-    CasseroleDriverView.setBoolean("Climber Upper SW Pressed", climberUpperLSPressed);
-    CasseroleDriverView.setBoolean("Climber Lower SW Pressed", climberLowerLSPressed);
+    CasseroleDriverView.setBoolean("Climber Upper SW Pressed", climber.isUpperLimitSwitchPressed());
+    CasseroleDriverView.setBoolean("Climber Lower SW Pressed", climber.isLowerLimitSwitchPressed());
     CasseroleDriverView.setBoolean("Pnuematic Pressure", pneumaticPressureLow);
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
