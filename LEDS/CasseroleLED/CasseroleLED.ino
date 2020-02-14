@@ -39,8 +39,9 @@ void loop()
   if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
   {
     //Disabled Pattern
-    CasseroleColorStripeChase_update();
-  }
+    //CasseroleColorStripeChase_update();
+    redFade();
+    }
   else if ((pulseLen_us >= 900) && (pulseLen_us <= 1000))
   {
     //TODO - Call periodic update for pattern 0
@@ -68,12 +69,12 @@ void loop()
   else if ((pulseLen_us >= 1600) && (pulseLen_us <= 1699))
   {
     //TODO - Call periodic update for pattern 4
-    blueFade();
+    Blue_Fade();
   }
   else if ((pulseLen_us >= 1700) && (pulseLen_us <= 1799))
   {
     //TODO - Call periodic update for pattern 5
-    redFade();
+    Red_Fade();
   }
   else if ((pulseLen_us >= 1901) && (pulseLen_us <= 2000))
   {
@@ -157,11 +158,6 @@ void ColorSparkle_update(int red, int grn, int blu)
 //**************************************************************
 void Rainbow_Fade_Chase()
 {
-  /*you must set all LEDS to black so the effect works properly
-  for (int i = 0; i < NUM_LEDS; i++)
-  {
-    led[i] = CRGB(0, 0, 0);
-  }*/
   static uint8_t hue = 0;
   //establish a counter
   static int counter = 0;
@@ -191,61 +187,78 @@ void Rainbow_Fade_Chase()
 //**************************************************************
 // Pattern:Blue Fade
 //**************************************************************
-void Blue_Mode_Maker(){
-  static int b = 0;
-  static int mode = 0;
-  b++;
+void Blue_Fade(){
+  static double b = 0;
+  static int bluemode = 0;
+  static boolean bluefade;
+  
+  if(b<=0){
+    bluefade = true;
+    bluemode++;
+    if(bluemode == 2){
+      bluemode = 0;
+    }
+    b = 0.1;
+  }
+  else if(254<=b){
+    bluefade = false;
+    b = 254;
+  }
+  
+  if (bluefade==true){
+    b+=2.0;
+  }
+  else if(bluefade==false){
+    b-=2.0;
+  }
+    
   for (int i = 0; i < NUM_LEDS; i++){
-    if (b == 255){
-      mode = 1;
-    }
-    else if (b == 510){
-      mode = 0;
-    }
-    if (b >= 511){
-      b = 0;
-    }
-    if (mode == 1){
+    if((bluemode%2)==1){
       led[i] = CRGB(0, 0, b);
     }
-    else if (mode == 0){
+    else{
       led[i] = CRGB(b, b, b);
     }
   }
 }
-void blueFade(){
-  Blue_Mode_Maker();
-  fadeall();
-  }
+
 //**************************************************************
 // Pattern:Red Fade
 //**************************************************************
-void Red_Mode_Maker(){
-  static int r = 0;
-  static int mode = 0;
-  r++;
+void Red_Fade(){
+  static double r = 0;
+  static int redmode = 0;
+  static boolean redfade;
+  
+  if(r<=0){
+    redfade = true;
+    redmode++;
+    if(redmode == 2){
+      redmode = 0;
+    }
+    r = 0.1;
+  }
+  else if(254<=r){
+    redfade = false;
+    r = 254;
+  }
+  
+  if (redfade==true){
+    r+=2.0;
+  }
+  else if(redfade==false){
+    r-=2.0;
+  }
+    
   for (int i = 0; i < NUM_LEDS; i++){
-    if (r == 255){
-      mode = 1;
-    }
-    else if (r == 510){
-      mode = 0;
-    }
-    if (r >= 511){
-      r = 0;
-    }
-    if (mode == 1){
+    if((redmode%2)==1){
       led[i] = CRGB(r, 0, 0);
     }
-    else if (mode == 0){
+    else{
       led[i] = CRGB(r, r, r);
     }
   }
 }
-void redFade(){
-  Red_Mode_Maker();
-  fadeall();
-  }
 
 //**************************************************************
 // Utilities
