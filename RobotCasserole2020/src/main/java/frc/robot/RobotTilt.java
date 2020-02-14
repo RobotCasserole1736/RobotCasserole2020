@@ -1,5 +1,7 @@
 package frc.robot;
+
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import frc.lib.DataServer.Signal;
 
 /*
  *******************************************************************************************
@@ -32,27 +34,48 @@ public class RobotTilt {
     
     BuiltInAccelerometer onboardAccel;
 
-    double robotAngle;
+    Signal sideTiltAngleSig;
+    Signal frontTiltAngleSig;
+    Signal totalRobotTiltAngleSig;
+
+    double totalRobotAngle;
+    double sideTiltAngle;
+    double frontTiltAngle;
 
 	// This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
 	private RobotTilt() {
         onboardAccel = new BuiltInAccelerometer();
+        sideTiltAngleSig = new Signal("Robot Side Tilt Angle", "degrees");
+        sideTiltAngleSig = new Signal("Robot Front Tilt Angle", "degrees");
+
     }
 
     public void update(){
-        double forceInXDirection;
-        double forceInZDirection;
+        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
+
+        double forceInXDirection; //X refers to the left and right sides of the robot
+        double forceInZDirection; //Z refers to the up and down forces with the robot
+        double forceInYDirection; //Y refers to the front to back of the robot
 
         forceInXDirection = onboardAccel.getX();
         forceInZDirection = onboardAccel.getZ();
+        forceInYDirection = onboardAccel.getY();
         
         //Calculates the angle our robot is at by doing the arc tan of the force in the z direction over the force in the x direction
-        robotAngle = Math.atan2(forceInZDirection, forceInXDirection);
-        //adding 60 is to make it equal 0 when the robot is upright.
-        robotAngle = Math.toDegrees(robotAngle)+60;
+        sideTiltAngle = Math.toDegrees(Math.atan2(forceInZDirection, forceInXDirection));
+
+        //Calculates angle from the front of the robot.
+        //frontTiltAngle = Math.toDegrees(Math.atan2(forceInZDirection, forceInYDirection));
+
+        //adding 150 is to make it equal 0 when the robot is upright. Why this is needed I have no idea.
+        totalRobotAngle = sideTiltAngle+90;
+
+        sideTiltAngleSig.addSample(sampleTimeMs, sideTiltAngle);
+        //frontTiltAngleSig.addSample(sampleTimeMs, sideTiltAngle);
+        totalRobotTiltAngleSig.addSample(sampleTimeMs, sideTiltAngle);
     }
     
     public double getRobotAngle(){
-        return robotAngle;
+        return totalRobotAngle;
     }
 }
