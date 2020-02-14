@@ -128,14 +128,14 @@ public class IntakeControl {
 
 		intakeSolenoid.set(intake_solenoid_cmd);
 		if(Robot.isReal()){
-			intakeMotor.set(0);
+			intakeMotor.set(intkCommand);
 			motorCurrentSig.addSample(sampleTimeMs, intakeMotor.getOutputCurrent());
 		}
 		
 		posStateSig.addSample(sampleTimeMs, posState.value);
 		spdStateSig.addSample(sampleTimeMs, spdState.value);
 		intkSpdCmdSig.addSample(sampleTimeMs, intkCommand);
-		intkSpdCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
+		intkSolCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
 
 	}
 
