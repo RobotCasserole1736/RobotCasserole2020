@@ -95,7 +95,7 @@ public class RealShooterControl extends ShooterControl {
         shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 25);
         shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
         shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 4500);
-        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 200);
+        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 100);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.001);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
@@ -107,7 +107,7 @@ public class RealShooterControl extends ShooterControl {
         shooterMotorF_hold    = new Calibration("Shooter Motor hold F", 0.00018);
 
         //Shooter loaded calculation
-        loadedDebounceRPMCal = new Calibration("Shooter Loaded Timer RPM", shooterRPMSetpointFar.get()-100);
+        loadedDebounceRPMCal = new Calibration("Shooter Loaded RPM", shooterRPMSetpointFar.get()-100);
 
         //Data Logging
         motor1SpeedSig = new Signal("Shooter Motor 1 Speed", "RPM");
