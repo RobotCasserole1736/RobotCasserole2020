@@ -1,5 +1,4 @@
 #include <FastLED.h>
-#include "Fire.h"
 
 //Constants related to hardware setup
 #define NUM_LEDS 100

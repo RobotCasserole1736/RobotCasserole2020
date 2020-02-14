@@ -1,5 +1,6 @@
 /* 
   LED Chasing with a better delay code (doesn't lag) 
+  Current Error - The val integer once it hits NUM_LEDS does not get set back to zero
 */
 #include <FastLED.h>
 
@@ -21,7 +22,7 @@ CRGB led[NUM_LEDS];
 unsigned long previousMillis = 0;        // will store last time LED was updated
 
 // THIS IS THE DELAY
-const long interval = 100;           // interval at which to blink (milliseconds)
+const long interval = 10;           // interval at which to blink (milliseconds)
 
 void setup() {
   // set the digital pin as output:
@@ -69,8 +70,8 @@ void loop() {
 //**************************************************************
 // Pattern: Blue Chaser
 //**************************************************************
-      curVal_2=(val-5) % NUM_LEDS;    //Modulo
-      resetVal_2=(val-7) % NUM_LEDS;   //The difference between curVal and resetVal is the length of your chaser
+      curVal_2=(val-5) % NUM_LEDS;
+      resetVal_2=(val-7) % NUM_LEDS;   //Gap of 2 MORE than curVal required between cur and reset
       
       color2=CRGB(random(val), random(val), random(val));
 
