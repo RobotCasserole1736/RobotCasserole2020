@@ -473,7 +473,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
     CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
     
-    if (DriverStation.getInstance().getMatchTime() <= 15 & Climber.getInstance().climbEnabled == false){
+    if (Climber.getInstance().climbEnabled){
       CasseroleDriverView.setSoundWidget("High Ground Acqd",true);
     }else{
       CasseroleDriverView.setSoundWidget("High Ground Acqd",false); 
