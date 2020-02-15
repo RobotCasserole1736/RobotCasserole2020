@@ -39,9 +39,9 @@ public class BallDistanceSensor{
             tofSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
         }
         
-        sensorVoltageSig = new Signal("Distance Sensor Raw Voltage", "V");
-        detectedDistancesSig = new Signal("Distance Sensor Distance", "in");
-        distAvailSig = new Signal("Distance Sensor Available", "bool");
+        sensorVoltageSig = new Signal("Ball Distance Sensor Raw Voltage", "V");
+        detectedDistancesSig = new Signal("Ball Distance Sensor Distance", "in");
+        distAvailSig = new Signal("Ball Distance Sensor Available", "bool");
         voltFilter = new AveragingFilter(2, 0);
     }
 

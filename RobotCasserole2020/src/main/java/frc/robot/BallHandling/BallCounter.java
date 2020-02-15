@@ -7,8 +7,6 @@
 
 package frc.robot.BallHandling;
 
-import org.eclipse.jetty.util.HttpCookieStore.Empty;
-
 import frc.lib.Calibration.Calibration;
 import frc.robot.LoopTiming;
 import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
@@ -47,8 +45,8 @@ public class BallCounter {
     Double ballHeightIn;
 
     // Calibrations
-    Calibration ballMinThicknessCal;
-    Calibration ballMaxThicknessCal;
+    Calibration ballPresentDistThreshCal;
+    Calibration ballApexDistThreshCal;
 
     // Signals
     Signal ballCountSig;
@@ -68,8 +66,8 @@ public class BallCounter {
         //Ensure sensor gets instantiated.
         BallDistanceSensor.getInstance();
 
-        ballMinThicknessCal = new Calibration("Ball Counter Empty-Short Thresh Inches", 5);
-        ballMaxThicknessCal = new Calibration("Ball Counter Short-Apex Thresh Inches", 4);
+        ballPresentDistThreshCal = new Calibration("Ball Counter Ball Present Distance Thresh Inches", 8.0);
+        ballApexDistThreshCal = new Calibration("Ball Counter Ball Apex Distance Thresh Inches", 4.0);
 
         ballCountSig = new Signal("Ball Counter Ball Count", "count");
         howFarFromSensorSig = new Signal("Ball Counter Sensor Distance", "in");
@@ -107,9 +105,9 @@ public class BallCounter {
 
     public void setBallHeight() {
         ballHeightIn = BallDistanceSensor.getInstance().getDistance_in();
-        if (ballHeightIn > ballMaxThicknessCal.get()) {
+        if (ballHeightIn > ballPresentDistThreshCal.get()) {
             curBallHeight = BallHeight.Empty;
-        } else if (ballHeightIn < ballMaxThicknessCal.get() && ballHeightIn > ballMinThicknessCal.get()) {
+        } else if (ballHeightIn < ballPresentDistThreshCal.get() && ballHeightIn > ballApexDistThreshCal.get()) {
             curBallHeight = BallHeight.ShortButPresent;
         } else {
             curBallHeight = BallHeight.Apex;
