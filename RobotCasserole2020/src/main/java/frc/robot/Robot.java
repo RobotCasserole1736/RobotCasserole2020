@@ -284,8 +284,6 @@ public class Robot extends TimedRobot {
       loopTiming.markLoopStart();
       CrashTracker.logAutoPeriodic();
       //Put all auto periodic code after this
-
-      ledController.setPattern(LEDPatterns.Pattern2);
   
       thbbtbbtbbtbbt.update();
       eyeOfVeganSauron.setLEDRingState(true);
@@ -344,7 +342,6 @@ public class Robot extends TimedRobot {
       CrashTracker.logTeleopPeriodic();
       //Put all teleop periodic code after this
 
-      ledController.setPattern(LEDPatterns.Pattern1);
 
       DriverController.getInstance().update();
       OperatorController.getInstance().update();

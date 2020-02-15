@@ -47,6 +47,7 @@ public class Climber{
 
     public Climber(){
         climberMotor = new Spark(RobotConstants.CLIMBER_SPARK_PORT);
+        climberMotor.setInverted(true);
         upperLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_UPPER_NO_DIO_PORT, RobotConstants.CLIMBER_LIMIT_UPPER_NC_DIO_PORT);
         lowerLimitSwitch = new TwoWireParitySwitch(RobotConstants.CLIMBER_LIMIT_LOWER_NO_DIO_PORT, RobotConstants.CLIMBER_LIMIT_LOWER_NC_DIO_PORT);
         climbLocker = new Solenoid(RobotConstants.CLIMBER_SOLENOID_PCM_PORT);
@@ -83,15 +84,15 @@ public class Climber{
         upperLimitSwitchPressed = (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
         lowerLimitSwitchPressed = (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
 
-        if(climbEnabled && canClimb){
+        if(!climbEnabled || !canClimb){
             
-            climbLocker.set(true);
+            climbLocker.set(false);
             motorCmd = 0;
             initialPulseCounter = 4;
         
         } else {
 
-            climbLocker.set(false);
+            climbLocker.set(true);
             
             if(initialPulseCounter > 0) {
                 //Initial Pulse for ensuring the latch fully disengages.

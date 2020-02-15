@@ -73,8 +73,9 @@ public class IntakeControl {
 	private IntakeControl(){
 		if(Robot.isReal()){
 			//No REV support for sim :(
-			intakeMotor = new CANSparkMax(RobotConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushed);
+			intakeMotor = new CANSparkMax(RobotConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 			intakeMotor.restoreFactoryDefaults();
+			intakeMotor.setInverted(true);
 			intakeMotor.setSmartCurrentLimit(30); //30A limit
 			intakeMotor.setIdleMode(IdleMode.kCoast);
 			intakeMotor.burnFlash();
@@ -128,14 +129,14 @@ public class IntakeControl {
 
 		intakeSolenoid.set(intake_solenoid_cmd);
 		if(Robot.isReal()){
-			intakeMotor.set(0);
+			intakeMotor.set(intkCommand);
 			motorCurrentSig.addSample(sampleTimeMs, intakeMotor.getOutputCurrent());
 		}
 		
 		posStateSig.addSample(sampleTimeMs, posState.value);
 		spdStateSig.addSample(sampleTimeMs, spdState.value);
 		intkSpdCmdSig.addSample(sampleTimeMs, intkCommand);
-		intkSpdCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
+		intkSolCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
 
 	}
 

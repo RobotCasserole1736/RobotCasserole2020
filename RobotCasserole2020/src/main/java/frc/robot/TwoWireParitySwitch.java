@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 public class TwoWireParitySwitch {
 
     public enum SwitchState {
-        Pressed(0),
-        NotPressed(1),
+        Pressed(1),
+        NotPressed(0),
         Broken(-1);
 
         public final int value;
