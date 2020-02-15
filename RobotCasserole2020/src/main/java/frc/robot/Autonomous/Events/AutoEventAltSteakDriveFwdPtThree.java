@@ -8,10 +8,10 @@ import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
 /**
- * drive straight and stuff. Step response check (with typical smoothing)
+ * go to scale on left.
  */
-public class AutoEventBackUpFromBallThief extends AutoEvent {
-    PathPlannerAutoEvent driveBackward;
+public class AutoEventAltSteakDriveFwdPtThree extends AutoEvent {
+    PathPlannerAutoEvent driveForward;
 
     //PrepToShoot Stuff
     double prepSpeed;
@@ -19,33 +19,27 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
 	double prepEndTime;
 	boolean prepCompleted = true;
 
-    //Waypoints always start at (0,0), and are referenced relative to the robot's
-    // position and pose angle whenever the event starts running. Units must be inches.
-
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-4.0, -1,  Pathfinder.d2r(45))
+        new Waypoint(3.0,   1,  Pathfinder.d2r(45)),
+        new Waypoint(4.5, 7.5, Pathfinder.d2r(105))
     };
 
-    public AutoEventBackUpFromBallThief(double prepDuration_s_in) {
-        driveBackward = new PathPlannerAutoEvent(waypoints_ft, true);
-
+    public AutoEventAltSteakDriveFwdPtThree(double prepDuration_s_in) {
         prepDuration_s = prepDuration_s_in;
+        driveForward = new PathPlannerAutoEvent(waypoints_ft, false);
     }
 
     @Override
     public void userStart() {
-        driveBackward.userStart();
-
         prepEndTime = Timer.getFPGATimestamp() + prepDuration_s;
         prepCompleted = false;
 		Supperstructure.getInstance().setPrepToShootDesired(true);
+        driveForward.userStart();
     }
 
     @Override
     public void userUpdate() {
-        driveBackward.userUpdate();
-
         prepCompleted = (Timer.getFPGATimestamp() > prepEndTime);
 		if (prepCompleted){
 			Supperstructure.getInstance().setPrepToShootDesired(false);
@@ -53,28 +47,27 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
             Supperstructure.getInstance().setPrepToShootDesired(true);
             Supperstructure.getInstance().setIntakeDesired(false); //Because intake overrides prep to shoot
 		}
+        driveForward.userUpdate();
     }
-
+    
     @Override
     public void userForceStop() {
-        driveBackward.userForceStop();
-
         Supperstructure.getInstance().setPrepToShootDesired(false);
+        driveForward.userForceStop();
     }
 
     @Override
     public boolean isTriggered() {
-        return driveBackward.isTriggered();
+        return driveForward.isTriggered();
     }
 
     @Override
     public boolean isDone() {
-        return driveBackward.isDone();
+        return driveForward.isDone();
     }
-    
+
     public static void main(String[] args) {
-		System.out.println("Starting path planner calculation...");
-        AutoEventBackUpFromBallThief autoEvent = new AutoEventBackUpFromBallThief(4.0); //time is for prep to shoot
+        AutoEventAltSteakDriveFwdPtThree autoEvent = new AutoEventAltSteakDriveFwdPtThree(4.0); //time is for intk
 		//TODO
 		System.out.println("Done");
     }
