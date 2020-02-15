@@ -46,8 +46,8 @@ public class RobotTilt {
 	private RobotTilt() {
         onboardAccel = new BuiltInAccelerometer();
         sideTiltAngleSig = new Signal("Robot Side Tilt Angle", "degrees");
-        sideTiltAngleSig = new Signal("Robot Front Tilt Angle", "degrees");
-
+        frontTiltAngleSig = new Signal("Robot Front Tilt Angle", "degrees");
+        totalRobotTiltAngleSig = new Signal("Total Tilt Angle", "degrees");
     }
 
     public void update(){
@@ -71,8 +71,8 @@ public class RobotTilt {
         totalRobotAngle = sideTiltAngle+90;
 
         sideTiltAngleSig.addSample(sampleTimeMs, sideTiltAngle);
-        //frontTiltAngleSig.addSample(sampleTimeMs, sideTiltAngle);
-        totalRobotTiltAngleSig.addSample(sampleTimeMs, sideTiltAngle);
+        //frontTiltAngleSig.addSample(sampleTimeMs, frontTiltAngle);
+        totalRobotTiltAngleSig.addSample(sampleTimeMs, totalRobotAngle);
     }
     
     public double getRobotAngle(){
