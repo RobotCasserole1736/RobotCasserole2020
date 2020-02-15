@@ -1,5 +1,4 @@
 #include <FastLED.h>
-#include "Fire.h"
 
 //Constants related to hardware setup
 #define NUM_LEDS 31
@@ -39,8 +38,7 @@ void loop()
   if ((pulseLen_us >= -50) && (pulseLen_us <= 50))
   {
     //Disabled Pattern
-    //CasseroleColorStripeChase_update();
-    redFade();
+    CasseroleColorStripeChase_update();
     }
   else if ((pulseLen_us >= 900) && (pulseLen_us <= 1000))
   {
