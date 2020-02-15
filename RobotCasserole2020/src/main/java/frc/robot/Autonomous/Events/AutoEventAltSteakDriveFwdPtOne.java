@@ -10,7 +10,7 @@ import jaci.pathfinder.Waypoint;
 /**
  * go to scale on left.
  */
-public class AutoEventDriveToBallThief extends AutoEvent {
+public class AutoEventAltSteakDriveFwdPtOne extends AutoEvent {
     PathPlannerAutoEvent driveForward;
 
     //stuff for Intake
@@ -21,10 +21,10 @@ public class AutoEventDriveToBallThief extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(7.8,   0.0,  Pathfinder.d2r(0))
+        new Waypoint(8.5,   0.0,  Pathfinder.d2r(37))
     };
 
-    public AutoEventDriveToBallThief(double intkDuration_s_in) {
+    public AutoEventAltSteakDriveFwdPtOne(double intkDuration_s_in) {
         intkDuration_s = intkDuration_s_in;
         driveForward = new PathPlannerAutoEvent(waypoints_ft, false);
     }
@@ -66,7 +66,7 @@ public class AutoEventDriveToBallThief extends AutoEvent {
     }
 
     public static void main(String[] args) {
-        AutoEventDriveToBallThief autoEvent = new AutoEventDriveToBallThief(4.0); //time is for intk
+        AutoEventAltSteakDriveFwdPtOne autoEvent = new AutoEventAltSteakDriveFwdPtOne(3.0); //time is for intk
 		//TODO
 		System.out.println("Done");
     }
