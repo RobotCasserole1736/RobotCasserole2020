@@ -111,7 +111,7 @@ public class Conveyor{
             break;
 
             case AdvanceFromHopper:
-                if(intakeEndSensorTriggered) {
+                if(intakeEndSensorTriggered  && !shooterEndSensorTriggered) {
                     conveyorMotor.set(conveyorLoadingSpeedCal.get());
                     
                 }else{
