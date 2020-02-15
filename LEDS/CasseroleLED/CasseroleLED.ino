@@ -1,7 +1,7 @@
 #include <FastLED.h>
 
 //Constants related to hardware setup
-#define NUM_LEDS 100
+#define NUM_LEDS 35
 #define LED_PIN 2
 #define ROBORIO_DATA_PIN 9
 
