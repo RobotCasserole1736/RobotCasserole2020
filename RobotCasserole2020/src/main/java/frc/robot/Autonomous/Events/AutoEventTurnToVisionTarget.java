@@ -16,7 +16,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
     
     final double TURN_SPEED_RPM = 50;
     final double TIMEOUT_S = 5.0;
-    final double ALLOWABLE_ANGLE_ERR_DEG = 2.0;
+    final double ALLOWABLE_ANGLE_ERR_DEG = 1.0;
     final double DT_ANGLE_STABLE_DEBOUNCE_SEC = 0.5;
 
     double dtStableEndTime = 0;

@@ -99,7 +99,7 @@ public class Supperstructure {
             case Normal:
             intk.setPosMode(IntakePosition.Retracted);
             intk.setSpeedMode(IntakeSpeed.Stop);
-            hopp.setOpMode(HopperOpMode.Injest);
+            hopp.setOpMode(HopperOpMode.Stop);
             shoot.setRun(ShooterRunCommand.Stop);
             conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
             break;

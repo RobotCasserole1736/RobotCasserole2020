@@ -11,7 +11,8 @@ public class AutoEventTurn extends AutoEvent {
 	private boolean weAreDone;
 	private double currentTime = 0.0;
 	private double startTime = 0.0;
-    private double elapsedTime = 0.0;
+	private double elapsedTime = 0.0;
+	private double errordeg=2.0;
 	
 	final double TURN_SPEED_RPM = 100;
 	final double TIMEOUT_S = 5.0;
@@ -44,12 +45,17 @@ public class AutoEventTurn extends AutoEvent {
 		currentTime = Timer.getFPGATimestamp();
 		elapsedTime = currentTime - startTime;
         //Drivetrain.getInstance().disableHeadingCmd();
-        Drivetrain.getInstance().setClosedLoopSpeedCmd((-1*TURN_SPEED_RPM), (TURN_SPEED_RPM));
-		if(Drivetrain.getInstance().getGyroAngle() > targetAngle || elapsedTime > TIMEOUT_S) {
+		
+		if((elapsedTime > TIMEOUT_S) || (Math.abs(Drivetrain.getInstance().getGyroAngle()-targetAngle) < errordeg)){
 			weAreDone = true;
 			Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
-		}else {
+		}else{
 			weAreDone = false;
+			if(Drivetrain.getInstance().getGyroAngle()-targetAngle<0){
+				Drivetrain.getInstance().setClosedLoopSpeedCmd((-1*TURN_SPEED_RPM), (TURN_SPEED_RPM));
+			}else{
+				Drivetrain.getInstance().setClosedLoopSpeedCmd((TURN_SPEED_RPM), (-1*TURN_SPEED_RPM));
+			}
 		}
 	}
 

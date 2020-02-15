@@ -95,7 +95,7 @@ public class RealShooterControl extends ShooterControl {
         shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 25);
         shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
         shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 4500);
-        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 100);
+        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 150);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.001);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);

@@ -96,14 +96,14 @@ public class Climber{
             
             if(initialPulseCounter > 0) {
                 //Initial Pulse for ensuring the latch fully disengages.
-                motorCmd = -0.5;
+                motorCmd = 0.5;
                 initialPulseCounter--;
             } else {
 
                 if (upperLSVal == TwoWireParitySwitch.SwitchState.Pressed){
-                    motorCmd = Math.min(0,climbCMD);
-                } else if (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed){
                     motorCmd = Math.max(0,climbCMD);
+                } else if (lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed){
+                    motorCmd = Math.min(0,climbCMD);
                 } else {
                     motorCmd = climbCMD;
                 }

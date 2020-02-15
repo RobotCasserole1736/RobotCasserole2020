@@ -144,7 +144,7 @@ public class RealDrivetrain extends Drivetrain {
         kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 1.0);
         currentLimit = new Calibration("Drivetrain Per-Motor Smart Current Limit" , 60, 0, 100);
         turnToAnglekP= new Calibration("Drivetrain Turn To Angle kP", 3.0);
-        turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0);
+        turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0.1);
         turnToAngleMaxRPM= new Calibration("Drivetrain Turn To Angle Max RPM", 150, 0, 500);
         turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM/sec", 300, 0, 5000);
 

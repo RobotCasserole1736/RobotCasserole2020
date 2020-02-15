@@ -24,7 +24,7 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-4.0, -1,  Pathfinder.d2r(45))
+        new Waypoint(-3.0, -8.0,  Pathfinder.d2r(45))
     };
 
     public AutoEventBackUpFromBallThief(double prepDuration_s_in) {
