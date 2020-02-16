@@ -83,5 +83,7 @@ public abstract class ShooterControl {
 
     public abstract void updateGains(boolean forceChange);
 
-	public abstract int getShotCount();
+    public abstract int getShotCount();
+    
+    public abstract boolean ready2shoot();
 }

@@ -239,7 +239,7 @@ public class Autonomous {
                 break;
 
                 case ShootOnly:
-                    seq.addEvent(new AutoEventShoot(15.0));
+                    seq.addEvent(new AutoEventShoot(15.0,5));
                 break;
 
                 case VisionAlignOnly:
@@ -250,7 +250,7 @@ public class Autonomous {
 
                 case VisionAlignShoot:
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(15.0));
+                    seq.addEvent(new AutoEventShoot(15.0,5));
                 break;
 
                 case BallThief:
@@ -258,7 +258,7 @@ public class Autonomous {
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(8.0));
+                    seq.addEvent(new AutoEventShoot(8.0,5));
                 break;
 
                 case Steak:
@@ -266,19 +266,19 @@ public class Autonomous {
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(5.0));
+                    seq.addEvent(new AutoEventShoot(5.0,5));
                     seq.addEvent(new AutoEventTurn(135));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventDriveToShootFromSteakCollect());
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(8.0));
+                    seq.addEvent(new AutoEventShoot(8.0,5));
                 break;
                 case OurSideSteak:
                     Drivetrain.getInstance().setInitialPose(11.4, 11.5, 90);
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(5.0));
+                    seq.addEvent(new AutoEventShoot(5.0,5));
                     seq.addEvent(new AutoEventTurn(110));
                     seq.addEvent(new AutoEventAltSteakDriveFwdPtOne(3.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpThreeFeet());
@@ -291,7 +291,7 @@ public class Autonomous {
                     seq.addEvent(new AutoEventTurn(120));
                     seq.addEvent(new AutoEventAltSteakDriveFwdPtThree(3.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(5.0));
+                    seq.addEvent(new AutoEventShoot(5.0,5));
                 break;
             }
             modeCmdPrev = modeCmd;
