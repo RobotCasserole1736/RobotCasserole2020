@@ -54,8 +54,8 @@ public class Hopper{
             hopperSparkRight.restoreFactoryDefaults();
             hopperSparkLeft.setIdleMode(IdleMode.kCoast);
             hopperSparkLeft.setIdleMode(IdleMode.kCoast);
-            hopperSparkLeft.setSmartCurrentLimit(30);
-            hopperSparkRight.setSmartCurrentLimit(30);
+            hopperSparkLeft.setSmartCurrentLimit(20);
+            hopperSparkRight.setSmartCurrentLimit(20);
             hopperSparkRight.setInverted(true);
             hopperSparkLeft.burnFlash();
             hopperSparkRight.burnFlash();
