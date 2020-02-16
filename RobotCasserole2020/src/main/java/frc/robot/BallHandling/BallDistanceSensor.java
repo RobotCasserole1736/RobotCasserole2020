@@ -37,6 +37,7 @@ public class BallDistanceSensor{
         if(!RobotSimMode.getInstance().runSimulation()){
             tofSensor = new TimeOfFlight(RobotConstants.TOF_CAN_ID);
             tofSensor.setRangingMode(TimeOfFlight.RangingMode.Short, 24);
+            tofSensor.setRangeOfInterest(6, 6, 10, 10);
         }
         
         sensorVoltageSig = new Signal("Ball Distance Sensor Raw Voltage", "V");
