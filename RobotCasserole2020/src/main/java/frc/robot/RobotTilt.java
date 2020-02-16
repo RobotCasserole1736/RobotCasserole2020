@@ -67,8 +67,8 @@ public class RobotTilt {
         //Calculates angle from the front of the robot.
         //frontTiltAngle = Math.toDegrees(Math.atan2(forceInZDirection, forceInYDirection));
 
-        //adding 150 is to make it equal 0 when the robot is upright. Why this is needed I have no idea.
-        totalRobotAngle = sideTiltAngle+90;
+        //subtracting 90 is to make it equal 0 when the robot is upright. Why this is needed I have no idea.
+        totalRobotAngle = sideTiltAngle-90;
 
         sideTiltAngleSig.addSample(sampleTimeMs, sideTiltAngle);
         //frontTiltAngleSig.addSample(sampleTimeMs, frontTiltAngle);
