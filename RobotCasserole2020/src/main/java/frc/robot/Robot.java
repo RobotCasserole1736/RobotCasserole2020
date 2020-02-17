@@ -355,7 +355,8 @@ public class Robot extends TimedRobot {
             DriverController.getInstance().getPhotonCannonInput()
           ) 
           && 
-          !DriverController.getInstance().getAutoAlignAndShooterDesired()
+          !(DriverController.getInstance().getAutoAlignAndShootCmd() || 
+            DriverController.getInstance().getAutoAlignCmd() ) 
         ){
         photonCannon.setPhotonCannonState(true);
         eyeOfVeganSauron.setLEDRingState(false);

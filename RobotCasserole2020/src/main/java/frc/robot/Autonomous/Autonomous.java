@@ -90,9 +90,6 @@ public class Autonomous {
     AutoMode actualMode;
     String autoModeName = "";
 
-    boolean driverVisionAlignButtonReleased = false;
-
-
     public static final String[] ACTION_MODES =  new String[]{"Do Nothing", 
                                                               "Drive Forward", 
                                                               "Shoot Only", 
@@ -157,19 +154,34 @@ public class Autonomous {
         loadSequencer(true);
     }
 
+    boolean visionAlignOnlyButtonReleased = false;
+    boolean visionAlignShootButtonReleased = false;
+
+
     public void sampleOperatorCommands(){
         delayTime_s = 0; //Never delay while operator triggers auto modes
 
-        if(DriverController.getInstance().getAutoAlignAndShooterDesired()){
-            if(driverVisionAlignButtonReleased==true){
+        if(DriverController.getInstance().getAutoAlignAndShootCmd()){
+            visionAlignOnlyButtonReleased = true; // assume opposite button released
+            if(visionAlignShootButtonReleased==true){
                 modeCmd = AutoMode.VisionAlignShoot;
+                autoModeName = "Driver Commanded Vision Align And Shoot";
+                visionAlignShootButtonReleased = false;
+            } else {
+                //Do Nothing until driver releases the button
+            }
+        } else if(DriverController.getInstance().getAutoAlignCmd()){
+            visionAlignShootButtonReleased = true; // assume opposite button released
+            if(visionAlignOnlyButtonReleased==true){
+                modeCmd = AutoMode.VisionAlignOnly;
                 autoModeName = "Driver Commanded Vision Align Only";
-                driverVisionAlignButtonReleased = false;
+                visionAlignOnlyButtonReleased = false;
             } else {
                 //Do Nothing until driver releases the button
             }
         } else {
-            driverVisionAlignButtonReleased = true;
+            visionAlignOnlyButtonReleased = true;
+            visionAlignShootButtonReleased = true;
             modeCmd = AutoMode.Inactive;
             autoModeName = "Inactive";
         }
