@@ -37,11 +37,13 @@ public class DriverController {
     double fwdRevCmd = 0;
     double rotCmd = 0;
     boolean autoAlignCmd = false;
+    boolean autoAlignAndShootCmd = false;
     boolean snailModeCmd = false;
     boolean reverseModeCmd = false;
 
     Signal fwdRevCmdSig;
     Signal rotCmdSig;
+    Signal autoAlignAndShootCmdSig;
     Signal autoAlignCmdSig;
     Signal snailModeCmdSig;
     Signal reverseModeSig;
@@ -59,7 +61,8 @@ public class DriverController {
 
         fwdRevCmdSig    = new Signal("Driver FwdRev Command", "cmd");
         rotCmdSig       = new Signal("Driver Rotate Command", "cmd");
-        autoAlignCmdSig = new Signal("Driver Auto Align Command", "bool");
+        autoAlignAndShootCmdSig = new Signal("Driver Auto Align and Shoot Command", "bool");
+        autoAlignCmdSig = new Signal("Driver Auto Align Only Command", "bool");
         snailModeCmdSig = new Signal("Driver Snail Mode Command", "bool");
         reverseModeSig  = new Signal("Driver Flip Front/Back Command", "bool");
     }
@@ -87,12 +90,14 @@ public class DriverController {
         }
         
         autoAlignCmd = driverController.getXButton();
+        autoAlignAndShootCmd = (driverController.getTriggerAxis(Hand.kRight) > 0.2);
         snailModeCmd = driverController.getBumper(Hand.kRight);
 
         double time_in_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         fwdRevCmdSig.addSample(time_in_ms, fwdRevCmd);
         rotCmdSig.addSample(time_in_ms, rotCmd);      
         autoAlignCmdSig.addSample(time_in_ms, autoAlignCmd);
+        autoAlignAndShootCmdSig.addSample(time_in_ms, autoAlignAndShootCmd);
         snailModeCmdSig.addSample(time_in_ms, snailModeCmd);
         reverseModeSig.addSample(time_in_ms, reverseModeCmd);
     }
@@ -120,9 +125,12 @@ public class DriverController {
         return rotCmd; 
     }
 
-    public boolean getAutoHighGoalAlignDesired(){
+    public boolean getAutoAlignAndShootCmd(){
+        return autoAlignAndShootCmd; 
+    }
+
+    public boolean getAutoAlignCmd(){
         return autoAlignCmd; 
- 
     }
     
     public boolean getPhotonCannonInput(){
@@ -141,9 +149,6 @@ public class DriverController {
         driverController.setRumble(RumbleType.kLeftRumble, strength);
         driverController.setRumble(RumbleType.kRightRumble, strength);
     }
-
-    
-
 
 
 }

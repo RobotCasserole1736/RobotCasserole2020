@@ -63,11 +63,6 @@ public class Supperstructure {
     }
 
     public void update(){
-        
-        conv.update(); 
-        hopp.update();
-        shoot.update();
-        intk.update();
 
         if(stopDes){
             opMode = SupperstructureOpMode.Stop;
@@ -92,54 +87,70 @@ public class Supperstructure {
         }
 
         setOpMode(opMode);
+        
+        conv.update(); 
+        hopp.update();
+        shoot.update();
+        intk.update();
+
     }
 
     private void setOpMode(SupperstructureOpMode opMode_in){
         switch(opMode_in){
             case Normal:
-            intk.setPosMode(IntakePosition.Retracted);
-            intk.setSpeedMode(IntakeSpeed.Stop);
-            hopp.setOpMode(HopperOpMode.Stop);
-            shoot.setRun(ShooterRunCommand.Stop);
-            conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
+                intk.setPosMode(IntakePosition.Retracted);
+                intk.setSpeedMode(IntakeSpeed.Stop);
+                hopp.setOpMode(HopperOpMode.Stop);
+                shoot.setRun(ShooterRunCommand.Stop);
+                conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
             break;
             case PrepToShoot:
-            intk.setSpeedMode(IntakeSpeed.Stop);
-            hopp.setOpMode(HopperOpMode.Injest);
-            shoot.setRun(ShooterRunCommand.ShotFar);
-            conv.setOpMode(ConveyorOpMode.AdvanceToShooter);
+                intk.setPosMode(IntakePosition.Retracted);
+                intk.setSpeedMode(IntakeSpeed.Stop);
+                hopp.setOpMode(HopperOpMode.Injest);
+                shoot.setRun(ShooterRunCommand.ShotFar);
+                conv.setOpMode(ConveyorOpMode.AdvanceToShooter);
             break;
             case Shoot:
-            intk.setPosMode(IntakePosition.Extended);
-            intk.setSpeedMode(IntakeSpeed.Intake);
-            hopp.setOpMode(HopperOpMode.Injest);
-            shoot.setRun(ShooterRunCommand.ShotFar);
-            conv.setOpMode(ConveyorOpMode.InjectIntoShooter);
+                intk.setPosMode(IntakePosition.Extended);
+                intk.setSpeedMode(IntakeSpeed.Intake);
+                hopp.setOpMode(HopperOpMode.Injest);
+                shoot.setRun(ShooterRunCommand.ShotFar);
+                conv.setOpMode(ConveyorOpMode.InjectIntoShooter);
             break;
             case Intake:
-            intk.setPosMode(IntakePosition.Extended);
-            intk.setSpeedMode(IntakeSpeed.Intake);
-            hopp.setOpMode(HopperOpMode.Injest);
-            conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
-            shoot.setRun(ShooterRunCommand.Stop);
+                intk.setPosMode(IntakePosition.Extended);
+                intk.setSpeedMode(IntakeSpeed.Intake);
+                hopp.setOpMode(HopperOpMode.Injest);
+                conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
+                shoot.setRun(ShooterRunCommand.Stop);
             break;
             case Eject:
-            shoot.setRun(ShooterRunCommand.Eject);
-            conv.setOpMode(ConveyorOpMode.Reverse);
-            hopp.setOpMode(HopperOpMode.Reverse);
-            intk.setPosMode(IntakePosition.Extended);
-            intk.setSpeedMode(IntakeSpeed.Eject);
+                shoot.setRun(ShooterRunCommand.Stop);
+                conv.setOpMode(ConveyorOpMode.Reverse);
+                hopp.setOpMode(HopperOpMode.Reverse);
+                intk.setPosMode(IntakePosition.Extended);
+                intk.setSpeedMode(IntakeSpeed.Eject);
             break;
             case Stop:
-            intk.setSpeedMode(IntakeSpeed.Stop);
-            hopp.setOpMode(HopperOpMode.Stop);
-            conv.setOpMode(ConveyorOpMode.Stop);
-            shoot.setRun(ShooterRunCommand.Stop);
+                intk.setPosMode(IntakePosition.Retracted);
+                intk.setSpeedMode(IntakeSpeed.Stop);
+                hopp.setOpMode(HopperOpMode.Stop);
+                conv.setOpMode(ConveyorOpMode.Stop);
+                shoot.setRun(ShooterRunCommand.Stop);
             break;
             case ClearJam:
-            intk.setSpeedMode(IntakeSpeed.Stop);
-            hopp.setOpMode(HopperOpMode.ClearJam);
-            conv.setOpMode(ConveyorOpMode.Stop);
+                intk.setPosMode(IntakePosition.Extended);
+                intk.setSpeedMode(IntakeSpeed.Stop);
+                hopp.setOpMode(HopperOpMode.ClearJam);
+                conv.setOpMode(ConveyorOpMode.Stop);
+            break;
+            case PrepShootWhileIntake:
+                intk.setPosMode(IntakePosition.Extended);
+                intk.setSpeedMode(IntakeSpeed.Intake);
+                hopp.setOpMode(HopperOpMode.Injest);
+                shoot.setRun(ShooterRunCommand.ShotFar);
+                conv.setOpMode(ConveyorOpMode.AdvanceToShooter);
             break;
         }
     }

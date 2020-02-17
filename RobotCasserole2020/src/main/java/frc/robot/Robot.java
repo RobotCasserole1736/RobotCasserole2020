@@ -287,7 +287,7 @@ public class Robot extends TimedRobot {
   
       thbbtbbtbbtbbt.update();
       eyeOfVeganSauron.setLEDRingState(true);
-    ledUpdater();
+      ledUpdater();
       photonCannon.setPhotonCannonState(false);
       photonCannon.update();
       cam.update();
@@ -355,7 +355,8 @@ public class Robot extends TimedRobot {
             DriverController.getInstance().getPhotonCannonInput()
           ) 
           && 
-          !DriverController.getInstance().getAutoHighGoalAlignDesired()
+          !(DriverController.getInstance().getAutoAlignAndShootCmd() || 
+            DriverController.getInstance().getAutoAlignCmd() ) 
         ){
         photonCannon.setPhotonCannonState(true);
         eyeOfVeganSauron.setLEDRingState(false);
@@ -376,12 +377,14 @@ public class Robot extends TimedRobot {
       supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
       supperstructure.setEstopDesired(false); //TODO
       supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
+      supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
+
+
 
       if(auto.isActive()){
         //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
       } else {
         //Driver & operator control in manual
-        supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
         supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
 
         if(DriverController.getInstance().getSnailModeDesired()){

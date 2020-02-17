@@ -2,13 +2,13 @@ package frc.robot.Autonomous.Events;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.AutoSequencer.AutoEvent;
+import frc.robot.Supperstructure;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.VisionProc.CasseroleVision;
 import frc.robot.VisionProc.VisionCamera;
 
 public class AutoEventTurnToVisionTarget extends AutoEvent {
     
-    private double startAngle;
     private double desAngle;
     private boolean weAreDone = false;
     private double startTime = 0.0;
@@ -80,6 +80,9 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
                 }
             }
         }
+
+        //Ensure we are always spooling up the shooter while doing this
+        Supperstructure.getInstance().setPrepToShootDesired(true);
 
         // When we finish, make sure the robot is 
         if(weAreDone){
