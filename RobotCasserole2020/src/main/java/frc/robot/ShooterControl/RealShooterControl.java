@@ -82,8 +82,8 @@ public class RealShooterControl extends ShooterControl {
 
         shooterMotor1.getEncoder().setVelocityConversionFactor(RobotConstants.SHOOTER_GEAR_RATIO);
 
-        shooterMotor1.setSmartCurrentLimit(60);
-        shooterMotor2.setSmartCurrentLimit(60);
+        shooterMotor1.setSmartCurrentLimit(90);
+        shooterMotor2.setSmartCurrentLimit(90);
 
         //Motors should be inverted to spin outward
         shooterMotor1.setInverted(true);
@@ -105,7 +105,7 @@ public class RealShooterControl extends ShooterControl {
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.0006);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0.0000015);
-        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.000);
+        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.003);
         shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00020);
         shooterMotorIZone_spoolup = new Calibration("Shooter Motor SpoolUp Izone", 100.0);
 
