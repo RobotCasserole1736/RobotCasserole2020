@@ -126,7 +126,7 @@ public class Supperstructure {
                 shoot.setRun(ShooterRunCommand.Stop);
             break;
             case Eject:
-                shoot.setRun(ShooterRunCommand.Eject);
+                shoot.setRun(ShooterRunCommand.Stop);
                 conv.setOpMode(ConveyorOpMode.Reverse);
                 hopp.setOpMode(HopperOpMode.Reverse);
                 intk.setPosMode(IntakePosition.Extended);
