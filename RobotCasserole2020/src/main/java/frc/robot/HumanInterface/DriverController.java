@@ -59,7 +59,7 @@ public class DriverController {
 
         fwdRevCmdSig    = new Signal("Driver FwdRev Command", "cmd");
         rotCmdSig       = new Signal("Driver Rotate Command", "cmd");
-        autoAlignCmdSig = new Signal("Driver Auto Align Command", "bool");
+        autoAlignCmdSig = new Signal("Driver Auto Align and Shoot Command", "bool");
         snailModeCmdSig = new Signal("Driver Snail Mode Command", "bool");
         reverseModeSig  = new Signal("Driver Flip Front/Back Command", "bool");
     }
@@ -120,7 +120,7 @@ public class DriverController {
         return rotCmd; 
     }
 
-    public boolean getAutoHighGoalAlignDesired(){
+    public boolean getAutoAlignAndShooterDesired(){
         return autoAlignCmd; 
  
     }
@@ -141,9 +141,6 @@ public class DriverController {
         driverController.setRumble(RumbleType.kLeftRumble, strength);
         driverController.setRumble(RumbleType.kRightRumble, strength);
     }
-
-    
-
 
 
 }

@@ -160,10 +160,9 @@ public class Autonomous {
     public void sampleOperatorCommands(){
         delayTime_s = 0; //Never delay while operator triggers auto modes
 
-        boolean tmp = DriverController.getInstance().getAutoHighGoalAlignDesired();
-        if(tmp){
+        if(DriverController.getInstance().getAutoAlignAndShooterDesired()){
             if(driverVisionAlignButtonReleased==true){
-                modeCmd = AutoMode.VisionAlignOnly;
+                modeCmd = AutoMode.VisionAlignShoot;
                 autoModeName = "Driver Commanded Vision Align Only";
                 driverVisionAlignButtonReleased = false;
             } else {
