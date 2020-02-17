@@ -48,6 +48,7 @@ public class RealShooterControl extends ShooterControl {
     Calibration shooterMotorI_spoolup;
     Calibration shooterMotorD_spoolup;
     Calibration shooterMotorF_spoolup;
+    Calibration shooterMotorIZone_spoolup;
     Calibration percentSpeed;
 
     Calibration loadedDebounceRPMCal;
@@ -103,9 +104,10 @@ public class RealShooterControl extends ShooterControl {
         EjectSpeed = new Calibration("Shooter Eject RPM", 1000);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.0006);
-        shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
+        shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0.00003);
         shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.000);
         shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00020);
+        shooterMotorIZone_spoolup = new Calibration("Shooter Motor SpoolUp Izone", 250.0);
 
 
         //Shooter loaded calculation
@@ -142,6 +144,7 @@ public class RealShooterControl extends ShooterControl {
             shooterPIDCtrl.setI(shooterMotorI_spoolup.get(), SPOOLUP_PID_SLOT_ID);
             shooterPIDCtrl.setD(shooterMotorD_spoolup.get(), SPOOLUP_PID_SLOT_ID);
             shooterPIDCtrl.setFF(shooterMotorF_spoolup.get(), SPOOLUP_PID_SLOT_ID);
+            shooterPIDCtrl.setIZone(shooterMotorIZone_spoolup.get(), SPOOLUP_PID_SLOT_ID);
             calsUpdated = true;
         }
     }
@@ -150,7 +153,8 @@ public class RealShooterControl extends ShooterControl {
         return shooterMotorP_spoolup.isChanged() || 
                shooterMotorI_spoolup.isChanged() || 
                shooterMotorD_spoolup.isChanged() || 
-               shooterMotorF_spoolup.isChanged();
+               shooterMotorF_spoolup.isChanged() ||
+               shooterMotorIZone_spoolup.isChanged();
     }
     
 
