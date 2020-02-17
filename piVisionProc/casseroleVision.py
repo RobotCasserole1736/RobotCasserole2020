@@ -143,6 +143,7 @@ class VisionProcessor():
             cv2.imwrite("Image"+str(self.counter), self.inimg)
             ntTable.putNumber("Fuzzy Pickles", False)
             self.counter+=1
+            print("Photo Taken")
         self.stableidx+=1
         return self.maskoutput
 
@@ -316,6 +317,7 @@ class cameraSettings():
         os.system(cmdStart+"compression_quality=100")
 
 def setupPhotos():
+    global ONMATCH
     ONMATCH=ntTable.getEntry("InMatch").value
     MATCHNUM=ntTable.getEntry("MatchNumber").value
     
@@ -328,7 +330,7 @@ def setupPhotos():
                 os.mkdir(MATCHNUM)
                 os.chdir(PATH+"//data//"+MATCHNUM)
         else:
-            os.mkdir(data)
+            os.mkdir("data")
             setupPhotos()
     else:
         print("The Roborio decided not to Exist")
@@ -336,7 +338,9 @@ def setupPhotos():
 
 if __name__ == "__main__":
     global img
+    global ONMATCH
     img = None
+    photocounter=0
 
     print("Casserole Vision Processing starting")
     print("OpenCV Version: {}".format(cv2.__version__))
@@ -400,7 +404,9 @@ if __name__ == "__main__":
         ntTable.putNumber("proc_duration_sec", proc_time)
         ntTable.putNumber("framerate_fps", 1.0/(capture_time - prev_cap_time))
         time.sleep(0)
-        if(start_time-proc_end_time>20 and photoCheck):
+        photocounter+=1
+        print(ONMATCH)
+        if(photocounter%400==0 and ONMATCH is None):
             print("Checking for Photos")
             setupPhotos()
             photoCheck=False

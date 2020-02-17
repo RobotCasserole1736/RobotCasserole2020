@@ -56,9 +56,9 @@ public class CasseroleVision extends VisionCamera {
         targetVisible_nt = table.getEntry("targetVisible");
         targetAngle_deg_nt = table.getEntry("targetAngle_deg");
         targetPosStable_nt = table.getEntry("targetPosStable");
-        FuzzyPickles = table.getEntry("Fu");
-        InMatch = table.getEntry("targetPosStable");
-        MatchNumber = table.getEntry("targetPosStable");
+        FuzzyPickles = table.getEntry("Fuzzy Pickles");
+        InMatch = table.getEntry("InMatch");
+        MatchNumber = table.getEntry("MatchNumber");
         InMatch.setBoolean(true);
         MatchNumber.setString(DriverStation.getInstance().getEventName()+"_"
         +DriverStation.getInstance().getMatchType()+"_"
