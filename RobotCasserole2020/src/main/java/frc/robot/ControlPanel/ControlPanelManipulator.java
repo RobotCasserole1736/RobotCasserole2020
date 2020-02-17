@@ -26,6 +26,7 @@ public class ControlPanelManipulator {
     CANSparkMax ControlPanelMotor;
 
     CANPIDController controlPanelPID;
+    Calibration ErrorLimit;
     Calibration kP;
     Calibration kI;
     Calibration kD;
@@ -41,11 +42,13 @@ public class ControlPanelManipulator {
 
 
 
+
     private ControlPanelManipulator(){
         kP = new Calibration("Control Panel P Value", 0);
         kI = new Calibration("Control Panel I Value", 0);
         kD = new Calibration("Control Panel D Value", 0);
         kFF = new Calibration("Control Panel F Value", 0);
+        ErrorLimit = new Calibration("Control Panel Maximum Error",45);
         if(Robot.isReal()){
             ControlPanelMotor= new CANSparkMax(RobotConstants.CONTROL_PANEL_MANIPULATOR_CAN_ID, MotorType.kBrushless);
             ControlPanelMotor.restoreFactoryDefaults();
@@ -66,10 +69,13 @@ public class ControlPanelManipulator {
 
         if(Robot.isReal()){
             sampleSensors();
+            if(Math.abs(ControlPanelMotor.getEncoder().getPosition()-desiredRotation_deg)<ErrorLimit.get()){
+                rotationComplete = true;
+            }
             if(!rotationComplete){
-                controlPanelPID.setReference(0, ControlType.kPosition);
+                controlPanelPID.setReference(desiredRotation_deg, ControlType.kPosition);
             }else{
-                controlPanelPID.setReference(0, ControlType.kPosition);
+                controlPanelPID.setReference(0, ControlType.kVelocity);
             }
             ControlPanelMotorCurrentSignal.addSample(sampleTimeMs, ControlPanelMotor.getOutputCurrent());
             ControlPanelActualAngleSignal.addSample(sampleTimeMs, ControlPanelMotor.getEncoder().getPosition());

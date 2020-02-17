@@ -80,6 +80,9 @@ public class ControlPanelStateMachine{
         }else{
             ControlPanelManipulator.getInstance().sendRotationCommand(0);
         }
+        if(!rotateToSpecificColorActivated && !rotate3to5Activated){
+            ControlPanelManipulator.getInstance().stopRotation();
+        }
 
         degreesToRotateStaticSig.addSample(sampleTimeMS, degreesToRotateThreeToFive);
         degreesToColorSig.addSample(sampleTimeMS, degreesToRotateColor);
