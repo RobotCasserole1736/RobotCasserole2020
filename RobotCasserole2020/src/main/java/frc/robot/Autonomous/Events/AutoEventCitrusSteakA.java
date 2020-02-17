@@ -32,11 +32,15 @@ public class AutoEventCitrusSteakA extends AutoEvent {
     private final Waypoint[] citrus_waypoints_ft_pt1 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
         new Waypoint(-9.0,1.0,  Pathfinder.d2r(25)),
-        //new Waypoint(-9-(7.5*0.906307787), 1-(7.5*0.422618262),  Pathfinder.d2r(25))
+        new Waypoint(-9-(7.5*0.906307787), 1-(7.5*0.422618262),  Pathfinder.d2r(25))
     };
+    // private final Waypoint[] citrus_waypoints_ft_pt2 = new Waypoint[] {
+    //     new Waypoint(0,      0,  Pathfinder.d2r(0)),
+    //     new Waypoint(-7.5, 0,  Pathfinder.d2r(0))
+    // };
     private final Waypoint[] citrus_waypoints_ft_pt2 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-7.5, 0,  Pathfinder.d2r(0))
+        new Waypoint(0, 3.6,  Pathfinder.d2r(90))
     };
 
 

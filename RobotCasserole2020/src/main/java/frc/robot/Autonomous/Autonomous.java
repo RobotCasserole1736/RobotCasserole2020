@@ -268,7 +268,6 @@ public class Autonomous {
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurn(24));
                     seq.addEvent(new AutoEventWait(0.25));
-
                     seq.addEvent(new AutoEventTurnToVisionTarget());
                     seq.addEvent(new AutoEventShoot(8.0,5));
                 break;
@@ -277,20 +276,23 @@ public class Autonomous {
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
+                    seq.addEvent(new AutoEventTurn(24));
+                    seq.addEvent(new AutoEventWait(0.25));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
                     seq.addEvent(new AutoEventShoot(3.0,5));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
-                    seq.addEvent(new AutoEventDriveToShootFromSteakCollect());
-                    seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(8.0,5));
+                    seq.addEvent(new AutoEventTurn(14));
+                    seq.addEvent(new AutoEventWait(0.25));
+                    //seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventShoot(3.0,5));
                 break;
                 case CitrusSteak:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventCitrusSteakA(4.0));
                     seq.addEvent(new AutoEventTurn(90));
-                    seq.addEvent(new AutoEventShoot(2.0,5));
+                    seq.addEvent(new AutoEventShoot(3.0,5));
                     seq.addEvent(new AutoEventCitrusSteakB(4.0));
-                    seq.addEvent(new AutoEventShoot(2.0,5));
+                    seq.addEvent(new AutoEventShoot(3.0,5));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
                     //seq.addEvent(new AutoEventShoot(3.0,5));
                     //seq.addEvent(new AutoEventShoot(8.0,5));

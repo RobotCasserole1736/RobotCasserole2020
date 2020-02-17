@@ -33,5 +33,8 @@ public abstract class VisionCamera {
     /** Returns true when the image has settled and the pose reading can be trusted */
     public abstract boolean isTargetStable();
 
+    /** Tells Camera to take a picture */
+    public abstract void TakeAPicture();
+
 
 }

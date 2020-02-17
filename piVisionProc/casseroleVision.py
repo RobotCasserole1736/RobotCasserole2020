@@ -74,6 +74,8 @@ class VisionProcessor():
     def init(self):
         self.debug = True
         self.counter=0
+        self.stableidx=0
+        self.stableList=[None,None,None,None,None]
         #self.camMatrix = np.array([[2.29925773e+03,0.00000000e+00,9.99462308e+02], [0.00000000e+00,2.25914533e+03,5.51498851e+02], [0.00000000e+00,0.00000000e+00,1.00000000e+00]])
         self.camMatrix = np.array([[2306.29109, 0, 960], [0, 2305.12837, 540], [0, 0, 1]])
         #self.distCoeffs=np.array([[-4.15580768e-01,-4.63818812e-01,-4.28854580e-03,-5.07851815e-04,1.61811656e+00]])
@@ -98,11 +100,12 @@ class VisionProcessor():
         #     ], dtype=np.float64)
 
         self.ObjPoints = np.array([
-            (-19.625, 0, 0),
-            (19.625, 0, 0),
-            (9.8198, -17, 0),
-            (-9.8198, -17, 0)
+            (-19.625, 0, 24.25),
+            (19.625, 0, 24.25),
+            (9.8198, -17, 24.25),
+            (-9.8198, -17, 24.25)
             ], dtype=np.float64)
+        self.stableTarget=False
 
 
 
@@ -117,8 +120,8 @@ class VisionProcessor():
         #upperBrightness = np.array([100,200,255])
 
         ##Standard Green Vision Tape Range
-        self.lowerBrightness=np.array([30,50,150])
-        self.upperBrightness=np.array([70,255,255])
+        self.lowerBrightness=np.array([30,170,20])
+        self.upperBrightness=np.array([90,255,210])
 
 
 
@@ -126,18 +129,21 @@ class VisionProcessor():
     # Main Process
     ###################
     def process(self, inFrame):
+        
         self.inimg = inFrame
         self.LightFilter()
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
-        filteredContours = self.filtercontours(contours, 100.0, 20.0, math.inf)
+        filteredContours = self.filtercontours(contours, 100.0, 200.0, math.inf)
         self.TargetDetection(filteredContours)
         self.updateTable()
         if self.debug:
             self.outputStr = "{{{},{},{},{},{},{}}}\n".format(self.ret, self.angle, self.angle1, self.angle2, self.xval, self.yval)
             print(self.outputStr)
-        if ntTable.getEntry("Take A Photo").value:
+        if ntTable.getEntry("Fuzzy Pickles").value:
             cv2.imwrite("Image"+str(self.counter), self.inimg)
+            ntTable.putNumber("Fuzzy Pickles", False)
             self.counter+=1
+        self.stableidx+=1
         return self.maskoutput
 
     ###################
@@ -147,7 +153,7 @@ class VisionProcessor():
         ntTable.putNumber("targetAngle_deg", self.angle1)
         ntTable.putNumber("targetVisible", self.ret)
         #TODO add stabilization
-        ntTable.putNumber("targetPosStable", True)
+        ntTable.putNumber("targetPosStable", self.stableTarget)
 
 
     ###################
@@ -185,9 +191,11 @@ class VisionProcessor():
             #Experimental Subpixel stuff
             CornerIDs = self.cornerFinder(polygon)
             corners = np.float32([polygon[CornerIDs[0]],polygon[CornerIDs[1]],polygon[CornerIDs[2]],polygon[CornerIDs[3]]])
-            criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.1)
-            SC = cv2.cornerSubPix(self.mask, corners, (5,5), (-1,-1), criteria) 
+            #print(corners)
+            #criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.1)
+            #SC = cv2.cornerSubPix(self.mask, corners, (5,5), (-1,-1), criteria) 
             
+            #print(SC)
             #Draws line between pairs if streaming
             if self.debug:
                 cv2.circle(self.maskoutput,tuple(polygon[CornerIDs[0]][0]),10,[255,0,0])
@@ -202,8 +210,8 @@ class VisionProcessor():
 
             #Gets bottom, leftmost, topmost, and rightmost points of each contour
 
-            #ImgPoints = np.array([polygon[CornerIDs[0]], polygon[CornerIDs[1]], polygon[CornerIDs[2]], polygon[CornerIDs[3]]], dtype="double")
-            ImgPoints = np.array([SC[0], SC[1], SC[2], SC[3]], dtype="double")
+            ImgPoints = np.array([polygon[CornerIDs[0]], polygon[CornerIDs[1]], polygon[CornerIDs[2]], polygon[CornerIDs[3]]], dtype="double")
+            #ImgPoints = np.array([SC[0], SC[1], SC[2], SC[3]], dtype="double")
             #Actual Pnp algorithm, takes the points we calculated along with predefined points of target
             _, rvec, tvec = cv2.solvePnP(self.ObjPoints, ImgPoints, self.camMatrix, self.distCoeffs)
 
@@ -216,15 +224,27 @@ class VisionProcessor():
             ##Chooses the values we need for path planning
             distance = math.sqrt(tvec[0]**2 + tvec[2]**2)
             self.angle1 = -1*np.degrees((math.atan2(tvec[0], tvec[2])))
+            self.stability(self.angle1)
             self.ret = True
             self.yaw = (str(rvec[2]).strip('[]'))
             self.xval = (str(tvec[2]).strip('[]'))
             self.yval = (str(tvec[0]).strip('[]'))
+        else:
+            self.stability(None)
 
 
     ###################
     # Target Detection
     ###################
+    def stability(self,inAngle):
+        self.stableList[self.stableidx%len(self.stableList)]=inAngle
+        if None not in self.stableList:
+            if(max(self.stableList)-min(self.stableList)<1.2):
+                self.stableTarget=True
+            else:
+                self.stableTarget=False
+        else:
+            self.stableTarget=False
 
     @staticmethod
     def filtercontours(input_contours, min_area, min_width, max_width):
@@ -261,9 +281,9 @@ class cameraSettings():
         os.system(cmdStart+"white_balance_auto_preset=0")
 
         #User Controls
-        os.system(cmdStart+"brightness=35")
+        os.system(cmdStart+"brightness=30")
         os.system(cmdStart+"contrast=100")
-        os.system(cmdStart+"saturation=100")
+        os.system(cmdStart+"saturation=10")
         os.system(cmdStart+"red_balance=1000")
         os.system(cmdStart+"blue_balance=1000")
         os.system(cmdStart+"horizontal_flip=0")
@@ -272,7 +292,7 @@ class cameraSettings():
         os.system(cmdStart+"sharpness=100")
         os.system(cmdStart+"color_effects=0")
         os.system(cmdStart+"rotate=0")
-        os.system(cmdStart+"color_effects_cbcr=32896")
+        os.system(cmdStart+"color_effects_cbcr=3896")
 
         #Codec Controls
         os.system(cmdStart+"video_bitrate_mode=1")
@@ -283,9 +303,9 @@ class cameraSettings():
         os.system(cmdStart+"h264_profile=4")
 
         #Camera Controls
-        os.system(cmdStart+"exposure_time_absolute=9")
+        os.system(cmdStart+"exposure_time_absolute=93")
         os.system(cmdStart+"exposure_dynamic_framerate=0")
-        os.system(cmdStart+"auto_exposure_bias=12")
+        os.system(cmdStart+"auto_exposure_bias=0")
         os.system(cmdStart+"image_stabilization=0")
         os.system(cmdStart+"iso_sensitivity=0")
         os.system(cmdStart+"iso_sensitivity_auto=0")
@@ -295,6 +315,23 @@ class cameraSettings():
         #JPEG Compression controls
         os.system(cmdStart+"compression_quality=100")
 
+def setupPhotos():
+    ONMATCH=ntTable.getEntry("InMatch").value
+    MATCHNUM=ntTable.getEntry("MatchNumber").value
+    
+    if ONMATCH:
+        print("The Roborio decided to Exist")
+        PATH=os.getcwd()
+        if(os.path.isdir(PATH+"//data")):
+            if not os.path.exists(MATCHNUM):
+                os.chdir(PATH+"//data")
+                os.mkdir(MATCHNUM)
+                os.chdir(PATH+"//data//"+MATCHNUM)
+        else:
+            os.mkdir(data)
+            setupPhotos()
+    else:
+        print("The Roborio decided not to Exist")
 
 
 if __name__ == "__main__":
@@ -321,8 +358,8 @@ if __name__ == "__main__":
 
     
     try:
-        #server = ThreadedHTTPServer(('10.17.36.11', 5805), CamHandler)
-        server = ThreadedHTTPServer(('frcvision.local', 5805), CamHandler)
+        server = ThreadedHTTPServer(('10.17.36.11', 5805), CamHandler)
+        #server = ThreadedHTTPServer(('frcvision.local', 5805), CamHandler)
         t = threading.Thread(target=server.serve_forever)
         t.start()
         print("MJPEG Server Started")
@@ -332,20 +369,17 @@ if __name__ == "__main__":
 
     ntTable = NetworkTables.getTable("VisionData")
 
-    ONMATCH=ntTable.getEntry("InMatch").value
-    MATCHNUM=ntTable.getEntry("MatchNumber").value
-    if ONMATCH:
-        PATH=os.getcwd()
-        if not os.path.exists(MATCHNUM):
-            os.mkdir(MATCHNUM)
-            os.chdir(PATH+"//"+MATCHNUM)
+    setupPhotos()
+    photoCheck=True
 
     prev_cap_time = 0
     capture_time = 0
+    start_time = time.time_ns()/(10 ** 9)
 
     print("Vision Processing Starting..")
     Processor=VisionProcessor()
     Processor.init()
+    
     # loop forever
     while True:
         prev_cap_time = capture_time
@@ -358,6 +392,7 @@ if __name__ == "__main__":
             continue
         else:
             img = Processor.process(cam_img)
+            # img = cam_img
             # 26 deg
 
         proc_end_time = time.time_ns()/(10 ** 9)
@@ -365,6 +400,9 @@ if __name__ == "__main__":
         ntTable.putNumber("proc_duration_sec", proc_time)
         ntTable.putNumber("framerate_fps", 1.0/(capture_time - prev_cap_time))
         time.sleep(0)
-        
+        if(start_time-proc_end_time>20 and photoCheck):
+            print("Checking for Photos")
+            setupPhotos()
+            photoCheck=False
 
 

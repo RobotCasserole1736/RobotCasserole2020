@@ -58,6 +58,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
                 Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
                 if(cam.isTargetStable()){
                     desAngle = Drivetrain.getInstance().getGyroAngle() + cam.getTgtGeneralAngle(); //Calcuate what angle to turn toward
+                    cam.TakeAPicture();
                     startTime = Timer.getFPGATimestamp(); //Restart timer
                     dtStableEndTime = Timer.getFPGATimestamp() + DT_ANGLE_STABLE_DEBOUNCE_SEC;
                     stableTargetSeen = true;

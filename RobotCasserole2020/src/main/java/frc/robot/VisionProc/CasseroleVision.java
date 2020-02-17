@@ -1,8 +1,14 @@
 package frc.robot.VisionProc;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
 
@@ -21,6 +27,9 @@ public class CasseroleVision extends VisionCamera {
     NetworkTableEntry targetVisible_nt;
     NetworkTableEntry targetAngle_deg_nt;
     NetworkTableEntry targetPosStable_nt;
+    NetworkTableEntry FuzzyPickles;
+    NetworkTableEntry InMatch;
+    NetworkTableEntry MatchNumber;
     
     double proc_duration_sec;
     double framerate_fps;
@@ -47,6 +56,14 @@ public class CasseroleVision extends VisionCamera {
         targetVisible_nt = table.getEntry("targetVisible");
         targetAngle_deg_nt = table.getEntry("targetAngle_deg");
         targetPosStable_nt = table.getEntry("targetPosStable");
+        FuzzyPickles = table.getEntry("Fu");
+        InMatch = table.getEntry("targetPosStable");
+        MatchNumber = table.getEntry("targetPosStable");
+        InMatch.setBoolean(true);
+        MatchNumber.setString(DriverStation.getInstance().getEventName()+"_"
+        +DriverStation.getInstance().getMatchType()+"_"
+        +Integer.toString(DriverStation.getInstance().getMatchNumber())+"_"
+        +  getDateTimeString());
 
         targetAngleSignal= new Signal("Vision Raspberry Pi Angle","deg");
         targetVisibleSignal= new Signal("Vision Raspberry Pi Visible Target","bool");
@@ -54,6 +71,12 @@ public class CasseroleVision extends VisionCamera {
         cameraFramerateSignal= new Signal("Vision Raspberry Pi Framerate","fps");
         cameraDurationSignal= new Signal("Vision Raspberry Pi Duration","sec");
         visionOnlineSignal= new Signal("Vision Raspberry Pi Vision System Online","bool");
+    }
+
+    private String getDateTimeString() {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        df.setTimeZone(TimeZone.getTimeZone("US/Central"));
+        return df.format(new Date());
     }
 
     @Override
@@ -127,6 +150,11 @@ public class CasseroleVision extends VisionCamera {
     @Override
     public boolean isTargetStable(){
         return targetPosStable;
+    }
+
+    @Override
+    public void TakeAPicture(){
+        FuzzyPickles.setBoolean(true);
     }
 
 }

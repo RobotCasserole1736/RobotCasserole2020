@@ -637,5 +637,11 @@ public class JeVoisInterface extends VisionCamera {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public void TakeAPicture() {
+        // TODO Auto-generated method stub
+
+    }
     
 }
