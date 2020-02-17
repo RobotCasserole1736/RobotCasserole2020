@@ -27,7 +27,6 @@ public class RealShooterControl extends ShooterControl {
     private final int HOLD_PID_SLOT_ID = 1;
     
     boolean underLoad = false;
-    boolean ready2shoot = false;
     ShooterCtrlMode currentStateShooter;
     ShooterCtrlMode previousStateShooter;
     double shooterActualSpeed_rpm; //Arbitrated shooter wheel speed
@@ -41,6 +40,7 @@ public class RealShooterControl extends ShooterControl {
     Calibration shooterMaxErrorRPM;
     Calibration shooterSpoolUpSteadyStateDbnc;
     Calibration shooterReadyStateDbnc;
+    Calibration EjectSpeed;
 
     Calibration shooterMotorP_spoolup;
     Calibration shooterMotorI_spoolup;
@@ -51,6 +51,7 @@ public class RealShooterControl extends ShooterControl {
     Calibration shooterMotorI_hold;
     Calibration shooterMotorD_hold;
     Calibration shooterMotorF_hold;
+    Calibration percentSpeed;
 
     Calibration loadedDebounceRPMCal;
 
@@ -96,12 +97,12 @@ public class RealShooterControl extends ShooterControl {
         
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
-        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 25);
-        shooterReadyStateDbnc = new Calibration("Shooter Ready to Shoot Debounce Loops", 25);
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
-        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 4500);
-        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 200);
-        shooterMaxErrorRPM = new Calibration("Shooter Max Error RPM", 65);
+        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 10);
+        shooterReadyStateDbnc = new Calibration("Shooter Ready to Shoot Debounce Loops", 5);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4545);
+        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 4545);
+        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 100);
+        EjectSpeed = new Calibration("Shooter Eject RPM", 1000);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.001);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
@@ -150,7 +151,6 @@ public class RealShooterControl extends ShooterControl {
             shooterPIDCtrl.setI(shooterMotorI_hold.get(), HOLD_PID_SLOT_ID);
             shooterPIDCtrl.setD(shooterMotorD_hold.get(), HOLD_PID_SLOT_ID);
             shooterPIDCtrl.setFF(shooterMotorF_hold.get(), HOLD_PID_SLOT_ID);
-            shooterPIDCtrl.setIZone(shooterMaxHoldErrorRPM.get());
             calsUpdated = true;
         }
     }
@@ -168,14 +168,17 @@ public class RealShooterControl extends ShooterControl {
     
 
     public void update() {
-
-        //Calc desired shooter speed
         double shooterSetpointRPM = 0;
+        
+        //Calc desired shooter speed
+        
         if(run == ShooterRunCommand.ShotClose) {
             shooterSetpointRPM = shooterRPMSetpointClose.get();
         } else if (run == ShooterRunCommand.ShotFar) {
             shooterSetpointRPM = shooterRPMSetpointFar.get();
-        } else if (run == ShooterRunCommand.Stop){
+        } else if (run == ShooterRunCommand.Eject){
+            shooterSetpointRPM = EjectSpeed.get();
+        }else if (run == ShooterRunCommand.Stop){
             shooterSetpointRPM = 0;
         }
 
@@ -187,37 +190,28 @@ public class RealShooterControl extends ShooterControl {
         //Switch Control Mode
         if(run == ShooterRunCommand.Stop){
             currentStateShooter = ShooterCtrlMode.Stop;
-            ready2shoot=false;
             shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
             shooterReadyDebounceCounter = shooterReadyStateDbnc.get();
         } else {
             //When commanded to run....
             double err = Math.abs(shooterActualSpeed_rpm - shooterSetpointRPM);
-
-            if(err > shooterMaxHoldErrorRPM.get()){
-                currentStateShooter = ShooterCtrlMode.SpoolUp;
-                shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
-            } else {
-                if(shooterAtSteadyStateDebounceCounter > 0){
-                    //Debounce being below the error threshold
-                    shooterAtSteadyStateDebounceCounter--;
-                } else {
-                    currentStateShooter = ShooterCtrlMode.HoldSpeed;
-                }
+            if(currentStateShooter==ShooterCtrlMode.Stop){
+                currentStateShooter=ShooterCtrlMode.SpoolUp;
             }
-            if(err > shooterMaxErrorRPM.get()){
-                ready2shoot=false;
-                shooterReadyDebounceCounter = shooterReadyStateDbnc.get();
-            } else{
-                if(shooterReadyDebounceCounter > 0){
-                    shooterReadyDebounceCounter--;
-                    ready2shoot = false;
+            if(currentStateShooter==ShooterCtrlMode.SpoolUp){
+                if(err > shooterMaxHoldErrorRPM.get()){
+                    currentStateShooter = ShooterCtrlMode.SpoolUp;
+                    shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
                 } else {
-                    ready2shoot = true;
+                    if(shooterAtSteadyStateDebounceCounter > 0){
+                        //Debounce being below the error threshold
+                        shooterAtSteadyStateDebounceCounter--;
+                    } else {
+                        currentStateShooter = ShooterCtrlMode.HoldSpeed;
+                    }
                 }
             }
         }
-        
 
         if(currentStateShooter != previousStateShooter){
             if(currentStateShooter == ShooterCtrlMode.HoldSpeed){
@@ -232,8 +226,8 @@ public class RealShooterControl extends ShooterControl {
         if(currentStateShooter == ShooterCtrlMode.HoldSpeed){
             shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, HOLD_PID_SLOT_ID);
         } else if(currentStateShooter == ShooterCtrlMode.SpoolUp){
-            shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, HOLD_PID_SLOT_ID);
-        } else {
+            shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, SPOOLUP_PID_SLOT_ID);
+        }else{
             shooterPIDCtrl.setReference(0, ControlType.kVoltage);
         }
 
@@ -299,9 +293,5 @@ public class RealShooterControl extends ShooterControl {
         return shotCount;
     }
 
-    @Override
-    public boolean ready2shoot(){
-        return ready2shoot;
-    }
 
 }

@@ -76,7 +76,7 @@ public class Supperstructure {
         }else if(clearJamDes){
             opMode = SupperstructureOpMode.ClearJam;
         }else if(shootDes && !prepShootDes){
-            if((shoot.getShooterCtrlMode()==ShooterCtrlMode.HoldSpeed) && shoot.ready2shoot()){
+            if((shoot.getShooterCtrlMode()==ShooterCtrlMode.HoldSpeed)){
                 opMode = SupperstructureOpMode.Shoot;
             }else if(shoot.getShooterCtrlMode() != ShooterCtrlMode.HoldSpeed){
                 opMode = SupperstructureOpMode.PrepToShoot;
@@ -123,7 +123,7 @@ public class Supperstructure {
             shoot.setRun(ShooterRunCommand.Stop);
             break;
             case Eject:
-            shoot.setRun(ShooterRunCommand.Stop);
+            shoot.setRun(ShooterRunCommand.Eject);
             conv.setOpMode(ConveyorOpMode.Reverse);
             hopp.setOpMode(HopperOpMode.Reverse);
             intk.setPosMode(IntakePosition.Extended);

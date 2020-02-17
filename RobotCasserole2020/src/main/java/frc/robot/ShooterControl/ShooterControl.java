@@ -19,7 +19,7 @@ public abstract class ShooterControl {
     /* Allowable shooter operation modes*/
     public enum ShooterCtrlMode {
         SpoolUp(0),   
-        HoldSpeed(1),  
+        HoldSpeed(1),
         Stop(2);
 
         public final int value;
@@ -30,8 +30,9 @@ public abstract class ShooterControl {
 
     public enum ShooterRunCommand {
         ShotFar(0),   
-        ShotClose(1),  
-        Stop(2);
+        ShotClose(1),
+        Eject(2),    
+        Stop(3);
 
         public final int value;
         private ShooterRunCommand(int value) {
@@ -85,5 +86,4 @@ public abstract class ShooterControl {
 
     public abstract int getShotCount();
     
-    public abstract boolean ready2shoot();
 }

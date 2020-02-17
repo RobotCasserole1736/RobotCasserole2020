@@ -21,12 +21,13 @@ public class AutoEventDriveToBallThief extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(7.8,   0.0,  Pathfinder.d2r(0))
+        new Waypoint(5.9,   0.0,  Pathfinder.d2r(0)),
+        new Waypoint(8.5,1.7,Pathfinder.d2r(80))
     };
 
     public AutoEventDriveToBallThief(double intkDuration_s_in) {
         intkDuration_s = intkDuration_s_in;
-        driveForward = new PathPlannerAutoEvent(waypoints_ft, false);
+        driveForward = new PathPlannerAutoEvent(waypoints_ft, false,5,5);
     }
 
     @Override
