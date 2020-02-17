@@ -41,6 +41,7 @@ public class RealShooterControl extends ShooterControl {
     Calibration shooterMaxErrorRPM;
     Calibration shooterSpoolUpSteadyStateDbnc;
     Calibration shooterReadyStateDbnc;
+    Calibration shooterHoldKickOutRPM;
     Calibration EjectSpeed;
 
     Calibration shooterMotorP_spoolup;
@@ -93,17 +94,18 @@ public class RealShooterControl extends ShooterControl {
         
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
-        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 10);
+        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 15);
         shooterReadyStateDbnc = new Calibration("Shooter Ready to Shoot Debounce Loops", 5);
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 4500);
-        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 4500);
-        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 200);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3500);
+        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 3500);
+        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 50);
+        shooterHoldKickOutRPM = new Calibration("Shooter Hold Error Kickout Thresh RPM", 400);
         EjectSpeed = new Calibration("Shooter Eject RPM", 1000);
 
-        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.002);
+        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.0006);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0);
-        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.032);
-        shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00018);
+        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.000);
+        shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00020);
 
 
         //Shooter loaded calculation
@@ -183,6 +185,7 @@ public class RealShooterControl extends ShooterControl {
             if(currentStateShooter==ShooterCtrlMode.Stop){
                 currentStateShooter=ShooterCtrlMode.SpoolUp;
             }
+
             if(currentStateShooter==ShooterCtrlMode.SpoolUp){
                 if(err > shooterMaxHoldErrorRPM.get()){
                     currentStateShooter = ShooterCtrlMode.SpoolUp; //Stay in spoolup
@@ -195,6 +198,10 @@ public class RealShooterControl extends ShooterControl {
                         currentStateShooter = ShooterCtrlMode.HoldSpeed; //Go to hold and remain there till shooter is commanded to stop.
                         shooterHoldCmdDCPct = shooterMotor1.getAppliedOutput();
                     }
+                }
+            } else {
+                if(err > shooterHoldKickOutRPM.get()){
+                    currentStateShooter = ShooterCtrlMode.SpoolUp;
                 }
             }
         }
