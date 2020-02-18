@@ -476,7 +476,7 @@ function rectifySize(){
     //Need highcharts to flow vertically. Seems like it's stuck at 400px. Huh.
     if(global_chart){
         height = 0.8* window.innerHeight;
-        global_chart.setSize(undefined, height);
+        global_chart.setSize(null, height);
         global_chart.reflow();
         global_chart.redraw();
     }
@@ -490,15 +490,16 @@ function handleClearBtnClick(){
         checkbox = checkBoxList.children[i].children[0];
         checkbox.checked = false;
     }
+    hideAll();
+    rectifySize();
 }
 
 function checkboxHandler(elem){
     var itemNo = parseInt(elem.id); //This feels like a hack. Ah well.
     if(global_chart) {
         global_chart.series[itemNo].setVisible(elem.checked, false);
-        global_chart.redraw();
-        rectifySize();
     }
+    rectifySize();
 }
 
 
@@ -507,7 +508,6 @@ function hideAll() {
         for (itemNo = 0; itemNo < global_chart.series.length; itemNo++) {
             global_chart.series[itemNo].setVisible(false, false);
         }
-        rectifySize();
     }
 }
 
