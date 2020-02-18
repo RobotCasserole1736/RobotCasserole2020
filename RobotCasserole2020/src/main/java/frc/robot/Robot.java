@@ -371,16 +371,14 @@ public class Robot extends TimedRobot {
       thbbtbbtbbtbbt.update();
       ctrlPanelManipulator.update();
 
-      auto.sampleOperatorCommands();
-      auto.update();
-
       supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
       supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
       supperstructure.setEstopDesired(false); //TODO
       supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
       supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
 
-
+      auto.sampleOperatorCommands();
+      auto.update();
 
       if(auto.isActive()){
         //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
@@ -464,7 +462,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
     CasseroleDriverView.setDialValue("Robot Angle (deg)", robotTilt.getRobotAngle());
-    CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible()?cam.getTgtGeneralAngle():-50);
+    CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible()?-1.0*cam.getTgtGeneralAngle():-50);
     CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
