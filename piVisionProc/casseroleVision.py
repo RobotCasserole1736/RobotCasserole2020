@@ -54,7 +54,7 @@ class CamHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type','text/html')
             self.end_headers()
             self.wfile.write('<html><head></head><body>')
-            self.wfile.write('<img src="http://10.17.36.10:5805/cam.mjpg"/>')
+            self.wfile.write('<img src="http://10.17.36.11:5805/cam.mjpg"/>')
             self.wfile.write('</body></html>')
             return
 

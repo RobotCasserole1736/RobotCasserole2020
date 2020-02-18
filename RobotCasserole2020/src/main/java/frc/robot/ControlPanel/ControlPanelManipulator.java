@@ -78,7 +78,7 @@ public class ControlPanelManipulator {
             if(!rotationComplete){
                 controlPanelPID.setReference(desiredRotation_deg, ControlType.kPosition);
             }else{
-                controlPanelPID.setReference(ControlPanelMotor.getEncoder().getPosition(),ControlType.kPosition);
+                controlPanelPID.setReference(0,ControlType.kVoltage);
             }
             ControlPanelMotorCurrentSignal.addSample(sampleTimeMs, ControlPanelMotor.getOutputCurrent());
             ControlPanelActualAngleSignal.addSample(sampleTimeMs, ControlPanelMotor.getEncoder().getPosition());

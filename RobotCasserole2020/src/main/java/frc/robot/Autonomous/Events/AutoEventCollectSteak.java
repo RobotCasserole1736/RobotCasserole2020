@@ -24,15 +24,16 @@ public class AutoEventCollectSteak extends AutoEvent {
     private final Waypoint[] waypoints_ft_pt1 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
         new Waypoint(-6,   -5,  Pathfinder.d2r(0)),
+        new Waypoint(-10,   -9.9,  Pathfinder.d2r(-20)),
         
     };
 
-    private final Waypoint[] waypoints_ft_pt2=new Waypoint[]{
-        new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-4,   -4.9,  Pathfinder.d2r(-20)),
-    };
+    // private final Waypoint[] waypoints_ft_pt2=new Waypoint[]{
+    //     new Waypoint(0,      0,  Pathfinder.d2r(0)),
+        
+    // };
 
-    private final Waypoint[] waypoints_ft_pt3 = new Waypoint[] {
+    private final Waypoint[] waypoints_ft_pt2 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
         new Waypoint(12,   0,  Pathfinder.d2r(0)),
     };
@@ -40,11 +41,11 @@ public class AutoEventCollectSteak extends AutoEvent {
     public AutoEventCollectSteak(double intkDuration_s_in) {
         intkDuration_s = intkDuration_s_in;
         idx=0;
-        driveForward=new PathPlannerAutoEvent[3];
+        driveForward=new PathPlannerAutoEvent[2];
         driveForward[0]=new PathPlannerAutoEvent(waypoints_ft_pt1, true);
         driveForward[1]=new PathPlannerAutoEvent(waypoints_ft_pt2, true);
-        driveForward[2]=new PathPlannerAutoEvent(waypoints_ft_pt3, false,12,6);
-        len=2;
+        //driveForward[2]=new PathPlannerAutoEvent(waypoints_ft_pt3, false,12,6);
+        len=1;
         
     }
 
