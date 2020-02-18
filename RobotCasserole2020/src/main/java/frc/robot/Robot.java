@@ -229,6 +229,7 @@ public class Robot extends TimedRobot {
       auto.sampleDashboardSelector();
 
       ctrlPanel.update();
+      ctrlPanelManipulator.update();
       climber.update();
 
       supperstructure.setClearJamDesired(false);

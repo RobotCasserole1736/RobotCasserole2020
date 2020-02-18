@@ -21,7 +21,7 @@ public class ControlPanelManipulator {
         return instance;
     }
 
-    boolean rotationComplete = false;
+    boolean rotationComplete = true;
     double desiredRotation_deg = 0.0;
     CANSparkMax ControlPanelMotor;
 
@@ -40,15 +40,15 @@ public class ControlPanelManipulator {
 
 
 
-
+// 88% speed should be good
 
 
     private ControlPanelManipulator(){
-        kP = new Calibration("Control Panel P Value", 0);
+        kP = new Calibration("Control Panel P Value", 0.1);
         kI = new Calibration("Control Panel I Value", 0);
         kD = new Calibration("Control Panel D Value", 0);
-        kFF = new Calibration("Control Panel F Value", 0);
-        ErrorLimit = new Calibration("Control Panel Maximum Error",45);
+        kFF = new Calibration("Control Panel F Value", 0.0);
+        ErrorLimit = new Calibration("Control Panel Maximum Error",10);
         if(Robot.isReal()){
             ControlPanelMotor= new CANSparkMax(RobotConstants.CONTROL_PANEL_MANIPULATOR_CAN_ID, MotorType.kBrushless);
             ControlPanelMotor.restoreFactoryDefaults();
@@ -58,7 +58,9 @@ public class ControlPanelManipulator {
             controlPanelPID = new CANPIDController(ControlPanelMotor);
             ControlPanelMotor.getEncoder().setPositionConversionFactor(RobotConstants.CONTROL_PANEL_MANIPULATOR_RATIO);
             updateGains(true);
+            ControlPanelMotor.setClosedLoopRampRate(0);
             ControlPanelMotor.burnFlash();
+            desiredRotation_deg = ControlPanelMotor.getEncoder().getPosition();
         }
         ControlPanelDesiredAngleSignal = new Signal("Control Panel Desired Angle","deg");
 
@@ -71,11 +73,12 @@ public class ControlPanelManipulator {
             sampleSensors();
             if(Math.abs(ControlPanelMotor.getEncoder().getPosition()-desiredRotation_deg)<ErrorLimit.get()){
                 rotationComplete = true;
+                ControlPanelMotor.setClosedLoopRampRate(0);
             }
             if(!rotationComplete){
                 controlPanelPID.setReference(desiredRotation_deg, ControlType.kPosition);
             }else{
-                controlPanelPID.setReference(0, ControlType.kVelocity);
+                controlPanelPID.setReference(ControlPanelMotor.getEncoder().getPosition(),ControlType.kPosition);
             }
             ControlPanelMotorCurrentSignal.addSample(sampleTimeMs, ControlPanelMotor.getOutputCurrent());
             ControlPanelActualAngleSignal.addSample(sampleTimeMs, ControlPanelMotor.getEncoder().getPosition());
@@ -109,8 +112,19 @@ public class ControlPanelManipulator {
     }
 
     public void sendRotationCommand(double desRotation_deg_in){
+        if(Robot.isReal()){
+            ControlPanelMotor.setClosedLoopRampRate(0.5);
+        }
         rotationComplete = false;
         desiredRotation_deg += desRotation_deg_in; 
+    }
+
+    public void resetPos(){
+        if(Robot.isReal()){
+            desiredRotation_deg=ControlPanelMotor.getEncoder().getPosition();
+        }else{
+            desiredRotation_deg=0;
+        }
     }
 
     public boolean isRotationCompleted(){
@@ -118,7 +132,11 @@ public class ControlPanelManipulator {
     }
 
     public void stopRotation(){
-        desiredRotation_deg=ControlPanelMotor.getEncoder().getPosition();
+        if(Robot.isReal()){
+            desiredRotation_deg=ControlPanelMotor.getEncoder().getPosition();
+        }else{
+            desiredRotation_deg=0;
+        }
     }
 
 
