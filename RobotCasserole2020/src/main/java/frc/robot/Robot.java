@@ -463,7 +463,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    CasseroleDriverView.setDialValue("Robot Angle (degrees)", robotTilt.getRobotAngle());
+    CasseroleDriverView.setDialValue("Robot Angle (deg)", robotTilt.getRobotAngle());
     CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible()?cam.getTgtGeneralAngle():-50);
     CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());

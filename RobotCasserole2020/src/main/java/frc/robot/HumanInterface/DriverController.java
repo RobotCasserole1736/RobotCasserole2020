@@ -81,12 +81,11 @@ public class DriverController {
 
         reverseModeCmd = driverController.getBumper(Hand.kLeft);
         fwdRevCmd =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.15);
-        rotCmd =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 5.0, 0.15);
+        rotCmd =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 6.5, 0.10);
 
         //Flips which side is the front and back in regards to driving
         if(reverseModeCmd){
             fwdRevCmd *= -1.0;
-            rotCmd *= -1.0;
         }
         
         autoAlignCmd = driverController.getXButton();
