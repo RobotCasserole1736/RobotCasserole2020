@@ -371,16 +371,14 @@ public class Robot extends TimedRobot {
       thbbtbbtbbtbbt.update();
       ctrlPanelManipulator.update();
 
-      auto.sampleOperatorCommands();
-      auto.update();
-
       supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
       supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
       supperstructure.setEstopDesired(false); //TODO
       supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
       supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
 
-
+      auto.sampleOperatorCommands();
+      auto.update();
 
       if(auto.isActive()){
         //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
@@ -439,7 +437,8 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
     CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
     CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
-    CasseroleDriverView.newDial("Robot Angle (degrees)", -180, 180, 45, -10, 10);
+    CasseroleDriverView.newDial("Robot Angle (deg)", -180, 180, 45, -10, 10);
+    CasseroleDriverView.newDial("Vision Tgt Angle (deg)", -30, 30, 5, -2.5, 2.5);
     CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
@@ -462,7 +461,8 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    CasseroleDriverView.setDialValue("Robot Angle (degrees)", robotTilt.getRobotAngle());
+    CasseroleDriverView.setDialValue("Robot Angle (deg)", robotTilt.getRobotAngle());
+    CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible()?-1.0*cam.getTgtGeneralAngle():-50);
     CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
