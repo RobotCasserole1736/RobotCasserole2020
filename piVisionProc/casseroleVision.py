@@ -325,8 +325,8 @@ def setupPhotos():
         print("The Roborio decided to Exist")
         PATH=os.getcwd()
         if(os.path.isdir(PATH+"//data")):
+            os.chdir(PATH+"//data")
             if not os.path.exists(MATCHNUM):
-                os.chdir(PATH+"//data")
                 os.mkdir(MATCHNUM)
                 os.chdir(PATH+"//data//"+MATCHNUM)
         else:
@@ -405,10 +405,8 @@ if __name__ == "__main__":
         ntTable.putNumber("framerate_fps", 1.0/(capture_time - prev_cap_time))
         time.sleep(0)
         photocounter+=1
-        print(ONMATCH)
         if(photocounter%400==0 and ONMATCH is None):
             print("Checking for Photos")
             setupPhotos()
-            photoCheck=False
 
 

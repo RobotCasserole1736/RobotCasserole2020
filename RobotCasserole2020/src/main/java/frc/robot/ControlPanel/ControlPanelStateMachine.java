@@ -74,14 +74,16 @@ public class ControlPanelStateMachine{
         prevGoToColorState=rotateToSpecificColorActivated;
 
         if(degreesToRotateThreeToFive != 0 && degreesToRotateColor == 0){
+            ControlPanelManipulator.getInstance().resetPos();
             ControlPanelManipulator.getInstance().sendRotationCommand(degreesToRotateThreeToFive);
         }else if(degreesToRotateColor != 0 && degreesToRotateThreeToFive == 0){
+            ControlPanelManipulator.getInstance().resetPos();
             ControlPanelManipulator.getInstance().sendRotationCommand(degreesToRotateColor);
         }else{
+            if(!rotate3to5Activated && !rotateToSpecificColorActivated){
+                ControlPanelManipulator.getInstance().resetPos();
+            }
             ControlPanelManipulator.getInstance().sendRotationCommand(0);
-        }
-        if(!rotateToSpecificColorActivated && !rotate3to5Activated){
-            ControlPanelManipulator.getInstance().stopRotation();
         }
 
         degreesToRotateStaticSig.addSample(sampleTimeMS, degreesToRotateThreeToFive);

@@ -116,7 +116,7 @@ public class RobotConstants {
     static public final double SHOOTER_GEAR_RATIO = 1.0;
     static public final double DRIVETRAIN_GEAR_RATIO = 1.0/10.0;
     static public final double CONVEYOR_BELT_RATIO = 1.0/1.0;
-    static public final double CONTROL_PANEL_MANIPULATOR_RATIO = (1.0/20.0)*(1.0)*(16.0); //Gear Ratio of Gear box * Radius of Wheel in inches(circumference/(2*pi)) * Radius of Control Panel in inches
+    static public final double CONTROL_PANEL_MANIPULATOR_RATIO = (1.0/9.0)*(1.0)*(16.0); //Gear Ratio of Gear box * Radius of Wheel in inches(circumference/(2*pi)) * Radius of Control Panel in inches
     
 
 }
