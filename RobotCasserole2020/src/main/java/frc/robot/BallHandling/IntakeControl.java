@@ -26,6 +26,7 @@ public class IntakeControl {
 
 	Calibration intakeSpeedCmd;
 	Calibration ejectSpeedCmd;
+	Calibration intakeSlowCmd;
 
 	IntakePosition posState;
 	IntakeSpeed spdState;
@@ -61,7 +62,8 @@ public class IntakeControl {
     public enum IntakeSpeed {
         Eject(-1),   
 		Stop(0),
-		Intake(1);
+		Intake(1),
+		IntakeButSlowly(2);
 
         public final int value;
         private IntakeSpeed(int value) {
@@ -87,6 +89,7 @@ public class IntakeControl {
 
 		
 		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.5);
+		intakeSlowCmd = new Calibration("Intake Slow Speed Cmd", 0.1);
 		ejectSpeedCmd = new Calibration("Eject Speed Cmd", -0.5); 
 
 		posState = IntakePosition.Retracted; 
@@ -123,6 +126,9 @@ public class IntakeControl {
 			case Intake:
 				intkCommand = intakeSpeedCmd.get();
 			break; 
+			case IntakeButSlowly:
+				intkCommand = intakeSlowCmd.get();
+			break;
 		}
 
 		double sampleTimeMs = (LoopTiming.getInstance().getLoopStartTimeSec() * 1000);

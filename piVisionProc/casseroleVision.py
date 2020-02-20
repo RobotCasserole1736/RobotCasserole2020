@@ -405,8 +405,8 @@ if __name__ == "__main__":
         ntTable.putNumber("framerate_fps", 1.0/(capture_time - prev_cap_time))
         time.sleep(0)
         photocounter+=1
-        if(photocounter%400==0 and ONMATCH is None):
-            print("Checking for Photos")
-            setupPhotos()
+        # if(photocounter%400==0 and ONMATCH is None):
+        #     print("Checking for Photos")
+            #setupPhotos()
 
 

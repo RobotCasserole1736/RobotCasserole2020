@@ -14,6 +14,7 @@ import frc.robot.Autonomous.Events.AutoEventCitrusSteakB;
 import frc.robot.Autonomous.Events.AutoEventCollectSteak;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveToShootFromSteakCollect;
+import frc.robot.Autonomous.Events.AutoEventNoStealSteakA;
 import frc.robot.Autonomous.Events.AutoEventStopRobot;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
@@ -62,8 +63,9 @@ public class Autonomous {
         Steak(5),
         OurSideSteak(6),
         CitrusSteak(7),
-        VisionAlignOnly(8),
-        SWTest(9),
+        NoStealSteak(8),
+        VisionAlignOnly(9),
+        SWTest(10),
         Inactive(-1); 
 
         public final int value;
@@ -98,6 +100,7 @@ public class Autonomous {
                                                               "Steak",
                                                               "Our Side Steak",
                                                               "Citrus Steak",
+                                                              "No Steal Steak",
                                                               "SW TEAM TEST ONLY"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
@@ -147,7 +150,9 @@ public class Autonomous {
 			modeCmd = AutoMode.OurSideSteak;
 		} else if (actionStr.compareTo(ACTION_MODES[7]) == 0) { 
 			modeCmd = AutoMode.CitrusSteak;
-		} else { 
+        } else if (actionStr.compareTo(ACTION_MODES[8]) == 0){
+            modeCmd = AutoMode.NoStealSteak;
+        }else { 
 			modeCmd = AutoMode.Inactive;
         }
 
@@ -239,6 +244,9 @@ public class Autonomous {
                     case CitrusSteak:
                         Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     break;
+                    case NoStealSteak:
+                        Drivetrain.getInstance().setInitialPose(-10, 11.5, 90);
+                    break;
                 }
             }
 
@@ -326,6 +334,12 @@ public class Autonomous {
                     seq.addEvent(new AutoEventTurn(120));
                     seq.addEvent(new AutoEventAltSteakDriveFwdPtThree(3.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventShoot(5.0,5));
+                break;
+                case NoStealSteak:
+                    Drivetrain.getInstance().setInitialPose(-10, 11.5, 90);
+                    seq.addEvent(new AutoEventNoStealSteakA(4.0));
+                    seq.addEvent(new AutoEventTurn(50));
                     seq.addEvent(new AutoEventShoot(5.0,5));
                 break;
             }

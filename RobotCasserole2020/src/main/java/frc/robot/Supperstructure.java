@@ -113,7 +113,7 @@ public class Supperstructure {
             break;
             case Shoot:
                 intk.setPosMode(IntakePosition.Extended);
-                intk.setSpeedMode(IntakeSpeed.Intake);
+                intk.setSpeedMode(IntakeSpeed.IntakeButSlowly);
                 hopp.setOpMode(HopperOpMode.Injest);
                 shoot.setRun(ShooterRunCommand.ShotFar);
                 conv.setOpMode(ConveyorOpMode.InjectIntoShooter);
