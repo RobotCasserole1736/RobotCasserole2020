@@ -282,6 +282,16 @@ public class RealDrivetrain extends Drivetrain {
         opModeCmd = DrivetrainOpMode.kOpenLoop;
         fwdRevCmd = forwardReverseCmd;
         rotCmd = rotationCmd;
+
+        //Aden likes cheesy drive, so we do this thing.
+        if(Math.abs(fwdRevCmd) < 0.1){
+            //coutner rotate allowed
+            fwdRevCmd = 0;
+            rotCmd = rotationCmd;
+        } else {
+            fwdRevCmd = forwardReverseCmd;
+            rotCmd = Math.abs(forwardReverseCmd) * rotationCmd * 1.0; //Modifiy scalar for sensitivity
+        }
     }
 
     @Override
