@@ -57,9 +57,13 @@ public class Robot extends TimedRobot {
   //Top level telemetry signals
   Signal rioDSSampLoadSig;
   Signal rioDSLogQueueLenSig;
-  Signal rioCurrDrawLoadSig;
-  Signal rioBattVoltLoadSig;
+  Signal rioBattCurrDrawSig;
+  Signal rioBattVoltSig;
+  Signal rioSupplyVoltSig;
   Signal rioIsBrownoutSig;
+  Signal rio6VBusVoltageSig;
+  Signal rio5VBusVoltageSig;
+  Signal rio3V3BusVoltageSig;
   Signal rioCANBusUsagePctSig;
   Signal pdpUpperBoardAuxCurrentSig;
   Signal pdpCoolingFansCurrentSig;
@@ -114,8 +118,12 @@ public class Robot extends TimedRobot {
 
     /* Init local telemetry signals */
     rioDSSampLoadSig = new Signal("Dataserver Stored Samples", "count"); 
-    rioCurrDrawLoadSig = new Signal("Battery Current Draw", "A");
-    rioBattVoltLoadSig = new Signal("Battery Voltage", "V");
+    rioBattCurrDrawSig = new Signal("Robot Battery Current Draw", "A");
+    rioBattVoltSig = new Signal("Robot Battery Voltage", "V");
+    rioSupplyVoltSig = new Signal("RIO Input Voltage", "V");
+    rio3V3BusVoltageSig = new Signal("RIO 3V Supply Voltage", "V");
+    rio5VBusVoltageSig = new Signal("RIO 5V Supply Voltage", "V");
+    rio6VBusVoltageSig = new Signal("RIO 6V Supply Voltage", "V");
     rioDSLogQueueLenSig = new Signal("Dataserver File Logger Queue Length", "count");
     rioIsBrownoutSig = new Signal("Robot Brownout", "bool");
     rioCANBusUsagePctSig = new Signal("Robot CAN Bus Utilization", "pct");
@@ -185,8 +193,9 @@ public class Robot extends TimedRobot {
     }
     
     rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
-    rioCurrDrawLoadSig.addSample(sampleTimeMs, pdp.getTotalCurrent());
-    rioBattVoltLoadSig.addSample(sampleTimeMs, pdp.getVoltage());  
+    rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
+    rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
+    rioSupplyVoltSig.addSample(sampleTimeMs,  RobotController.getInputVoltage());  
     rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
     rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
     rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
