@@ -10,7 +10,7 @@ import jaci.pathfinder.Waypoint;
 /**
  * go to scale on left.
  */
-public class AutoEventCollectSteak extends AutoEvent {
+public class AutoEventNoStealSteakB extends AutoEvent {
     PathPlannerAutoEvent[] driveForward;
 
     int idx;
@@ -21,31 +21,28 @@ public class AutoEventCollectSteak extends AutoEvent {
 	double intkEndTime;
 	boolean intkCompleted = true;
 
-    private final Waypoint[] waypoints_ft_pt1 = new Waypoint[] {
+    
+
+
+    private final Waypoint[] citrus_waypoints_ft_pt0 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-3.5,   -3.1,  Pathfinder.d2r(10)),
-        //new Waypoint(-4+(-2*.241),   -3+(-2*.9702),  Pathfinder.d2r(0)),
-        new Waypoint(-10,   -9.9,  Pathfinder.d2r(-20)),
-        
+        new Waypoint(-4.6,      -6.5,  Pathfinder.d2r(0)),
     };
 
-    // private final Waypoint[] waypoints_ft_pt2=new Waypoint[]{
-    //     new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        
-    // };
-
-    private final Waypoint[] waypoints_ft_pt2 = new Waypoint[] {
+    private final Waypoint[] citrus_waypoints_ft_pt1 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(12,   0,  Pathfinder.d2r(0)),
+        new Waypoint(9.6,   1,  Pathfinder.d2r(-10)),
     };
 
-    public AutoEventCollectSteak(double intkDuration_s_in) {
+
+    public AutoEventNoStealSteakB(double intkDuration_s_in) {
         intkDuration_s = intkDuration_s_in;
         idx=0;
         driveForward=new PathPlannerAutoEvent[2];
-        driveForward[0]=new PathPlannerAutoEvent(waypoints_ft_pt1, true,12,6);
-        driveForward[1]=new PathPlannerAutoEvent(waypoints_ft_pt2, false,12,6);
+        driveForward[0] = new PathPlannerAutoEvent(citrus_waypoints_ft_pt0, true,12,6);
+        driveForward[1] = new PathPlannerAutoEvent(citrus_waypoints_ft_pt1, false,12,6);
         len=1;
+    
         
     }
 
@@ -91,7 +88,7 @@ public class AutoEventCollectSteak extends AutoEvent {
     }
 
     public static void main(String[] args) {
-        AutoEventCollectSteak autoEvent = new AutoEventCollectSteak(4.0); //time is for intk
+        AutoEventNoStealSteakB autoEvent = new AutoEventNoStealSteakB(4.0); //time is for intk
 		//TODO
 		System.out.println("Done");
     }

@@ -15,6 +15,7 @@ import frc.robot.Autonomous.Events.AutoEventCollectSteak;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveToShootFromSteakCollect;
 import frc.robot.Autonomous.Events.AutoEventNoStealSteakA;
+import frc.robot.Autonomous.Events.AutoEventNoStealSteakB;
 import frc.robot.Autonomous.Events.AutoEventStopRobot;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
@@ -308,8 +309,9 @@ public class Autonomous {
                 case CitrusSteak:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventCitrusSteakA(4.0));
-                    seq.addEvent(new AutoEventTurn(90));
+                    seq.addEvent(new AutoEventTurn(114));
                     seq.addEvent(new AutoEventShoot(3.0,5));
+                    seq.addEvent(new AutoEventTurn(-24));
                     seq.addEvent(new AutoEventCitrusSteakB(4.0));
                     seq.addEvent(new AutoEventShoot(3.0,5));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
@@ -341,6 +343,8 @@ public class Autonomous {
                     seq.addEvent(new AutoEventNoStealSteakA(4.0));
                     seq.addEvent(new AutoEventTurn(50));
                     seq.addEvent(new AutoEventShoot(5.0,5));
+                    seq.addEvent(new AutoEventNoStealSteakB(4.0));
+                    seq.addEvent(new AutoEventShoot(3.0,3));
                 break;
             }
             modeCmdPrev = modeCmd;
