@@ -41,6 +41,7 @@ public abstract class Drivetrain {
     public abstract void setInitialPose(double x_ft, double y_ft, double theta_ft);
     public abstract void setTurnToAngleCmd(double angle_cmd);
     public abstract double getTurnToAngleErrDeg();
+    public abstract void calGyro();
     
     public double WHEEL_RPM_TO_FPS(double rpm_in){
         return rpm_in / 60 * 2 * Math.PI * WHEEL_ROLLING_RADIUS_FT;

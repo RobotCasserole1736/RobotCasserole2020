@@ -28,6 +28,7 @@ import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
 import frc.robot.ControlPanel.ControlPanelColor;
 import frc.robot.ControlPanel.ControlPanelManipulator;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
+import frc.robot.Drivetrain.CasseroleGyro;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
@@ -100,7 +101,7 @@ public class Robot extends TimedRobot {
 
 
   int slowLoopCounter = 0;
-  final int SLOW_LOOP_RATE = 5;
+  final int SLOW_LOOP_RATE = 10; //200ms loop
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -240,6 +241,10 @@ public class Robot extends TimedRobot {
         robotTilt.update();
         climber.update();
 
+        if(RobotController.getUserButton() == true){
+          drivetrain.calGyro();
+        }
+
       }
 
       cam.update();
@@ -287,7 +292,6 @@ public class Robot extends TimedRobot {
   
       slowLoopCounter++;
       if(slowLoopCounter%SLOW_LOOP_RATE == 0){
-
         thbbtbbtbbtbbt.update();
         eyeOfVeganSauron.setLEDRingState(true);
         ledUpdater();
@@ -336,29 +340,19 @@ public class Robot extends TimedRobot {
       DriverController.getInstance().update();
       OperatorController.getInstance().update();
 
-      //Based on operator commands, change which photon source we use.
-      //Photon Cannon can be activated by driver or operator, but only if
-      // we're not attempting to vision align.
-      //if(
-      //    (
-      //      OperatorController.getInstance().getPhotonCannonCmd() || 
-      //      DriverController.getInstance().getPhotonCannonInput()
-      //    ) 
-      //    && 
-      //    !(DriverController.getInstance().getAutoAlignAndShootCmd() || 
-      //      DriverController.getInstance().getAutoAlignCmd() ) 
-      //  ){
-      //  photonCannon.setPhotonCannonState(true);
-      //  eyeOfVeganSauron.setLEDRingState(false);
-      //} else {
-      //  photonCannon.setPhotonCannonState(false);
-      //  eyeOfVeganSauron.setLEDRingState(true);
-      //}
-      //photonCannon.update();
-      cam.update();
+      slowLoopCounter++;
+      if(slowLoopCounter%SLOW_LOOP_RATE == 0){
+        thbbtbbtbbtbbt.update();
+        ctrlPanel.update();
+        ctrlPanelManipulator.update();
+        ledController.update();
+        robotTilt.update();
+        pfb.update();
+        ledUpdater();
+        telemetryUpdate();
+      }
 
-      thbbtbbtbbtbbt.update();
-      ctrlPanelManipulator.update();
+      cam.update();
 
       supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
       supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
@@ -386,24 +380,14 @@ public class Robot extends TimedRobot {
           drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
                                     DriverController.getInstance().getRotateCmd());
         }
-
-
       }
 
       drivetrain.update();
       supperstructure.update();
   
       climber.update();
-      ctrlPanel.update();
-      ledController.update();
-
-      robotTilt.update();
+      
       updateDriverView();
-      telemetryUpdate();
-    
-      pfb.update();
-
-      ledUpdater();
 
       // put all teleop periodic code before this 
       loopTiming.markLoopEnd();

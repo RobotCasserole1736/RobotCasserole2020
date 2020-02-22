@@ -166,6 +166,11 @@ public class RealDrivetrain extends Drivetrain {
 
     }
 
+    @Override
+    public void calGyro(){
+        dtGyro.calibrate();
+    }
+
     public void sampleSensors() {
 
         dtGyro.update();

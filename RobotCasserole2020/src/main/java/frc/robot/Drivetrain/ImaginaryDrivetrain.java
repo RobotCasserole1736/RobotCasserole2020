@@ -170,7 +170,10 @@ public class ImaginaryDrivetrain extends Drivetrain{
         useHeadingCommand = true;
     }
 
-    
+    @Override
+    public void calGyro() {
+        return;
+    }
     
 
     @Override
