@@ -275,7 +275,7 @@ public class Autonomous {
                     //seq.addEvent(new AutoEventBackUpThreeFeet());
 
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShootClose(delayTime_s, 0));
+                    seq.addEvent(new AutoEventShootClose(15.0, 5));
 
                 break;
 
