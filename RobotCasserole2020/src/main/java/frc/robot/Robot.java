@@ -372,11 +372,9 @@ public class Robot extends TimedRobot {
         supperstructure.setShootFarDesired(OperatorController.getInstance().getShootCmd());
 
         if(DriverController.getInstance().getSnailModeDesired()){
-          //Closed-loop, fine movement mode
-          double spd = snailModeLimitRPM.get();
-          double leftCmdRPM  = spd*(DriverController.getInstance().getFwdRevCmd() - DriverController.getInstance().getRotateCmd());
-          double rightCmdRPM = spd*(DriverController.getInstance().getFwdRevCmd() + DriverController.getInstance().getRotateCmd());
-          drivetrain.setClosedLoopSpeedCmd(leftCmdRPM, rightCmdRPM);
+          //fine movement mode
+          double turnVal = DriverController.getInstance().getRotateCmd();
+          drivetrain.setOpenLoopCmd(0,turnVal*turnVal);
         } else {
           //Open loop control of motors
           drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
