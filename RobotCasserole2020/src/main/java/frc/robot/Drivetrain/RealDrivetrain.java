@@ -141,7 +141,7 @@ public class RealDrivetrain extends Drivetrain {
         kI = new Calibration("Drivetrain I Value", 0);
         kD = new Calibration("Drivetrain D Value", 0.0096);
         kFF = new Calibration("Drivetrain F Value", 0.00195);
-        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 1.0);
+        kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 2.0);
         currentLimit = new Calibration("Drivetrain Per-Motor Smart Current Limit" , 80, 0, 200);
         turnToAnglekP= new Calibration("Drivetrain Turn To Angle kP", 3.0);
         turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0.1);
