@@ -73,6 +73,7 @@ class VisionProcessor():
     ###################
     def init(self):
         self.debug = True
+        self.innerAim=False
         self.counter=0
         self.stableidx=0
         self.stableList=[None,None,None,None,None]
@@ -99,11 +100,17 @@ class VisionProcessor():
         #     (9.8051, -17, 0)
         #     ], dtype=np.float64)
 
-        self.ObjPoints = np.array([
+        self.ObjPointsInner = np.array([
             (-19.625, 0, 24.25),
             (19.625, 0, 24.25),
             (9.8198, -17, 24.25),
             (-9.8198, -17, 24.25)
+            ], dtype=np.float64)
+        self.ObjPointsOuter = np.array([
+            (-19.625, 0, 0),
+            (19.625, 0, 0),
+            (9.8198, -17, 0),
+            (-9.8198, -17, 0)
             ], dtype=np.float64)
         self.stableTarget=False
 
@@ -129,7 +136,8 @@ class VisionProcessor():
     # Main Process
     ###################
     def process(self, inFrame):
-        
+        if(self.stableidx%20==0):
+            self.innerAIm=ntTable.getEntry("InnerAim").value
         self.inimg = inFrame
         self.LightFilter()
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
@@ -141,7 +149,7 @@ class VisionProcessor():
             print(self.outputStr)
         if ntTable.getEntry("Fuzzy Pickles").value:
             #cv2.imwrite("Image"+str(self.counter), self.inimg)
-            ntTable.putNumber("Fuzzy Pickles", False)
+            ntTable.putBoolean("Fuzzy Pickles", False)
             self.counter+=1
             print("Photo Taken")
         self.stableidx+=1
@@ -214,7 +222,10 @@ class VisionProcessor():
             ImgPoints = np.array([polygon[CornerIDs[0]], polygon[CornerIDs[1]], polygon[CornerIDs[2]], polygon[CornerIDs[3]]], dtype="double")
             #ImgPoints = np.array([SC[0], SC[1], SC[2], SC[3]], dtype="double")
             #Actual Pnp algorithm, takes the points we calculated along with predefined points of target
-            _, rvec, tvec = cv2.solvePnP(self.ObjPoints, ImgPoints, self.camMatrix, self.distCoeffs)
+            if(self.innerAim):
+                _, rvec, tvec = cv2.solvePnP(self.ObjPointsInner, ImgPoints, self.camMatrix, self.distCoeffs)
+            else:
+                _, rvec, tvec = cv2.solvePnP(self.ObjPointsOuter, ImgPoints, self.camMatrix, self.distCoeffs)
 
 
             #othermatrix
@@ -341,6 +352,7 @@ if __name__ == "__main__":
     global ONMATCH
     img = None
     photocounter=0
+    
 
     print("Casserole Vision Processing starting")
     print("OpenCV Version: {}".format(cv2.__version__))
@@ -372,6 +384,7 @@ if __name__ == "__main__":
         server.socket.close()
 
     ntTable = NetworkTables.getTable("VisionData")
+    ntTable.putBoolean("InnerAim", True)
 
     #setupPhotos()
     photoCheck=True

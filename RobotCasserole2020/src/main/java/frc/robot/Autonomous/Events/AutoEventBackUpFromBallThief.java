@@ -16,21 +16,25 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
     //PrepToShoot Stuff
     double prepSpeed;
 	double prepDuration_s;
-	double prepEndTime;
-	boolean prepCompleted = true;
+    double prepEndTime;
+    double intkDuration_s;
+	double intkEndTime;
+    boolean prepCompleted = true;
+    boolean intkCompleted = true;
 
     //Waypoints always start at (0,0), and are referenced relative to the robot's
     // position and pose angle whenever the event starts running. Units must be inches.
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-9.0, 1,  Pathfinder.d2r(-32))
+        new Waypoint(-4.5, 1,  Pathfinder.d2r(-32))
     };
 
-    public AutoEventBackUpFromBallThief(double prepDuration_s_in) {
+    public AutoEventBackUpFromBallThief(double prepDuration_s_in, double intkDuration_s_in) {
         driveBackward = new PathPlannerAutoEvent(waypoints_ft, true);
 
         prepDuration_s = prepDuration_s_in;
+        intkDuration_s = intkDuration_s_in;
     }
 
     @Override
@@ -38,8 +42,11 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
         driveBackward.userStart();
 
         prepEndTime = Timer.getFPGATimestamp() + prepDuration_s;
+        intkEndTime = Timer.getFPGATimestamp() + intkDuration_s;
         prepCompleted = false;
-		Supperstructure.getInstance().setPrepToShootDesired(true);
+        intkCompleted = false;
+        Supperstructure.getInstance().setPrepToShootDesired(true);
+        Supperstructure.getInstance().setIntakeDesired(true);
     }
 
     @Override
@@ -47,12 +54,18 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
         driveBackward.userUpdate();
 
         prepCompleted = (Timer.getFPGATimestamp() > prepEndTime);
-		if (prepCompleted){
-			Supperstructure.getInstance().setPrepToShootDesired(false);
-		} else {
-            Supperstructure.getInstance().setPrepToShootDesired(true);
-            Supperstructure.getInstance().setIntakeDesired(false); //Because intake overrides prep to shoot
-		}
+        intkCompleted = (Timer.getFPGATimestamp() > intkEndTime);
+        if(intkCompleted){
+            Supperstructure.getInstance().setIntakeDesired(false);
+            if (prepCompleted){
+                Supperstructure.getInstance().setPrepToShootDesired(false);
+            } else {
+                Supperstructure.getInstance().setPrepToShootDesired(true);
+                Supperstructure.getInstance().setIntakeDesired(false); //Because intake overrides prep to shoot
+            }
+        }else{
+            Supperstructure.getInstance().setIntakeDesired(true);
+        }
     }
 
     @Override
@@ -74,7 +87,7 @@ public class AutoEventBackUpFromBallThief extends AutoEvent {
     
     public static void main(String[] args) {
 		System.out.println("Starting path planner calculation...");
-        AutoEventBackUpFromBallThief autoEvent = new AutoEventBackUpFromBallThief(4.0); //time is for prep to shoot
+        AutoEventBackUpFromBallThief autoEvent = new AutoEventBackUpFromBallThief(4.0,1.0); //time is for prep to shoot
 		//TODO
 		System.out.println("Done");
     }
