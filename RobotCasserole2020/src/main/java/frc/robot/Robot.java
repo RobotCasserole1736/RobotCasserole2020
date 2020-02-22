@@ -255,7 +255,8 @@ public class Robot extends TimedRobot {
       supperstructure.setEstopDesired(false);
       supperstructure.setIntakeDesired(false);
       supperstructure.setPrepToShootDesired(false);
-      supperstructure.setShootDesired(false);
+      supperstructure.setShootFarDesired(false);
+      supperstructure.setShootCloseDesired(false);
       supperstructure.update();
 
       drivetrain.setOpenLoopCmd(0, 0);
@@ -368,7 +369,7 @@ public class Robot extends TimedRobot {
         //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
       } else {
         //Driver & operator control in manual
-        supperstructure.setShootDesired(OperatorController.getInstance().getShootCmd());
+        supperstructure.setShootFarDesired(OperatorController.getInstance().getShootCmd());
 
         if(DriverController.getInstance().getSnailModeDesired()){
           //Closed-loop, fine movement mode

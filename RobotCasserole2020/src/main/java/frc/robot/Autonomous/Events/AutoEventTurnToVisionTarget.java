@@ -5,7 +5,6 @@ import frc.lib.AutoSequencer.AutoEvent;
 import frc.robot.Supperstructure;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.VisionProc.CasseroleVision;
-import frc.robot.VisionProc.VisionCamera;
 
 public class AutoEventTurnToVisionTarget extends AutoEvent {
     
@@ -24,7 +23,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
 
     private boolean stableTargetSeen = false;
 
-    private VisionCamera cam;
+    private CasseroleVision cam;
 
     double startT = 0;
     double startX = 0;

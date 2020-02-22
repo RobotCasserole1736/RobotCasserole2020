@@ -18,7 +18,6 @@ import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
-import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 
 /**
  * Add your docs here.
@@ -31,8 +30,6 @@ public class RealShooterControl extends ShooterControl {
     ShooterCtrlMode currentStateShooter;
     ShooterCtrlMode previousStateShooter;
     double shooterActualSpeed_rpm; //Arbitrated shooter wheel speed
-    double shooterMotor1Speed_rpm; //Motor 1 measured speed
-    double shooterMotor2Speed_rpm; //Motor 2 measured speed - Ideally this should be same as 1, but maybe not if faulted
     double shooterAtSteadyStateDebounceCounter;
     double shooterHoldCmdDCPct = 0;
 
@@ -62,16 +59,11 @@ public class RealShooterControl extends ShooterControl {
 
     boolean calsUpdated;
 
-    Signal motor1SpeedSig;
-    Signal motor2SpeedSig;
     Signal isUnderLoadSig;
     Signal shotCountSig;
     Signal shooterMotor1CurrentSig;
     Signal shooterMotor2CurrentSig;
     Signal shooterMotor1Percent;
-    Signal shooterMotor2Percent;
-    Signal shooterMotor1InVoltage;
-    Signal shooterMotor2InVoltage;
 
     CANSparkMax shooterMotor1; //Master
     CANSparkMax shooterMotor2; //Unpaid Intern
@@ -107,8 +99,7 @@ public class RealShooterControl extends ShooterControl {
         shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 30);
 
         shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3650);
-        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 3650);
-
+        shooterSendEmVoltage   = new Calibration("Shooter Far Shot Setpoint V", 12.0, 0.0, 14.0);
 
         holdToShootErrThreshRPM = new Calibration("Shooter Hold To Shoot Error Thresh RPM", 75);
         shootToSpoolupThreshRPM = new Calibration("Shooter Shoot To Spoolup Error Thresh RPM", 400);
@@ -127,16 +118,11 @@ public class RealShooterControl extends ShooterControl {
         loadedDebounceRPMCal = new Calibration("Shooter Loaded RPM", shooterRPMSetpointFar.get()-100);
 
         //Data Logging
-        motor1SpeedSig = new Signal("Shooter Motor 1 Speed", "RPM");
-        motor2SpeedSig = new Signal("Shooter Motor 2 Speed", "RPM");
         shooterMotor1Percent = new Signal("Shooter Motor 1 Percent", "pct");
-        shooterMotor2Percent = new Signal("Shooter Motor 2 Percent", "pct");
         isUnderLoadSig = new Signal("Shooter Under Load","bool");
         shotCountSig = new Signal("Shots Taken","balls");
         shooterMotor1CurrentSig = new Signal("Shooter Motor 1 Current","A");
         shooterMotor2CurrentSig = new Signal("Shooter Motor 2 Current","A");
-        shooterMotor1InVoltage = new Signal("Shooter Motor 1 in Voltage", "V");
-        shooterMotor2InVoltage = new Signal("Shooter Motor 2 in Voltage", "V");;
 
         commonInit();
 
@@ -176,23 +162,19 @@ public class RealShooterControl extends ShooterControl {
         
         //Calc desired shooter speed
         
-        if(run == ShooterRunCommand.ShotClose) {
-            shooterSetpointRPM = shooterRPMSetpointClose.get();
-        } else if (run == ShooterRunCommand.ShotFar) {
-            shooterSetpointRPM = shooterRPMSetpointFar.get();
-        } else if (run == ShooterRunCommand.Eject){
+        if (runCommand == ShooterRunCommand.Eject){
             shooterSetpointRPM = EjectSpeed.get();
-        }else if (run == ShooterRunCommand.Stop){
+        }else if (runCommand == ShooterRunCommand.Stop){
             shooterSetpointRPM = 0;
+        }else { //For close and far shots, use the closed loop calibration
+            shooterSetpointRPM = shooterRPMSetpointFar.get();
         }
 
-        //Calcualte actual speed from both motors for redundancy
-        shooterMotor1Speed_rpm = shooterMotor1.getEncoder().getVelocity();
-        shooterMotor2Speed_rpm = shooterMotor2.getEncoder().getVelocity();
-        shooterActualSpeed_rpm = Math.max(shooterMotor1Speed_rpm, shooterMotor2Speed_rpm); //Arbitrarte actual speed as max of both motors
+        //Get actual speed
+        shooterActualSpeed_rpm = shooterMotor1.getEncoder().getVelocity();
 
         //Switch Control Mode
-        if(run == ShooterRunCommand.Stop){
+        if(runCommand == ShooterRunCommand.Stop){
             currentStateShooter = ShooterCtrlMode.Stop;
             shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
             shooterSpeedErrorPrev = 0;
@@ -224,19 +206,29 @@ public class RealShooterControl extends ShooterControl {
                 }
             } else if(currentStateShooter == ShooterCtrlMode.HoldForShot) {
                 if(shooterSpeedError > holdToShootErrThreshRPM.get()){
-                    currentStateShooter = ShooterCtrlMode.Shooting;
+                    if(runCommand == ShooterRunCommand.ShotClose){
+                        //For close shots, we just blast the motor at full power and send'em
+                        currentStateShooter = ShooterCtrlMode.JustGonnaSendEm;
+                    } else {
+                        //Far shot mode - Only send a single ball through at a time, then closed-loop recover before next ball
+                        currentStateShooter = ShooterCtrlMode.Shooting;
+                    }
                 }
             } else if(currentStateShooter == ShooterCtrlMode.Shooting) {
+
                 if(shooterSpeedError < shootToSpoolupThreshRPM.get() && shooterSpeedErrorDeriv < 0 ){
                     currentStateShooter = ShooterCtrlMode.SpoolUp;
                 }
+
+            } else if(currentStateShooter == ShooterCtrlMode.JustGonnaSendEm) {
+                currentStateShooter = ShooterCtrlMode.JustGonnaSendEm; //Maintain this operational mode until someone commands us off.
             } else {
                 currentStateShooter = ShooterCtrlMode.Stop; //ERROR software team forgot to do a thing
             }
         }
 
         if(currentStateShooter != previousStateShooter){
-            if(currentStateShooter == ShooterCtrlMode.HoldForShot){
+            if(currentStateShooter != ShooterCtrlMode.SpoolUp){
                 shooterMotor1.setClosedLoopRampRate(0.0);
             } else {
                 shooterMotor1.setClosedLoopRampRate(0.25);
@@ -249,6 +241,8 @@ public class RealShooterControl extends ShooterControl {
             shooterPIDCtrl.setReference(shooterHoldCmdDCPct, ControlType.kDutyCycle); //A la 254 in 2017
         } else if(currentStateShooter == ShooterCtrlMode.SpoolUp){
             shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, SPOOLUP_PID_SLOT_ID);
+        } else if(currentStateShooter == ShooterCtrlMode.JustGonnaSendEm){
+            shooterPIDCtrl.setReference(shooterSendEmVoltage.get(), ControlType.kVoltage); 
         }else{
             shooterPIDCtrl.setReference(0, ControlType.kVoltage);
         }
@@ -275,19 +269,13 @@ public class RealShooterControl extends ShooterControl {
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, shooterSetpointRPM);
         rpmActualSig.addSample(sampleTimeMS, shooterActualSpeed_rpm);
-        motor1SpeedSig.addSample(sampleTimeMS, shooterMotor1Speed_rpm);
-        motor2SpeedSig.addSample(sampleTimeMS, shooterMotor2Speed_rpm);
         isUnderLoadSig.addSample(sampleTimeMS, underLoad);
         shotCountSig.addSample(sampleTimeMS, shotCount);
-        shooterStateCommandSig.addSample(sampleTimeMS, run.value);
+        shooterStateCommandSig.addSample(sampleTimeMS, runCommand.value);
         shooterControlModeSig.addSample(sampleTimeMS, currentStateShooter.value);
         shooterMotor1CurrentSig.addSample(sampleTimeMS, shooterMotor1.getOutputCurrent());
         shooterMotor2CurrentSig.addSample(sampleTimeMS, shooterMotor2.getOutputCurrent());
         shooterMotor1Percent.addSample(sampleTimeMS, shooterMotor1.getAppliedOutput());
-        shooterMotor2Percent.addSample(sampleTimeMS, shooterMotor2.getAppliedOutput());
-        shooterMotor1InVoltage.addSample(sampleTimeMS, shooterMotor1.getBusVoltage());
-        shooterMotor2InVoltage.addSample(sampleTimeMS, shooterMotor2.getBusVoltage());
-        
 
     }
 

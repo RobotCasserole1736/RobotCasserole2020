@@ -21,6 +21,7 @@ public abstract class ShooterControl {
         SpoolUp(0),   
         HoldForShot(1),
         Shooting(2),
+        JustGonnaSendEm(3),
         Stop(-1);
 
         public final int value;
@@ -32,7 +33,7 @@ public abstract class ShooterControl {
     public enum ShooterRunCommand {
         ShotFar(0),   
         ShotClose(1),
-        Eject(2),    
+        Eject(2),
         Stop(3);
 
         public final int value;
@@ -41,9 +42,10 @@ public abstract class ShooterControl {
         }
     }
 
-    ShooterRunCommand run;
+    ShooterRunCommand runCommand;
 
     Calibration shooterRPMSetpointFar;
+    Calibration shooterSendEmVoltage;
     Calibration shooterRPMSetpointClose;
 
     Signal rpmDesiredSig;
@@ -72,7 +74,7 @@ public abstract class ShooterControl {
     }
 
     public void setRun(ShooterRunCommand runCmd) {
-        run = runCmd;
+        runCommand = runCmd;
     }
 
     public abstract void update();

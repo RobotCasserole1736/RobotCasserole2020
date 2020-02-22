@@ -29,9 +29,9 @@ public class ImaginaryShooterControl extends ShooterControl {
     }
 
     public void update() {
-        if(run == ShooterRunCommand.ShotClose){
+        if(runCommand == ShooterRunCommand.ShotClose){
             des_speed_rpm = shooterRPMSetpointClose.get();
-        } else if (run == ShooterRunCommand.ShotFar){
+        } else if (runCommand == ShooterRunCommand.ShotFar){
             des_speed_rpm = shooterRPMSetpointFar.get();
         } else {
             des_speed_rpm = 0;
@@ -55,7 +55,7 @@ public class ImaginaryShooterControl extends ShooterControl {
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, des_speed_rpm);
         rpmActualSig.addSample(sampleTimeMS, speed_rpm);
-        shooterStateCommandSig.addSample(sampleTimeMS, run.value);
+        shooterStateCommandSig.addSample(sampleTimeMS, runCommand.value);
         shooterControlModeSig.addSample(sampleTimeMS, ctrlMode.value); 
     }
 

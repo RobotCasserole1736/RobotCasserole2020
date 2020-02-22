@@ -5,16 +5,16 @@ import frc.lib.AutoSequencer.AutoEvent;
 import frc.robot.Supperstructure;
 import frc.robot.ShooterControl.ShooterControl;
 
-public class AutoEventShoot extends AutoEvent {
-	
+public class AutoEventShootClose extends AutoEvent {
+
 	double speed;
 	double duration_s;
 	double endTime;
 	int ballCount;
 	int startBall;
 	boolean completed = true;
-	
-	public AutoEventShoot(double duration_s_in, int ballCount_in) {
+
+	public AutoEventShootClose(double duration_s_in, int ballCount_in) {
 		duration_s = duration_s_in;
 		ballCount=ballCount_in;
 	}
@@ -24,7 +24,7 @@ public class AutoEventShoot extends AutoEvent {
 		endTime = Timer.getFPGATimestamp() + duration_s;
 		completed = false;
 		startBall=ShooterControl.getInstance().getShotCount();
-		Supperstructure.getInstance().setShootDesired(true);
+		Supperstructure.getInstance().setShootCloseDesired(true);
 		Supperstructure.getInstance().setPrepToShootDesired(false); //because PrepToShoot overrides Shoot
 	}
 	
@@ -32,13 +32,13 @@ public class AutoEventShoot extends AutoEvent {
 	public void userUpdate() {
 		completed = (Timer.getFPGATimestamp() > endTime);
 		if (completed||ShooterControl.getInstance().getShotCount()-startBall>=ballCount){
-			Supperstructure.getInstance().setShootDesired(false);
+			Supperstructure.getInstance().setShootCloseDesired(false);
 		}
 	}
 
 	@Override
 	public void userForceStop() {
-		Supperstructure.getInstance().setShootDesired(false);
+		Supperstructure.getInstance().setShootCloseDesired(false);
 	}
 
 	@Override

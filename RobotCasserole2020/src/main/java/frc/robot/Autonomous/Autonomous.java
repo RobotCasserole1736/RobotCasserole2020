@@ -22,7 +22,8 @@ import frc.robot.Autonomous.Events.AutoEventStopRobot;
 import frc.robot.Autonomous.Events.AutoEventDriveToBallThief;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventReversePathPlanTest;
-import frc.robot.Autonomous.Events.AutoEventShoot;
+import frc.robot.Autonomous.Events.AutoEventShootClose;
+import frc.robot.Autonomous.Events.AutoEventShootFar;
 import frc.robot.Autonomous.Events.AutoEventTurn;
 import frc.robot.Autonomous.Events.AutoEventTurnToVisionTarget;
 import frc.robot.Autonomous.Events.AutoEventWait;
@@ -269,12 +270,17 @@ public class Autonomous {
                     // seq.addEvent(new AutoEventPathPlanTest());
                     // seq.addEvent(new AutoEventReversePathPlanTest());
                     // seq.addEvent(new AutoEventStopRobot());
-                    seq.addEvent(new AutoEventTurn(90));
-                    seq.addEvent(new AutoEventBackUpThreeFeet());
+
+                    //seq.addEvent(new AutoEventTurn(90));
+                    //seq.addEvent(new AutoEventBackUpThreeFeet());
+
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventShootClose(delayTime_s, 0));
+
                 break;
 
                 case ShootOnly:
-                    seq.addEvent(new AutoEventShoot(15.0,5));
+                    seq.addEvent(new AutoEventShootFar(15.0,5));
                 break;
 
                 case VisionAlignOnly:
@@ -286,9 +292,9 @@ public class Autonomous {
                 case VisionAlignShoot:
                     seq.addEvent(new AutoEventTurnToVisionTarget());
                     if(DriverStation.getInstance().isAutonomous()){
-                        seq.addEvent(new AutoEventShoot(15.0,5));
+                        seq.addEvent(new AutoEventShootFar(15.0,5));
                     } else {
-                        seq.addEvent(new AutoEventShoot(150.0,100));
+                        seq.addEvent(new AutoEventShootFar(150.0,100));
                     }
 
                 break;
@@ -300,7 +306,7 @@ public class Autonomous {
                     seq.addEvent(new AutoEventTurn(24));
                     seq.addEvent(new AutoEventWait(0.25));
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(8.0,5));
+                    seq.addEvent(new AutoEventShootFar(8.0,5));
                 break;
 
                 case Steak:
@@ -310,33 +316,33 @@ public class Autonomous {
                     seq.addEvent(new AutoEventTurn(24));
                     seq.addEvent(new AutoEventWait(0.25));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(3.0,5));
+                    seq.addEvent(new AutoEventShootFar(3.0,5));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventTurn(20));
                     seq.addEvent(new AutoEventCollectSteakPt2(4.0));
                     seq.addEvent(new AutoEventTurn(14));
                     seq.addEvent(new AutoEventWait(0.25));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(3.0,5));
+                    seq.addEvent(new AutoEventShootFar(3.0,5));
                 break;
                 case CitrusSteak:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventCitrusSteakA(4.0));
                     seq.addEvent(new AutoEventTurn(114));
-                    seq.addEvent(new AutoEventShoot(3.0,5));
+                    seq.addEvent(new AutoEventShootFar(3.0,5));
                     seq.addEvent(new AutoEventTurn(-24));
                     seq.addEvent(new AutoEventCitrusSteakB(4.0));
-                    seq.addEvent(new AutoEventShoot(3.0,5));
+                    seq.addEvent(new AutoEventShootFar(3.0,5));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
-                    //seq.addEvent(new AutoEventShoot(3.0,5));
-                    //seq.addEvent(new AutoEventShoot(8.0,5));
+                    //seq.addEvent(new AutoEventShootFar(3.0,5));
+                    //seq.addEvent(new AutoEventShootFar(8.0,5));
                 break;
                 case OurSideSteak:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(5.0,5));
+                    seq.addEvent(new AutoEventShootFar(5.0,5));
                     seq.addEvent(new AutoEventTurn(110));
                     seq.addEvent(new AutoEventAltSteakDriveFwdPtOne(3.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpThreeFeet());
@@ -349,15 +355,15 @@ public class Autonomous {
                     seq.addEvent(new AutoEventTurn(120));
                     seq.addEvent(new AutoEventAltSteakDriveFwdPtThree(3.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(5.0,5));
+                    seq.addEvent(new AutoEventShootFar(5.0,5));
                 break;
                 case NoStealSteak:
                     Drivetrain.getInstance().setInitialPose(-10, 11.5, 90);
                     seq.addEvent(new AutoEventNoStealSteakA(4.0));
                     seq.addEvent(new AutoEventTurn(50));
-                    seq.addEvent(new AutoEventShoot(5.0,5));
+                    seq.addEvent(new AutoEventShootFar(5.0,5));
                     seq.addEvent(new AutoEventNoStealSteakB(4.0));
-                    seq.addEvent(new AutoEventShoot(3.0,3));
+                    seq.addEvent(new AutoEventShootFar(3.0,3));
                 break;
             }
             modeCmdPrev = modeCmd;

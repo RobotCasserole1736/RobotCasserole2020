@@ -27,12 +27,13 @@ public class Supperstructure {
     public enum SupperstructureOpMode {
         Normal(0),               //No intake, but advance balls from the hopper into the conveyor
         PrepToShoot(1),          //Run shooter wheel up to speed, and advance any balls in the system as close to the shooter as possible
-        Shoot(2),                //Run all balls in the system through the shooter.
+        ShootFar(2),             //Put balls through the shooter, waiting between each shoot for the shooter to get back to speed
         Intake(3),               //Same as normal, but with the addition of the intake sucking from the ground.
         Eject(4),                //Eject everything as quickly as possible from every subsystem
         PrepShootWhileIntake(5), //Run intake while getting shooter wheel up to speed and advancing balls
         Stop(6),                 //Estop - everything is off
-        ClearJam(7);             //When balls get stuck
+        ClearJam(7),             //When balls get stuck
+        ShootClose(8);           //Run all balls in the system through the shooter as fast as possible (sacrificing accuracy)
 
         public final int value;
 
@@ -46,7 +47,8 @@ public class Supperstructure {
     IntakeControl   intk;
     ShooterControl shoot;
 
-    boolean shootDes;
+    boolean shootFarDes;
+    boolean shootCloseDes;
     boolean prepShootDes;
     boolean intkDes;
     boolean ejectDes;
@@ -64,24 +66,40 @@ public class Supperstructure {
 
     public void update(){
 
+        ShooterCtrlMode shooterCM = shoot.getShooterCtrlMode();
+
         if(stopDes){
             opMode = SupperstructureOpMode.Stop;
+
         }else if(ejectDes){
             opMode = SupperstructureOpMode.Eject;
+
         }else if(clearJamDes){
             opMode = SupperstructureOpMode.ClearJam;
-        }else if(shootDes && !prepShootDes){
-            if((shoot.getShooterCtrlMode()==ShooterCtrlMode.HoldForShot)){
-                opMode = SupperstructureOpMode.Shoot;
-            }else if(shoot.getShooterCtrlMode() != ShooterCtrlMode.HoldForShot){
+
+        }else if(shootFarDes && !prepShootDes){
+            if(shooterCM == ShooterCtrlMode.HoldForShot){
+                opMode = SupperstructureOpMode.ShootFar;
+            } else {
                 opMode = SupperstructureOpMode.PrepToShoot;
             } 
+
+        }else if(shootCloseDes && !prepShootDes){
+            if(shooterCM == ShooterCtrlMode.HoldForShot || shooterCM == ShooterCtrlMode.JustGonnaSendEm){
+                opMode = SupperstructureOpMode.ShootClose;
+            } else {
+                opMode = SupperstructureOpMode.PrepToShoot;
+            } 
+            
         }else if(prepShootDes && intkDes){
             opMode = SupperstructureOpMode.PrepShootWhileIntake;
+
         }else if(prepShootDes && !intkDes){
             opMode = SupperstructureOpMode.PrepToShoot;
-        }else if(intkDes && !shootDes && !prepShootDes){
+
+        }else if(intkDes && !shootFarDes && !prepShootDes){
             opMode = SupperstructureOpMode.Intake;
+
         }else{ //if(everything is false)
             opMode = SupperstructureOpMode.Normal;
         }
@@ -111,11 +129,16 @@ public class Supperstructure {
                 shoot.setRun(ShooterRunCommand.ShotFar);
                 conv.setOpMode(ConveyorOpMode.AdvanceToShooter);
             break;
-            case Shoot:
-                //intk.setPosMode(IntakePosition.Extended);
+            case ShootFar:
                 intk.setSpeedMode(IntakeSpeed.IntakeButSlowly);
                 hopp.setOpMode(HopperOpMode.Injest);
                 shoot.setRun(ShooterRunCommand.ShotFar);
+                conv.setOpMode(ConveyorOpMode.InjectIntoShooter);
+            break;
+            case ShootClose:
+                intk.setSpeedMode(IntakeSpeed.IntakeButSlowly);
+                hopp.setOpMode(HopperOpMode.Injest);
+                shoot.setRun(ShooterRunCommand.ShotClose);
                 conv.setOpMode(ConveyorOpMode.InjectIntoShooter);
             break;
             case Intake:
@@ -155,9 +178,14 @@ public class Supperstructure {
         }
     }
 
-    //Set to true when the operator or some auto routine wants to be shooting balls, false otherwise.
-    public void setShootDesired(boolean cmd){
-        shootDes = cmd;
+    //Set to true when the operator or some auto routine wants to be shooting balls with precision, false otherwise.
+    public void setShootFarDesired(boolean cmd){
+        shootFarDes = cmd;
+    }
+
+    //Set to true when the operator or some auto routine wants to be shooting balls with precision, false otherwise.
+    public void setShootCloseDesired(boolean cmd){
+        shootCloseDes = cmd;
     }
 
     //This should do the 1a/b/c actions above, but not advance to the 2a/b actions.
