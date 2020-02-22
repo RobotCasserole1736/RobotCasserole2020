@@ -455,9 +455,9 @@ public class Robot extends TimedRobot {
     if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
       ledController.setPattern(LEDPatterns.Pattern6);
     }
-    else if(ctrlPanelManipulator.isRotationCompleted() == true){
+   /* else if(ctrlPanelManipulator.isRotationCompleted() == true){
       ledController.setPattern(LEDPatterns.Pattern6);
-    }
+    }*/
     else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
       ledController.setPattern(LEDPatterns.Pattern0);
     }

@@ -54,14 +54,14 @@ public class Hopper{
             hopperSparkRight.restoreFactoryDefaults();
             hopperSparkLeft.setIdleMode(IdleMode.kCoast);
             hopperSparkLeft.setIdleMode(IdleMode.kCoast);
-            hopperSparkLeft.setSmartCurrentLimit(20);
-            hopperSparkRight.setSmartCurrentLimit(20);
+            hopperSparkLeft.setSmartCurrentLimit(25);
+            hopperSparkRight.setSmartCurrentLimit(25);
             hopperSparkRight.setInverted(true);
             hopperSparkLeft.burnFlash();
             hopperSparkRight.burnFlash();
         }
 
-        hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.25, 0, 1);
+        hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.35, 0, 1);
         hopperBWDSpeed = new Calibration("Hopper Backwards Speed", -0.75, -1, 0);
         hopperSparkLeftCurrentSignal =new Signal("Hopper Motor Left Current","A");
         hopperSparkRightCurrentSignal =new Signal("Hopper Motor Right Current","A");
