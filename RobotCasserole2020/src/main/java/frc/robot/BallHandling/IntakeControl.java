@@ -141,14 +141,15 @@ public class IntakeControl {
 		if(Robot.isReal()){
 			intakeMotor.set(intkCommand);
 			motorCurrentSig.addSample(sampleTimeMs, intakeMotor.getOutputCurrent());
+			intkSpeedSig.addSample(sampleTimeMs, intakeMotor.getEncoder().getVelocity());
+			intkFaultSig.addSample(sampleTimeMs, intakeMotor.getFaults());
 		}
 		
 		posStateSig.addSample(sampleTimeMs, posState.value);
 		spdStateSig.addSample(sampleTimeMs, spdState.value);
 		intkSpdCmdSig.addSample(sampleTimeMs, intkCommand);
 		intkSolCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
-		intkSpeedSig.addSample(sampleTimeMs, intakeMotor.getEncoder().getVelocity());
-		intkFaultSig.addSample(sampleTimeMs, intakeMotor.getFaults());
+
 
 	}
 

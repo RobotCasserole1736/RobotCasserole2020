@@ -12,6 +12,7 @@ import frc.robot.Autonomous.Events.AutoEventBackUpThreeFeet;
 import frc.robot.Autonomous.Events.AutoEventCitrusSteakA;
 import frc.robot.Autonomous.Events.AutoEventCitrusSteakB;
 import frc.robot.Autonomous.Events.AutoEventCollectSteak;
+import frc.robot.Autonomous.Events.AutoEventCollectSteakPt2;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveToShootFromSteakCollect;
 import frc.robot.Autonomous.Events.AutoEventNoStealSteakA;
@@ -305,6 +306,8 @@ public class Autonomous {
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
                     seq.addEvent(new AutoEventShoot(3.0,5));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
+                    seq.addEvent(new AutoEventTurn(20));
+                    seq.addEvent(new AutoEventCollectSteakPt2(4.0));
                     seq.addEvent(new AutoEventTurn(14));
                     seq.addEvent(new AutoEventWait(0.25));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
