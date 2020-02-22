@@ -174,7 +174,6 @@ public class RealDrivetrain extends Drivetrain {
         
         leftWheelSpeedActualRPM = dtLeftMaster.getEncoder().getVelocity();
         rightWheelSpeedActualRPM = dtRightMaster.getEncoder().getVelocity();
-
         dtNeoL1Current = dtLeftMaster.getOutputCurrent();
         dtNeoL2Current = dtLeftIntern.getOutputCurrent();
         dtNeoR1Current = dtRightMaster.getOutputCurrent();

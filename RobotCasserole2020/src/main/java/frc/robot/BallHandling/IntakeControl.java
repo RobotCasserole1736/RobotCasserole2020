@@ -78,7 +78,7 @@ public class IntakeControl {
 			intakeMotor = new CANSparkMax(RobotConstants.INTAKE_MOTOR_CAN_ID, MotorType.kBrushless);
 			intakeMotor.restoreFactoryDefaults();
 			intakeMotor.setInverted(true);
-			intakeMotor.setSmartCurrentLimit(30); //30A limit
+			intakeMotor.setSmartCurrentLimit(65); //Prevent the magic smoke
 			intakeMotor.setIdleMode(IdleMode.kCoast);
 			intakeMotor.burnFlash();
         
