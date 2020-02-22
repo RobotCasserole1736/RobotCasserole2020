@@ -90,7 +90,7 @@ public class IntakeControl {
 
 
 		
-		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.5);
+		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.65);
 		intakeSlowCmd = new Calibration("Intake Slow Speed Cmd", 0.1);
 		ejectSpeedCmd = new Calibration("Eject Speed Cmd", -0.5); 
 

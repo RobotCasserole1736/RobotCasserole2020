@@ -137,11 +137,13 @@ class VisionProcessor():
     ###################
     def process(self, inFrame):
         if(self.stableidx%20==0):
-            self.innerAIm=ntTable.getEntry("InnerAim").value
-            if(self.stabilidx%40==0):
-                ntTable.putBoolean("Heartbeat", False)
+            self.innerAim=ntTable.getEntry("InnerAim").value
+            if(self.stableidx%40==0):
+                ntTable.putNumber("Heartbeat", 0.0)
+                print("Heartbeat")
             else:
-                ntTable.putBoolean("Heartbeat", True)
+                ntTable.putNumber("Heartbeat", 1.0)
+                print("Heartbeat")
             
         self.inimg = inFrame
         self.LightFilter()
@@ -150,7 +152,7 @@ class VisionProcessor():
         self.TargetDetection(filteredContours)
         self.updateTable()
         if self.debug:
-            self.outputStr = "{{{},{},{},{},{},{}}}\n".format(self.ret, self.angle, self.angle1, self.angle2, self.xval, self.yval)
+            self.outputStr = "{{{},{},{},{},{},{},{}}}\n".format(self.ret, self.angle, self.angle1, self.angle2, self.xval, self.yval, self.innerAim)
             print(self.outputStr)
         if ntTable.getEntry("Fuzzy Pickles").value:
             #cv2.imwrite("Image"+str(self.counter), self.inimg)

@@ -309,13 +309,13 @@ public class Autonomous {
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0,1.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurn(17));
                     seq.addEvent(new AutoEventWait(0.25));
-                    //seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
                     seq.addEvent(new AutoEventShoot(3.0,5));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
-                    seq.addEvent(new AutoEventTurn(20));
+                    seq.addEvent(new AutoEventTurn(25));
                     seq.addEvent(new AutoEventCollectSteakPt2(4.0));
                     seq.addEvent(new AutoEventWait(0.25));
-                    //seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
                     seq.addEvent(new AutoEventShoot(3.0,5));
                 break;
                 case CitrusSteak:
