@@ -294,7 +294,7 @@ public class RealDrivetrain extends Drivetrain {
             rotCmd = rotationCmd;
         } else {
             fwdRevCmd = forwardReverseCmd;
-            rotCmd = Math.abs(forwardReverseCmd) * rotationCmd * 1.0; //Modifiy scalar for sensitivity
+            rotCmd = Math.abs(forwardReverseCmd) * rotationCmd * 1.2; //Modifiy scalar for sensitivity
         }
     }
 

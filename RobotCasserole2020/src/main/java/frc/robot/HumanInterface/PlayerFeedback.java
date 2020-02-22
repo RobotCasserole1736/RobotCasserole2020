@@ -1,7 +1,6 @@
 package frc.robot.HumanInterface;
 
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.lib.Calibration.Calibration;
 import frc.robot.ShooterControl.RealShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
@@ -9,7 +8,6 @@ import frc.robot.HumanInterface.OperatorController;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.Drivetrain.RealDrivetrain;
 import frc.robot.VisionProc.CasseroleVision;
-import frc.robot.VisionProc.JeVoisInterface;
 
 /*
  *******************************************************************************************
@@ -33,15 +31,13 @@ import frc.robot.VisionProc.JeVoisInterface;
 
 public class PlayerFeedback {
 
-    private static PlayerFeedback empty = null;
+    private static PlayerFeedback inst = null;
 
     public static synchronized PlayerFeedback getInstance() {
-        if (empty == null)
-            empty = new PlayerFeedback();
-        return empty;
+        if (inst == null)
+            inst = new PlayerFeedback();
+        return inst;
     }
-
-    Calibration minShooterRPM;
 
     XboxController operatorController = OperatorController.getInstance().operaterController;
     XboxController driverController = DriverController.getInstance().driverController;
@@ -51,15 +47,14 @@ public class PlayerFeedback {
     // This is the private constructor that will be called once by getInstance() and
     // it should instantiate anything that will be required by the class
     private PlayerFeedback() {
-        minShooterRPM = new Calibration("Minimum Shooter RPM for Rumble", 6000);
+
     }
 
     public void update(){
         ShooterCtrlMode currentShooterCtrlMode = RealShooterControl.getInstance().getShooterCtrlMode();
-        double actualShooterRPM = RealShooterControl.getInstance().getSpeedRPM();
         
         //Makes the operator controller rumble when the robot is preparing to shoot and for each ball that is shot
-        if((currentShooterCtrlMode == ShooterCtrlMode.SpoolUp || currentShooterCtrlMode == ShooterCtrlMode.HoldSpeed) && actualShooterRPM < minShooterRPM.get()){
+        if(currentShooterCtrlMode == ShooterCtrlMode.SpoolUp){
             OperatorController.getInstance().rumble(0.4);
         }else{
             OperatorController.getInstance().rumble(0);

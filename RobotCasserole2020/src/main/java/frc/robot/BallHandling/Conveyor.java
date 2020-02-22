@@ -36,7 +36,10 @@ public class Conveyor{
     //State Data
     ConveyorOpMode opMode = ConveyorOpMode.Stop;
     ConveyorOpMode prevOpMode = ConveyorOpMode.Stop;
-    boolean shooterEndSensorTriggered = false;
+    boolean shooterEndSensorTriggeredRaw = false;
+    boolean shooterEndSensorTriggeredDbnc = false;
+    int shooterEndSensorTriggeredDbncCounter = 0;
+    final int SHOOTER_END_SENSOR_DBNC_LOOPS = 3;
     boolean intakeEndSensorTriggered = false;
     double motorCurrent;
     
@@ -84,7 +87,7 @@ public class Conveyor{
         //Calibrations
         conveyorLoadingSpeedCal = new Calibration("Conveyor Speed for Loading from Hopper to Conveyor", 0.5, 0.0, 1.0);
         conveyorPrepToShootCal = new Calibration("Conveyor Speed Operator Says Stop Loading and Shoot", 0.5, 0.0, 1.0);
-        conveyorFullSendCal = new Calibration("Conveyor Speed for Full Send", 0.85, 0.0, 1.0);
+        conveyorFullSendCal = new Calibration("Conveyor Speed for Full Send", 1.0, 0.0, 1.0);
         conveyorReverseCal = new Calibration("Conveyor Speed for EmptyTheRobot", 0.6, 0.0, 1.0);
 
         convMotorSpeedCmdSig = new Signal("Conveyor Motor Speed Command", "pct");
@@ -97,8 +100,20 @@ public class Conveyor{
     public void sampleSensors() {
         intakeEndSensor.update();
         intakeEndSensorTriggered = intakeEndSensor.isBallPresent();
-        shooterEndSensorTriggered = !shooterEndSensor.get(); //Sensor state is inverted from digital input
+        shooterEndSensorTriggeredRaw = !shooterEndSensor.get(); //Sensor state is inverted from digital input
         
+        //one-way debounce on shooter end sensor
+        if(shooterEndSensorTriggeredRaw == true){
+            shooterEndSensorTriggeredDbnc = true;
+            shooterEndSensorTriggeredDbncCounter = SHOOTER_END_SENSOR_DBNC_LOOPS;
+        } else {
+            if(shooterEndSensorTriggeredDbncCounter>0){
+                shooterEndSensorTriggeredDbncCounter--;
+            } else {
+                shooterEndSensorTriggeredDbnc = false;
+            }
+        }
+
         motorCurrent = CasserolePDP.getInstance().getCurrent(RobotConstants.CONVEYOR_MOTOR_PDP_CHANNEL);
     }
 
@@ -111,7 +126,7 @@ public class Conveyor{
             break;
 
             case AdvanceFromHopper:
-                if(intakeEndSensorTriggered  && !shooterEndSensorTriggered) {
+                if(intakeEndSensorTriggered  && !shooterEndSensorTriggeredDbnc) {
                     conveyorMotor.set(conveyorLoadingSpeedCal.get());
                     
                 }else{
@@ -120,7 +135,7 @@ public class Conveyor{
             break;
 
             case AdvanceToShooter:
-                if(!shooterEndSensorTriggered) {
+                if(!shooterEndSensorTriggeredDbnc) {
                     conveyorMotor.set(conveyorPrepToShootCal.get());
                 }else{
                     conveyorMotor.set(0);
@@ -144,7 +159,7 @@ public class Conveyor{
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
         motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
-        shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggered);
+        shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggeredDbnc);
         intakeEndSensorSig.addSample(sampleTimeMS, intakeEndSensorTriggered);
         conveyorPositionSig.addSample(sampleTimeMS, conveyorPosition);
     
@@ -167,7 +182,7 @@ public class Conveyor{
 
     public boolean getUpperSensorValue(){
         // return true if the conveyor->shooter sensor sees a ball, false otherwise
-        return shooterEndSensorTriggered;
+        return shooterEndSensorTriggeredDbnc;
     }
     public ConveyorOpMode getOpMode() {
         return opMode;

@@ -44,7 +44,7 @@ public class ImaginaryShooterControl extends ShooterControl {
         }
 
         if(Math.abs(des_speed_rpm - speed_rpm) < 100){
-            ctrlMode = ShooterCtrlMode.HoldSpeed;
+            ctrlMode = ShooterCtrlMode.HoldForShot;
         } else if (des_speed_rpm < 100){
             ctrlMode = ShooterCtrlMode.Stop;
         } else {

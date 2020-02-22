@@ -1,5 +1,6 @@
 package frc.robot.Autonomous;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.AutoSequencer.AutoSequencer;
 import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleDriverView;
@@ -284,7 +285,12 @@ public class Autonomous {
 
                 case VisionAlignShoot:
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShoot(15.0,5));
+                    if(DriverStation.getInstance().isAutonomous()){
+                        seq.addEvent(new AutoEventShoot(15.0,5));
+                    } else {
+                        seq.addEvent(new AutoEventShoot(150.0,100));
+                    }
+
                 break;
 
                 case BallThief:

@@ -71,9 +71,9 @@ public class Supperstructure {
         }else if(clearJamDes){
             opMode = SupperstructureOpMode.ClearJam;
         }else if(shootDes && !prepShootDes){
-            if((shoot.getShooterCtrlMode()==ShooterCtrlMode.HoldSpeed)){
+            if((shoot.getShooterCtrlMode()==ShooterCtrlMode.HoldForShot)){
                 opMode = SupperstructureOpMode.Shoot;
-            }else if(shoot.getShooterCtrlMode() != ShooterCtrlMode.HoldSpeed){
+            }else if(shoot.getShooterCtrlMode() != ShooterCtrlMode.HoldForShot){
                 opMode = SupperstructureOpMode.PrepToShoot;
             } 
         }else if(prepShootDes && intkDes){
