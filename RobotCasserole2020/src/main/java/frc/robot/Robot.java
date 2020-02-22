@@ -243,13 +243,9 @@ public class Robot extends TimedRobot {
       }
 
       cam.update();
-      
-      
 
       ctrlPanel.update();
       ctrlPanelManipulator.update();
-      
-      
 
       supperstructure.setClearJamDesired(false);
       supperstructure.setEjectDesired(false);
@@ -285,32 +281,34 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
 
+      loopTiming.markLoopStart();
       CrashTracker.logAutoPeriodic();
       //Put all auto periodic code after this
   
-      thbbtbbtbbtbbt.update();
-      eyeOfVeganSauron.setLEDRingState(true);
-      ledUpdater();
-      //photonCannon.setPhotonCannonState(false);
-      //photonCannon.update();
+      slowLoopCounter++;
+      if(slowLoopCounter%SLOW_LOOP_RATE == 0){
+
+        thbbtbbtbbtbbt.update();
+        eyeOfVeganSauron.setLEDRingState(true);
+        ledUpdater();
+        ctrlPanel.update();
+        ctrlPanelManipulator.update();
+        robotTilt.update();
+        telemetryUpdate();
+        pfb.update();
+      }
+
       cam.update();
 
       auto.update();
 
-      ctrlPanel.update();
-      climber.update();
+      supperstructure.update();
 
       drivetrain.update();
-      supperstructure.update();
-      ctrlPanelManipulator.update();
 
-      ledController.update();
-
-      robotTilt.update();
+      climber.update();
+      
       updateDriverView();
-      telemetryUpdate();
-
-      pfb.update();
 
       // put all auto periodic code before this
       loopTiming.markLoopEnd();
@@ -406,7 +404,6 @@ public class Robot extends TimedRobot {
       pfb.update();
 
       ledUpdater();
-      ledController.update();
 
       // put all teleop periodic code before this 
       loopTiming.markLoopEnd();
@@ -503,6 +500,7 @@ public class Robot extends TimedRobot {
           ledController.setPattern(LEDPatterns.Pattern5);
         }
       }
+      ledController.update();
     }
 
 

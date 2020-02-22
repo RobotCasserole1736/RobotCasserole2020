@@ -39,6 +39,8 @@ public class IntakeControl {
 	Signal motorCurrentSig;
 	Signal intkSpdCmdSig;
 	Signal intkSolCmdSig;
+	Signal intkSpeedSig;
+	Signal intkFaultSig;
 
     private static IntakeControl instance = null;
 	public static synchronized IntakeControl getInstance() {
@@ -100,6 +102,8 @@ public class IntakeControl {
 		motorCurrentSig = new Signal("Intake Motor Current", "A");
 		intkSpdCmdSig = new Signal("Intake Speed Command", "cmd");
 		intkSolCmdSig = new Signal("Intake Solenoid Command", "bool");
+		intkSpeedSig = new Signal("Intake Motor Speed", "RPM");
+		intkFaultSig = new Signal("Intake Fault", "bits");
 	}
 
 	public void update(){
@@ -143,6 +147,8 @@ public class IntakeControl {
 		spdStateSig.addSample(sampleTimeMs, spdState.value);
 		intkSpdCmdSig.addSample(sampleTimeMs, intkCommand);
 		intkSolCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
+		intkSpeedSig.addSample(sampleTimeMs, intakeMotor.getEncoder().getVelocity());
+		intkFaultSig.addSample(sampleTimeMs, intakeMotor.getFaults());
 
 	}
 
