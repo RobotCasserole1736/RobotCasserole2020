@@ -153,8 +153,10 @@ public class Autonomous {
 			modeCmd = AutoMode.CitrusSteak;
         } else if (actionStr.compareTo(ACTION_MODES[8]) == 0){
             modeCmd = AutoMode.NoStealSteak;
-        }else { 
-			modeCmd = AutoMode.Inactive;
+        } else if (actionStr.compareTo(ACTION_MODES[9]) == 0) { 
+            modeCmd = AutoMode.SWTest;
+        } else {
+            modeCmd = AutoMode.Inactive;
         }
 
         loadSequencer(true);
@@ -262,9 +264,11 @@ public class Autonomous {
                 break;
 
                 case SWTest:
-                    seq.addEvent(new AutoEventPathPlanTest());
-                    seq.addEvent(new AutoEventReversePathPlanTest());
-                    seq.addEvent(new AutoEventStopRobot());
+                    // seq.addEvent(new AutoEventPathPlanTest());
+                    // seq.addEvent(new AutoEventReversePathPlanTest());
+                    // seq.addEvent(new AutoEventStopRobot());
+                    seq.addEvent(new AutoEventTurn(90));
+                    seq.addEvent(new AutoEventBackUpThreeFeet());
                 break;
 
                 case ShootOnly:

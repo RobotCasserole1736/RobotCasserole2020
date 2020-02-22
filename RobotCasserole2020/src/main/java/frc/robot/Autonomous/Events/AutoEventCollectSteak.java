@@ -43,8 +43,8 @@ public class AutoEventCollectSteak extends AutoEvent {
         intkDuration_s = intkDuration_s_in;
         idx=0;
         driveForward=new PathPlannerAutoEvent[2];
-        driveForward[0]=new PathPlannerAutoEvent(waypoints_ft_pt1, true,12,6);
-        driveForward[1]=new PathPlannerAutoEvent(waypoints_ft_pt2, false,12,6);
+        driveForward[0]=new PathPlannerAutoEvent(waypoints_ft_pt1, true,8,6);
+        driveForward[1]=new PathPlannerAutoEvent(waypoints_ft_pt2, false,8,6);
         len=1;
         
     }
