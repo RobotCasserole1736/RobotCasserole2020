@@ -268,6 +268,7 @@ public class Autonomous {
                     // seq.addEvent(new AutoEventReversePathPlanTest());
                     // seq.addEvent(new AutoEventStopRobot());
                     seq.addEvent(new AutoEventTurn(90));
+                    seq.addEvent(new AutoEventBackUpThreeFeet());
                 break;
 
                 case ShootOnly:
