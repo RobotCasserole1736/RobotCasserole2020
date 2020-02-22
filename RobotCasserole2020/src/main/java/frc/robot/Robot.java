@@ -28,7 +28,6 @@ import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
 import frc.robot.ControlPanel.ControlPanelColor;
 import frc.robot.ControlPanel.ControlPanelManipulator;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
-import frc.robot.Drivetrain.CasseroleGyro;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
@@ -36,7 +35,6 @@ import frc.robot.HumanInterface.PlayerFeedback;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.VisionProc.CasseroleVision;
-import frc.robot.VisionProc.VisionCamera;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -73,7 +71,7 @@ public class Robot extends TimedRobot {
   Autonomous auto;
 
   //Sensors and Cameras and stuff, oh my!
-  VisionCamera cam;
+  CasseroleVision cam;
   //PhotonCannonControl photonCannon;
   VisionLEDRingControl eyeOfVeganSauron;
 
@@ -300,6 +298,7 @@ public class Robot extends TimedRobot {
         robotTilt.update();
         telemetryUpdate();
         pfb.update();
+        cam.setInnerGoalAsTarget(false); //just 2's for auto
       }
 
       cam.update();
@@ -351,6 +350,7 @@ public class Robot extends TimedRobot {
         ledUpdater();
         telemetryUpdate();
         eyeOfVeganSauron.setLEDRingState(true);
+        cam.setInnerGoalAsTarget(true); //try for 3's in teleop
       }
 
       cam.update();
