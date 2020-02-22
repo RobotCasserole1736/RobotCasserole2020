@@ -1,5 +1,6 @@
 package frc.robot.HumanInterface;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.lib.Calibration.Calibration;
 import frc.robot.ShooterControl.RealShooterControl;
@@ -54,33 +55,42 @@ public class PlayerFeedback {
         ShooterCtrlMode currentShooterCtrlMode = RealShooterControl.getInstance().getShooterCtrlMode();
         
         //Makes the operator controller rumble when the robot is preparing to shoot and for each ball that is shot
-        if(currentShooterCtrlMode == ShooterCtrlMode.SpoolUp){
-            OperatorController.getInstance().rumble(0.4);
+        if(!DriverStation.getInstance().isAutonomous()){
+            if(currentShooterCtrlMode == ShooterCtrlMode.SpoolUp){
+                OperatorController.getInstance().rumble(0.4);
+            }else{
+                OperatorController.getInstance().rumble(0);
+            }
         }else{
             OperatorController.getInstance().rumble(0);
         }
+        
 
         //2 is the allowable angle error. It should be equal to AutoEventTurnToVisionTarget's variable.
-        if(DriverController.getInstance().autoAlignCmd && RealDrivetrain.getInstance().getTurnToAngleErrDeg() < 2){
-            DriverController.getInstance().rumble(0.3);
-        }else if(DriverController.getInstance().autoAlignCmd && (CasseroleVision.getInstance().isVisionOnline() == false || CasseroleVision.getInstance().isTgtVisible() == false)){
-            //Makes the controller rumble every 5 loops so it pulses instead of being constant
-            if(loopCounter == 10){
-                loopCounter = 0;
-            } else {
-                loopCounter++;
-            }
-
-            if(loopCounter < 5){
-                DriverController.getInstance().rumble(0.8);
-            } else {
+        if(!DriverStation.getInstance().isAutonomous()){
+            if(DriverController.getInstance().autoAlignCmd && RealDrivetrain.getInstance().getTurnToAngleErrDeg() < 2){
+                DriverController.getInstance().rumble(0.3);
+            }else if(DriverController.getInstance().autoAlignCmd && (CasseroleVision.getInstance().isVisionOnline() == false || CasseroleVision.getInstance().isTgtVisible() == false)){
+                //Makes the controller rumble every 5 loops so it pulses instead of being constant
+                if(loopCounter == 10){
+                    loopCounter = 0;
+                } else {
+                    loopCounter++;
+                }
+    
+                if(loopCounter < 5){
+                    DriverController.getInstance().rumble(0.8);
+                } else {
+                    DriverController.getInstance().rumble(0);
+                }
+    
+            }else{
                 DriverController.getInstance().rumble(0);
             }
-
         }else{
             DriverController.getInstance().rumble(0);
         }
 
     }
 	
-}
+}   
