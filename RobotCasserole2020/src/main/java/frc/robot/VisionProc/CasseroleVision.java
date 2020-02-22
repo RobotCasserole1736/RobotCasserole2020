@@ -11,9 +11,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
-import frc.lib.Util.MapLookup2D;
 
-public class CasseroleVision extends VisionCamera {
+public class CasseroleVision {
 
     private static CasseroleVision instance = null;
 
@@ -31,6 +30,13 @@ public class CasseroleVision extends VisionCamera {
     NetworkTableEntry FuzzyPickles;
     NetworkTableEntry InMatch;
     NetworkTableEntry MatchNumber;
+    NetworkTableEntry InnerAim;
+    NetworkTableEntry Heartbeat;
+
+    double camHbeatVal = 0;
+    double camHbeatPrev = 0;
+    final int CAM_HBEAT_LIMIT_LOOPS = 150; //3 second timeout
+    int camHbeatCounter = CAM_HBEAT_LIMIT_LOOPS;
     
     double proc_duration_sec;
     double framerate_fps;
@@ -54,20 +60,20 @@ public class CasseroleVision extends VisionCamera {
     private CasseroleVision(){
         NetworkTableInstance.getDefault().setUpdateRate(0.01); //SPEEEEEEEEEEED
         NetworkTable table = NetworkTableInstance.getDefault().getTable("VisionData");
+
+        //Camera -> RIO
         proc_duration_sec_nt = table.getEntry("proc_duration_sec");
         framerate_fps_nt = table.getEntry("framerate_fps");
         targetVisible_nt = table.getEntry("targetVisible");
         targetAngle_deg_nt = table.getEntry("targetAngle_deg");
         targetPosStable_nt = table.getEntry("targetPosStable");
+
+        //RIO -> Camera
         FuzzyPickles = table.getEntry("Fuzzy Pickles");
         InMatch = table.getEntry("InMatch");
         MatchNumber = table.getEntry("MatchNumber");
-        InMatch.setBoolean(true);
-        MatchNumber.setString(DriverStation.getInstance().getEventName()+"_"
-        +DriverStation.getInstance().getMatchType()+"_"
-        +Integer.toString(DriverStation.getInstance().getMatchNumber())+"_"
-        +  getDateTimeString());
-
+        InnerAim = table.getEntry("InnerAim");
+        Heartbeat = table.getEntry("Heartbeat");
 
         targetAngleSignal= new Signal("Vision Raspberry Pi Angle","deg");
         targetVisibleSignal= new Signal("Vision Raspberry Pi Visible Target","bool");
@@ -75,6 +81,8 @@ public class CasseroleVision extends VisionCamera {
         cameraFramerateSignal= new Signal("Vision Raspberry Pi Framerate","fps");
         cameraDurationSignal= new Signal("Vision Raspberry Pi Duration","sec");
         visionOnlineSignal= new Signal("Vision Raspberry Pi Vision System Online","bool");
+
+        updateMatchData();
     }
 
     private String getDateTimeString() {
@@ -83,8 +91,15 @@ public class CasseroleVision extends VisionCamera {
         return df.format(new Date());
     }
 
+    private void updateMatchData(){
+        InMatch.setBoolean(true);
+        MatchNumber.setString(DriverStation.getInstance().getEventName()+"_"
+        +DriverStation.getInstance().getMatchType()+"_"
+        +Integer.toString(DriverStation.getInstance().getMatchNumber())+"_"
+        +  getDateTimeString());
+    }
 
-    @Override
+
     public void update() {
         //read values periodically
         double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
@@ -94,12 +109,23 @@ public class CasseroleVision extends VisionCamera {
         targetPosStable = convertDoubletoBoolean(targetPosStable_nt.getDouble(0.0));
         targetAngle_deg = targetAngle_deg_nt.getDouble(-1.0);
         visionUpdatedTime = targetAngle_deg_nt.getLastChange();
+        
+        camHbeatPrev = camHbeatVal;
+        camHbeatVal = Heartbeat.getDouble(0.0);
 
-        if(framerate_fps == -1.0){
-            visionOnline = false;
-            targetVisible = false;
-        } else {
+        //Expect the vision process software to update a heartbeat periodically.
+        // Declare vision offline if that heartbeat gets stuck.
+        if(camHbeatPrev != camHbeatVal){
+            camHbeatCounter = CAM_HBEAT_LIMIT_LOOPS;
             visionOnline = true;
+        } else {
+            if(camHbeatCounter > 0){
+                camHbeatCounter--;
+                visionOnline = true;
+            } else {
+                visionOnline = false;
+                targetVisible = false;
+            }
         }
 
         targetAngleSignal.addSample(sampleTimeMs, targetAngle_deg);
@@ -108,7 +134,6 @@ public class CasseroleVision extends VisionCamera {
         cameraFramerateSignal.addSample(sampleTimeMs, framerate_fps);
         cameraDurationSignal.addSample(sampleTimeMs, proc_duration_sec);
         visionOnlineSignal.addSample(sampleTimeMs, visionOnline);
-        
 
     }
 
@@ -120,46 +145,32 @@ public class CasseroleVision extends VisionCamera {
         }
     }
 
-    @Override
     public double getTgtAngle() {
         return targetAngle_deg;
     }
 
-    @Override
-    public double getTgtPositionX() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public double getTgtPositionY() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
     public double getTgtGeneralAngle() {
         return targetAngle_deg;
     }
 
-	@Override
 	public boolean isTgtVisible() {
 	    return targetVisible;
 	}
 
-	@Override
 	public boolean isVisionOnline() {
 		return visionOnline;
     }
     
-    @Override
     public boolean isTargetStable(){
         return targetPosStable;
     }
 
-    @Override
     public void TakeAPicture(){
         FuzzyPickles.setBoolean(true);
+    }
+
+    public void setInnerGoalAsTarget(boolean input){
+        InnerAim.setBoolean(input);
     }
 
 }
