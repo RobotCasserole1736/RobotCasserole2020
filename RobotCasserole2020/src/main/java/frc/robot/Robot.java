@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
 
   //Sensors and Cameras and stuff, oh my!
   VisionCamera cam;
-  PhotonCannonControl photonCannon;
+  //PhotonCannonControl photonCannon;
   VisionLEDRingControl eyeOfVeganSauron;
 
   //Subsystems
@@ -97,6 +97,10 @@ public class Robot extends TimedRobot {
   boolean climberLowerLSPressed;
   boolean conveyorFull;
   boolean pneumaticPressureLow;
+
+
+  int slowLoopCounter = 0;
+  final int SLOW_LOOP_RATE = 5;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -132,7 +136,7 @@ public class Robot extends TimedRobot {
 
     thbbtbbtbbtbbt = PneumaticsControl.getInstance();
     eyeOfVeganSauron = VisionLEDRingControl.getInstance();
-    photonCannon = PhotonCannonControl.getInstance();
+    //photonCannon = PhotonCannonControl.getInstance();
     ledController = LEDController.getInstance();
 
 
@@ -210,36 +214,38 @@ public class Robot extends TimedRobot {
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void disabledInit() {
-    try {
       CrashTracker.logDisabledInit();
       dataServer.logger.stopLogging();
       auto.reset();
-    } catch(Throwable t) {
-      CrashTracker.logThrowableCrash(t);
-      throw t;
-    }
 
   }
 
   @Override
   public void disabledPeriodic() {
-    try {
+
       loopTiming.markLoopStart();
       CrashTracker.logDisabledPeriodic();
 
-      ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
+      slowLoopCounter++;
+      if(slowLoopCounter%SLOW_LOOP_RATE == 0){
+        ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
+        thbbtbbtbbtbbt.update();
+        eyeOfVeganSauron.setLEDRingState(false);
+        auto.sampleDashboardSelector();
 
-      thbbtbbtbbtbbt.update();
-      eyeOfVeganSauron.setLEDRingState(false);
-      photonCannon.setPhotonCannonState(false);
-      photonCannon.update();
+        ctrlPanelManipulator.updateGains(false);
+        drivetrain.updateGains(false);
+        shooterCtrl.updateGains(false);
+        pfb.update();
+        robotTilt.update();
+        climber.update();
+
+      }
+
       cam.update();
-      
-      auto.sampleDashboardSelector();
 
       ctrlPanel.update();
       ctrlPanelManipulator.update();
-      climber.update();
 
       supperstructure.setClearJamDesired(false);
       supperstructure.setEjectDesired(false);
@@ -250,21 +256,13 @@ public class Robot extends TimedRobot {
       supperstructure.update();
 
       drivetrain.setOpenLoopCmd(0, 0);
-      drivetrain.updateGains(false);
-      ctrlPanelManipulator.updateGains(false);
       drivetrain.update();
-      shooterCtrl.updateGains(false);
-
-      pfb.update();
-      robotTilt.update();
+      
 
       updateDriverView();
       telemetryUpdate();
       loopTiming.markLoopEnd();
-    } catch(Throwable t) {
-      CrashTracker.logThrowableCrash(t);
-      throw t;
-    }
+
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -274,58 +272,46 @@ public class Robot extends TimedRobot {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void autonomousInit() {
-    try {
-
       CrashTracker.logAutoInit();
       dataServer.logger.startLoggingAuto();
       auto.sampleDashboardSelector();
       auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
-
-    } catch(Throwable t) {
-      CrashTracker.logThrowableCrash(t);
-      throw t;
-    }
   }
 
   @Override
   public void autonomousPeriodic() {
-    
-    try{
+
       loopTiming.markLoopStart();
       CrashTracker.logAutoPeriodic();
       //Put all auto periodic code after this
   
-      thbbtbbtbbtbbt.update();
-      eyeOfVeganSauron.setLEDRingState(true);
-      ledUpdater();
-      photonCannon.setPhotonCannonState(false);
-      photonCannon.update();
+      slowLoopCounter++;
+      if(slowLoopCounter%SLOW_LOOP_RATE == 0){
+
+        thbbtbbtbbtbbt.update();
+        eyeOfVeganSauron.setLEDRingState(true);
+        ledUpdater();
+        ctrlPanel.update();
+        ctrlPanelManipulator.update();
+        robotTilt.update();
+        telemetryUpdate();
+        pfb.update();
+      }
+
       cam.update();
 
       auto.update();
 
-      ctrlPanel.update();
-      climber.update();
+      supperstructure.update();
 
       drivetrain.update();
-      supperstructure.update();
-      ctrlPanelManipulator.update();
 
-      ledController.update();
-
-      robotTilt.update();
+      climber.update();
+      
       updateDriverView();
-      telemetryUpdate();
-
-      pfb.update();
 
       // put all auto periodic code before this
       loopTiming.markLoopEnd();
-
-    } catch(Throwable t) {
-      CrashTracker.logThrowableCrash(t);
-      throw t;
-    }
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -336,18 +322,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    try {   
       CrashTracker.logTeleopInit();
       dataServer.logger.startLoggingTeleop();
-    } catch(Throwable t) {
-      CrashTracker.logThrowableCrash(t);
-      throw t;
-    }
   }
 
   @Override
   public void teleopPeriodic() {
-    try {
       loopTiming.markLoopStart();
       CrashTracker.logTeleopPeriodic();
       //Put all teleop periodic code after this
@@ -359,22 +339,22 @@ public class Robot extends TimedRobot {
       //Based on operator commands, change which photon source we use.
       //Photon Cannon can be activated by driver or operator, but only if
       // we're not attempting to vision align.
-      if(
-          (
-            OperatorController.getInstance().getPhotonCannonCmd() || 
-            DriverController.getInstance().getPhotonCannonInput()
-          ) 
-          && 
-          !(DriverController.getInstance().getAutoAlignAndShootCmd() || 
-            DriverController.getInstance().getAutoAlignCmd() ) 
-        ){
-        photonCannon.setPhotonCannonState(true);
-        eyeOfVeganSauron.setLEDRingState(false);
-      } else {
-        photonCannon.setPhotonCannonState(false);
-        eyeOfVeganSauron.setLEDRingState(true);
-      }
-      photonCannon.update();
+      //if(
+      //    (
+      //      OperatorController.getInstance().getPhotonCannonCmd() || 
+      //      DriverController.getInstance().getPhotonCannonInput()
+      //    ) 
+      //    && 
+      //    !(DriverController.getInstance().getAutoAlignAndShootCmd() || 
+      //      DriverController.getInstance().getAutoAlignCmd() ) 
+      //  ){
+      //  photonCannon.setPhotonCannonState(true);
+      //  eyeOfVeganSauron.setLEDRingState(false);
+      //} else {
+      //  photonCannon.setPhotonCannonState(false);
+      //  eyeOfVeganSauron.setLEDRingState(true);
+      //}
+      //photonCannon.update();
       cam.update();
 
       thbbtbbtbbtbbt.update();
@@ -424,14 +404,9 @@ public class Robot extends TimedRobot {
       pfb.update();
 
       ledUpdater();
-      ledController.update();
 
       // put all teleop periodic code before this 
       loopTiming.markLoopEnd();
-    } catch(Throwable t) {
-      CrashTracker.logThrowableCrash(t);
-      throw t;
-    }
     
   }
 
@@ -525,6 +500,7 @@ public class Robot extends TimedRobot {
           ledController.setPattern(LEDPatterns.Pattern5);
         }
       }
+      ledController.update();
     }
 
 
