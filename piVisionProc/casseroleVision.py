@@ -138,6 +138,11 @@ class VisionProcessor():
     def process(self, inFrame):
         if(self.stableidx%20==0):
             self.innerAIm=ntTable.getEntry("InnerAim").value
+            if(self.stabilidx%40==0):
+                ntTable.putBoolean("Heartbeat", False)
+            else:
+                ntTable.putBoolean("Heartbeat", True)
+            
         self.inimg = inFrame
         self.LightFilter()
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
