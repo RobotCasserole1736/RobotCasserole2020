@@ -450,43 +450,43 @@ public class Robot extends TimedRobot {
     }
   }
 
-    public void ledUpdater(){
-      if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
-        ledController.setPattern(LEDPatterns.Pattern6);
-      }
-      else if(ctrlPanelManipulator.isRotationCompleted() == true){
-        ledController.setPattern(LEDPatterns.Pattern6);
-      }
-      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
-        ledController.setPattern(LEDPatterns.Pattern0);
-      }
-      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kBLUE){
+  public void ledUpdater(){
+    if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
+      ledController.setPattern(LEDPatterns.Pattern6);
+    }
+    else if(ctrlPanelManipulator.isRotationCompleted() == true){
+      ledController.setPattern(LEDPatterns.Pattern6);
+    }
+    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
+      ledController.setPattern(LEDPatterns.Pattern0);
+    }
+    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kBLUE){
+      ledController.setPattern(LEDPatterns.Pattern1);
+    }
+    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kYELLOW){
+      ledController.setPattern(LEDPatterns.Pattern3);
+    }
+    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kGREEN){
+      ledController.setPattern(LEDPatterns.Pattern2);
+    }
+    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
+      if(DriverStation.getInstance().isAutonomous() == true){
         ledController.setPattern(LEDPatterns.Pattern1);
       }
-      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kYELLOW){
-        ledController.setPattern(LEDPatterns.Pattern3);
+      else{
+        ledController.setPattern(LEDPatterns.Pattern4);
       }
-      else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kGREEN){
-        ledController.setPattern(LEDPatterns.Pattern2);
-      }
-      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
-        if(DriverStation.getInstance().isAutonomous() == true){
-          ledController.setPattern(LEDPatterns.Pattern1);
-        }
-        else{
-          ledController.setPattern(LEDPatterns.Pattern4);
-        }
-      }
-      else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
-        if(DriverStation.getInstance().isAutonomous() == true){
-          ledController.setPattern(LEDPatterns.Pattern0);
-        }
-        else{
-          ledController.setPattern(LEDPatterns.Pattern5);
-        }
-      }
-      ledController.update();
     }
+    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
+      if(DriverStation.getInstance().isAutonomous() == true){
+        ledController.setPattern(LEDPatterns.Pattern0);
+      }
+      else{
+        ledController.setPattern(LEDPatterns.Pattern5);
+      }
+    }
+    ledController.update();
+  }
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
