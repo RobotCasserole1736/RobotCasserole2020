@@ -18,6 +18,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
     final double TIMEOUT_S = 5.0;
     final double ALLOWABLE_ANGLE_ERR_DEG = 0.5;
     final double DT_ANGLE_STABLE_DEBOUNCE_SEC = 0.5;
+    final double CHAIN_SLACK_OVERSHOOT = 0.5;
 
     double dtStableEndTime = 0;
 
@@ -58,6 +59,11 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
                 Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
                 if(cam.isTargetStable()){
                     desAngle = Drivetrain.getInstance().getGyroAngle() + cam.getTgtGeneralAngle(); //Calcuate what angle to turn toward
+                    if(cam.getTgtGeneralAngle()>0){
+                        desAngle-=CHAIN_SLACK_OVERSHOOT;
+                    }else{
+                        desAngle+=CHAIN_SLACK_OVERSHOOT;
+                    }
                     cam.TakeAPicture();
                     startTime = Timer.getFPGATimestamp(); //Restart timer
                     dtStableEndTime = Timer.getFPGATimestamp() + DT_ANGLE_STABLE_DEBOUNCE_SEC;

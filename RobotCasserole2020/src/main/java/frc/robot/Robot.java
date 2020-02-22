@@ -350,6 +350,7 @@ public class Robot extends TimedRobot {
         pfb.update();
         ledUpdater();
         telemetryUpdate();
+        eyeOfVeganSauron.setLEDRingState(true);
       }
 
       cam.update();

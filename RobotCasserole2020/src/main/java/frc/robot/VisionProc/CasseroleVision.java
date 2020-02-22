@@ -41,8 +41,6 @@ public class CasseroleVision extends VisionCamera {
     boolean visionOnline;
     long visionUpdatedTime;
 
-    MapLookup2D conversionMap;
-    int[][]Points={{0,0},{1,1}};
 
     Signal targetAngleSignal;
     Signal targetVisibleSignal;
@@ -70,7 +68,6 @@ public class CasseroleVision extends VisionCamera {
         +Integer.toString(DriverStation.getInstance().getMatchNumber())+"_"
         +  getDateTimeString());
 
-        lookUpSetup();
 
         targetAngleSignal= new Signal("Vision Raspberry Pi Angle","deg");
         targetVisibleSignal= new Signal("Vision Raspberry Pi Visible Target","bool");
@@ -86,17 +83,6 @@ public class CasseroleVision extends VisionCamera {
         return df.format(new Date());
     }
 
-    private void lookUpSetup(){
-        conversionMap=new MapLookup2D();
-        for (int i=0; i< Points.length;i++){
-            conversionMap.insertNewPoint(Points[i][0], Points[i][1]);
-        }
-
-    }
-
-    private double angleLookupConversion(double inAngle){
-        return conversionMap.lookupVal(inAngle);
-    }
 
     @Override
     public void update() {
@@ -106,7 +92,7 @@ public class CasseroleVision extends VisionCamera {
         framerate_fps = framerate_fps_nt.getDouble(-1.0);
         targetVisible = convertDoubletoBoolean(targetVisible_nt.getDouble(0.0));
         targetPosStable = convertDoubletoBoolean(targetPosStable_nt.getDouble(0.0));
-        targetAngle_deg = angleLookupConversion(targetAngle_deg_nt.getDouble(-1.0));
+        targetAngle_deg = targetAngle_deg_nt.getDouble(-1.0);
         visionUpdatedTime = targetAngle_deg_nt.getLastChange();
 
         if(framerate_fps == -1.0){

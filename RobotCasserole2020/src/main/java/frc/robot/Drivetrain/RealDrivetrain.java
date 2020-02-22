@@ -146,7 +146,7 @@ public class RealDrivetrain extends Drivetrain {
         turnToAnglekP= new Calibration("Drivetrain Turn To Angle kP", 3.0);
         turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0.1);
         turnToAngleMaxRPM= new Calibration("Drivetrain Turn To Angle Max RPM", 150, 0, 500);
-        turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM/sec", 300, 0, 5000);
+        turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM sec", 75, 0, 5000);
 
         dtLeftIntern.follow(dtLeftMaster);
         dtRightIntern.follow(dtRightMaster);
