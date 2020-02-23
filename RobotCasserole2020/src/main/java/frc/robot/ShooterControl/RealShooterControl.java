@@ -36,7 +36,7 @@ public class RealShooterControl extends ShooterControl {
     ShooterCtrlMode previousStateShooter;
     double shooterActualSpeed_rpm; //Arbitrated shooter wheel speed
     double shooterAtSteadyStateDebounceCounter;
-    double shooterHoldCmdDCPct = 0;
+    double shooterHoldCmdVoltage = 0;
 
     double shooterSpeedError = 0;
     double shooterSpeedErrorPrev = 0;
@@ -103,7 +103,7 @@ public class RealShooterControl extends ShooterControl {
         shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 25);
         shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 30);
 
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3650);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3475);
         shooterSendEmVoltage   = new Calibration("Shooter Far Shot Setpoint V", 12.0, 0.0, 14.0);
 
         holdToShootErrThreshRPM = new Calibration("Shooter Hold To Shoot Error Thresh RPM", 75);
@@ -216,7 +216,7 @@ public class RealShooterControl extends ShooterControl {
                         shooterAtSteadyStateDebounceCounter--;
                     } else {
                         currentStateShooter = ShooterCtrlMode.HoldForShot; //Go to hold and remain there till shooter is commanded to stop.
-                        shooterHoldCmdDCPct = shooterMotor1.getAppliedOutput();
+                        shooterHoldCmdVoltage = shooterMotor1.getAppliedOutput()*shooterMotor1.getBusVoltage();//Calculate the voltage to hold the shooter. Yes I'm well aware this isn't reallly how the physics works. But hey, we've only got 12 hours till competition, and it seems to help. bla bla bla bla george box all models are wrong something something whateves. 
                     }
                 }
             } else if(currentStateShooter == ShooterCtrlMode.HoldForShot) {
@@ -253,7 +253,7 @@ public class RealShooterControl extends ShooterControl {
 
         // Send commands to the motor
         if(currentStateShooter == ShooterCtrlMode.HoldForShot || currentStateShooter == ShooterCtrlMode.Shooting){
-            shooterPIDCtrl.setReference(shooterHoldCmdDCPct, ControlType.kDutyCycle); //A la 254 in 2017
+            shooterPIDCtrl.setReference(shooterHoldCmdVoltage, ControlType.kVoltage); //A la 254 in 2017
         } else if(currentStateShooter == ShooterCtrlMode.SpoolUp){
             shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, SPOOLUP_PID_SLOT_ID);
         } else if(currentStateShooter == ShooterCtrlMode.JustGonnaSendEm){
