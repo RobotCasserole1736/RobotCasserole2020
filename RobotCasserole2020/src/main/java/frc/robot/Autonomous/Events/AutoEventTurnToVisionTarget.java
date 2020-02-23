@@ -14,7 +14,7 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
     private double elapsedTime = 0.0;
     
     final double TURN_SPEED_RPM = 50;
-    final double TIMEOUT_S = 5.0;
+    double TIMEOUT_S = 5.0;
     final double ALLOWABLE_ANGLE_ERR_DEG = 0.5;
     final double DT_ANGLE_STABLE_DEBOUNCE_SEC = 0.5;
     final double CHAIN_SLACK_OVERSHOOT = 0.5;
@@ -29,8 +29,9 @@ public class AutoEventTurnToVisionTarget extends AutoEvent {
     double startX = 0;
     double startY = 0;
 
-    public AutoEventTurnToVisionTarget(){
+    public AutoEventTurnToVisionTarget(double timeout_s_in){
         cam = CasseroleVision.getInstance();
+        TIMEOUT_S=timeout_s_in;
     }
     
     @Override

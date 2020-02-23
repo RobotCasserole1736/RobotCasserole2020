@@ -296,8 +296,11 @@ public class RealDrivetrain extends Drivetrain {
     public void setOpenLoopCmd(double forwardReverseCmd, double rotationCmd) {
         opModeCmd = DrivetrainOpMode.kOpenLoop;
         fwdRevCmd = forwardReverseCmd;
-        rotCmd = rotationCmd;
-
+        if(rotationCmd<0){
+            rotCmd = Math.pow(Math.abs(rotationCmd),2.7)*-1;
+        }else{
+            rotCmd = Math.pow(Math.abs(rotationCmd),2.7);
+        }
         //Aden likes cheesy drive, so we do this thing.
         //No he doesn't so we don't do this thing.
         // if(Math.abs(fwdRevCmd) < 0.1){
