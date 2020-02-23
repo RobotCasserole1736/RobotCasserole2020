@@ -38,16 +38,18 @@ public class OperatorController {
         return instance;
     }
 
-    public boolean shootCmd = false;
-    public boolean prepToShootCmd = false;
-    public boolean intakeDesired = false;
-    public boolean unjamCmd = false;
-    public boolean ejectDesired = false;
-    public boolean photonCannonCmd = false;
-    public boolean climbEnabledCmd = false;
-    public double  climbSpeedCmd = 0.0;
-    public boolean ctrlPanelThreeRotationsDesired = false;
-    public boolean ctrlPanelSeekToColorDesired = false;
+    boolean shootCmd = false;
+    boolean prepToShootCmd = false;
+    boolean intakeDesired = false;
+    boolean unjamCmd = false;
+    boolean ejectDesired = false;
+    boolean photonCannonCmd = false;
+    boolean climbEnabledCmd = false;
+    double  climbSpeedCmd = 0.0;
+    boolean ctrlPanelThreeRotationsDesired = false;
+    boolean ctrlPanelSeekToColorDesired = false;
+    boolean shotSpeedIncrementCmd = false;
+    boolean shotSpeedDecrementCmd = false;
 
     Signal shootCmdSig;
     Signal prepToShootCmdSig;
@@ -55,10 +57,15 @@ public class OperatorController {
     Signal unjamCmdSig;
     Signal ejectDesiredSig;
     Signal photonCannonCmdSig;
-    Signal climbEnabledCmdSig;
+    Signal climbEnabledCmdSig; 
     Signal climbSpeedCmdSig;
     Signal ctrlPanelThreeRotationsDesiredSig;
     Signal ctrlPanelSeekToColorDesiredSig;
+    Signal shotSpeedIncrementCmdSig;
+    Signal shotSpeedDecrementCmdSig;
+
+    ButtonPulser speedIncCmdPulser;
+    ButtonPulser speedDecCmdPulser;
 
     // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
     private OperatorController() {
@@ -74,6 +81,8 @@ public class OperatorController {
         climbSpeedCmdSig = new Signal("Operator Controller Climb Speed Command", "cmd");
         ctrlPanelThreeRotationsDesiredSig = new Signal("Operator Controller Ctrl Panel Three Rotations Command", "bool");
         ctrlPanelSeekToColorDesiredSig = new Signal("Operator Controller Ctrl Panel Seek To Color Command", "bool");
+        shotSpeedIncrementCmdSig = new Signal("Operator Controller Shot Speed Increment", "bool");
+        shotSpeedDecrementCmdSig = new Signal("Operator Controller Shot Speed Decrement", "bool");
         
     }
 
@@ -89,6 +98,17 @@ public class OperatorController {
         ctrlPanelThreeRotationsDesired = operaterController.getYButton();
         ctrlPanelSeekToColorDesired = operaterController.getBButton();
 
+        if(operaterController.getPOV() == 0){
+            shotSpeedIncrementCmd = speedIncCmdPulser.pulse(true);
+            shotSpeedDecrementCmd = speedDecCmdPulser.pulse(false);
+        } else if(operaterController.getPOV() == 180) {
+            shotSpeedIncrementCmd = speedIncCmdPulser.pulse(false);
+            shotSpeedDecrementCmd = speedDecCmdPulser.pulse(true);
+        } else {
+            shotSpeedIncrementCmd = speedIncCmdPulser.pulse(false);
+            shotSpeedDecrementCmd = speedDecCmdPulser.pulse(false);
+        }
+
         double time_in_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         shootCmdSig.addSample(time_in_ms, shootCmd);
         prepToShootCmdSig.addSample(time_in_ms, prepToShootCmd);
@@ -100,6 +120,8 @@ public class OperatorController {
         climbSpeedCmdSig.addSample(time_in_ms, climbSpeedCmd);
         ctrlPanelThreeRotationsDesiredSig.addSample(time_in_ms, ctrlPanelThreeRotationsDesired);
         ctrlPanelSeekToColorDesiredSig.addSample(time_in_ms, ctrlPanelSeekToColorDesired);
+        shotSpeedIncrementCmdSig.addSample(time_in_ms, shotSpeedIncrementCmd);
+        shotSpeedDecrementCmdSig.addSample(time_in_ms, shotSpeedDecrementCmd);
     }
     
     public boolean getShootCmd(){
@@ -131,6 +153,12 @@ public class OperatorController {
     }
     public boolean getControlPanelSeekToColorDesired(){
         return ctrlPanelSeekToColorDesired; 
+    }
+    public boolean getshotSpeedIncrementCmd(){
+        return shotSpeedIncrementCmd; 
+    }
+    public boolean getshotSpeedDecrementCmd(){
+        return shotSpeedDecrementCmd; 
     }
 
     //Extras

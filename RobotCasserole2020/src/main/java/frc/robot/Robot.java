@@ -248,6 +248,12 @@ public class Robot extends TimedRobot {
 
       }
 
+      if(OperatorController.getInstance().getshotSpeedIncrementCmd()){
+        shooterCtrl.incrementSpeedSetpoint();
+      } else if(OperatorController.getInstance().getshotSpeedDecrementCmd()){
+        shooterCtrl.decrementSpeedSetpoint();
+      }
+
       cam.update();
 
       ctrlPanel.update();
@@ -361,6 +367,12 @@ public class Robot extends TimedRobot {
 
       cam.update();
 
+      if(OperatorController.getInstance().getshotSpeedIncrementCmd()){
+        shooterCtrl.incrementSpeedSetpoint();
+      } else if(OperatorController.getInstance().getshotSpeedDecrementCmd()){
+        shooterCtrl.decrementSpeedSetpoint();
+      }
+
       supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
       supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
       supperstructure.setEstopDesired(false); //TODO
@@ -433,6 +445,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newBoolean("Pnuematic Pressure", "red");
     CasseroleDriverView.newBoolean("Shooter Spoolup", "yellow");
     CasseroleDriverView.newStringBox("Shots Taken");
+    CasseroleDriverView.newStringBox("Shooter Setpoint");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
 		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
@@ -457,6 +470,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
     CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
+    CasseroleDriverView.setStringBox("Shooter Setpoint", String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
     
     if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
       CasseroleDriverView.setSoundWidget("High Ground Acqd",true);

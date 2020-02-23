@@ -21,18 +21,18 @@ public class ImaginaryShooterControl extends ShooterControl {
     ShooterCtrlMode ctrlMode = ShooterCtrlMode.Stop;
     final double SHOOTER_ACCEL_RPM_PER_SEC = 2000;
     final double SHOOTER_DECEL_RPM_PER_SEC = 1000;
+    double adjustedSetpointRPM;
 
     public ImaginaryShooterControl() {
         shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 2000);
-        shooterRPMSetpointClose= new Calibration("Shooter Close Shot Setpoint RPM", 1500);
         commonInit();
     }
 
     public void update() {
-        if(runCommand == ShooterRunCommand.ShotClose){
-            des_speed_rpm = shooterRPMSetpointClose.get();
-        } else if (runCommand == ShooterRunCommand.ShotFar){
-            des_speed_rpm = shooterRPMSetpointFar.get();
+        adjustedSetpointRPM = shooterRPMSetpointFar.get() + shotAdjustmentRPM;
+
+        if (runCommand == ShooterRunCommand.ShotFar || runCommand == ShooterRunCommand.ShotClose){
+            des_speed_rpm = adjustedSetpointRPM;
         } else {
             des_speed_rpm = 0;
         }
@@ -52,19 +52,19 @@ public class ImaginaryShooterControl extends ShooterControl {
         }
 
 
-        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
+        final double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, des_speed_rpm);
         rpmActualSig.addSample(sampleTimeMS, speed_rpm);
         shooterStateCommandSig.addSample(sampleTimeMS, runCommand.value);
-        shooterControlModeSig.addSample(sampleTimeMS, ctrlMode.value); 
+        shooterControlModeSig.addSample(sampleTimeMS, ctrlMode.value);
     }
 
-    public boolean isUnderLoad(){
-        //Not really doable in simulation
+    public boolean isUnderLoad() {
+        // Not really doable in simulation
         return false;
     }
 
-    public double getSpeed_rpm(){
+    public double getSpeed_rpm() {
         return speed_rpm;
     }
 
@@ -73,12 +73,12 @@ public class ImaginaryShooterControl extends ShooterControl {
         return speed_rpm;
     }
 
-    public ShooterCtrlMode getShooterCtrlMode(){
+    public ShooterCtrlMode getShooterCtrlMode() {
         return ctrlMode;
     }
 
     @Override
-    public void updateGains(boolean forceChange) {
+    public void updateGains(final boolean forceChange) {
         // TODO Auto-generated method stub
 
     }
@@ -86,6 +86,11 @@ public class ImaginaryShooterControl extends ShooterControl {
     @Override
     public int getShotCount() {
         return 42;
+    }
+
+    @Override
+    public double getAdjustedSetpointRPM() {
+        return adjustedSetpointRPM;
     }
 
 }
