@@ -26,6 +26,11 @@ public class RealShooterControl extends ShooterControl {
 
     private final int SPOOLUP_PID_SLOT_ID = 0;
     
+
+    double adjustedSetpointRPM = 0;
+    double prevAdjustedSetpointRPM = 0;
+    boolean setpointChanged = false;
+
     boolean underLoad = false;
     ShooterCtrlMode currentStateShooter;
     ShooterCtrlMode previousStateShooter;
@@ -161,13 +166,16 @@ public class RealShooterControl extends ShooterControl {
         double shooterSetpointRPM = 0;
         
         //Calc desired shooter speed
+        if(shotAdjustmentChanged){
+            adjustedSetpointRPM = shooterRPMSetpointFar.get() + shotAdjustmentRPM;
+        }
         
         if (runCommand == ShooterRunCommand.Eject){
             shooterSetpointRPM = EjectSpeed.get();
         }else if (runCommand == ShooterRunCommand.Stop){
             shooterSetpointRPM = 0;
         }else { //For close and far shots, use the closed loop calibration
-            shooterSetpointRPM = shooterRPMSetpointFar.get();
+            shooterSetpointRPM = adjustedSetpointRPM;
         }
 
         //Get actual speed
@@ -187,6 +195,11 @@ public class RealShooterControl extends ShooterControl {
 
             //Handle transition out of stop, and into the "running" modes.
             if(currentStateShooter==ShooterCtrlMode.Stop){
+                currentStateShooter=ShooterCtrlMode.SpoolUp;
+            }
+
+            //Whenever we change the setpoint, go back to spoolup to ensure we get to the right speed
+            if(shotAdjustmentChanged){
                 currentStateShooter=ShooterCtrlMode.SpoolUp;
             }
 
@@ -264,6 +277,7 @@ public class RealShooterControl extends ShooterControl {
         }
 
         previousStateShooter = currentStateShooter;
+        shotAdjustmentChanged = false; //has been handled by this call to update()
 
 
         double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
@@ -301,6 +315,11 @@ public class RealShooterControl extends ShooterControl {
     @Override
     public int getShotCount(){
         return shotCount;
+    }
+
+    @Override
+    public double getAdjustedSetpointRPM() {
+        return adjustedSetpointRPM;
     }
 
 

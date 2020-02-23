@@ -46,12 +46,15 @@ public abstract class ShooterControl {
 
     Calibration shooterRPMSetpointFar;
     Calibration shooterSendEmVoltage;
-    Calibration shooterRPMSetpointClose;
 
     Signal rpmDesiredSig;
     Signal rpmActualSig;
     Signal shooterStateCommandSig;
     Signal shooterControlModeSig;
+    
+    final double SHOT_ADJUST_STEP_RPM = 25.0;
+    double shotAdjustmentRPM = 0;
+    boolean shotAdjustmentChanged = false;
 
     private static ShooterControl instance = null;
 	public static synchronized ShooterControl getInstance() {
@@ -88,5 +91,18 @@ public abstract class ShooterControl {
     public abstract void updateGains(boolean forceChange);
 
     public abstract int getShotCount();
+
+
+    public void incrementSpeedSetpoint() {
+        shotAdjustmentRPM += SHOT_ADJUST_STEP_RPM;
+        shotAdjustmentChanged = true;
+    }
+
+    public void decrementSpeedSetpoint() {
+        shotAdjustmentRPM -= SHOT_ADJUST_STEP_RPM;
+        shotAdjustmentChanged = true;
+    }
+
+    public abstract double getAdjustedSetpointRPM();
     
 }
