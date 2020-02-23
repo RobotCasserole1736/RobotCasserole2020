@@ -139,6 +139,8 @@ public class RealShooterControl extends ShooterControl {
         currentStateShooter = ShooterCtrlMode.Stop;
         previousStateShooter = ShooterCtrlMode.Stop;
 
+        adjustedSetpointRPM = shooterRPMSetpointFar.get() + shotAdjustmentRPM;
+
     }
 
     public void updateGains(boolean forceChange) {

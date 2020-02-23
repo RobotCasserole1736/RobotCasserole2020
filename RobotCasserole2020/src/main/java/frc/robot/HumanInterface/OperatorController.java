@@ -70,6 +70,8 @@ public class OperatorController {
     // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
     private OperatorController() {
         operaterController= new XboxController(1);
+        speedIncCmdPulser = new ButtonPulser();
+        speedDecCmdPulser = new ButtonPulser();
 
         shootCmdSig = new Signal("Operator Controller Shoot Command", "bool");
         prepToShootCmdSig = new Signal("Operator Controller Prep to Shoot Command", "bool");
