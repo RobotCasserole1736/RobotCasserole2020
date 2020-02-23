@@ -63,13 +63,14 @@ public class Autonomous {
         DriveFwd(1),  
         ShootOnly(2),  
         VisionAlignShoot(3),   
-        BallThief(4),
-        Steak(5),
-        OurSideSteak(6),
-        CitrusSteak(7),
-        NoStealSteak(8),
-        VisionAlignOnly(9),
-        SWTest(10),
+        CloseVisionAlignShoot(4),
+        BallThief(5),
+        Steak(6),
+        OurSideSteak(7),
+        CitrusSteak(8),
+        NoStealSteak(9),
+        VisionAlignOnly(10),
+        SWTest(11),
         Inactive(-1); 
 
         public final int value;
@@ -100,6 +101,7 @@ public class Autonomous {
                                                               "Drive Forward", 
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
+                                                              "Close Vision Align Shoot",
                                                               "Ball Thief",                                              
                                                               "Steak",
                                                               "Our Side Steak",
@@ -145,18 +147,20 @@ public class Autonomous {
 		} else if (actionStr.compareTo(ACTION_MODES[2]) == 0) { 
 			modeCmd = AutoMode.ShootOnly;
 		} else if (actionStr.compareTo(ACTION_MODES[3]) == 0) { 
-			modeCmd = AutoMode.VisionAlignShoot;
+            modeCmd = AutoMode.VisionAlignShoot;
 		} else if (actionStr.compareTo(ACTION_MODES[4]) == 0) { 
-			modeCmd = AutoMode.BallThief;
-		} else if (actionStr.compareTo(ACTION_MODES[5]) == 0) { 
-            modeCmd = AutoMode.Steak;
+            modeCmd = AutoMode.CloseVisionAlignShoot;
+        } else if (actionStr.compareTo(ACTION_MODES[5]) == 0){
+            modeCmd = AutoMode.BallThief;
         } else if (actionStr.compareTo(ACTION_MODES[6]) == 0) { 
+            modeCmd = AutoMode.Steak;
+        } else if (actionStr.compareTo(ACTION_MODES[7]) == 0) { 
 			modeCmd = AutoMode.OurSideSteak;
-		} else if (actionStr.compareTo(ACTION_MODES[7]) == 0) { 
+		} else if (actionStr.compareTo(ACTION_MODES[8]) == 0) { 
 			modeCmd = AutoMode.CitrusSteak;
-        } else if (actionStr.compareTo(ACTION_MODES[8]) == 0){
+        } else if (actionStr.compareTo(ACTION_MODES[9]) == 0){
             modeCmd = AutoMode.NoStealSteak;
-        } else if (actionStr.compareTo(ACTION_MODES[9]) == 0) { 
+        } else if (actionStr.compareTo(ACTION_MODES[10]) == 0) { 
             modeCmd = AutoMode.SWTest;
         } else {
             modeCmd = AutoMode.Inactive;
@@ -187,6 +191,15 @@ public class Autonomous {
                 modeCmd = AutoMode.VisionAlignOnly;
                 autoModeName = "Driver Commanded Vision Align Only";
                 visionAlignOnlyButtonReleased = false;
+            } else {
+                //Do Nothing until driver releases the button
+            }
+        } else if(DriverController.getInstance().getAutoAlignAndShootCloseCmd()){
+            visionAlignOnlyButtonReleased = true; // assume opposite button released
+            if(visionAlignShootButtonReleased==true){
+                modeCmd = AutoMode.CloseVisionAlignShoot;
+                autoModeName = "Driver Commanded Vision Align And Shoot";
+                visionAlignShootButtonReleased = false;
             } else {
                 //Do Nothing until driver releases the button
             }
@@ -263,7 +276,7 @@ public class Autonomous {
                 break;
 
                 case DriveFwd:
-                    seq.addEvent(new AutoEventDriveForTime(2, 0.25));
+                    seq.addEvent(new AutoEventDriveForTime(0.5, 0.25));
                 break;
 
                 case SWTest:
@@ -285,7 +298,6 @@ public class Autonomous {
 
                 case VisionAlignOnly:
                     seq.addEvent(new AutoEventStopRobot());
-                    seq.addEvent(new AutoEventWait(0.25));
                     seq.addEvent(new AutoEventTurnToVisionTarget());
                 break;
 
@@ -299,39 +311,48 @@ public class Autonomous {
 
                 break;
 
+                case CloseVisionAlignShoot:
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
+                    if(DriverStation.getInstance().isAutonomous()){
+                        seq.addEvent(new AutoEventShootClose(15.0,5));
+                    } else {
+                        seq.addEvent(new AutoEventShootClose(150.0,100));
+                    }
+
+                break;
+
                 case BallThief:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0,1.0)); //Time is for shoot prep, which is included
-                    seq.addEvent(new AutoEventTurn(17));
-                    seq.addEvent(new AutoEventWait(0.25));
+                    seq.addEvent(new AutoEventTurn(6));
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShootFar(8.0,5));
+                    seq.addEvent(new AutoEventShootClose(4.0, 5));
                 break;
 
                 case Steak:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventDriveToBallThief(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBackUpFromBallThief(4.0,1.0)); //Time is for shoot prep, which is included
-                    seq.addEvent(new AutoEventTurn(17));
-                    seq.addEvent(new AutoEventWait(0.25));
+                    seq.addEvent(new AutoEventTurn(6));
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShootFar(3.0,5));
+                    seq.addEvent(new AutoEventShootClose(3.0, 5));
                     seq.addEvent(new AutoEventCollectSteak(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventTurn(25));
                     seq.addEvent(new AutoEventCollectSteakPt2(4.0));
-                    seq.addEvent(new AutoEventWait(0.25));
+                    seq.addEvent(new AutoEventTurn(15));
                     seq.addEvent(new AutoEventTurnToVisionTarget());
-                    seq.addEvent(new AutoEventShootFar(3.0,5));
+                    seq.addEvent(new AutoEventShootClose(10.0, 5));
                 break;
                 case CitrusSteak:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
                     seq.addEvent(new AutoEventCitrusSteakA(4.0));
                     seq.addEvent(new AutoEventTurn(114));
-                    seq.addEvent(new AutoEventShootFar(3.0,5));
-                    seq.addEvent(new AutoEventTurn(-24));
-                    seq.addEvent(new AutoEventCitrusSteakB(4.0));
-                    seq.addEvent(new AutoEventShootFar(3.0,5));
+                    seq.addEvent(new AutoEventTurnToVisionTarget());
+                    seq.addEvent(new AutoEventShootClose(3.0,5));
+                    // seq.addEvent(new AutoEventTurn(-24));
+                    // seq.addEvent(new AutoEventCitrusSteakB(4.0));
+                    // seq.addEvent(new AutoEventShootFar(3.0,5));
                     //seq.addEvent(new AutoEventTurnToVisionTarget());
                     //seq.addEvent(new AutoEventShootFar(3.0,5));
                     //seq.addEvent(new AutoEventShootFar(8.0,5));
@@ -360,7 +381,7 @@ public class Autonomous {
                     Drivetrain.getInstance().setInitialPose(-10, 11.5, 90);
                     seq.addEvent(new AutoEventNoStealSteakA(4.0));
                     seq.addEvent(new AutoEventTurn(50));
-                    seq.addEvent(new AutoEventShootFar(5.0,5));
+                    seq.addEvent(new AutoEventShootClose(3.0, 5));
                     seq.addEvent(new AutoEventNoStealSteakB(4.0));
                     seq.addEvent(new AutoEventShootFar(3.0,3));
                 break;

@@ -33,7 +33,10 @@ public class Supperstructure {
         PrepShootWhileIntake(5), //Run intake while getting shooter wheel up to speed and advancing balls
         Stop(6),                 //Estop - everything is off
         ClearJam(7),             //When balls get stuck
-        ShootClose(8);           //Run all balls in the system through the shooter as fast as possible (sacrificing accuracy)
+        ShootClose(8),           //Run all balls in the system through the shooter as fast as possible (sacrificing accuracy)
+        SpinDaShooter(9),
+        Repel(10);
+
 
         public final int value;
 
@@ -53,6 +56,7 @@ public class Supperstructure {
     boolean intkDes;
     boolean ejectDes;
     boolean stopDes;
+    boolean repelDes=false;
     boolean clearJamDes;
 
     SupperstructureOpMode opMode = SupperstructureOpMode.Normal; //Default
@@ -173,7 +177,14 @@ public class Supperstructure {
                 intk.setSpeedMode(IntakeSpeed.Intake);
                 hopp.setOpMode(HopperOpMode.Injest);
                 shoot.setRun(ShooterRunCommand.ShotFar);
-                conv.setOpMode(ConveyorOpMode.AdvanceToShooter);
+                conv.setOpMode(ConveyorOpMode.AdvanceFromHopper);
+            break;
+            case Repel:
+                intk.setPosMode(IntakePosition.Extended);
+                intk.setSpeedMode(IntakeSpeed.Eject);
+                hopp.setOpMode(HopperOpMode.Stop);
+                conv.setOpMode(ConveyorOpMode.Stop);
+                shoot.setRun(ShooterRunCommand.Stop);
             break;
         }
     }
@@ -195,6 +206,10 @@ public class Supperstructure {
 
     public void setIntakeDesired(boolean cmd){
         intkDes = cmd;
+    }
+
+    public void setRepelDesired(boolean cmd){
+        repelDes=cmd;
     }
 
     public void setEjectDesired(boolean cmd){

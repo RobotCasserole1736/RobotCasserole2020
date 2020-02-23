@@ -1,5 +1,7 @@
 package frc.robot.Drivetrain;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import frc.robot.RobotSimMode;
 
 public abstract class Drivetrain {
@@ -42,6 +44,7 @@ public abstract class Drivetrain {
     public abstract void setTurnToAngleCmd(double angle_cmd);
     public abstract double getTurnToAngleErrDeg();
     public abstract void calGyro();
+    public abstract void setMotorMode(IdleMode inMode);
     
     public double WHEEL_RPM_TO_FPS(double rpm_in){
         return rpm_in / 60 * 2 * Math.PI * WHEEL_ROLLING_RADIUS_FT;

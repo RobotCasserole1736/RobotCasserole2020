@@ -92,6 +92,8 @@ public class RealDrivetrain extends Drivetrain {
     Calibration turnToAngleMaxRPM;
     Calibration turnToAngleMaxRPMPerSec;
 
+    Calibration AdenSensitivityCal;
+
     Calibration currentLimit;
     boolean calsUpdated;
 
@@ -147,6 +149,7 @@ public class RealDrivetrain extends Drivetrain {
         turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0.1);
         turnToAngleMaxRPM= new Calibration("Drivetrain Turn To Angle Max RPM", 150, 0, 500);
         turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM sec", 75, 0, 5000);
+        AdenSensitivityCal = new Calibration("Aden Sensitivity",1.2);
 
         dtLeftIntern.follow(dtLeftMaster);
         dtRightIntern.follow(dtRightMaster);
@@ -169,6 +172,14 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public void calGyro(){
         dtGyro.calibrate();
+    }
+
+    @Override
+    public void setMotorMode(IdleMode inMode){
+        dtLeftMaster.setIdleMode(inMode);
+        dtLeftIntern.setIdleMode(inMode);
+        dtRightMaster.setIdleMode(inMode);
+        dtRightIntern.setIdleMode(inMode);
     }
 
     public void sampleSensors() {
@@ -294,7 +305,7 @@ public class RealDrivetrain extends Drivetrain {
             rotCmd = rotationCmd;
         } else {
             fwdRevCmd = forwardReverseCmd;
-            rotCmd = Math.abs(forwardReverseCmd) * rotationCmd * 1.2; //Modifiy scalar for sensitivity
+            rotCmd = Math.abs(forwardReverseCmd) * rotationCmd * AdenSensitivityCal.get(); //Modifiy scalar for sensitivity
         }
     }
 

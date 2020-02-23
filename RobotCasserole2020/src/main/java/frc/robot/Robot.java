@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotController;
@@ -215,6 +217,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
       CrashTracker.logDisabledInit();
       dataServer.logger.stopLogging();
+      drivetrain.setMotorMode(IdleMode.kCoast);
       auto.reset();
 
   }
@@ -278,6 +281,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
       CrashTracker.logAutoInit();
       dataServer.logger.startLoggingAuto();
+      drivetrain.setMotorMode(IdleMode.kCoast);
       auto.sampleDashboardSelector();
       auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
   }
@@ -328,6 +332,7 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
       CrashTracker.logTeleopInit();
       dataServer.logger.startLoggingTeleop();
+      drivetrain.setMotorMode(IdleMode.kBrake);
   }
 
   @Override
@@ -374,7 +379,11 @@ public class Robot extends TimedRobot {
         if(DriverController.getInstance().getSnailModeDesired()){
           //fine movement mode
           double turnVal = DriverController.getInstance().getRotateCmd();
-          drivetrain.setOpenLoopCmd(0,turnVal*turnVal);
+          if(turnVal>0){
+            drivetrain.setOpenLoopCmd(0,turnVal*turnVal);
+          }else{
+            drivetrain.setOpenLoopCmd(0,-1*turnVal*turnVal);
+          }
         } else {
           //Open loop control of motors
           drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 

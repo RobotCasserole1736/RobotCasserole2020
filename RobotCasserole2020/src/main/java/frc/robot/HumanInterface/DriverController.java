@@ -38,12 +38,14 @@ public class DriverController {
     double rotCmd = 0;
     boolean autoAlignCmd = false;
     boolean autoAlignAndShootCmd = false;
+    boolean autoAlignAndShootCloseCmd = false;
     boolean snailModeCmd = false;
     boolean reverseModeCmd = false;
 
     Signal fwdRevCmdSig;
     Signal rotCmdSig;
     Signal autoAlignAndShootCmdSig;
+    Signal autoAlignAndShootCloseCmdSig;
     Signal autoAlignCmdSig;
     Signal snailModeCmdSig;
     Signal reverseModeSig;
@@ -62,6 +64,7 @@ public class DriverController {
         fwdRevCmdSig    = new Signal("Driver FwdRev Command", "cmd");
         rotCmdSig       = new Signal("Driver Rotate Command", "cmd");
         autoAlignAndShootCmdSig = new Signal("Driver Auto Align and Shoot Command", "bool");
+        autoAlignAndShootCloseCmdSig =  new Signal("Driver Auto Align Close and Shoot Command", "bool");
         autoAlignCmdSig = new Signal("Driver Auto Align Only Command", "bool");
         snailModeCmdSig = new Signal("Driver Snail Mode Command", "bool");
         reverseModeSig  = new Signal("Driver Flip Front/Back Command", "bool");
@@ -90,6 +93,7 @@ public class DriverController {
         
         autoAlignCmd = driverController.getXButton();
         autoAlignAndShootCmd = (driverController.getTriggerAxis(Hand.kRight) > 0.2);
+        autoAlignAndShootCloseCmd = (driverController.getTriggerAxis(Hand.kLeft) > 0.2);
         snailModeCmd = driverController.getBumper(Hand.kRight);
 
         double time_in_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
@@ -97,6 +101,7 @@ public class DriverController {
         rotCmdSig.addSample(time_in_ms, rotCmd);      
         autoAlignCmdSig.addSample(time_in_ms, autoAlignCmd);
         autoAlignAndShootCmdSig.addSample(time_in_ms, autoAlignAndShootCmd);
+        autoAlignAndShootCloseCmdSig.addSample(time_in_ms, autoAlignAndShootCloseCmd);
         snailModeCmdSig.addSample(time_in_ms, snailModeCmd);
         reverseModeSig.addSample(time_in_ms, reverseModeCmd);
     }
@@ -126,6 +131,10 @@ public class DriverController {
 
     public boolean getAutoAlignAndShootCmd(){
         return autoAlignAndShootCmd; 
+    }
+
+    public boolean getAutoAlignAndShootCloseCmd(){
+        return autoAlignAndShootCloseCmd;
     }
 
     public boolean getAutoAlignCmd(){

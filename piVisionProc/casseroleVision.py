@@ -138,7 +138,8 @@ class VisionProcessor():
     def process(self, inFrame):
         if(self.stableidx%20==0):
             self.innerAim=ntTable.getEntry("InnerAim").value
-            if(self.stableidx%40==0):
+        if(self.stableidx%15==0):
+            if(self.stableidx%30==0):
                 ntTable.putNumber("Heartbeat", 0.0)
                 print("Heartbeat")
             else:

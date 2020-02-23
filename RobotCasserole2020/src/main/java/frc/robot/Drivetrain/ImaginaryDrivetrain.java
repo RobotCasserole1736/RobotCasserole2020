@@ -1,6 +1,8 @@
 
 package frc.robot.Drivetrain;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
@@ -216,6 +218,11 @@ public class ImaginaryDrivetrain extends Drivetrain{
     @Override
     public void setInitialPose(double x_ft, double y_ft, double pose_angle_deg) {
         dtPose.resetToPosition(x_ft, y_ft, pose_angle_deg);
+    }
+
+    @Override
+    public void setMotorMode(IdleMode inMode){
+
     }
 
     @Override
