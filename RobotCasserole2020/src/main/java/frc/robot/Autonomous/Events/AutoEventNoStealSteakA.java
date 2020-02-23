@@ -14,10 +14,9 @@ public class AutoEventNoStealSteakA extends AutoEvent {
     PathPlannerAutoEvent driveBackward;
 
     //PrepToShoot Stuff
-    double prepSpeed;
-	double prepDuration_s;
-	double prepEndTime;
-	boolean prepCompleted = true;
+	double intkPrepDuration_s;
+	double intkPrepEndTime;
+	boolean intkPrepCompleted = true;
 
     //Waypoints always start at (0,0), and are referenced relative to the robot's
     // position and pose angle whenever the event starts running. Units must be inches.
@@ -25,21 +24,22 @@ public class AutoEventNoStealSteakA extends AutoEvent {
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
         new Waypoint(3.2,   0.0,  Pathfinder.d2r(0)),
-        new Waypoint(8.1,5.2,Pathfinder.d2r(50))
+        new Waypoint(7.5,1.8,Pathfinder.d2r(50))
     };
 
-    public AutoEventNoStealSteakA(double prepDuration_s_in) {
+    public AutoEventNoStealSteakA(double intkPrepDuration_s_in) {
         driveBackward = new PathPlannerAutoEvent(waypoints_ft, false);
 
-        prepDuration_s = prepDuration_s_in;
+        intkPrepDuration_s = intkPrepDuration_s_in;
     }
 
     @Override
     public void userStart() {
         driveBackward.userStart();
 
-        prepEndTime = Timer.getFPGATimestamp() + prepDuration_s;
-        prepCompleted = false;
+        intkPrepEndTime = Timer.getFPGATimestamp() + intkPrepDuration_s;
+        intkPrepCompleted = false;
+        Supperstructure.getInstance().setIntakeDesired(true);
 		Supperstructure.getInstance().setPrepToShootDesired(true);
     }
 
@@ -47,13 +47,11 @@ public class AutoEventNoStealSteakA extends AutoEvent {
     public void userUpdate() {
         driveBackward.userUpdate();
 
-        prepCompleted = (Timer.getFPGATimestamp() > prepEndTime);
-		if (prepCompleted){
-			Supperstructure.getInstance().setPrepToShootDesired(false);
-		} else {
-            Supperstructure.getInstance().setPrepToShootDesired(true);
-            Supperstructure.getInstance().setIntakeDesired(false); //Because intake overrides prep to shoot
-		}
+        intkPrepCompleted = (Timer.getFPGATimestamp() > intkPrepEndTime);
+		if (intkPrepCompleted){
+            Supperstructure.getInstance().setPrepToShootDesired(false);
+            Supperstructure.getInstance().setIntakeDesired(false);
+        }
     }
 
     @Override
@@ -61,6 +59,7 @@ public class AutoEventNoStealSteakA extends AutoEvent {
         driveBackward.userForceStop();
 
         Supperstructure.getInstance().setPrepToShootDesired(false);
+        Supperstructure.getInstance().setIntakeDesired(false);
     }
 
     @Override

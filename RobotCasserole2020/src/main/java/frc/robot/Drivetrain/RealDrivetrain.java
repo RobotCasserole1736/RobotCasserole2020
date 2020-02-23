@@ -299,14 +299,15 @@ public class RealDrivetrain extends Drivetrain {
         rotCmd = rotationCmd;
 
         //Aden likes cheesy drive, so we do this thing.
-        if(Math.abs(fwdRevCmd) < 0.1){
-            //coutner rotate allowed
-            fwdRevCmd = 0;
-            rotCmd = rotationCmd;
-        } else {
-            fwdRevCmd = forwardReverseCmd;
-            rotCmd = Math.abs(forwardReverseCmd) * rotationCmd * AdenSensitivityCal.get(); //Modifiy scalar for sensitivity
-        }
+        //No he doesn't so we don't do this thing.
+        // if(Math.abs(fwdRevCmd) < 0.1){
+        //     //coutner rotate allowed
+        //     fwdRevCmd = 0;
+        //     rotCmd = rotationCmd;
+        // } else {
+        //     fwdRevCmd = forwardReverseCmd;
+        //     rotCmd = Math.abs(forwardReverseCmd) * rotationCmd * AdenSensitivityCal.get(); //Modifiy scalar for sensitivity
+        // }
     }
 
     @Override

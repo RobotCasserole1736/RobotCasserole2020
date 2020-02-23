@@ -379,11 +379,18 @@ public class Robot extends TimedRobot {
         if(DriverController.getInstance().getSnailModeDesired()){
           //fine movement mode
           double turnVal = DriverController.getInstance().getRotateCmd();
-          if(turnVal>0){
-            drivetrain.setOpenLoopCmd(0,turnVal*turnVal);
+          double speedVal = DriverController.getInstance().getRotateCmd();
+          if(turnVal<0){
+            turnVal*=turnVal*-1;
           }else{
-            drivetrain.setOpenLoopCmd(0,-1*turnVal*turnVal);
+            turnVal*=turnVal;
           }
+          if(speedVal<0){
+            speedVal*=speedVal*-1;
+          }else{
+            speedVal*=speedVal;
+          }
+          drivetrain.setOpenLoopCmd(0,turnVal*turnVal);
         } else {
           //Open loop control of motors
           drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 

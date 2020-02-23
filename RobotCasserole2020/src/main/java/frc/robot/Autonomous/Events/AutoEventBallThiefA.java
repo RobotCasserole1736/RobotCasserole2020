@@ -10,39 +10,40 @@ import jaci.pathfinder.Waypoint;
 /**
  * go to scale on left.
  */
-public class AutoEventAltSteakDriveFwdPtOne extends AutoEvent {
+public class AutoEventBallThiefA extends AutoEvent {
     PathPlannerAutoEvent driveForward;
 
     //stuff for Intake
-    double intkSpeed;
-	double intkDuration_s;
-	double intkEndTime;
-	boolean intkCompleted = true;
+	double intkPrepDuration_s;
+	double intkPrepEndTime;
+	boolean intkPrepCompleted = true;
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(8.5,   0.0,  Pathfinder.d2r(37))
+        new Waypoint(5.9,   0.0,  Pathfinder.d2r(0)),
+        new Waypoint(8.5,1.7,Pathfinder.d2r(80))
     };
 
-    public AutoEventAltSteakDriveFwdPtOne(double intkDuration_s_in) {
-        intkDuration_s = intkDuration_s_in;
-        driveForward = new PathPlannerAutoEvent(waypoints_ft, false);
+    public AutoEventBallThiefA(double intkPrepDuration_s_in) {
+        intkPrepDuration_s = intkPrepDuration_s_in;
+        driveForward = new PathPlannerAutoEvent(waypoints_ft, false,5,5);
     }
 
     @Override
     public void userStart() {
-        intkEndTime = Timer.getFPGATimestamp() + intkDuration_s;
-        intkCompleted = false;
+        intkPrepEndTime = Timer.getFPGATimestamp() + intkPrepDuration_s;
+        intkPrepCompleted = false;
         Supperstructure.getInstance().setIntakeDesired(true);
-        
+        Supperstructure.getInstance().setPrepToShootDesired(true);
         driveForward.userStart();
     }
 
     @Override
     public void userUpdate() {
-        intkCompleted = (Timer.getFPGATimestamp() > intkEndTime);
-		if (intkCompleted){
-			Supperstructure.getInstance().setIntakeDesired(false);
+        intkPrepCompleted = (Timer.getFPGATimestamp() > intkPrepEndTime);
+		if (intkPrepCompleted){
+            Supperstructure.getInstance().setIntakeDesired(false);
+            Supperstructure.getInstance().setPrepToShootDesired(false);
         }
         
         driveForward.userUpdate();
@@ -51,6 +52,7 @@ public class AutoEventAltSteakDriveFwdPtOne extends AutoEvent {
     @Override
     public void userForceStop() {
         Supperstructure.getInstance().setIntakeDesired(false);
+        Supperstructure.getInstance().setPrepToShootDesired(false);
         
         driveForward.userForceStop();
     }
@@ -66,7 +68,7 @@ public class AutoEventAltSteakDriveFwdPtOne extends AutoEvent {
     }
 
     public static void main(String[] args) {
-        AutoEventAltSteakDriveFwdPtOne autoEvent = new AutoEventAltSteakDriveFwdPtOne(3.0); //time is for intk
+        AutoEventBallThiefA autoEvent = new AutoEventBallThiefA(4.0); //time is for intk
 		//TODO
 		System.out.println("Done");
     }

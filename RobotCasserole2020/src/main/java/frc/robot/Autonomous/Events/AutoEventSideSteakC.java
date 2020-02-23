@@ -10,7 +10,7 @@ import jaci.pathfinder.Waypoint;
 /**
  * go to scale on left.
  */
-public class AutoEventAltSteakDriveFwdPtThree extends AutoEvent {
+public class AutoEventSideSteakC extends AutoEvent {
     PathPlannerAutoEvent driveForward;
 
     //PrepToShoot Stuff
@@ -21,13 +21,12 @@ public class AutoEventAltSteakDriveFwdPtThree extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(3.0,   1,  Pathfinder.d2r(45)),
-        new Waypoint(4.5, 7.5, Pathfinder.d2r(105))
+        new Waypoint(7.5, 1, Pathfinder.d2r(-29))
     };
 
-    public AutoEventAltSteakDriveFwdPtThree(double prepDuration_s_in) {
+    public AutoEventSideSteakC(double prepDuration_s_in) {
         prepDuration_s = prepDuration_s_in;
-        driveForward = new PathPlannerAutoEvent(waypoints_ft, false);
+        driveForward = new PathPlannerAutoEvent(waypoints_ft, false,12,6);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class AutoEventAltSteakDriveFwdPtThree extends AutoEvent {
     }
 
     public static void main(String[] args) {
-        AutoEventAltSteakDriveFwdPtThree autoEvent = new AutoEventAltSteakDriveFwdPtThree(4.0); //time is for intk
+        AutoEventSideSteakC autoEvent = new AutoEventSideSteakC(4.0); //time is for intk
 		//TODO
 		System.out.println("Done");
     }

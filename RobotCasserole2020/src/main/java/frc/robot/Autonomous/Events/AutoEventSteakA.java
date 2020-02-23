@@ -10,51 +10,47 @@ import jaci.pathfinder.Waypoint;
 /**
  * go to scale on left.
  */
-public class AutoEventDriveToBallThief extends AutoEvent {
+public class AutoEventSteakA extends AutoEvent {
     PathPlannerAutoEvent driveForward;
-
     //stuff for Intake
-    double intkSpeed;
-	double intkPrepDuration_s;
-	double intkEndTime;
-	boolean intkPrepCompleted = true;
+	double prepDuration_s;
+	double prepEndTime;
+	boolean prepCompleted = true;
 
-    private final Waypoint[] waypoints_ft = new Waypoint[] {
+    private final Waypoint[] waypoints_ft_pt1 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(5.9,   0.0,  Pathfinder.d2r(0)),
-        new Waypoint(8.5,1.7,Pathfinder.d2r(80))
+        new Waypoint(-17.5,   -9,  Pathfinder.d2r(0)),
+        
     };
 
-    public AutoEventDriveToBallThief(double intkPrepDuration_s_in) {
-        intkPrepDuration_s = intkPrepDuration_s_in;
-        driveForward = new PathPlannerAutoEvent(waypoints_ft, false,5,5);
+
+    public AutoEventSteakA(double prepDuration_s_in) {
+        prepDuration_s = prepDuration_s_in;
+        driveForward=new PathPlannerAutoEvent(waypoints_ft_pt1, true,12,6);
+
+        
     }
 
     @Override
     public void userStart() {
-        intkEndTime = Timer.getFPGATimestamp() + intkPrepDuration_s;
-        intkPrepCompleted = false;
-        Supperstructure.getInstance().setIntakeDesired(true);
+        prepEndTime = Timer.getFPGATimestamp() + prepDuration_s;
+        prepCompleted = false;
         Supperstructure.getInstance().setPrepToShootDesired(true);
         driveForward.userStart();
     }
 
     @Override
     public void userUpdate() {
-        intkPrepCompleted = (Timer.getFPGATimestamp() > intkEndTime);
-		if (intkPrepCompleted){
-            Supperstructure.getInstance().setIntakeDesired(false);
-            Supperstructure.getInstance().setPrepToShootDesired(false);
+        prepCompleted = (Timer.getFPGATimestamp() > prepEndTime);
+		if (prepCompleted){
+			Supperstructure.getInstance().setIntakeDesired(false);
         }
-        
         driveForward.userUpdate();
     }
     
     @Override
     public void userForceStop() {
         Supperstructure.getInstance().setIntakeDesired(false);
-        Supperstructure.getInstance().setPrepToShootDesired(false);
-        
         driveForward.userForceStop();
     }
 
@@ -69,7 +65,7 @@ public class AutoEventDriveToBallThief extends AutoEvent {
     }
 
     public static void main(String[] args) {
-        AutoEventDriveToBallThief autoEvent = new AutoEventDriveToBallThief(4.0); //time is for intk
+        AutoEventSteakA autoEvent = new AutoEventSteakA(4.0); //time is for intk
 		//TODO
 		System.out.println("Done");
     }

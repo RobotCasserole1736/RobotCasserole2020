@@ -16,10 +16,9 @@ public class AutoEventCitrusSteakB extends AutoEvent {
     int idx;
     int len;
     //stuff for Intake
-    double intkSpeed;
-	double intkDuration_s;
-	double intkEndTime;
-	boolean intkCompleted = true;
+	double intkPrepDuration_s;
+	double intkPrepEndTime;
+	boolean intkPrepCompleted = true;
 
     
 
@@ -40,8 +39,8 @@ public class AutoEventCitrusSteakB extends AutoEvent {
     };
 
 
-    public AutoEventCitrusSteakB(double intkDuration_s_in) {
-        intkDuration_s = intkDuration_s_in;
+    public AutoEventCitrusSteakB(double intkPrepDuration_s_in) {
+        intkPrepDuration_s = intkPrepDuration_s_in;
         idx=0;
         driveForward=new PathPlannerAutoEvent[3];
         driveForward[0] = new PathPlannerAutoEvent(citrus_waypoints_ft_pt0, false,12,6);
@@ -54,18 +53,20 @@ public class AutoEventCitrusSteakB extends AutoEvent {
 
     @Override
     public void userStart() {
-        intkEndTime = Timer.getFPGATimestamp() + intkDuration_s;
-        intkCompleted = false;
+        intkPrepEndTime = Timer.getFPGATimestamp() + intkPrepDuration_s;
+        intkPrepCompleted = false;
         Supperstructure.getInstance().setIntakeDesired(true);
+        Supperstructure.getInstance().setPrepToShootDesired(true);
 
         driveForward[idx].userStart();
     }
 
     @Override
     public void userUpdate() {
-        intkCompleted = (Timer.getFPGATimestamp() > intkEndTime);
-		if (intkCompleted){
-			Supperstructure.getInstance().setIntakeDesired(false);
+        intkPrepCompleted = (Timer.getFPGATimestamp() > intkPrepEndTime);
+		if (intkPrepCompleted){
+            Supperstructure.getInstance().setIntakeDesired(false);
+            Supperstructure.getInstance().setPrepToShootDesired(false);
         }
         if(driveForward[idx].isDone()){
             idx++;
@@ -78,6 +79,7 @@ public class AutoEventCitrusSteakB extends AutoEvent {
     @Override
     public void userForceStop() {
         Supperstructure.getInstance().setIntakeDesired(false);
+        Supperstructure.getInstance().setPrepToShootDesired(false);
         for(int i=0; i<len;i++){
             driveForward[i].userForceStop();
         }

@@ -65,9 +65,12 @@ public class PneumaticsControl {
 
         //  curPressurePSI = ((voltage/5.0)-0.1)*(150/0.8); /*Equation derived from datasheet old sensor */
         //  curPressurePSI = (250*(voltage/4.62)-25);       /*Equation derived from datasheet old sensor */
-        //  curPressurePSI=(((p_max-p_min)*(1-(0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)))+p_min;  /* actual equation but pmin is zero so we can simplify */
-        if(voltage >= 0.001){
-            curPressurePSI=(((p_max-(p_max*0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)));
+        //  curPressurePSI=(((p_max-p_min)*(1-(0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)))+p_min;
+        // curPressurePSI=(((p_max-(p_max*0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)));
+          /* actual equation but pmin is zero so we can simplify */
+        if(v_supplied >= 0.001){
+            curPressurePSI =(250*(voltage/v_supplied)-25);
+            //curPressurePSI = (250*(voltage/4.62)-25); I have a hunch its this one, simply based on the fact that it is in the comments and similar to the formula I currently have
         } else {
             curPressurePSI = 0;//meh, should never happen physically
         }
