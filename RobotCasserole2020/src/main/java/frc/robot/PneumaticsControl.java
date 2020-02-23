@@ -69,8 +69,8 @@ public class PneumaticsControl {
         // curPressurePSI=(((p_max-(p_max*0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)));
           /* actual equation but pmin is zero so we can simplify */
         if(v_supplied >= 0.001){
-            curPressurePSI =(250*(voltage/v_supplied)-25);
-            //curPressurePSI = (250*(voltage/4.62)-25); I have a hunch its this one, simply based on the fact that it is in the comments and similar to the formula I currently have
+            // curPressurePSI =(250*(voltage/v_supplied)-25);
+            curPressurePSI = (250*(voltage/4.62)-25); 
         } else {
             curPressurePSI = 0;//meh, should never happen physically
         }

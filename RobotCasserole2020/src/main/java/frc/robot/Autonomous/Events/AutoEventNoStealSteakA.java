@@ -24,7 +24,7 @@ public class AutoEventNoStealSteakA extends AutoEvent {
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
         new Waypoint(3.2,   0.0,  Pathfinder.d2r(0)),
-        new Waypoint(7.5,1.8,Pathfinder.d2r(50))
+        new Waypoint(7.5,2.7,Pathfinder.d2r(50))
     };
 
     public AutoEventNoStealSteakA(double intkPrepDuration_s_in) {

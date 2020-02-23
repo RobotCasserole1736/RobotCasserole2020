@@ -90,9 +90,9 @@ public class IntakeControl {
 
 
 		
-		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.65);
+		intakeSpeedCmd = new Calibration("Intake Speed Cmd", 0.85);
 		intakeSlowCmd = new Calibration("Intake Slow Speed Cmd", 0.1);
-		ejectSpeedCmd = new Calibration("Eject Speed Cmd", -0.5); 
+		ejectSpeedCmd = new Calibration("Intake Eject Speed Cmd", -0.5); 
 
 		posState = IntakePosition.Retracted; 
 		spdState = IntakeSpeed.Stop;

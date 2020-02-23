@@ -390,7 +390,7 @@ public class Robot extends TimedRobot {
           }else{
             speedVal*=speedVal;
           }
-          drivetrain.setOpenLoopCmd(0,turnVal*turnVal);
+          drivetrain.setOpenLoopCmd(0,turnVal);
         } else {
           //Open loop control of motors
           drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 

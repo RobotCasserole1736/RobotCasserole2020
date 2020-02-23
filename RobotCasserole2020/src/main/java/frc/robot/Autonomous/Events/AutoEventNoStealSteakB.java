@@ -25,12 +25,12 @@ public class AutoEventNoStealSteakB extends AutoEvent {
 
     private final Waypoint[] citrus_waypoints_ft_pt0 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-4.6,      -6.5,  Pathfinder.d2r(0)),
+        new Waypoint(-4.6,      -5.6,  Pathfinder.d2r(0)),
     };
 
     private final Waypoint[] citrus_waypoints_ft_pt1 = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(9.6,   1,  Pathfinder.d2r(-10)),
+        new Waypoint(12.6,   -2,  Pathfinder.d2r(-10)),
     };
 
 
@@ -39,7 +39,7 @@ public class AutoEventNoStealSteakB extends AutoEvent {
         idx=0;
         driveForward=new PathPlannerAutoEvent[2];
         driveForward[0] = new PathPlannerAutoEvent(citrus_waypoints_ft_pt0, true,12,6);
-        driveForward[1] = new PathPlannerAutoEvent(citrus_waypoints_ft_pt1, false,12,6);
+        driveForward[1] = new PathPlannerAutoEvent(citrus_waypoints_ft_pt1, false,8,6);
         len=1;
     
         

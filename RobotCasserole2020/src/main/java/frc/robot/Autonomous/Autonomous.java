@@ -291,7 +291,7 @@ public class Autonomous {
                 break;
 
                 case ShootOnly:
-                    seq.addEvent(new AutoEventDriveStraight(-3));
+                    seq.addEvent(new AutoEventDriveStraight(7.7));
                     seq.addEvent(new AutoEventShootFar(15.0,5));
                 break;
 
@@ -378,10 +378,10 @@ public class Autonomous {
                 case NoStealSteak:
                     Drivetrain.getInstance().setInitialPose(-7, 11.5, 90);
                     seq.addEvent(new AutoEventNoStealSteakA(4.0));
-                    seq.addEvent(new AutoEventTurn(50));
+                    seq.addEvent(new AutoEventTurn(46));
                     seq.addEvent(new AutoEventTurnToVisionTarget());
                     seq.addEvent(new AutoEventShootClose(3.0, 5));
-                    seq.addEvent(new AutoEventNoStealSteakB(4.0));
+                    seq.addEvent(new AutoEventNoStealSteakB(7.0));
                     seq.addEvent(new AutoEventTurnToVisionTarget());
                     seq.addEvent(new AutoEventShootClose(3.0,5));
                 break;
