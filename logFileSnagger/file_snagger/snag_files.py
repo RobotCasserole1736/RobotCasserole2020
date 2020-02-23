@@ -33,48 +33,51 @@ print('*****         FRC '+TEAM_NUMBER_STR+' Robot Log File Snagger           **
 print('*************************************************************')
 
 
+class fileSnagger():
 
+    def __init__(self, rmt_ftp_address, rmt_directory, local_path)
+        # Attempt an FTP connection. Retry if we can't. User may do a ctrl-c to exit if needed.
+        failed = 1
+        while(failed == 1):
+            print('Attempting to connect to target on ftp://' + rmt_ftp_address + " ...")
+            failed = 0
+            try:
+                ftp = FTP(rmt_ftp_address)
+                ftp.login()
+            except:
+                failed = 1
+                print('Error - could not connect to target! Retrying...')
 
-def log_log_result(fsnag_list):
-    if not os.path.isdir(SNAGGER_LOGS_DIR):
-        os.mkdir(SNAGGER_LOGS_DIR)
-    
-    if(fsnag_list == None):
-        fname = os.path.join(SNAGGER_LOGS_DIR, "FAILED_"+time.strftime("%Y%m%d-%H%M%S")+"_log.txt")
-        fcontents = "ERROR! Snag failed! No logs grabbed!"
-    else:
-        fname = os.path.join(SNAGGER_LOGS_DIR, "SNAGGED_"+time.strftime("%Y%m%d-%H%M%S")+"_log.txt")
-        fcontents = ["Files were snagged:\n\n"]
-        fcontents.extend([x + " \n" for x in fsnag_list])
-        fcontents = "".join(fcontents)
         
-    tempf = open(fname, "w")
-    tempf.write(fcontents)
-    tempf.close()
-    return
+        #Log Files
+        #Change to correct working proper working directory
+        # and snag the list of files
+        ftp.cwd(LOG_RIO_FPATH)
+        filenames = ftp.nlst() # get filenames within the directory
 
-# Attempt an FTP connection. Retry if we can't. User may do a ctrl-c to exit if needed.
-failed = 1;
-while(failed == 1):
-    print('Attempting to connect to roboRIO on ftp://' + RIO_ADDRESS + " ...")
-    failed = 0;
-    try:
-        ftp = FTP(RIO_ADDRESS)
-        ftp.login()
-    except:
-        failed = 1;
-        print('Error - could not connect to roboRIO! Retrying...')
-    
-# FTP Connected! 
+        # Inform user what files were found
+        print("Found "+ str(len(filenames)) +" Files.")
 
-#Log Files
-#Change to correct working proper working directory
-# and snag the list of files
-ftp.cwd(LOG_RIO_FPATH)
-filenames = ftp.nlst() # get filenames within the directory
 
-# Inform user what files were found
-print("Found "+ str(len(filenames)) +" Files.")
+    def log_log_result(fsnag_list):
+        if not os.path.isdir(SNAGGER_LOGS_DIR):
+            os.mkdir(SNAGGER_LOGS_DIR)
+        
+        if(fsnag_list == None):
+            fname = os.path.join(SNAGGER_LOGS_DIR, "FAILED_"+time.strftime("%Y%m%d-%H%M%S")+"_log.txt")
+            fcontents = "ERROR! Snag failed! No logs grabbed!"
+        else:
+            fname = os.path.join(SNAGGER_LOGS_DIR, "SNAGGED_"+time.strftime("%Y%m%d-%H%M%S")+"_log.txt")
+            fcontents = ["Files were snagged:\n\n"]
+            fcontents.extend([x + " \n" for x in fsnag_list])
+            fcontents = "".join(fcontents)
+            
+        tempf = open(fname, "w")
+        tempf.write(fcontents)
+        tempf.close()
+        return
+
+###TODO MOVE THISI STUFF UP
 
 #make local dir if doesn't exist yet.
 if not os.path.isdir(LOG_LOCAL_PATH):
