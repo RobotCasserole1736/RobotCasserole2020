@@ -17,8 +17,6 @@ public enum ControlPanelColor{
         //which is to then be subject to the modulo operator below the if statement
         if(colorValue >= -4 && colorValue < 0){
             colorValue += 4;
-        }else{
-            throw new RuntimeException("Invalid number put into getColorFromInt. Must be within -4 and positive infinity");
         }
 
         //wraps integers greater than 3 back into the list

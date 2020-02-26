@@ -297,9 +297,9 @@ public class RealDrivetrain extends Drivetrain {
         opModeCmd = DrivetrainOpMode.kOpenLoop;
         fwdRevCmd = forwardReverseCmd;
         if(rotationCmd<0){
-            rotCmd = Math.pow(Math.abs(rotationCmd),2.7)*-1;
+            rotCmd = Math.pow(Math.abs(rotationCmd),2.85)*-1;
         }else{
-            rotCmd = Math.pow(Math.abs(rotationCmd),2.7);
+            rotCmd = Math.pow(Math.abs(rotationCmd),2.85);
         }
         //Aden likes cheesy drive, so we do this thing.
         //No he doesn't so we don't do this thing.
