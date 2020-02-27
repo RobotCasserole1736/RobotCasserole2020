@@ -427,6 +427,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
     CasseroleDriverView.newDial("Robot Angle (deg)", -180, 180, 45, -10, 10);
     CasseroleDriverView.newDial("Vision Tgt Angle (deg)", -30, 30, 5, -2.5, 2.5);
+    CasseroleDriverView.newBoolean("Master Caution", "red");
     CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
     CasseroleDriverView.newBoolean("Vision Target Visible", "green");
     CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
@@ -446,6 +447,10 @@ public class Robot extends TimedRobot {
 
   }
 
+  int masterCautionBlinkCounter = 0;
+  final int MASTER_CAUTION_BLINK_LOOPS = 15;
+  boolean masterCautionIndicatorState = false;
+
   public void updateDriverView(){
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
@@ -463,6 +468,19 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
     CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
     CasseroleDriverView.setStringBox("Shooter Setpoint", String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
+
+    if(pneumaticPressureLow || climber.isUpperLimitSwitchFaulted() || climber.isLowerLimitSwitchFaulted()){
+      masterCautionBlinkCounter++;
+      if(masterCautionBlinkCounter > MASTER_CAUTION_BLINK_LOOPS){
+        masterCautionBlinkCounter = 0;
+        masterCautionIndicatorState = !masterCautionIndicatorState;
+      }
+    } else {
+      masterCautionBlinkCounter = 0;
+      masterCautionIndicatorState = false;
+    }
+
+    CasseroleDriverView.setBoolean("Master Caution", masterCautionIndicatorState);
     
     if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
       CasseroleDriverView.setSoundWidget("High Ground Acqd",true);
