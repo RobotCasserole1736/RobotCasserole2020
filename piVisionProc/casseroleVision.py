@@ -127,8 +127,8 @@ class VisionProcessor():
         #upperBrightness = np.array([100,200,255])
 
         ##Standard Green Vision Tape Range
-        self.lowerBrightness=np.array([30,170,20])
-        self.upperBrightness=np.array([90,255,210])
+        self.lowerBrightness=np.array([30,170,50])
+        self.upperBrightness=np.array([90,255,190])
 
 
 
@@ -149,7 +149,7 @@ class VisionProcessor():
         self.inimg = inFrame
         self.LightFilter()
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
-        filteredContours = self.filtercontours(contours, 100.0, 200.0, math.inf)
+        filteredContours = self.filtercontours(contours, 100.0, 175.0, math.inf)
         self.TargetDetection(filteredContours)
         self.updateTable()
         if self.debug:
@@ -379,6 +379,7 @@ if __name__ == "__main__":
     capture = cv2.VideoCapture(0)
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    capture.set(cv2.CAP_PROP_FPS, 30)
 
     
     try:

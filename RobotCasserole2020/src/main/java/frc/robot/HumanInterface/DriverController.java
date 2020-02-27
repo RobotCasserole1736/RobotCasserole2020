@@ -39,7 +39,7 @@ public class DriverController {
     boolean autoAlignCmd = false;
     boolean autoAlignAndShootCmd = false;
     boolean autoAlignAndShootCloseCmd = false;
-    boolean snailModeCmd = false;
+    boolean snailModeCmd = true;
     boolean reverseModeCmd = false;
 
     Signal fwdRevCmdSig;
@@ -94,7 +94,7 @@ public class DriverController {
         autoAlignCmd = driverController.getXButton();
         autoAlignAndShootCmd = (driverController.getTriggerAxis(Hand.kRight) > 0.2);
         autoAlignAndShootCloseCmd = (driverController.getTriggerAxis(Hand.kLeft) > 0.2);
-        snailModeCmd = driverController.getBumper(Hand.kRight);
+        snailModeCmd = !driverController.getBumper(Hand.kRight);
 
         double time_in_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
         fwdRevCmdSig.addSample(time_in_ms, fwdRevCmd);
