@@ -47,14 +47,14 @@ import com.revrobotics.ColorMatch;
 
 	ControlPanelColor controlPanelColor;
 
-	double[] redMin = {0.34, 0.36, 0.13};
+	double[] redMin = {0.34, 0.36, 0.10};
 	double[] redMax = {0.54, 0.45, 0.22};
 	double[] greenMin = {0.17, 0.49, 0.22};
 	double[] greenMax = {0.28, 0.57, 0.27};
 	double[] blueMin = {0.12, 0.41, 0.26};
 	double[] blueMax = {0.24, 0.47, 0.45};
 	double[] yellowMin = {0.30, 0.48, 0.10};
-	double[] yellowMax = {0.33, 0.56, 0.21};
+	double[] yellowMax = {0.40, 0.56, 0.21};
 
 	Color sensorValues;
 	double IR;
