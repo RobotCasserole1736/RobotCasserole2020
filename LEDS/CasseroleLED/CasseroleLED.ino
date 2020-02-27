@@ -55,7 +55,7 @@ void loop()
   else if ((pulseLen_us >= 1300) && (pulseLen_us <= 1449))
   {
     //TODO - Call periodic update for pattern 2
-    ColorSparkle_update(0, 255, 255);
+    ColorSparkle_update(0, 255, 15);
     //purple color sparkle
   }
   else if ((pulseLen_us >= 1450) && (pulseLen_us <= 1499))
