@@ -57,6 +57,8 @@ public class Hopper{
             hopperSparkLeft.setSmartCurrentLimit(25);
             hopperSparkRight.setSmartCurrentLimit(25);
             hopperSparkRight.setInverted(true);
+            hopperSparkLeft.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+            hopperSparkRight.setCANTimeout(RobotConstants.CAN_TIMEOUT);
             hopperSparkLeft.burnFlash();
             hopperSparkRight.burnFlash();
         }

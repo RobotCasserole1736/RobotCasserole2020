@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
   PneumaticsControl thbbtbbtbbtbbt;
   ControlPanelStateMachine ctrlPanel;
   ControlPanelManipulator ctrlPanelManipulator;
-  RobotTilt robotTilt;
+  //RobotTilt robotTilt;
   
   LEDController ledController;
   Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is even baked into our source code.
@@ -165,7 +165,7 @@ public class Robot extends TimedRobot {
 
     ControlPanelStateMachine.getInstance();
 
-    robotTilt = RobotTilt.getInstance();
+    //robotTilt = RobotTilt.getInstance();
 
     snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
 
@@ -239,7 +239,7 @@ public class Robot extends TimedRobot {
         drivetrain.updateGains(false);
         shooterCtrl.updateGains(false);
         pfb.update();
-        robotTilt.update();
+        //robotTilt.update();
         climber.update();
 
         if(RobotController.getUserButton() == true){
@@ -306,7 +306,7 @@ public class Robot extends TimedRobot {
         ledUpdater();
         ctrlPanel.update();
         ctrlPanelManipulator.update();
-        robotTilt.update();
+        //robotTilt.update();
         telemetryUpdate();
         pfb.update();
         cam.setInnerGoalAsTarget(false); //just 2's for auto
@@ -357,7 +357,7 @@ public class Robot extends TimedRobot {
         ctrlPanel.update();
         ctrlPanelManipulator.update();
         ledController.update();
-        robotTilt.update();
+        //robotTilt.update();
         pfb.update();
         ledUpdater();
         telemetryUpdate();
@@ -425,7 +425,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
     CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
     CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
-    CasseroleDriverView.newDial("Robot Angle (deg)", -180, 180, 45, -10, 10);
+    //CasseroleDriverView.newDial("Robot Angle (deg)", -180, 180, 45, -10, 10);
     CasseroleDriverView.newDial("Vision Tgt Angle (deg)", -30, 30, 5, -2.5, 2.5);
     CasseroleDriverView.newBoolean("Master Caution", "red");
     CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
@@ -455,7 +455,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    CasseroleDriverView.setDialValue("Robot Angle (deg)", robotTilt.getRobotAngle());
+    //CasseroleDriverView.setDialValue("Robot Angle (deg)", robotTilt.getRobotAngle());
     CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible()?-1.0*cam.getTgtGeneralAngle():-50);
     CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());

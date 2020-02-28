@@ -68,7 +68,7 @@ public class PlayerFeedback {
 
         //2 is the allowable angle error. It should be equal to AutoEventTurnToVisionTarget's variable.
         if(!DriverStation.getInstance().isAutonomous()){
-            if(DriverController.getInstance().autoAlignCmd && RealDrivetrain.getInstance().getTurnToAngleErrDeg() < 2){
+            if(DriverController.getInstance().autoAlignCmd && RealDrivetrain.getInstance().getTurnToAngleErrDeg() < 0.5){
                 DriverController.getInstance().rumble(0.3);
             }else if(DriverController.getInstance().autoAlignCmd && (CasseroleVision.getInstance().isVisionOnline() == false || CasseroleVision.getInstance().isTgtVisible() == false)){
                 //Makes the controller rumble every 5 loops so it pulses instead of being constant

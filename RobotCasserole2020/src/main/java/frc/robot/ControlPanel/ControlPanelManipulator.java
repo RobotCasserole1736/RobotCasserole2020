@@ -59,6 +59,7 @@ public class ControlPanelManipulator {
             ControlPanelMotor.getEncoder().setPositionConversionFactor(RobotConstants.CONTROL_PANEL_MANIPULATOR_RATIO);
             updateGains(true);
             ControlPanelMotor.setClosedLoopRampRate(0);
+            ControlPanelMotor.setCANTimeout(RobotConstants.CAN_TIMEOUT);
             ControlPanelMotor.burnFlash();
             desiredRotation_deg = ControlPanelMotor.getEncoder().getPosition();
         }

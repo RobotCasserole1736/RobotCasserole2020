@@ -162,6 +162,12 @@ public class RealDrivetrain extends Drivetrain {
         
         updateGains(true);
 
+        
+        dtLeftMaster.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+        dtLeftIntern.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+        dtRightIntern.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+        dtRightMaster.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+
         dtLeftMaster.burnFlash();
         dtLeftIntern.burnFlash();
         dtRightMaster.burnFlash();

@@ -82,6 +82,7 @@ public class IntakeControl {
 			intakeMotor.setInverted(true);
 			intakeMotor.setSmartCurrentLimit(65); //Prevent the magic smoke
 			intakeMotor.setIdleMode(IdleMode.kCoast);
+			intakeMotor.setCANTimeout(RobotConstants.CAN_TIMEOUT);
 			intakeMotor.burnFlash();
         
 		}
