@@ -60,32 +60,33 @@ public class PneumaticsControl {
         return compressor;
     }
 
-    public void update(){
-        double voltage = pressureSensor.getVoltage();
-
-        //  curPressurePSI = ((voltage/5.0)-0.1)*(150/0.8); /*Equation derived from datasheet old sensor */
-        //  curPressurePSI = (250*(voltage/4.62)-25);       /*Equation derived from datasheet old sensor */
-        //  curPressurePSI=(((p_max-p_min)*(1-(0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)))+p_min;
-        // curPressurePSI=(((p_max-(p_max*0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)));
-          /* actual equation but pmin is zero so we can simplify */
-        if(v_supplied >= 0.001){
-            // curPressurePSI =(250*(voltage/v_supplied)-25);
-            curPressurePSI = (250*(voltage/4.62)-25); 
-        } else {
-            curPressurePSI = 0;//meh, should never happen physically
-        }
-
-        if(DriverController.getInstance().getCompressorDisableReq()){
-            this.stop();
-        } else if(DriverController.getInstance().getCompressorEnableReq()){
-            this.start();
-        }
-
-        double sample_time_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
-        pressSig.addSample(sample_time_ms,curPressurePSI);
-        pressSwVallSig.addSample(sample_time_ms,compressor.getPressureSwitchValue());
-        compCurrent.addSample(sample_time_ms,compressor.getCompressorCurrent());
-    }
+    //public void update(){
+    //    double voltage = pressureSensor.getVoltage();
+//
+    //    //  curPressurePSI = ((voltage/5.0)-0.1)*(150/0.8); /*Equation derived from datasheet old sensor */
+    //    //  curPressurePSI = (250*(voltage/4.62)-25);       /*Equation derived from datasheet old sensor */
+    //    //  curPressurePSI=(((p_max-p_min)*(1-(0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)))+p_min;
+    //    // curPressurePSI=(((p_max-(p_max*0.1*(v_supplied/voltage))))/(0.8*(v_supplied/voltage)));
+    //      /* actual equation but pmin is zero so we can simplify */
+    //    
+    //    if(v_supplied >= 0.001){
+    //        // curPressurePSI =(250*(voltage/v_supplied)-25);
+    //        curPressurePSI = (250*(voltage/4.62)-25); 
+    //    } else {
+    //        curPressurePSI = 0;//meh, should never happen physically
+    //    }
+//
+    //    if(DriverController.getInstance().getCompressorDisableReq()){
+    //        this.stop();
+    //    } else if(DriverController.getInstance().getCompressorEnableReq()){
+    //        this.start();
+    //    }
+//
+    //    double sample_time_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
+    //    pressSig.addSample(sample_time_ms,curPressurePSI);
+    //    pressSwVallSig.addSample(sample_time_ms,compressor.getPressureSwitchValue());
+    //    compCurrent.addSample(sample_time_ms,compressor.getCompressorCurrent());
+    //}
     
     // start method for the compressor
     public void start(){

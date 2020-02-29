@@ -35,7 +35,7 @@ public class CasseroleVision {
 
     double camHbeatVal = 0;
     double camHbeatPrev = 0;
-    final int CAM_HBEAT_LIMIT_LOOPS = 150; //3 second timeout
+    final int CAM_HBEAT_LIMIT_LOOPS = 1500; //3 second timeout
     int camHbeatCounter = CAM_HBEAT_LIMIT_LOOPS;
     
     double proc_duration_sec;

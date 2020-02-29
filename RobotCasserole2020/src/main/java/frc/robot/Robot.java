@@ -84,16 +84,16 @@ public class Robot extends TimedRobot {
   Hopper hopper;
   Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
-  ControlPanelStateMachine ctrlPanel;
-  ControlPanelManipulator ctrlPanelManipulator;
+  //ControlPanelStateMachine ctrlPanel;
+  //ControlPanelManipulator ctrlPanelManipulator;
   //RobotTilt robotTilt;
   
-  LEDController ledController;
+  //LEDController ledController;
   Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is even baked into our source code.
 
   //Misc.
   Calibration snailModeLimitRPM;
-  PlayerFeedback pfb;
+  //PlayerFeedback pfb;
   boolean climberUpperLSPressed;
   boolean climberLowerLSPressed;
   boolean conveyorFull;
@@ -138,14 +138,15 @@ public class Robot extends TimedRobot {
     thbbtbbtbbtbbt = PneumaticsControl.getInstance();
     eyeOfVeganSauron = VisionLEDRingControl.getInstance();
     //photonCannon = PhotonCannonControl.getInstance();
-    ledController = LEDController.getInstance();
+    //ledController = LEDController.getInstance();
 
 
     OperatorController.getInstance();
     DriverController.getInstance();
-    ctrlPanel = ControlPanelStateMachine.getInstance();
-
-    ctrlPanelManipulator=ControlPanelManipulator.getInstance();
+    
+    //Tentatively disabling for now
+    //ctrlPanel = ControlPanelStateMachine.getInstance();
+    //ctrlPanelManipulator=ControlPanelManipulator.getInstance();
 
     shooterCtrl = ShooterControl.getInstance();
 
@@ -169,7 +170,7 @@ public class Robot extends TimedRobot {
 
     snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
 
-    pfb = PlayerFeedback.getInstance();
+    //pfb = PlayerFeedback.getInstance();
 
     /* Website Setup */
     initDriverView();
@@ -180,7 +181,7 @@ public class Robot extends TimedRobot {
   }
   
   public void telemetryUpdate(){
-    double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
+    //double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
 
     climberUpperLSPressed = (climber.upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
     climberLowerLSPressed = (climber.lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
@@ -197,15 +198,15 @@ public class Robot extends TimedRobot {
       pneumaticPressureLow = false;
     }
     
-    rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
-    rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
-    rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
-    rioSupplyVoltSig.addSample(sampleTimeMs,  RobotController.getInputVoltage());  
-    rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
-    rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
-    rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
-    pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));
-    pdpCoolingFansCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.COOLING_FANS_PDP_CHANNEL));
+    //rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
+    //rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
+    //rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
+    //rioSupplyVoltSig.addSample(sampleTimeMs,  RobotController.getInputVoltage());  
+    //rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
+    //rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
+    //rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
+    //pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));
+    //pdpCoolingFansCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.COOLING_FANS_PDP_CHANNEL));
   }
     
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -230,15 +231,15 @@ public class Robot extends TimedRobot {
 
       slowLoopCounter++;
       if(slowLoopCounter%SLOW_LOOP_RATE == 0){
-        ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
-        thbbtbbtbbtbbt.update();
+        //ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
+        //thbbtbbtbbtbbt.update();
         eyeOfVeganSauron.setLEDRingState(false);
         auto.sampleDashboardSelector();
 
-        ctrlPanelManipulator.updateGains(false);
+        //ctrlPanelManipulator.updateGains(false);
         drivetrain.updateGains(false);
         shooterCtrl.updateGains(false);
-        pfb.update();
+        //pfb.update();
         //robotTilt.update();
         climber.update();
 
@@ -256,8 +257,8 @@ public class Robot extends TimedRobot {
 
       cam.update();
 
-      ctrlPanel.update();
-      ctrlPanelManipulator.update();
+      //ctrlPanel.update();
+      //ctrlPanelManipulator.update();
 
       supperstructure.setClearJamDesired(false);
       supperstructure.setEjectDesired(false);
@@ -290,6 +291,7 @@ public class Robot extends TimedRobot {
       drivetrain.setMotorMode(IdleMode.kCoast);
       auto.sampleDashboardSelector();
       auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
+      eyeOfVeganSauron.setLEDRingState(true);
   }
 
   @Override
@@ -301,14 +303,13 @@ public class Robot extends TimedRobot {
   
       slowLoopCounter++;
       if(slowLoopCounter%SLOW_LOOP_RATE == 0){
-        thbbtbbtbbtbbt.update();
-        eyeOfVeganSauron.setLEDRingState(true);
-        ledUpdater();
-        ctrlPanel.update();
-        ctrlPanelManipulator.update();
+        //thbbtbbtbbtbbt.update();
+        //ledUpdater();
+        //ctrlPanel.update();
+        //ctrlPanelManipulator.update();
         //robotTilt.update();
         telemetryUpdate();
-        pfb.update();
+        //pfb.update();
         cam.setInnerGoalAsTarget(false); //just 2's for auto
       }
 
@@ -339,6 +340,7 @@ public class Robot extends TimedRobot {
       CrashTracker.logTeleopInit();
       dataServer.logger.startLoggingTeleop();
       drivetrain.setMotorMode(IdleMode.kBrake);
+      eyeOfVeganSauron.setLEDRingState(true);
   }
 
   @Override
@@ -353,15 +355,14 @@ public class Robot extends TimedRobot {
 
       slowLoopCounter++;
       if(slowLoopCounter%SLOW_LOOP_RATE == 0){
-        thbbtbbtbbtbbt.update();
-        ctrlPanel.update();
-        ctrlPanelManipulator.update();
-        ledController.update();
+        //thbbtbbtbbtbbt.update();
+        //ctrlPanel.update();
+        //ctrlPanelManipulator.update();
+        //ledController.update();
         //robotTilt.update();
-        pfb.update();
-        ledUpdater();
+        //pfb.update();
+        //ledUpdater();
         telemetryUpdate();
-        eyeOfVeganSauron.setLEDRingState(true);
         cam.setInnerGoalAsTarget(true); //try for 3's in teleop
       }
 
@@ -489,43 +490,43 @@ public class Robot extends TimedRobot {
     }
   }
 
-  public void ledUpdater(){
-    if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
-      ledController.setPattern(LEDPatterns.Pattern6);
-    }
-    else if(ctrlPanelManipulator.isRotationCompleted() == false){
-      ledController.setPattern(LEDPatterns.Pattern6);
-    }
-    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
-      ledController.setPattern(LEDPatterns.Pattern0);
-    }
-    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kBLUE){
-      ledController.setPattern(LEDPatterns.Pattern1);
-    }
-    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kYELLOW){
-      ledController.setPattern(LEDPatterns.Pattern3);
-    }
-    else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kGREEN){
-      ledController.setPattern(LEDPatterns.Pattern2);
-    }
-    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
-      if(DriverStation.getInstance().isAutonomous() == true){
-        ledController.setPattern(LEDPatterns.Pattern1);
-      }
-      else{
-        ledController.setPattern(LEDPatterns.Pattern4);
-      }
-    }
-    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
-      if(DriverStation.getInstance().isAutonomous() == true){
-        ledController.setPattern(LEDPatterns.Pattern0);
-      }
-      else{
-        ledController.setPattern(LEDPatterns.Pattern5);
-      }
-    }
-    ledController.update();
-  }
+  //public void ledUpdater(){
+  //  if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
+  //    ledController.setPattern(LEDPatterns.Pattern6);
+  //  }
+  // //else if(ctrlPanelManipulator.isRotationCompleted() == false){
+  // //  ledController.setPattern(LEDPatterns.Pattern6);
+  // //}
+  //  else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kRED){
+  //    ledController.setPattern(LEDPatterns.Pattern0);
+  //  }
+  //  else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kBLUE){
+  //    ledController.setPattern(LEDPatterns.Pattern1);
+  //  }
+  //  else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kYELLOW){
+  //    ledController.setPattern(LEDPatterns.Pattern3);
+  //  }
+  //  else if(ControlPanelStateMachine.getInstance().getGameDataColor() == ControlPanelColor.kGREEN){
+  //    ledController.setPattern(LEDPatterns.Pattern2);
+  //  }
+  //  else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
+  //    if(DriverStation.getInstance().isAutonomous() == true){
+  //      ledController.setPattern(LEDPatterns.Pattern1);
+  //    }
+  //    else{
+  //      ledController.setPattern(LEDPatterns.Pattern4);
+  //    }
+  //  }
+  //  else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
+  //    if(DriverStation.getInstance().isAutonomous() == true){
+  //      ledController.setPattern(LEDPatterns.Pattern0);
+  //    }
+  //    else{
+  //      ledController.setPattern(LEDPatterns.Pattern5);
+  //    }
+  //  }
+  //  ledController.update();
+  //}
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
