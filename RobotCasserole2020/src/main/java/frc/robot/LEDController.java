@@ -19,9 +19,7 @@ public class LEDController {
 
     public enum LEDPatterns {
         Pattern0(0), // Red Color Sparkle
-        Pattern1(1), // Blue Color Sparkle
-        Pattern2(2), // purple color sparkle
-        Pattern3(3), // yellow Color Sparkle
+        Pattern1(1), // Blue Color Sparkle  
         Pattern4(4), // Blue Fade
         Pattern5(5), // Red Fade
         Pattern6(6), // Rainbow Fade Chase
@@ -56,16 +54,6 @@ public class LEDController {
             case Pattern1:
                 ctrl.setSpeed(-0.5);
                 //this sould be 1200-1299ms
-                //TODO - State when this is played
-            break;
-            case Pattern2:
-                ctrl.setSpeed(-0.25);
-                //this should be 1300-1449ms
-                //TODO - State when this is played
-            break;
-            case Pattern3:
-                ctrl.setSpeed(0.0);
-                //this should be 1450-1499ms
                 //TODO - State when this is played
             break;
             case Pattern4:
