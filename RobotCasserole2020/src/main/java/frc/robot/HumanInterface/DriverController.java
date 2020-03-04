@@ -141,9 +141,6 @@ public class DriverController {
         return autoAlignCmd; 
     }
     
-    public boolean getPhotonCannonInput(){
-        return driverController.getYButton();
-    }
 
     public boolean getSnailModeDesired(){
         return snailModeCmd;

@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
 
   //Sensors and Cameras and stuff, oh my!
   CasseroleVision cam;
-  //PhotonCannonControl photonCannon;
+
   VisionLEDRingControl eyeOfVeganSauron;
 
   //Subsystems
@@ -86,7 +86,6 @@ public class Robot extends TimedRobot {
   PneumaticsControl thbbtbbtbbtbbt;
   //ControlPanelStateMachine ctrlPanel;
   //ControlPanelManipulator ctrlPanelManipulator;
-  //RobotTilt robotTilt;
   
   //LEDController ledController;
   Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is even baked into our source code.
@@ -137,7 +136,6 @@ public class Robot extends TimedRobot {
 
     thbbtbbtbbtbbt = PneumaticsControl.getInstance();
     eyeOfVeganSauron = VisionLEDRingControl.getInstance();
-    //photonCannon = PhotonCannonControl.getInstance();
     //ledController = LEDController.getInstance();
 
 
@@ -166,7 +164,6 @@ public class Robot extends TimedRobot {
 
     ControlPanelStateMachine.getInstance();
 
-    //robotTilt = RobotTilt.getInstance();
 
     snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
 
@@ -240,7 +237,6 @@ public class Robot extends TimedRobot {
         drivetrain.updateGains(false);
         shooterCtrl.updateGains(false);
         //pfb.update();
-        //robotTilt.update();
         climber.update();
 
         if(RobotController.getUserButton() == true){
@@ -307,7 +303,6 @@ public class Robot extends TimedRobot {
         //ledUpdater();
         //ctrlPanel.update();
         //ctrlPanelManipulator.update();
-        //robotTilt.update();
         telemetryUpdate();
         //pfb.update();
         cam.setInnerGoalAsTarget(false); //just 2's for auto
@@ -359,7 +354,6 @@ public class Robot extends TimedRobot {
         //ctrlPanel.update();
         //ctrlPanelManipulator.update();
         //ledController.update();
-        //robotTilt.update();
         //pfb.update();
         //ledUpdater();
         telemetryUpdate();
@@ -456,7 +450,6 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    //CasseroleDriverView.setDialValue("Robot Angle (deg)", robotTilt.getRobotAngle());
     CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible()?-1.0*cam.getTgtGeneralAngle():-50);
     CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
