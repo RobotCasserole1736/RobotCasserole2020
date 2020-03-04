@@ -1,5 +1,6 @@
 package frc.robot;
 import edu.wpi.first.wpilibj.PWM;
+import edu.wpi.first.wpilibj.DriverStation;
 
 public class LEDController {
 
@@ -37,7 +38,8 @@ public class LEDController {
         }
     }
 
-    // This is the private constructor that will be called once by getInstance() and it should instantiate anything that will be required by the class
+    // This is the private constructor that will be called once by getInstance() and it
+    //should instantiate anything that will be required by the class
     private LEDController() {
         
         patternCmd = LEDPatterns.Pattern0;
@@ -85,3 +87,56 @@ public class LEDController {
         patternCmd = LEDPatterns.Pattern0;
     }
 }
+/*This is a Utility Function to tell the updater
+ *what alliance color we are*/
+
+public void teamColor(){
+    
+    if (DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red)
+}
+
+public void ledUpdater(){
+    if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
+      //ledController.setPattern(LEDPatterns.Pattern6);
+      ctrl.setSpeed(1.0);
+    }
+    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
+      if(DriverStation.getInstance().isAutonomous() == true){
+        ctrl.setSpeed(-0.5);
+      }
+      else{
+        ctrl.setSpeed(0.25);
+      }
+    }
+    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
+      if(DriverStation.getInstance().isAutonomous() == true){
+        ctrl.setSpeed(-1.0);
+      }
+      else{
+        ctrl.setSpeed(0.5);
+      }
+    }
+    Thread monitorThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                while(!Thread.currentThread().isInterrupted()){
+                    periodicUpdate();
+                    Thread.sleep(200);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
+    
+    rioCPULoad = new Signal("roboRIO CPU Load", "pct");
+    rioMemLoad = new Signal("roboRIO Sys Memory Load", "pct"); 
+    rioJVMMemLoad = new Signal("roboRIO JVM Memory Load", "pct"); 
+    
+    //Set up thread properties and start it off
+    monitorThread.setName("CasseroleRIOLoadMonitor");
+    monitorThread.setPriority(Thread.MIN_PRIORITY);
+    monitorThread.start();
+}
+  }
