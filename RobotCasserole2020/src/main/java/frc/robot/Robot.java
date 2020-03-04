@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
   }
   
   public void telemetryUpdate(){
-    //double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
+    double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
 
     climberUpperLSPressed = (climber.upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
     climberLowerLSPressed = (climber.lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
@@ -198,15 +198,15 @@ public class Robot extends TimedRobot {
       pneumaticPressureLow = false;
     }
     
-    //rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
-    //rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
-    //rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
-    //rioSupplyVoltSig.addSample(sampleTimeMs,  RobotController.getInputVoltage());  
-    //rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
-    //rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
-    //rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
-    //pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));
-    //pdpCoolingFansCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.COOLING_FANS_PDP_CHANNEL));
+    rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
+    rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
+    rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
+    rioSupplyVoltSig.addSample(sampleTimeMs,  RobotController.getInputVoltage());  
+    rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
+    rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
+    rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
+    pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));
+    pdpCoolingFansCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.COOLING_FANS_PDP_CHANNEL));
   }
     
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -466,7 +466,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Climber Lower SW Pressed", climber.isLowerLimitSwitchPressed());
     CasseroleDriverView.setBoolean("Pnuematic Pressure", pneumaticPressureLow);
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
-    CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.SpoolUp));
+    CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Accelerate || shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Stabilize));
     CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
     CasseroleDriverView.setStringBox("Shooter Setpoint", String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
 

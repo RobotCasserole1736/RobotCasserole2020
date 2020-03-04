@@ -56,7 +56,7 @@ public class PlayerFeedback {
         
         //Makes the operator controller rumble when the robot is preparing to shoot and for each ball that is shot
         if(!DriverStation.getInstance().isAutonomous()){
-            if(currentShooterCtrlMode == ShooterCtrlMode.SpoolUp){
+            if(currentShooterCtrlMode == ShooterCtrlMode.Stabilize || currentShooterCtrlMode == ShooterCtrlMode.Accelerate){
                 OperatorController.getInstance().rumble(0.4);
             }else{
                 OperatorController.getInstance().rumble(0);

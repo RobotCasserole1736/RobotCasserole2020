@@ -18,11 +18,12 @@ public abstract class ShooterControl {
 
     /* Allowable shooter operation modes*/
     public enum ShooterCtrlMode {
-        SpoolUp(0),   
-        HoldForShot(1),
-        Shooting(2),
-        JustGonnaSendEm(3),
-        Stop(-1);
+        Stop(0),
+        Accelerate(1),   
+        Stabilize(2),   
+        HoldForShot(3),
+        Shooting(4),
+        JustGonnaSendEm(5);
 
         public final int value;
         private ShooterCtrlMode(int value) {
