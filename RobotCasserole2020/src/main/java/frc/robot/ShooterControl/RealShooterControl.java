@@ -52,6 +52,7 @@ public class RealShooterControl extends ShooterControl {
     Calibration accelerateToStabilizeThreshRPM;
     Calibration holdToShootErrThreshRPM;
     Calibration EjectSpeed;
+    Calibration shooterShootVoltage;
 
     Calibration shooterMotorP_spoolup;
     Calibration shooterMotorI_spoolup;
@@ -100,8 +101,9 @@ public class RealShooterControl extends ShooterControl {
         shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 12, 0, 500);
         shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 30, 0, 5000);
 
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3475, 0, 5000);
-        shooterSendEmVoltage   = new Calibration("Shooter Far Shot Setpoint V", 12.0, 0.0, 14.0);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3300, 0, 5000);
+        shooterSendEmVoltage   = new Calibration("Shooter Close Shot Setpoint V", 12.0, 0.0, 14.0);
+        shooterShootVoltage   = new Calibration("Shooter Far Shot Shoot Setpoint V", 10.5, 0.0, 14.0);
 
         holdToShootErrThreshRPM = new Calibration("Shooter Hold To Shoot Error Thresh RPM", 75);
         accelerateToStabilizeThreshRPM = new Calibration("Shooter Accelerate to Stabilize Error Thresh RPM", 200, 0, 5000);
@@ -250,16 +252,18 @@ public class RealShooterControl extends ShooterControl {
         }
 
         // Send commands to the motor
-        if(currentStateShooter == ShooterCtrlMode.HoldForShot || currentStateShooter == ShooterCtrlMode.Shooting){
-            shooterPIDCtrl.setReference(shooterHoldCmdVoltage, ControlType.kVoltage); //A la 254 in 2017
+        if(currentStateShooter == ShooterCtrlMode.HoldForShot){
+            shooterPIDCtrl.setReference(shooterHoldCmdVoltage, ControlType.kVoltage); //A la 254 in 2017 - hold shooter voltage during first part of the shot
+        } else if(currentStateShooter == ShooterCtrlMode.Shooting) {
+            shooterPIDCtrl.setReference(shooterShootVoltage.get(), ControlType.kVoltage); //As the ball traverses the shooter arc, boost the voltage to attempt to overcome the "droop"
         } else if(currentStateShooter == ShooterCtrlMode.Accelerate){
-            shooterPIDCtrl.setReference( 1.0, ControlType.kDutyCycle); //Maximum control effort
+            shooterPIDCtrl.setReference( 1.0, ControlType.kDutyCycle); //Maximum control effort for when we want to get fast, fast.
         } else if(currentStateShooter == ShooterCtrlMode.Stabilize){
-                shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, SPOOLUP_PID_SLOT_ID);
+                shooterPIDCtrl.setReference(shooterSetpointRPM, ControlType.kVelocity, SPOOLUP_PID_SLOT_ID); //PID control for zeroing-in on the target setpoint speed
         } else if(currentStateShooter == ShooterCtrlMode.JustGonnaSendEm){
-            shooterPIDCtrl.setReference(shooterSendEmVoltage.get(), ControlType.kVoltage); 
+            shooterPIDCtrl.setReference(shooterSendEmVoltage.get(), ControlType.kVoltage); //Throw accuracy to the wind. Just chuck them all out the window.
         }else{
-            shooterPIDCtrl.setReference(0, ControlType.kVoltage);
+            shooterPIDCtrl.setReference(0, ControlType.kVoltage); //Stop.
         }
 
 
