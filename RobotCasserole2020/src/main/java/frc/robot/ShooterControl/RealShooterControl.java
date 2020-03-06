@@ -178,7 +178,7 @@ public class RealShooterControl extends ShooterControl {
         shooterActualSpeed_rpm = Math.max(shooterMotor1Speed_rpm, shooterMotor2Speed_rpm); //Arbitrarte actual speed as max of both motors
 
         //Switch Control Mode
-        if(run == ShooterRunCommand.Stop){
+        if(run == ShooterRunCom mand.Stop){
             currentStateShooter = ShooterCtrlMode.Stop;
             shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
         } else {
