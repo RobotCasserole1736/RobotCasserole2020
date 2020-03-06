@@ -16,24 +16,19 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.CasseroleDataServer;
-import frc.lib.DataServer.Signal;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
 import frc.lib.Util.CrashTracker;
 import frc.lib.WebServer.CasseroleDriverView;
 import frc.lib.WebServer.CasseroleWebServer;
-import frc.robot.LEDController.LEDPatterns;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.BallHandling.Conveyor;
 import frc.robot.BallHandling.Hopper;
 import frc.robot.BallHandling.IntakeControl;
 import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
-import frc.robot.ControlPanel.ControlPanelColor;
-import frc.robot.ControlPanel.ControlPanelManipulator;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
-import frc.robot.HumanInterface.PlayerFeedback;
 import frc.robot.ShooterControl.ShooterControl;
 import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.VisionProc.CasseroleVision;
@@ -47,7 +42,7 @@ import frc.robot.VisionProc.CasseroleVision;
  */
 public class Robot extends TimedRobot {
 
-  //Website utilities
+  // Website utilities
   CasseroleWebServer webserver;
   CalWrangler wrangler;
   CasseroleDataServer dataServer;
@@ -55,61 +50,44 @@ public class Robot extends TimedRobot {
   PowerDistributionPanel pdp;
   CasseroleRIOLoadMonitor loadMon;
 
-  //Top level telemetry signals
-  Signal rioDSSampLoadSig;
-  Signal rioDSLogQueueLenSig;
-  Signal rioBattCurrDrawSig;
-  Signal rioBattVoltSig;
-  Signal rioSupplyVoltSig;
-  Signal rioIsBrownoutSig;
-  Signal rio6VBusVoltageSig;
-  Signal rio5VBusVoltageSig;
-  Signal rio3V3BusVoltageSig;
-  Signal rioCANBusUsagePctSig;
-  Signal pdpUpperBoardAuxCurrentSig;
-  Signal pdpCoolingFansCurrentSig;
-
-  //Autonomous Control Utilities
+  // Autonomous Control Utilities
   Autonomous auto;
 
-  //Sensors and Cameras and stuff, oh my!
+  // Sensors and Cameras and stuff, oh my!
   CasseroleVision cam;
 
   VisionLEDRingControl eyeOfVeganSauron;
 
-  //Subsystems
+  // Subsystems
   Drivetrain drivetrain;
   ShooterControl shooterCtrl;
   IntakeControl intakeCtrl;
   Hopper hopper;
   Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
-  //ControlPanelStateMachine ctrlPanel;
-  //ControlPanelManipulator ctrlPanelManipulator;
-  
-  //LEDController ledController;
-  Supperstructure supperstructure; //A misspelling you say? Ha! Wrong you are! Imagery is even baked into our source code.
+  MiscTelemetry telemetry;
 
-  //Misc.
+  Supperstructure supperstructure; // A misspelling you say? Ha! Wrong you are! Imagery is even baked into our
+                                   // source code.
+
+  // Misc.
   Calibration snailModeLimitRPM;
-  //PlayerFeedback pfb;
   boolean climberUpperLSPressed;
   boolean climberLowerLSPressed;
   boolean conveyorFull;
   boolean pneumaticPressureLow;
 
-
   int slowLoopCounter = 0;
-  final int SLOW_LOOP_RATE = 10; //200ms loop
+  final int SLOW_LOOP_RATE = 10; // 200ms loop
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~ Robot Init
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~ Robot Init
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void robotInit() {
-    
+
     CrashTracker.logRobotInit();
 
     /* Init website utilties */
@@ -118,33 +96,13 @@ public class Robot extends TimedRobot {
     dataServer = CasseroleDataServer.getInstance();
     cam = CasseroleVision.getInstance();
     pdp = CasserolePDP.getInstance();
-    loadMon= new CasseroleRIOLoadMonitor();
-
-    /* Init local telemetry signals */
-    rioDSSampLoadSig = new Signal("Dataserver Stored Samples", "count"); 
-    rioBattCurrDrawSig = new Signal("Robot Battery Current Draw", "A");
-    rioBattVoltSig = new Signal("Robot Battery Voltage", "V");
-    rioSupplyVoltSig = new Signal("RIO Input Voltage", "V");
-    rio3V3BusVoltageSig = new Signal("RIO 3V Supply Voltage", "V");
-    rio5VBusVoltageSig = new Signal("RIO 5V Supply Voltage", "V");
-    rio6VBusVoltageSig = new Signal("RIO 6V Supply Voltage", "V");
-    rioDSLogQueueLenSig = new Signal("Dataserver File Logger Queue Length", "count");
-    rioIsBrownoutSig = new Signal("Robot Brownout", "bool");
-    rioCANBusUsagePctSig = new Signal("Robot CAN Bus Utilization", "pct");
-    pdpUpperBoardAuxCurrentSig = new Signal("PDP Upper Board Current", "A");
-    pdpCoolingFansCurrentSig = new Signal("PDP Cooling Fans Current", "A");
+    loadMon = new CasseroleRIOLoadMonitor();
 
     thbbtbbtbbtbbt = PneumaticsControl.getInstance();
     eyeOfVeganSauron = VisionLEDRingControl.getInstance();
-    //ledController = LEDController.getInstance();
-
 
     OperatorController.getInstance();
     DriverController.getInstance();
-    
-    //Tentatively disabling for now
-    //ctrlPanel = ControlPanelStateMachine.getInstance();
-    //ctrlPanelManipulator=ControlPanelManipulator.getInstance();
 
     shooterCtrl = ShooterControl.getInstance();
 
@@ -156,7 +114,7 @@ public class Robot extends TimedRobot {
 
     hopper = Hopper.getInstance();
 
-    climber= Climber.getInstance();
+    climber = Climber.getInstance();
 
     loopTiming = LoopTiming.getInstance();
 
@@ -164,114 +122,77 @@ public class Robot extends TimedRobot {
 
     ControlPanelStateMachine.getInstance();
 
+    telemetry = MiscTelemetry.getInstance();
 
     snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
 
-    //pfb = PlayerFeedback.getInstance();
+    // pfb = PlayerFeedback.getInstance();
 
     /* Website Setup */
     initDriverView();
 
     dataServer.startServer();
     webserver.startServer();
-    
+
   }
-  
-  public void telemetryUpdate(){
-    double sampleTimeMs = loopTiming.getLoopStartTimeSec()*1000.0;
 
-    climberUpperLSPressed = (climber.upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
-    climberLowerLSPressed = (climber.lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
-
-    if(Conveyor.getInstance().getUpperSensorValue() == true && Conveyor.getInstance().getOpMode() == ConveyorOpMode.AdvanceFromHopper){
-      conveyorFull = true;
-    }else{
-      conveyorFull = false;
-    }
-
-    if(PneumaticsControl.getInstance().getPressure() < 60){
-      pneumaticPressureLow = true;
-    }else{
-      pneumaticPressureLow = false;
-    }
-    
-    rioDSSampLoadSig.addSample(sampleTimeMs, dataServer.getTotalStoredSamples());
-    rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
-    rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
-    rioSupplyVoltSig.addSample(sampleTimeMs,  RobotController.getInputVoltage());  
-    rioDSLogQueueLenSig.addSample(sampleTimeMs, dataServer.logger.getSampleQueueLength());
-    rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
-    rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
-    pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));
-    pdpCoolingFansCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.COOLING_FANS_PDP_CHANNEL));
-  }
-    
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~ DISABLED MODE
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~ DISABLED MODE
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void disabledInit() {
-      CrashTracker.logDisabledInit();
-      dataServer.logger.stopLogging();
-      drivetrain.setMotorMode(IdleMode.kCoast);
-      auto.reset();
+    CrashTracker.logDisabledInit();
+    dataServer.logger.stopLogging();
+    drivetrain.setMotorMode(IdleMode.kCoast);
+    auto.reset();
 
   }
 
   @Override
   public void disabledPeriodic() {
 
-      loopTiming.markLoopStart();
-      CrashTracker.logDisabledPeriodic();
+    loopTiming.markLoopStart();
+    CrashTracker.logDisabledPeriodic();
 
-      slowLoopCounter++;
-      if(slowLoopCounter%SLOW_LOOP_RATE == 0){
-        //ledController.setPattern(LEDPatterns.Pattern0); //Defaults to disabled. We can't actually change this
-        //thbbtbbtbbtbbt.update();
-        eyeOfVeganSauron.setLEDRingState(false);
-        auto.sampleDashboardSelector();
+    slowLoopCounter++;
+    if (slowLoopCounter % SLOW_LOOP_RATE == 0) {
+      eyeOfVeganSauron.setLEDRingState(false);
+      auto.sampleDashboardSelector();
 
-        //ctrlPanelManipulator.updateGains(false);
-        drivetrain.updateGains(false);
-        shooterCtrl.updateGains(false);
-        //pfb.update();
-        climber.update();
+      drivetrain.updateGains(false);
+      shooterCtrl.updateGains(false);
+      climber.update();
 
-        if(RobotController.getUserButton() == true){
-          drivetrain.calGyro();
-        }
-
+      if (RobotController.getUserButton() == true) {
+        drivetrain.calGyro();
       }
 
-      if(OperatorController.getInstance().getshotSpeedIncrementCmd()){
-        shooterCtrl.incrementSpeedSetpoint();
-      } else if(OperatorController.getInstance().getshotSpeedDecrementCmd()){
-        shooterCtrl.decrementSpeedSetpoint();
-      }
+    }
 
-      cam.update();
+    if (OperatorController.getInstance().getshotSpeedIncrementCmd()) {
+      shooterCtrl.incrementSpeedSetpoint();
+    } else if (OperatorController.getInstance().getshotSpeedDecrementCmd()) {
+      shooterCtrl.decrementSpeedSetpoint();
+    }
 
-      //ctrlPanel.update();
-      //ctrlPanelManipulator.update();
+    cam.update();
 
-      supperstructure.setClearJamDesired(false);
-      supperstructure.setEjectDesired(false);
-      supperstructure.setEstopDesired(false);
-      supperstructure.setIntakeDesired(false);
-      supperstructure.setPrepToShootDesired(false);
-      supperstructure.setShootFarDesired(false);
-      supperstructure.setShootCloseDesired(false);
-      supperstructure.update();
+    supperstructure.setClearJamDesired(false);
+    supperstructure.setEjectDesired(false);
+    supperstructure.setEstopDesired(false);
+    supperstructure.setIntakeDesired(false);
+    supperstructure.setPrepToShootDesired(false);
+    supperstructure.setShootFarDesired(false);
+    supperstructure.setShootCloseDesired(false);
+    supperstructure.update();
 
-      drivetrain.setOpenLoopCmd(0, 0);
-      drivetrain.update();
-      
+    drivetrain.setOpenLoopCmd(0, 0);
+    drivetrain.update();
 
-      updateDriverView();
-      telemetryUpdate();
-      loopTiming.markLoopEnd();
+    updateDriverView();
+    loopTiming.markLoopEnd();
 
   }
 
@@ -282,45 +203,37 @@ public class Robot extends TimedRobot {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void autonomousInit() {
-      CrashTracker.logAutoInit();
-      dataServer.logger.startLoggingAuto();
-      drivetrain.setMotorMode(IdleMode.kCoast);
-      auto.sampleDashboardSelector();
-      auto.startSequencer(); //Actually trigger the start of whatever autonomous routine we're doing
-      eyeOfVeganSauron.setLEDRingState(true);
+    CrashTracker.logAutoInit();
+    dataServer.logger.startLoggingAuto();
+    drivetrain.setMotorMode(IdleMode.kCoast);
+    auto.sampleDashboardSelector();
+    auto.startSequencer(); // Actually trigger the start of whatever autonomous routine we're doing
+    eyeOfVeganSauron.setLEDRingState(true);
+    cam.setInnerGoalAsTarget(false); // just 2's for auto
+
   }
 
   @Override
   public void autonomousPeriodic() {
 
-      loopTiming.markLoopStart();
-      CrashTracker.logAutoPeriodic();
-      //Put all auto periodic code after this
-  
-      slowLoopCounter++;
-      if(slowLoopCounter%SLOW_LOOP_RATE == 0){
-        //thbbtbbtbbtbbt.update();
-        //ctrlPanel.update();
-        //ctrlPanelManipulator.update();
-        telemetryUpdate();
-        //pfb.update();
-        cam.setInnerGoalAsTarget(false); //just 2's for auto
-      }
+    loopTiming.markLoopStart();
+    CrashTracker.logAutoPeriodic();
+    // Put all auto periodic code after this
 
-      cam.update();
+    cam.update();
 
-      auto.update();
+    auto.update();
 
-      supperstructure.update();
+    supperstructure.update();
 
-      drivetrain.update();
+    drivetrain.update();
 
-      climber.update();
-      
-      updateDriverView();
+    climber.update();
 
-      // put all auto periodic code before this
-      loopTiming.markLoopEnd();
+    updateDriverView();
+
+    // put all auto periodic code before this
+    loopTiming.markLoopEnd();
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -331,94 +244,82 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-      CrashTracker.logTeleopInit();
-      dataServer.logger.startLoggingTeleop();
-      drivetrain.setMotorMode(IdleMode.kBrake);
-      eyeOfVeganSauron.setLEDRingState(true);
+    CrashTracker.logTeleopInit();
+    dataServer.logger.startLoggingTeleop();
+    drivetrain.setMotorMode(IdleMode.kBrake);
+    eyeOfVeganSauron.setLEDRingState(true);
+    cam.setInnerGoalAsTarget(true); // try for 3's in teleop
   }
 
   @Override
   public void teleopPeriodic() {
-      loopTiming.markLoopStart();
-      CrashTracker.logTeleopPeriodic();
-      //Put all teleop periodic code after this
+    loopTiming.markLoopStart();
+    CrashTracker.logTeleopPeriodic();
+    // Put all teleop periodic code after this
 
+    DriverController.getInstance().update();
+    OperatorController.getInstance().update();
 
-      DriverController.getInstance().update();
-      OperatorController.getInstance().update();
+    cam.update();
 
-      slowLoopCounter++;
-      if(slowLoopCounter%SLOW_LOOP_RATE == 0){
-        //thbbtbbtbbtbbt.update();
-        //ctrlPanel.update();
-        //ctrlPanelManipulator.update();
-        //ledController.update();
-        //pfb.update();
-        telemetryUpdate();
-        cam.setInnerGoalAsTarget(true); //try for 3's in teleop
-      }
+    if (OperatorController.getInstance().getshotSpeedIncrementCmd()) {
+      shooterCtrl.incrementSpeedSetpoint();
+    } else if (OperatorController.getInstance().getshotSpeedDecrementCmd()) {
+      shooterCtrl.decrementSpeedSetpoint();
+    }
 
-      cam.update();
+    supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
+    supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
+    supperstructure.setEstopDesired(false); // TODO
+    supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
+    supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
 
-      if(OperatorController.getInstance().getshotSpeedIncrementCmd()){
-        shooterCtrl.incrementSpeedSetpoint();
-      } else if(OperatorController.getInstance().getshotSpeedDecrementCmd()){
-        shooterCtrl.decrementSpeedSetpoint();
-      }
+    auto.sampleOperatorCommands();
+    auto.update();
 
-      supperstructure.setClearJamDesired(OperatorController.getInstance().getUnjamCmd());
-      supperstructure.setEjectDesired(OperatorController.getInstance().getEjectDesired());
-      supperstructure.setEstopDesired(false); //TODO
-      supperstructure.setIntakeDesired(OperatorController.getInstance().getIntakeDesired());
-      supperstructure.setPrepToShootDesired(OperatorController.getInstance().getPrepToShootCmd());
+    if (auto.isActive()) {
+      // Nothing to do. Expect that auto sequencer will provide drivetrain & some
+      // superstructure
+    } else {
+      // Driver & operator control in manual
+      supperstructure.setShootFarDesired(OperatorController.getInstance().getShootCmd());
 
-      auto.sampleOperatorCommands();
-      auto.update();
-
-      if(auto.isActive()){
-        //Nothing to do. Expect that auto sequencer will provide drivetrain & some superstructure
+      if (DriverController.getInstance().getSnailModeDesired()) {
+        // fine movement mode
+        double turnVal = DriverController.getInstance().getRotateCmd();
+        double speedVal = DriverController.getInstance().getFwdRevCmd();
+        turnVal *= 0.5;
+        speedVal *= 0.3;
+        drivetrain.setOpenLoopCmd(speedVal, turnVal);
       } else {
-        //Driver & operator control in manual
-        supperstructure.setShootFarDesired(OperatorController.getInstance().getShootCmd());
-
-        if(DriverController.getInstance().getSnailModeDesired()){
-          //fine movement mode
-          double turnVal = DriverController.getInstance().getRotateCmd();
-          double speedVal = DriverController.getInstance().getFwdRevCmd();
-          turnVal*=0.5;
-          speedVal*=0.3;
-          drivetrain.setOpenLoopCmd(speedVal,turnVal);
-        } else {
-          //Open loop control of motors
-          drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(), 
-                                    DriverController.getInstance().getRotateCmd());
-        }
+        // Open loop control of motors
+        drivetrain.setOpenLoopCmd(DriverController.getInstance().getFwdRevCmd(),
+            DriverController.getInstance().getRotateCmd());
       }
+    }
 
-      drivetrain.update();
-      supperstructure.update();
-  
-      climber.update();
-      
-      updateDriverView();
+    drivetrain.update();
+    supperstructure.update();
 
-      // put all teleop periodic code before this 
-      loopTiming.markLoopEnd();
-    
+    climber.update();
+
+    updateDriverView();
+
+    // put all teleop periodic code before this
+    loopTiming.markLoopEnd();
+
   }
 
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~ UTILITIES
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~ UTILITIES
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  private void initDriverView(){
+  private void initDriverView() {
     CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
     CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
     CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
-    //CasseroleDriverView.newDial("Robot Angle (deg)", -180, 180, 45, -10, 10);
     CasseroleDriverView.newDial("Vision Tgt Angle (deg)", -30, 30, 5, -2.5, 2.5);
     CasseroleDriverView.newBoolean("Master Caution", "red");
     CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
@@ -434,7 +335,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.newStringBox("Shooter Setpoint");
     CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
     CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
-		CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
+    CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
     CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
     CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
 
@@ -444,11 +345,26 @@ public class Robot extends TimedRobot {
   final int MASTER_CAUTION_BLINK_LOOPS = 15;
   boolean masterCautionIndicatorState = false;
 
-  public void updateDriverView(){
+  public void updateDriverView() {
+    if (Conveyor.getInstance().getUpperSensorValue() == true && Conveyor.getInstance().getOpMode() == ConveyorOpMode.AdvanceFromHopper) {
+      conveyorFull = true;
+    } else {
+      conveyorFull = false;
+    }
+
+    if (PneumaticsControl.getInstance().getPressure() < 60) {
+      pneumaticPressureLow = true;
+    } else {
+      pneumaticPressureLow = false;
+    }
+
+    climberUpperLSPressed = (climber.upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
+    climberLowerLSPressed = (climber.lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
+
     CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
     CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
     CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible()?-1.0*cam.getTgtGeneralAngle():-50);
+    CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible() ? -1.0 * cam.getTgtGeneralAngle() : -50);
     CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
     CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
     CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
@@ -459,11 +375,12 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Accelerate || shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Stabilize));
     CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
-    CasseroleDriverView.setStringBox("Shooter Setpoint", String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
+    CasseroleDriverView.setStringBox("Shooter Setpoint",
+        String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
 
-    if(pneumaticPressureLow || climber.isUpperLimitSwitchFaulted() || climber.isLowerLimitSwitchFaulted()){
+    if (pneumaticPressureLow || climber.isUpperLimitSwitchFaulted() || climber.isLowerLimitSwitchFaulted()) {
       masterCautionBlinkCounter++;
-      if(masterCautionBlinkCounter > MASTER_CAUTION_BLINK_LOOPS){
+      if (masterCautionBlinkCounter > MASTER_CAUTION_BLINK_LOOPS) {
         masterCautionBlinkCounter = 0;
         masterCautionIndicatorState = !masterCautionIndicatorState;
       }
@@ -473,30 +390,28 @@ public class Robot extends TimedRobot {
     }
 
     CasseroleDriverView.setBoolean("Master Caution", masterCautionIndicatorState);
-    
-    if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
-      CasseroleDriverView.setSoundWidget("High Ground Acqd",true);
-    }else{
-      CasseroleDriverView.setSoundWidget("High Ground Acqd",false); 
+
+    if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true) {
+      CasseroleDriverView.setSoundWidget("High Ground Acqd", true);
+    } else {
+      CasseroleDriverView.setSoundWidget("High Ground Acqd", false);
     }
   }
 
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~ TEST MODE
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~ TEST MODE
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   @Override
   public void testInit() {
-    
+
   }
 
   @Override
   public void testPeriodic() {
     loopTiming.markLoopStart();
-    
-    telemetryUpdate();
+
     loopTiming.markLoopEnd();
   }
 }
