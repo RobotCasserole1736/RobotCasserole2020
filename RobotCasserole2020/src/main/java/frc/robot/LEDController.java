@@ -116,12 +116,12 @@ public void ledUpdater(){
         ctrl.setSpeed(0.5);
       }
     }
-    Thread monitorThread = new Thread(new Runnable() {
+    Thread monitorThread = new Thread(new Runnable(){
         @Override
         public void run() {
             try {
                 while(!Thread.currentThread().isInterrupted()){
-                    periodicUpdate();
+                    ledUpdater();
                     Thread.sleep(200);
                 }
             } catch (Exception e) {
@@ -130,12 +130,8 @@ public void ledUpdater(){
         }
     });
     
-    rioCPULoad = new Signal("roboRIO CPU Load", "pct");
-    rioMemLoad = new Signal("roboRIO Sys Memory Load", "pct"); 
-    rioJVMMemLoad = new Signal("roboRIO JVM Memory Load", "pct"); 
-    
     //Set up thread properties and start it off
-    monitorThread.setName("CasseroleRIOLoadMonitor");
+    monitorThread.setName("CasseroleLEDThread");
     monitorThread.setPriority(Thread.MIN_PRIORITY);
     monitorThread.start();
 }
