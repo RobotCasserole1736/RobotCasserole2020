@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
@@ -140,6 +141,28 @@ public class RealShooterControl extends ShooterControl {
 
         adjustedSetpointRPM = shooterRPMSetpointFar.get() + shotAdjustmentRPM;
 
+        // Kick off monitor in brand new thread.
+        // Thanks to Team 254 for an example of how to do this!
+        Thread monitorThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while(!Thread.currentThread().isInterrupted()){
+                        update();
+                        Thread.sleep(10);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        //Set up thread properties and start it off
+        monitorThread.setName("CasseroleRealShooterControl");
+        monitorThread.setPriority(Thread.MAX_PRIORITY - 2);
+        monitorThread.start();
+
     }
 
     public void updateGains(boolean forceChange) {
@@ -166,15 +189,18 @@ public class RealShooterControl extends ShooterControl {
     public void update() {
         double shooterSetpointRPM = 0;
         double shooterSpeedError = 0;
+
+        //Sample the run command
+        ShooterRunCommand runCommandLocal = runCommand;
         
         //Calc desired shooter speed
         if(shotAdjustmentChanged){
             adjustedSetpointRPM = shooterRPMSetpointFar.get() + shotAdjustmentRPM;
         }
         
-        if (runCommand == ShooterRunCommand.Eject){
+        if (runCommandLocal == ShooterRunCommand.Eject){
             shooterSetpointRPM = EjectSpeed.get();
-        }else if (runCommand == ShooterRunCommand.Stop){
+        }else if (runCommandLocal == ShooterRunCommand.Stop){
             shooterSetpointRPM = 0;
         }else { //For close and far shots, use the closed loop calibration
             shooterSetpointRPM = adjustedSetpointRPM;
@@ -184,7 +210,7 @@ public class RealShooterControl extends ShooterControl {
         shooterActualSpeed_rpm = shooterMotor1.getEncoder().getVelocity();
 
         //Switch Control Mode
-        if(runCommand == ShooterRunCommand.Stop){
+        if(runCommandLocal == ShooterRunCommand.Stop){
             currentStateShooter = ShooterCtrlMode.Stop;
             shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
             shooterSpeedErrorPrev = 0;
@@ -226,7 +252,7 @@ public class RealShooterControl extends ShooterControl {
                 }
             } else if(currentStateShooter == ShooterCtrlMode.HoldForShot) {
                 if(shooterSpeedErrorAbs > holdToShootErrThreshRPM.get()){
-                    if(runCommand == ShooterRunCommand.ShotClose){
+                    if(runCommandLocal == ShooterRunCommand.ShotClose){
                         //For close shots, we just blast the motor at full power and send'em
                         currentStateShooter = ShooterCtrlMode.JustGonnaSendEm;
                     } else {
@@ -286,12 +312,12 @@ public class RealShooterControl extends ShooterControl {
         shotAdjustmentChanged = false; //has been handled by this call to update()
 
 
-        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
+        double sampleTimeMS = Timer.getFPGATimestamp() * 1000.0;
         rpmDesiredSig.addSample(sampleTimeMS, shooterSetpointRPM);
         rpmActualSig.addSample(sampleTimeMS, shooterActualSpeed_rpm);
         isUnderLoadSig.addSample(sampleTimeMS, underLoad);
         shotCountSig.addSample(sampleTimeMS, shotCount);
-        shooterStateCommandSig.addSample(sampleTimeMS, runCommand.value);
+        shooterStateCommandSig.addSample(sampleTimeMS, runCommandLocal.value);
         shooterControlModeSig.addSample(sampleTimeMS, currentStateShooter.value);
         shooterMotor1CurrentSig.addSample(sampleTimeMS, shooterMotor1.getOutputCurrent());
         shooterMotor2CurrentSig.addSample(sampleTimeMS, shooterMotor2.getOutputCurrent());
