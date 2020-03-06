@@ -43,7 +43,7 @@ public abstract class ShooterControl {
         }
     }
 
-    ShooterRunCommand runCommand;
+    ShooterRunCommand runCommand = ShooterRunCommand.Stop;
 
     Calibration shooterRPMSetpointFar;
     Calibration shooterSendEmVoltage;

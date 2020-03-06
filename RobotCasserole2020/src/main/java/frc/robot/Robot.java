@@ -288,8 +288,8 @@ public class Robot extends TimedRobot {
         // fine movement mode
         double turnVal = DriverController.getInstance().getRotateCmd();
         double speedVal = DriverController.getInstance().getFwdRevCmd();
-        turnVal *= 0.5;
-        speedVal *= 0.3;
+        turnVal *= 0.55;
+        speedVal *= 0.5;
         drivetrain.setOpenLoopCmd(speedVal, turnVal);
       } else {
         // Open loop control of motors

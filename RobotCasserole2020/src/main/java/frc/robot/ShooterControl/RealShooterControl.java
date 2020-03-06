@@ -99,20 +99,20 @@ public class RealShooterControl extends ShooterControl {
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
         //Spool-up to hold transition conditions
-        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 12, 0, 500);
+        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 15, 0, 500);
         shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 30, 0, 5000);
 
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3300, 0, 5000);
-        shooterSendEmVoltage   = new Calibration("Shooter Close Shot Setpoint V", 12.0, 0.0, 14.0);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3400, 0, 5000);
+        shooterSendEmVoltage   = new Calibration("Shooter Close Shot Setpoint V", 11.0, 0.0, 14.0);
         shooterShootVoltage   = new Calibration("Shooter Far Shot Shoot Setpoint V", 10.5, 0.0, 14.0);
 
-        holdToShootErrThreshRPM = new Calibration("Shooter Hold To Shoot Error Thresh RPM", 75);
+        holdToShootErrThreshRPM = new Calibration("Shooter Hold To Shoot Error Thresh RPM", 50);
         accelerateToStabilizeThreshRPM = new Calibration("Shooter Accelerate to Stabilize Error Thresh RPM", 200, 0, 5000);
         EjectSpeed = new Calibration("Shooter Eject RPM", 1000, 0, 5000);
 
-        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.0006);
+        shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.0007);
         shooterMotorI_spoolup = new Calibration("Shooter Motor SpoolUp I", 0.0000015);
-        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.015);
+        shooterMotorD_spoolup = new Calibration("Shooter Motor SpoolUp D", 0.017);
         shooterMotorF_spoolup = new Calibration("Shooter Motor SpoolUp F", 0.00020);
         shooterMotorIZone_spoolup = new Calibration("Shooter Motor SpoolUp Izone", 100.0);
 
@@ -259,7 +259,7 @@ public class RealShooterControl extends ShooterControl {
                     }
                 }
             } else if(currentStateShooter == ShooterCtrlMode.HoldForShot) {
-                if(shooterSpeedErrorAbs > holdToShootErrThreshRPM.get()){
+                if(shooterSpeedError < -1.0 * holdToShootErrThreshRPM.get()){
                     if(runCommandLocal == ShooterRunCommand.ShotClose){
                         //For close shots, we just blast the motor at full power and send'em
                         currentStateShooter = ShooterCtrlMode.JustGonnaSendEm;

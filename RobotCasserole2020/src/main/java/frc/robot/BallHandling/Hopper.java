@@ -63,7 +63,7 @@ public class Hopper{
             hopperSparkRight.burnFlash();
         }
 
-        hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.35, 0, 1);
+        hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.50, 0, 1);
         hopperBWDSpeed = new Calibration("Hopper Backwards Speed", -0.75, -1, 0);
         hopperSparkLeftCurrentSignal =new Signal("Hopper Motor Left Current","A");
         hopperSparkRightCurrentSignal =new Signal("Hopper Motor Right Current","A");
