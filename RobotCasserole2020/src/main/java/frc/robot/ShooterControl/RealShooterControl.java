@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
-import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 
 /**

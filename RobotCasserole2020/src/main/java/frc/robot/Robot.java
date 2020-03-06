@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   Climber climber;
   PneumaticsControl thbbtbbtbbtbbt;
   MiscTelemetry telemetry;
+  LEDController ledCont;
 
   Supperstructure supperstructure; // A misspelling you say? Ha! Wrong you are! Imagery is even baked into our
                                    // source code.
@@ -126,7 +127,7 @@ public class Robot extends TimedRobot {
 
     snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
 
-    // pfb = PlayerFeedback.getInstance();
+    ledCont = LEDController.getInstance();
 
     /* Website Setup */
     initDriverView();
@@ -375,8 +376,7 @@ public class Robot extends TimedRobot {
     CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
     CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Accelerate || shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Stabilize));
     CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
-    CasseroleDriverView.setStringBox("Shooter Setpoint",
-        String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
+    CasseroleDriverView.setStringBox("Shooter Setpoint", String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
 
     if (pneumaticPressureLow || climber.isUpperLimitSwitchFaulted() || climber.isLowerLimitSwitchFaulted()) {
       masterCautionBlinkCounter++;

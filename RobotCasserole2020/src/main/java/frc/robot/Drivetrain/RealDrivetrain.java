@@ -145,10 +145,10 @@ public class RealDrivetrain extends Drivetrain {
         kFF = new Calibration("Drivetrain F Value", 0.00195);
         kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 2.0);
         currentLimit = new Calibration("Drivetrain Per-Motor Smart Current Limit" , 80, 0, 200);
-        turnToAnglekP= new Calibration("Drivetrain Turn To Angle kP", 3.0);
-        turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0.1);
-        turnToAngleMaxRPM= new Calibration("Drivetrain Turn To Angle Max RPM", 150, 0, 500);
-        turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM sec", 75, 0, 5000);
+        turnToAnglekP= new Calibration("Drivetrain Turn To Angle kP", 5.0);
+        turnToAnglekI= new Calibration("Drivetrain Turn To Angle kI", 0.3);
+        turnToAngleMaxRPM= new Calibration("Drivetrain Turn To Angle Max RPM", 250, 0, 500);
+        turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM sec", 200, 0, 5000);
         AdenSensitivityCal = new Calibration("Aden Sensitivity",1.2);
 
         dtLeftIntern.follow(dtLeftMaster);
