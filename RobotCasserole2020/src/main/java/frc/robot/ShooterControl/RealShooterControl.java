@@ -214,8 +214,6 @@ public class RealShooterControl extends ShooterControl {
             shooterAtSteadyStateDebounceCounter = shooterSpoolUpSteadyStateDbnc.get();
             shooterSpeedErrorPrev = 0;
             shooterSpeedErrorAbs = 0;
-            shooterMotor1.setOpenLoopRampRate(0.0);
-            shooterMotor2.setOpenLoopRampRate(0.0);
         } else {
             //When commanded to run....
             shooterSpeedErrorPrev = shooterSpeedErrorAbs;
@@ -226,23 +224,17 @@ public class RealShooterControl extends ShooterControl {
             //Handle transition out of stop, and into the "running" modes.
             if(currentStateShooter==ShooterCtrlMode.Stop){
                 currentStateShooter=ShooterCtrlMode.Accelerate;
-                shooterMotor1.setOpenLoopRampRate(1.0);
-                shooterMotor2.setOpenLoopRampRate(1.0);
             }
 
             //Whenever we change the setpoint, go back to accelerate to ensure we get to the right speed
             if(shotAdjustmentChanged){
                 currentStateShooter=ShooterCtrlMode.Accelerate;
-                shooterMotor1.setOpenLoopRampRate(1.0);
-                shooterMotor2.setOpenLoopRampRate(1.0);
             }
 
             //Handle running modes
             if(currentStateShooter==ShooterCtrlMode.Accelerate){
                 if(shooterSpeedError > -1.0 * accelerateToStabilizeThreshRPM.get()){
                     currentStateShooter = ShooterCtrlMode.Stabilize;
-                    shooterMotor1.setOpenLoopRampRate(0.0);
-                    shooterMotor2.setOpenLoopRampRate(0.0);
                 }
             } else if(currentStateShooter==ShooterCtrlMode.Stabilize){
                 if(shooterSpeedErrorAbs > shooterMaxHoldErrorRPM.get()){
@@ -271,8 +263,6 @@ public class RealShooterControl extends ShooterControl {
 
                 if( shooterSpeedErrorDeriv < 0 ){
                     currentStateShooter = ShooterCtrlMode.Accelerate;
-                    shooterMotor1.setOpenLoopRampRate(1.0);
-                    shooterMotor2.setOpenLoopRampRate(1.0);
                 }
 
             } else if(currentStateShooter == ShooterCtrlMode.JustGonnaSendEm) {
@@ -284,6 +274,14 @@ public class RealShooterControl extends ShooterControl {
 
         if(currentStateShooter != previousStateShooter){
             shooterPIDCtrl.setIAccum(0);
+
+            if(currentStateShooter == ShooterCtrlMode.Accelerate){
+                shooterMotor1.setOpenLoopRampRate(0.8);
+                shooterMotor2.setOpenLoopRampRate(0.8);
+            } else {
+                shooterMotor1.setOpenLoopRampRate(0.0);
+                shooterMotor2.setOpenLoopRampRate(0.0);
+            }
         }
 
         // Send commands to the motor

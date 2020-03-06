@@ -81,7 +81,7 @@ public class LEDController {
             } else {
                 ctrl.setSpeed(0.25);
             }
-        } else if (curAlliance == DriverStation.Alliance.Red) {
+        } else {
             if (DriverStation.getInstance().isAutonomous() == true) {
                 ctrl.setSpeed(-1.0);
             } else {
