@@ -43,7 +43,6 @@ public class OperatorController {
     boolean intakeDesired = false;
     boolean unjamCmd = false;
     boolean ejectDesired = false;
-    boolean photonCannonCmd = false;
     boolean climbEnabledCmd = false;
     double  climbSpeedCmd = 0.0;
     boolean ctrlPanelThreeRotationsDesired = false;
@@ -56,7 +55,7 @@ public class OperatorController {
     Signal intakeDesiredSig;
     Signal unjamCmdSig;
     Signal ejectDesiredSig;
-    Signal photonCannonCmdSig;
+
     Signal climbEnabledCmdSig; 
     Signal climbSpeedCmdSig;
     Signal ctrlPanelThreeRotationsDesiredSig;
@@ -78,7 +77,6 @@ public class OperatorController {
         intakeDesiredSig = new Signal("Operator Controller Intake Desired Command", "bool");
         unjamCmdSig = new Signal("Operator Controller Unjam Command", "bool");
         ejectDesiredSig = new Signal("Operator Controller Eject Desired Command", "bool");
-        photonCannonCmdSig = new Signal("Operator Controller Photon Cannon Command", "bool");
         climbEnabledCmdSig = new Signal("Operator Controller Climb Enable Command", "bool");
         climbSpeedCmdSig = new Signal("Operator Controller Climb Speed Command", "cmd");
         ctrlPanelThreeRotationsDesiredSig = new Signal("Operator Controller Ctrl Panel Three Rotations Command", "bool");
@@ -94,7 +92,6 @@ public class OperatorController {
         intakeDesired = (operaterController.getTriggerAxis(Hand.kLeft) > 0.2);
         unjamCmd = operaterController.getBumper(Hand.kLeft);
         ejectDesired = operaterController.getBackButton(); 
-        photonCannonCmd = operaterController.getAButton();
         climbEnabledCmd = operaterController.getStartButton();
         climbSpeedCmd = Utils.ctrlAxisScale(operaterController.getY(GenericHID.Hand.kLeft), 4.0, 0.15);
         ctrlPanelThreeRotationsDesired = operaterController.getYButton();
@@ -117,7 +114,6 @@ public class OperatorController {
         intakeDesiredSig.addSample(time_in_ms, intakeDesired);
         unjamCmdSig.addSample(time_in_ms, unjamCmd);
         ejectDesiredSig.addSample(time_in_ms, ejectDesired);
-        photonCannonCmdSig.addSample(time_in_ms, photonCannonCmd);
         climbEnabledCmdSig.addSample(time_in_ms, climbEnabledCmd);
         climbSpeedCmdSig.addSample(time_in_ms, climbSpeedCmd);
         ctrlPanelThreeRotationsDesiredSig.addSample(time_in_ms, ctrlPanelThreeRotationsDesired);
@@ -141,9 +137,7 @@ public class OperatorController {
     public boolean getEjectDesired(){
          return ejectDesired;
     }
-    public boolean getPhotonCannonCmd(){
-        return photonCannonCmd;
-    }
+
     public boolean getClimbEnableCmd(){
         return climbEnabledCmd;
     }

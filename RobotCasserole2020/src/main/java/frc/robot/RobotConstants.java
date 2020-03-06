@@ -84,7 +84,6 @@ public class RobotConstants {
     static public final int CONVEYOR_ENCODER_A_DIO_PORT = 5;
     static public final int CONVEYOR_ENCODER_B_DIO_PORT = 6;
     static public final int VISON_LED_RING_RELAY_DIO_PORT = 7;
-    static public final int PHOTON_CANNON_RELAY_DIO_PORT = 8;
     //static public final int UNUSED = 9;
 
 
