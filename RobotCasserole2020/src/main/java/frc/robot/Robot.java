@@ -300,7 +300,6 @@ public class Robot extends TimedRobot {
       slowLoopCounter++;
       if(slowLoopCounter%SLOW_LOOP_RATE == 0){
         //thbbtbbtbbtbbt.update();
-        //ledUpdater();
         //ctrlPanel.update();
         //ctrlPanelManipulator.update();
         telemetryUpdate();
@@ -355,7 +354,6 @@ public class Robot extends TimedRobot {
         //ctrlPanelManipulator.update();
         //ledController.update();
         //pfb.update();
-        //ledUpdater();
         telemetryUpdate();
         cam.setInnerGoalAsTarget(true); //try for 3's in teleop
       }
@@ -482,28 +480,6 @@ public class Robot extends TimedRobot {
       CasseroleDriverView.setSoundWidget("High Ground Acqd",false); 
     }
   }
-
-  /*public void ledUpdater(){
-    if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true){
-      ledController.setPattern(LEDPatterns.Pattern6);
-   }
-    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Blue){
-      if(DriverStation.getInstance().isAutonomous() == true){
-        ledController.setPattern(LEDPatterns.Pattern1);
-      }
-      else{
-        ledController.setPattern(LEDPatterns.Pattern4);
-      }
-    }
-    else if(DriverStation.getInstance().getAlliance() == DriverStation.Alliance.Red){
-      if(DriverStation.getInstance().isAutonomous() == true){
-        ledController.setPattern(LEDPatterns.Pattern0);
-      }
-      else{
-        ledController.setPattern(LEDPatterns.Pattern5);
-      }
-    }
-  }*/
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
