@@ -112,9 +112,8 @@ public class Supperstructure {
         
         conv.update(); 
         hopp.update();
-        shoot.update();
         intk.update();
-
+        //Shooter runs in separate thread
     }
 
     private void setOpMode(SupperstructureOpMode opMode_in){

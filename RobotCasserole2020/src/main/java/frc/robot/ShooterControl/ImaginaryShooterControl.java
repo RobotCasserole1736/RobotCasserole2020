@@ -48,7 +48,7 @@ public class ImaginaryShooterControl extends ShooterControl {
         } else if (des_speed_rpm < 100){
             ctrlMode = ShooterCtrlMode.Stop;
         } else {
-            ctrlMode = ShooterCtrlMode.SpoolUp;
+            ctrlMode = ShooterCtrlMode.Stabilize;
         }
 
 
