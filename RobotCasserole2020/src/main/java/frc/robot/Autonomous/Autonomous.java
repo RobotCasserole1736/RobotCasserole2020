@@ -13,9 +13,11 @@ import frc.robot.Autonomous.Events.AutoEventSteakA;
 import frc.robot.Autonomous.Events.AutoEventSteakB;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveStraight;
+import frc.robot.Autonomous.Events.AutoEventLoadingToTrench;
 import frc.robot.Autonomous.Events.AutoEventNoStealSteakA;
 import frc.robot.Autonomous.Events.AutoEventNoStealSteakB;
 import frc.robot.Autonomous.Events.AutoEventStopRobot;
+import frc.robot.Autonomous.Events.AutoEventTrenchToLoading;
 import frc.robot.Autonomous.Events.AutoEventBallThiefA;
 import frc.robot.Autonomous.Events.AutoEventBallThiefB;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
@@ -68,7 +70,9 @@ public class Autonomous {
         CitrusSteak(8),
         NoStealSteak(9),
         VisionAlignOnly(10),
-        SWTest(11),
+        LoadingToTrench(11),
+        TrenchToLoading(12),
+        SWTest(13),
         Inactive(-1); 
 
         public final int value;
@@ -105,6 +109,8 @@ public class Autonomous {
                                                               "Our Side Steak",
                                                               "Citrus Steak",
                                                               "No Steal Steak",
+                                                              "Loading To Trench",
+                                                              "Trench To Loading",
                                                               "SW TEAM TEST ONLY"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
@@ -159,6 +165,10 @@ public class Autonomous {
         } else if (actionStr.compareTo(ACTION_MODES[9]) == 0){
             modeCmd = AutoMode.NoStealSteak;
         } else if (actionStr.compareTo(ACTION_MODES[10]) == 0) { 
+            modeCmd = AutoMode.LoadingToTrench;
+        } else if (actionStr.compareTo(ACTION_MODES[11]) == 0) { 
+            modeCmd = AutoMode.TrenchToLoading;
+        } else if (actionStr.compareTo(ACTION_MODES[12]) == 0) { 
             modeCmd = AutoMode.SWTest;
         } else {
             modeCmd = AutoMode.Inactive;
@@ -194,6 +204,26 @@ public class Autonomous {
             }
         } else if(DriverController.getInstance().getAutoAlignAndShootCloseCmd()){
             visionAlignOnlyButtonReleased = true; // assume opposite button released
+            if(visionAlignShootButtonReleased==true){
+                modeCmd = AutoMode.CloseVisionAlignShoot;
+                autoModeName = "Driver Commanded Vision Align And Shoot";
+                visionAlignShootButtonReleased = false;
+            } else {
+                //Do Nothing until driver releases the button
+            }
+        } else if(DriverController.getInstance().getLoadingToTrenchCmd()){
+            visionAlignOnlyButtonReleased = true;
+            visionAlignShootButtonReleased = true;
+            if(visionAlignShootButtonReleased==true){
+                modeCmd = AutoMode.CloseVisionAlignShoot;
+                autoModeName = "Driver Commanded Vision Align And Shoot";
+                visionAlignShootButtonReleased = false;
+            } else {
+                //Do Nothing until driver releases the button
+            }
+        } else if(DriverController.getInstance().getAutoAlignAndShootCloseCmd()){
+            visionAlignOnlyButtonReleased = true;
+            visionAlignShootButtonReleased = true;
             if(visionAlignShootButtonReleased==true){
                 modeCmd = AutoMode.CloseVisionAlignShoot;
                 autoModeName = "Driver Commanded Vision Align And Shoot";
@@ -263,6 +293,12 @@ public class Autonomous {
                     break;
                     case NoStealSteak:
                         Drivetrain.getInstance().setInitialPose(-7, 11.5, 90);
+                    break;
+                    case LoadingToTrench:
+                        Drivetrain.getInstance().setInitialPose(6, 1.5, -90);
+                    break;
+                    case TrenchToLoading:
+                        Drivetrain.getInstance().setInitialPose(11, 18.5, -83);
                     break;
                 }
             }
@@ -384,6 +420,20 @@ public class Autonomous {
                     seq.addEvent(new AutoEventNoStealSteakB(7.0));
                     seq.addEvent(new AutoEventTurnToVisionTarget(5.0));
                     seq.addEvent(new AutoEventShootClose(3.0,5));
+                break;
+                case LoadingToTrench:
+                    Drivetrain.getInstance().setInitialPose(6, 1.5, -90);
+                    seq.addEvent(new AutoEventLoadingToTrench(0.0));
+                    seq.addEvent(new AutoEventTurnToVisionTarget(5.0));
+                    if(DriverStation.getInstance().isAutonomous()){
+                        seq.addEvent(new AutoEventShootFar(15.0,5));
+                    } else {
+                        seq.addEvent(new AutoEventShootFar(150.0,100));
+                    }
+                break;
+                case TrenchToLoading:
+                    Drivetrain.getInstance().setInitialPose(11, 18.5, -83);
+                    seq.addEvent(new AutoEventTrenchToLoading(0.0));
                 break;
             }
             modeCmdPrev = modeCmd;

@@ -37,6 +37,8 @@ public class DriverController {
     double fwdRevCmd = 0;
     double rotCmd = 0;
     boolean autoAlignCmd = false;
+    boolean loadingToTrenchCmd = false;
+    boolean trenchToLoadingCmd = false;
     boolean autoAlignAndShootCmd = false;
     boolean autoAlignAndShootCloseCmd = false;
     boolean snailModeCmd = true;
@@ -47,6 +49,8 @@ public class DriverController {
     Signal autoAlignAndShootCmdSig;
     Signal autoAlignAndShootCloseCmdSig;
     Signal autoAlignCmdSig;
+    Signal loadingToTrenchCmdSig;
+    Signal trenchToLoadingCmdSig;
     Signal snailModeCmdSig;
     Signal reverseModeSig;
 
@@ -66,6 +70,8 @@ public class DriverController {
         autoAlignAndShootCmdSig = new Signal("Driver Auto Align and Shoot Command", "bool");
         autoAlignAndShootCloseCmdSig =  new Signal("Driver Auto Align Close and Shoot Command", "bool");
         autoAlignCmdSig = new Signal("Driver Auto Align Only Command", "bool");
+        loadingToTrenchCmdSig = new Signal("Driver Loading To Trench Command", "bool");
+        trenchToLoadingCmdSig = new Signal("Driver Trench To Loading Align Only Command", "bool");
         snailModeCmdSig = new Signal("Driver Snail Mode Command", "bool");
         reverseModeSig  = new Signal("Driver Flip Front/Back Command", "bool");
     }
@@ -92,6 +98,8 @@ public class DriverController {
         }
         
         autoAlignCmd = driverController.getXButton();
+        loadingToTrenchCmd = driverController.getAButton();
+        trenchToLoadingCmd = driverController.getBButton();
         autoAlignAndShootCmd = (driverController.getTriggerAxis(Hand.kRight) > 0.2);
         autoAlignAndShootCloseCmd = (driverController.getTriggerAxis(Hand.kLeft) > 0.2);
         snailModeCmd = !driverController.getBumper(Hand.kRight);
@@ -102,6 +110,8 @@ public class DriverController {
         autoAlignCmdSig.addSample(time_in_ms, autoAlignCmd);
         autoAlignAndShootCmdSig.addSample(time_in_ms, autoAlignAndShootCmd);
         autoAlignAndShootCloseCmdSig.addSample(time_in_ms, autoAlignAndShootCloseCmd);
+        loadingToTrenchCmdSig.addSample(time_in_ms, loadingToTrenchCmd);
+        trenchToLoadingCmdSig.addSample(time_in_ms, trenchToLoadingCmd);
         snailModeCmdSig.addSample(time_in_ms, snailModeCmd);
         reverseModeSig.addSample(time_in_ms, reverseModeCmd);
     }
@@ -139,6 +149,14 @@ public class DriverController {
 
     public boolean getAutoAlignCmd(){
         return autoAlignCmd; 
+    }
+
+    public boolean getLoadingToTrenchCmd(){
+        return loadingToTrenchCmd;
+    }
+
+    public boolean getTrenchToLoadingCmd(){
+        return trenchToLoadingCmd;
     }
     
 
