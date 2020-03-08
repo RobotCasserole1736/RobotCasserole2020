@@ -18,14 +18,20 @@ public class AutoEventSideSteakA extends AutoEvent {
 	double intkPrepEndTime;
 	boolean intkPrepCompleted = true;
 
+    // private final Waypoint[] waypoints_ft = new Waypoint[] {
+    //     new Waypoint(0,      0,  Pathfinder.d2r(0)),
+    //     new Waypoint(4.25,   -1.6,  Pathfinder.d2r(37))
+    // };
+
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(4.25,   -1.6,  Pathfinder.d2r(37))
+        new Waypoint(12,   0,  Pathfinder.d2r(0)),
+        new Waypoint(15,2.5,Pathfinder.d2r(-105))
     };
 
     public AutoEventSideSteakA(double intkPrepDuration_s_in) {
         intkPrepDuration_s = intkPrepDuration_s_in;
-        driveForward = new PathPlannerAutoEvent(waypoints_ft, false,12,6);
+        driveForward = new PathPlannerAutoEvent(waypoints_ft, false,7,6);
     }
 
     @Override
