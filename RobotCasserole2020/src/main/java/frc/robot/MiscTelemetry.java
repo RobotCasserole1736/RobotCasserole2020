@@ -19,6 +19,7 @@ package frc.robot;
  *   if you would consider donating to our club to help further STEM education.
  */
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.CasseroleDataServer;
@@ -36,6 +37,7 @@ public class MiscTelemetry {
     Climber climber;
 
     //Top level telemetry signals
+    Signal matchTimeSig;
     Signal rioDSSampLoadSig;
     Signal rioDSLogQueueLenSig;
     Signal rioBattCurrDrawSig;
@@ -61,6 +63,7 @@ public class MiscTelemetry {
         climber = Climber.getInstance();
 
         /* Init local telemetry signals */
+        matchTimeSig = new Signal("Match Time", "s"); 
         rioDSSampLoadSig = new Signal("Dataserver Stored Samples", "count"); 
         rioBattCurrDrawSig = new Signal("Robot Battery Current Draw", "A");
         rioBattVoltSig = new Signal("Robot Battery Voltage", "V");
@@ -103,6 +106,7 @@ public class MiscTelemetry {
     public void telemetryUpdate(){
         double sampleTimeMs = Timer.getFPGATimestamp()*1000.0;
 
+        matchTimeSig.addSample(sampleTimeMs, DriverStation.getInstance().getMatchTime());
         rioDSSampLoadSig.addSample(sampleTimeMs, CasseroleDataServer.getInstance().getTotalStoredSamples());
         rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
         rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
