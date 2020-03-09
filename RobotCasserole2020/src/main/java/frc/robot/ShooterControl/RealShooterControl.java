@@ -1,9 +1,22 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2020 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+/*
+ *******************************************************************************************
+ * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ *******************************************************************************************
+ *
+ * This software is released under the MIT Licence - see the license.txt
+ *  file in the root of this repo.
+ *
+ * Non-legally-binding statement from Team 1736:
+ *  Thank you for taking the time to read through our software! We hope you
+ *   find it educational and informative! 
+ *  Please feel free to snag our software for your own use in whatever project
+ *   you have going on right now! We'd love to be able to help out! Shoot us 
+ *   any questions you may have, all our contact info should be on our website
+ *   (listed above).
+ *  If you happen to end up using our software to make money, that is wonderful!
+ *   Robot Casserole is always looking for more sponsors, so we'd be very appreciative
+ *   if you would consider donating to our club to help further STEM education.
+ */
 
 package frc.robot.ShooterControl;
 
@@ -18,6 +31,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
+import frc.lib.Util.ExecutionTimeTracker;
 import frc.robot.RobotConstants;
 
 /**
@@ -74,6 +88,8 @@ public class RealShooterControl extends ShooterControl {
     CANSparkMax shooterMotor1; //Master
     CANSparkMax shooterMotor2; //Unpaid Intern
     CANPIDController shooterPIDCtrl;
+
+    ExecutionTimeTracker timeTracker;
 
     public RealShooterControl() {
 
@@ -147,7 +163,7 @@ public class RealShooterControl extends ShooterControl {
             public void run() {
                 try {
                     while(!Thread.currentThread().isInterrupted()){
-                        update();
+                        timeTracker.run(RealShooterControl.getInstance(), RealShooterControl.class.getMethod("update"));
                         Thread.sleep(10);
                     }
                 } catch (Exception e) {
@@ -159,7 +175,7 @@ public class RealShooterControl extends ShooterControl {
 
         //Set up thread properties and start it off
         monitorThread.setName("CasseroleRealShooterControl");
-        monitorThread.setPriority(Thread.MAX_PRIORITY - 2);
+        monitorThread.setPriority(Thread.MAX_PRIORITY - 1);
         monitorThread.start();
 
     }

@@ -9,6 +9,7 @@ package frc.robot.ShooterControl;
 
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
+import frc.lib.Util.ExecutionTimeTracker;
 import frc.robot.RobotSimMode;
 
 /**
@@ -57,6 +58,8 @@ public abstract class ShooterControl {
     double shotAdjustmentRPM = 0;
     boolean shotAdjustmentChanged = false;
 
+    public ExecutionTimeTracker timeTracker;
+
     private static ShooterControl instance = null;
 	public static synchronized ShooterControl getInstance() {
 		if(instance == null){
@@ -75,6 +78,9 @@ public abstract class ShooterControl {
         rpmActualSig = new Signal("Shooter Actual Speed", "RPM");
         shooterStateCommandSig = new Signal("Shooter Input Mode Command", "state");
         shooterControlModeSig = new Signal("Shooter Wheel Current Control Mode", "state");
+
+        timeTracker = new ExecutionTimeTracker("ShooterControl", 0.03);
+
     }
 
     public void setRun(ShooterRunCommand runCmd) {
