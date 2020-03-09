@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.Signal;
 import frc.lib.Util.CrashTracker;
 import frc.robot.LoopTiming;
+import frc.robot.Robot;
 
 /**
  * DESCRIPTION: <br>
@@ -96,6 +97,10 @@ public class CasseroleRIOLoadMonitor {
 	 * background thread to gather load info
 	 */
 	public CasseroleRIOLoadMonitor(){
+
+		if(Robot.isSimulation()){
+			return; //nothing to do for simulation.
+		}
 		
 		//Reset give up flag
 		giveUp = false;
