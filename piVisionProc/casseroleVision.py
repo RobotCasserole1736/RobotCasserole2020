@@ -140,15 +140,11 @@ class VisionProcessor():
         if(self.stableidx%20==0):
             self.innerAim=ntTable.getEntry("InnerAim").value
         self.inimg = inFrame
-        print("Setting inimg:"+str((time.time() * 1000)-Timer))
         self.LightFilter()
-        print("Light Filtration:"+str((time.time() * 1000)-Timer))
         _, contours, _ = cv2.findContours(self.mask, mode=cv2.RETR_LIST, method=cv2.CHAIN_APPROX_SIMPLE)
-        print("Finding dem countours:"+str((time.time() * 1000)-Timer))
         filteredContours = self.filtercontours(contours, 100.0, 175.0, math.inf)
         self.TargetDetection(filteredContours)
         self.updateTable()
-        print("Processing Time:"+str((time.time() * 1000)-Timer))
         return self.maskoutput
 
     ###################
@@ -168,9 +164,8 @@ class VisionProcessor():
             else:
                 ntTable.putNumber("Heartbeat", 1.0)
                 print("Heartbeat")
-        if self.debug:
-            self.outputStr = "{{{},{},{},{},{}}}".format(self.ret, self.angle1, self.xval, self.yval, self.innerAim)
-            print(self.outputStr)
+        self.outputStr = "{{{},{},{},{},{}}}".format(self.ret, self.angle1, self.xval, self.yval, self.innerAim)
+        print(self.outputStr)
         self.stableidx += 1
 
 
@@ -270,6 +265,7 @@ class VisionProcessor():
 
 class cameraSettings():
     def __init__(self):
+        os.system("v4l2-ctl --set-fmt-video pixelformat=H264,width=1920,height=1080")
         cmdStart="v4l2-ctl --set-ctrl "
         #Turns off Auto setting that would change the ones we put in place
         os.system(cmdStart+"auto_exposure=1")
@@ -310,6 +306,44 @@ class cameraSettings():
         #JPEG Compression controls
         os.system(cmdStart+"compression_quality=100")
 
+class WebcamVideoStream:
+    def __init__(self, src=0):
+        # initialize the video camera stream and read the first frame
+        # from the stream
+        self.stream = cv2.VideoCapture(src,cv2.CAP_V4L2)
+        self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        self.stream.set(cv2.CAP_PROP_FPS, 30)
+        self.stream.set(cv2.CAP_PROP_FOURCC,cv2.VideoWriter_fourcc("H","2","6","4"))
+        (self.grabbed, self.frame) = self.stream.read()
+        # initialize the variable used to indicate if the thread should
+        # be stopped
+        self.stopped = False
+        self.start()
+    def start(self):
+        # start the thread to read frames from the video stream
+        threading.Thread(target=self.update, args=()).start()
+        return self
+    def update(self):
+        # keep looping infinitely until the thread is stopped
+        while True:
+            Timer=(time.time() * 1000)
+            # if the thread indicator variable is set, stop the thread
+            if self.stopped:
+                return
+            # otherwise, read the next frame from the stream
+            (self.grabbed, self.frame) = self.stream.read()
+            print("Image Capture Time: "+str((time.time() * 1000)-Timer))
+    def read(self):
+        # return the frame most recently read
+        if(self.grabbed):
+            self.grabbed=False
+            return (True, self.frame)
+        else:
+            return (False, self.frame)
+    def stop(self):
+        # indicate that the thread should be stopped
+        self.stopped = True
 
 
 if __name__ == "__main__":
@@ -328,11 +362,7 @@ if __name__ == "__main__":
     
 
 
-    
-    capture = cv2.VideoCapture(0,cv2.CAP_ANY)
-    capture.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-    capture.set(cv2.CAP_PROP_FPS, 25)
+    cameraHandler=WebcamVideoStream()
 
     
     try:
@@ -342,7 +372,7 @@ if __name__ == "__main__":
         t.start()
         print("MJPEG Server Started")
     except KeyboardInterrupt:
-        capture.release()
+        #cameraHandler.stop()
         server.socket.close()
 
     ntTable = NetworkTables.getTable("VisionData")
@@ -356,27 +386,22 @@ if __name__ == "__main__":
     print("Vision Processing Starting..")
     Processor=VisionProcessor()
     Processor.init()
-    
+    ENDTIMEMS=0
     # loop forever
     while True:
         STARTTIMEMS=time.time() * 1000
         prev_cap_time = capture_time
-        rc,cam_img = capture.read()
-        capture_time = time.time_ns()/(10 ** 9)
-        print("Capture Time:"+str((time.time() * 1000)-STARTTIMEMS))
-        
-        if not rc:
-            img = None
-            print("Bad Image Capture!")
-            continue
-        else:
-            img = Processor.process(cam_img)
+        rc,cam_img = cameraHandler.read()
+        if rc:
+            capture_time = time.time_ns()/(10 ** 9)
+            img = Processor.process(cv2.imdecode(np.frombuffer(cam_img,dtype=np.uint8),cv2.IMREAD_COLOR))
             # img = cam_img
             # 26 deg
-
-        proc_end_time = time.time_ns()/(10 ** 9)
-        proc_time = proc_end_time - capture_time
-        ntTable.putNumber("proc_duration_sec", proc_time)
-        ntTable.putNumber("framerate_fps", 1.0/(capture_time - prev_cap_time))
-        time.sleep(0)
-        print("Total Time:"+str((time.time() * 1000)-STARTTIMEMS))
+            proc_end_time = time.time_ns()/(10 ** 9)
+            proc_time = proc_end_time - capture_time
+            ntTable.putNumber("proc_duration_sec", proc_time)
+            ntTable.putNumber("framerate_fps", 1.0/(capture_time - prev_cap_time))
+            time.sleep(0)
+            print("Processing Time: "+str((time.time() * 1000)-STARTTIMEMS))
+            print("Total Time: "+str((time.time() * 1000)-ENDTIMEMS))
+            ENDTIMEMS=time.time() * 1000
