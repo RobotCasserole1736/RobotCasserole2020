@@ -92,7 +92,7 @@ public class LEDController {
     }
 
     public void ledUpdater() {
-        if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true) {
+        if (DriverStation.getInstance().getMatchTime() <= 30) {
             // ledController.setPattern(LEDPatterns.Pattern6);
             ctrl.setSpeed(1.0);
         } else if (curAlliance == DriverStation.Alliance.Blue) {
