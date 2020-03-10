@@ -62,6 +62,7 @@ public class LEDController {
     private LEDController() {
 
         ctrl = new PWM(RobotConstants.LED_CONTROLLER_PORT);
+        ctrl.setSafetyEnabled(false);
 
         Thread monitorThread = new Thread(new Runnable() {
             @Override
@@ -92,8 +93,8 @@ public class LEDController {
     }
 
     public void ledUpdater() {
-        if (DriverStation.getInstance().getMatchTime() <= 30) {
-            // ledController.setPattern(LEDPatterns.Pattern6);
+        double matchTime = DriverStation.getInstance().getMatchTime();
+        if (matchTime <= 30 && matchTime >= 0) {
             ctrl.setSpeed(1.0);
         } else if (curAlliance == DriverStation.Alliance.Blue) {
             if (DriverStation.getInstance().isAutonomous() == true) {

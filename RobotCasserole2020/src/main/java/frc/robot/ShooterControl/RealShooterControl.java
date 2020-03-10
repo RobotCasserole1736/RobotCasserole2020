@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.lib.SignalMath.AveragingFilter;
-import frc.lib.Util.ExecutionTimeTracker;
 import frc.robot.RobotConstants;
 
 /**
@@ -88,8 +87,6 @@ public class RealShooterControl extends ShooterControl {
     CANSparkMax shooterMotor1; //Master
     CANSparkMax shooterMotor2; //Unpaid Intern
     CANPIDController shooterPIDCtrl;
-
-    ExecutionTimeTracker timeTracker;
 
     public RealShooterControl() {
 
