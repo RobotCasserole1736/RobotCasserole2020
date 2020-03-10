@@ -8,73 +8,72 @@ import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
 /**
- * go to scale on left.
+ * drive straight and stuff. Step response check (with typical smoothing)
  */
-public class AutoEventSideSteakA extends AutoEvent {
-    PathPlannerAutoEvent driveForward;
+public class AutoEventTrenchToLoading extends AutoEvent {
+    PathPlannerAutoEvent driveBackward;
 
-    //stuff for Intake
+    //PrepToShoot Stuff
 	double intkPrepDuration_s;
 	double intkPrepEndTime;
 	boolean intkPrepCompleted = true;
 
-    // private final Waypoint[] waypoints_ft = new Waypoint[] {
-    //     new Waypoint(0,      0,  Pathfinder.d2r(0)),
-    //     new Waypoint(4.25,   -1.6,  Pathfinder.d2r(37))
-    // };
+    //Waypoints always start at (0,0), and are referenced relative to the robot's
+    // position and pose angle whenever the event starts running. Units must be inches.
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(12,   0,  Pathfinder.d2r(0)),
-        new Waypoint(15,2.5,Pathfinder.d2r(-105))
+        new Waypoint(15.5,   6.8,  Pathfinder.d2r(7))
     };
 
-    public AutoEventSideSteakA(double intkPrepDuration_s_in) {
+    public AutoEventTrenchToLoading(double intkPrepDuration_s_in) {
+        driveBackward = new PathPlannerAutoEvent(waypoints_ft, false,12,6);
+
         intkPrepDuration_s = intkPrepDuration_s_in;
-        driveForward = new PathPlannerAutoEvent(waypoints_ft, false,7,6);
     }
 
     @Override
     public void userStart() {
+        driveBackward.userStart();
+
         intkPrepEndTime = Timer.getFPGATimestamp() + intkPrepDuration_s;
         intkPrepCompleted = false;
         Supperstructure.getInstance().setIntakeDesired(true);
-        Supperstructure.getInstance().setPrepToShootDesired(true);
-        
-        driveForward.userStart();
+		Supperstructure.getInstance().setPrepToShootDesired(true);
     }
 
     @Override
     public void userUpdate() {
+        driveBackward.userUpdate();
+
         intkPrepCompleted = (Timer.getFPGATimestamp() > intkPrepEndTime);
 		if (intkPrepCompleted){
-            Supperstructure.getInstance().setIntakeDesired(false);
             Supperstructure.getInstance().setPrepToShootDesired(false);
+            Supperstructure.getInstance().setIntakeDesired(false);
         }
-        
-        driveForward.userUpdate();
     }
-    
+
     @Override
     public void userForceStop() {
-        Supperstructure.getInstance().setIntakeDesired(false);
+        driveBackward.userForceStop();
+
         Supperstructure.getInstance().setPrepToShootDesired(false);
-        
-        driveForward.userForceStop();
+        Supperstructure.getInstance().setIntakeDesired(false);
     }
 
     @Override
     public boolean isTriggered() {
-        return driveForward.isTriggered();
+        return driveBackward.isTriggered();
     }
 
     @Override
     public boolean isDone() {
-        return driveForward.isDone();
+        return driveBackward.isDone();
     }
-
+    
     public static void main(String[] args) {
-        AutoEventSideSteakA autoEvent = new AutoEventSideSteakA(3.0); //time is for intk
+		System.out.println("Starting path planner calculation...");
+        AutoEventTrenchToLoading autoEvent = new AutoEventTrenchToLoading(0.0); //time is for prep to shoot
 		//TODO
 		System.out.println("Done");
     }
