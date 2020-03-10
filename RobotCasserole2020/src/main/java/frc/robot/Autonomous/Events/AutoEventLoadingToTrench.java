@@ -23,7 +23,7 @@ public class AutoEventLoadingToTrench extends AutoEvent {
 
     private final Waypoint[] waypoints_ft = new Waypoint[] {
         new Waypoint(0,      0,  Pathfinder.d2r(0)),
-        new Waypoint(-17,   -5.0,  Pathfinder.d2r(-7))
+        new Waypoint(-15.5,   -5.0,  Pathfinder.d2r(-7))
     };
 
     public AutoEventLoadingToTrench(double intkPrepDuration_s_in) {

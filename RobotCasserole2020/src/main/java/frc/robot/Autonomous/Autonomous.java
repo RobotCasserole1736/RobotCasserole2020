@@ -431,7 +431,7 @@ public class Autonomous {
                     seq.addEvent(new AutoEventTurn(6));
                     seq.addEvent(new AutoEventTurnToVisionTarget(5.0));
                     seq.addEvent(new AutoEventShootClose(3.0,5));
-                    seq.addEvent(new AutoEventTurn(125)); //was 110
+                    seq.addEvent(new AutoEventTurn(115)); //was 110
                     seq.addEvent(new AutoEventSideSteakA(3.0)); //Time is for intk, which is included
                     //seq.addEvent(new AutoEventTurn(110));
                     // seq.addEvent(new AutoEventDriveStraight(-3));
@@ -456,7 +456,7 @@ public class Autonomous {
                     seq.addEvent(new AutoEventShootClose(3.0,5));
                 break;
                 case LoadingToTrench:
-                    Drivetrain.getInstance().setInitialPose(6, 1.5, -90);
+                    //Drivetrain.getInstance().setInitialPose(6, 1.5, -90);
                     seq.addEvent(new AutoEventLoadingToTrench(0.0));
                     seq.addEvent(new AutoEventTurnToVisionTarget(5.0));
                     if(DriverStation.getInstance().isAutonomous()){
@@ -466,7 +466,7 @@ public class Autonomous {
                     }
                 break;
                 case TrenchToLoading:
-                    Drivetrain.getInstance().setInitialPose(11, 18.5, -83);
+                    //Drivetrain.getInstance().setInitialPose(11, 18.5, -83);
                     seq.addEvent(new AutoEventTrenchToLoading(0.0));
                 break;
                 case TurnAround180:
