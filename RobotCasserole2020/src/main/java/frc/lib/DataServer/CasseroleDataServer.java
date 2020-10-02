@@ -1,6 +1,21 @@
 package frc.lib.DataServer;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Map.entry;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /*
  *******************************************************************************************
@@ -26,6 +41,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
+import edu.wpi.first.wpilibj.Timer;
 import frc.lib.Util.CrashTracker;
 
 /**
@@ -140,5 +156,52 @@ public class CasseroleDataServer {
         serverThread.setPriority(10);
         serverThread.start();
     }
+
+    Set<AutoDiscoveredSignal> autoSig;
+
+    public void findAllAnnotatedSignals(Object root, String prefix){
+        Class rootClass = root.getClass();
+
+        if(rootClass.getPackage().toString().contains("frc.robot")){
+            for(Field field : rootClass.getDeclaredFields()){
+                String newName = prefix + (prefix.length() > 0 ? "." : "") + field.getName();
+                if(field.getType().isPrimitive()){
+                    if(field.isAnnotationPresent(frc.lib.DataServer.Annotations.Signal.class)){
+                        autoSig.add(new AutoDiscoveredSignal(field, root, newName, "None"));
+                    }
+                } else {
+                    Object childObj = null;
+                    try{
+                        field.setAccessible(true);
+                        childObj = field.get(root);
+                    }  catch(IllegalAccessException e) {
+                        System.out.println("WARNING: skipping " + field.getName());
+                        System.out.println(e);
+                    }
+                    if(childObj != null){
+                        findAllAnnotatedSignals(childObj, newName);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    // Special thanks to oblarg and his oblog for help on impelmenting this.
+    public void registerSignals(Object rootContainer) {
+        autoSig = new HashSet<>();
+        findAllAnnotatedSignals(rootContainer, "");
+    }
+
+    public void sampleAllSignals(){
+        double sampleTime = Timer.getFPGATimestamp() * 1000;
+        for(AutoDiscoveredSignal sig : autoSig){
+            sig.addSample(sampleTime);
+        }
+    }
+
+
+
 
 }

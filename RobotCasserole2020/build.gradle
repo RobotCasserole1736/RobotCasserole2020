@@ -4,6 +4,13 @@ plugins {
     id "org.ajoberstar.grgit" version "3.0.0"
 }
 
+repositories {
+    mavenCentral()
+    maven {
+        url "./localMaven"
+    }
+}
+
 import org.ajoberstar.grgit.Grgit
 
 sourceCompatibility = JavaVersion.VERSION_11
