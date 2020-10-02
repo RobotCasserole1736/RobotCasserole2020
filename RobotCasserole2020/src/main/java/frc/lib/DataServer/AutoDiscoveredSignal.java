@@ -2,8 +2,6 @@ package frc.lib.DataServer;
 
 import java.lang.reflect.Field;
 
-import frc.robot.NumberedEnum;
-
 /*
  *******************************************************************************************
  * Copyright (C) 2018 FRC Team 1736 Robot Casserole - www.robotcasserole.org

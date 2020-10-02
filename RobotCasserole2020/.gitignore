@@ -161,5 +161,7 @@ gradle-app.setting
 bin/
 imgui.ini
 
+#Allow all files under the localMaven area (including binaries and .jars)
+!localMaven/**
 
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
