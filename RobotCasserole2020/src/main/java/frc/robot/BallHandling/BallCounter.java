@@ -8,9 +8,8 @@
 package frc.robot.BallHandling;
 
 import frc.lib.Calibration.Calibration;
-import frc.robot.LoopTiming;
+import frc.lib.DataServer.Annotations.Signal;
 import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
-import frc.lib.DataServer.Signal;
 
 public class BallCounter {
 
@@ -35,23 +34,23 @@ public class BallCounter {
     }
 
     // State Data
+    @Signal
     int ballsInConveyor = 0;
+    @Signal
     BallHeight curBallHeight;
     BallHeight prevBallHeight;
 
+    @Signal
     ConveyorDirection curConveyorDirection;
     ConveyorDirection prevConveyorDirection;
 
-    Double ballHeightIn;
+    @Signal
+    double ballHeightIn;
 
     // Calibrations
     Calibration ballPresentDistThreshCal;
     Calibration ballApexDistThreshCal;
 
-    // Signals
-    Signal ballCountSig;
-    Signal howFarFromSensorSig;
-    Signal whatHeightWeSaySig;
 
     private static BallCounter inst = null;
 
@@ -68,11 +67,6 @@ public class BallCounter {
 
         ballPresentDistThreshCal = new Calibration("Ball Counter Ball Present Distance Thresh Inches", 8.0);
         ballApexDistThreshCal = new Calibration("Ball Counter Ball Apex Distance Thresh Inches", 4.0);
-
-        ballCountSig = new Signal("Ball Counter Ball Count", "count");
-        howFarFromSensorSig = new Signal("Ball Counter Sensor Distance", "in");
-        whatHeightWeSaySig = new Signal("Ball Counter Ball Height State", "heightState");
-
     }
 
     public void update() {
@@ -95,11 +89,6 @@ public class BallCounter {
             }
         }
         prevBallHeight = curBallHeight;
-
-        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000;
-        ballCountSig.addSample(sampleTimeMS, ballsInConveyor);
-        howFarFromSensorSig.addSample(sampleTimeMS, ballHeightIn);
-        whatHeightWeSaySig.addSample(sampleTimeMS, curBallHeight.value);
 
     }
 

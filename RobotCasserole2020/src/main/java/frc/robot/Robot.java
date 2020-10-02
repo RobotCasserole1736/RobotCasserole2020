@@ -132,6 +132,7 @@ public class Robot extends TimedRobot {
     /* Website Setup */
     initDriverView();
 
+    dataServer.registerSignals(this);
     dataServer.startServer();
     webserver.startServer();
 
@@ -400,6 +401,8 @@ public class Robot extends TimedRobot {
     } else {
       CasseroleDriverView.setSoundWidget("High Ground Acqd", false);
     }
+
+    dataServer.sampleAllSignals();
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

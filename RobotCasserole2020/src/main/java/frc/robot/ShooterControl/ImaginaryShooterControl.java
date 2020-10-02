@@ -8,6 +8,7 @@
 package frc.robot.ShooterControl;
 
 import frc.lib.Calibration.Calibration;
+import frc.lib.DataServer.Annotations.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 
@@ -16,11 +17,15 @@ import frc.robot.RobotConstants;
  */
 public class ImaginaryShooterControl extends ShooterControl {
 
+    @Signal
     double speed_rpm = 0;
+    @Signal
     double des_speed_rpm = 0;
+    @Signal
     ShooterCtrlMode ctrlMode = ShooterCtrlMode.Stop;
     final double SHOOTER_ACCEL_RPM_PER_SEC = 2000;
     final double SHOOTER_DECEL_RPM_PER_SEC = 1000;
+    @Signal
     double adjustedSetpointRPM;
 
     public ImaginaryShooterControl() {
@@ -51,12 +56,6 @@ public class ImaginaryShooterControl extends ShooterControl {
             ctrlMode = ShooterCtrlMode.Stabilize;
         }
 
-
-        final double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
-        rpmDesiredSig.addSample(sampleTimeMS, des_speed_rpm);
-        rpmActualSig.addSample(sampleTimeMS, speed_rpm);
-        shooterStateCommandSig.addSample(sampleTimeMS, runCommand.value);
-        shooterControlModeSig.addSample(sampleTimeMS, ctrlMode.value);
     }
 
     public boolean isUnderLoad() {

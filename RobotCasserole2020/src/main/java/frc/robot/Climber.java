@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Spark;
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Signal;
+import frc.lib.DataServer.Annotations.Signal;
 import frc.robot.HumanInterface.OperatorController;
 
 
@@ -22,18 +22,12 @@ public class Climber{
     TwoWireParitySwitch upperLimitSwitch;
     TwoWireParitySwitch lowerLimitSwitch;
     Solenoid climbLocker; 
+    @Signal
     boolean climbEnabled;
+    @Signal
     double climbCMD=0;
     Calibration climberSpeed;
     Calibration climberSpeedOffset;
-
-    Signal climberCMDSignal;
-    Signal climberMotorCmdSignal;
-    Signal climbMotor1CurrentSignal;
-    Signal climbMotor2CurrentSignal;
-    Signal climberUpperLimitSignal;
-    Signal climberLowerLimitSignal;
-    Signal limitSwitchesReadingRightSig;
 
     TwoWireParitySwitch.SwitchState upperLSVal;
     TwoWireParitySwitch.SwitchState lowerLSVal;
@@ -54,17 +48,12 @@ public class Climber{
         climbLocker = new Solenoid(RobotConstants.CLIMBER_SOLENOID_PCM_PORT);
         climberSpeed=new Calibration("Climber Max Speed", 1, 0, 1);
         climberSpeedOffset=new Calibration("Climber Stopped Motor Offset Speed", 0.0, 0, 1);
-        climberCMDSignal= new Signal("Climber Input Command","cmd");
-        climberMotorCmdSignal= new Signal("Climber Motor Command","cmd");
-        climbMotor1CurrentSignal= new Signal("Climber Motor 1 Current","A");
-        climbMotor2CurrentSignal= new Signal("Climber Motor 2 Current","A");
-        climberUpperLimitSignal= new Signal("Climber Upper Limit Switch","state");
-        climberLowerLimitSignal= new Signal("Climber Lower Limit Switch","state");
     }
 
+    @Signal
+    double motorCmd = 0;
+
     public void update(){
-        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
-        double motorCmd = 0;
 
         if(DriverStation.getInstance().isDisabled()){
             climbEnabled = false;
@@ -116,13 +105,7 @@ public class Climber{
         }
 
         climberMotor.set(motorCmd);
-
-        climberCMDSignal.addSample(sampleTimeMs, climbCMD);
-        climberMotorCmdSignal.addSample(sampleTimeMs, motorCmd);
-        climbMotor1CurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_1_PDP_CHANNEL));
-        climbMotor2CurrentSignal.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_2_PDP_CHANNEL));
-        climberUpperLimitSignal.addSample(sampleTimeMs, upperLimitSwitch.get().value);
-        climberLowerLimitSignal.addSample(sampleTimeMs, lowerLimitSwitch.get().value);
+        readCurrents();
 
     }
 
@@ -144,6 +127,16 @@ public class Climber{
 
     public boolean canClimb(){
         return canClimb;
+    }
+
+    @Signal
+    double motor1Current = 0;
+    @Signal
+    double motor2Current = 0;
+
+    public void readCurrents(){
+        motor1Current = CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_1_PDP_CHANNEL);
+        motor2Current = CasserolePDP.getInstance().getCurrent(RobotConstants.CLIMBER_SPARK_2_PDP_CHANNEL);
     }
 
 }

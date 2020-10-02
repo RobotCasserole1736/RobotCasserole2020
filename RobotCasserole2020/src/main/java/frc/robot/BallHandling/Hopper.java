@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Signal;
+import frc.lib.DataServer.Annotations.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.Robot;
 
@@ -17,16 +17,15 @@ public class Hopper{
             inst = new Hopper();
         return inst;
     }
+    @Signal
     HopperOpMode hopperOpMode;
     CANSparkMax hopperSparkLeft;
     CANSparkMax hopperSparkRight;
 
+    @Signal
     double HopperSparkLeftCmd=0;
+    @Signal
     double HopperSparkRightCmd=0;
-    Signal hopperSparkLeftCurrentSignal;
-    Signal hopperSparkRightCurrentSignal;
-    Signal hopperSparkLeftCmdSignal;
-    Signal hopperSparkRightCmdSignal;
     Calibration hopperFWDSpeed;
     Calibration hopperBWDSpeed;
     Conveyor conv = Conveyor.getInstance();
@@ -66,16 +65,9 @@ public class Hopper{
 
         hopperFWDSpeed = new Calibration("Hopper Forward Speed", 0.50, 0, 1);
         hopperBWDSpeed = new Calibration("Hopper Backwards Speed", -0.75, -1, 0);
-        hopperSparkLeftCurrentSignal =new Signal("Hopper Motor Left Current","A");
-        hopperSparkRightCurrentSignal =new Signal("Hopper Motor Right Current","A");
-        hopperSparkLeftCmdSignal =new Signal("Hopper Motor Left Cmd","cmd");
-        hopperSparkRightCmdSignal =new Signal("Hopper Motor Right Cmd","cmd");
-
     }
 
     public void update(){
-
-
         if(hopperOpMode==HopperOpMode.Stop){
             HopperSparkLeftCmd=0;
             HopperSparkRightCmd=0;
@@ -94,18 +86,10 @@ public class Hopper{
             HopperSparkRightCmd=hopperBWDSpeed.get();
         }
 
-        double sampleTimeMs = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
-
         if(Robot.isReal()){
-
             hopperSparkLeft.set(HopperSparkLeftCmd);
             hopperSparkRight.set(HopperSparkRightCmd);
-            
-            hopperSparkLeftCurrentSignal.addSample(sampleTimeMs, hopperSparkLeft.getOutputCurrent());
-            hopperSparkRightCurrentSignal.addSample(sampleTimeMs, hopperSparkRight.getOutputCurrent());
         }
-        hopperSparkLeftCmdSignal.addSample(sampleTimeMs, HopperSparkLeftCmd);
-        hopperSparkRightCmdSignal.addSample(sampleTimeMs, HopperSparkRightCmd);
 
     }
 

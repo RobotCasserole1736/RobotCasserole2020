@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Signal;
+import frc.lib.DataServer.Annotations.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.Robot;
 import frc.robot.RobotConstants;
@@ -19,6 +19,7 @@ public class IntakeControl {
 	double endTimeRet;
 	double duration_s;
 
+	@Signal
 	double intkCommand = 0;
 
 	CANSparkMax intakeMotor;
@@ -28,19 +29,14 @@ public class IntakeControl {
 	Calibration ejectSpeedCmd;
 	Calibration intakeSlowCmd;
 
+	@Signal
 	IntakePosition posState;
+	@Signal
 	IntakeSpeed spdState;
 
 	public final boolean INTAKE_RETRACTED = false;
 	public final boolean INTAKE_EXTENDED = true;
 
-	Signal posStateSig;
-	Signal spdStateSig;
-	Signal motorCurrentSig;
-	Signal intkSpdCmdSig;
-	Signal intkSolCmdSig;
-	Signal intkSpeedSig;
-	Signal intkFaultSig;
 
     private static IntakeControl instance = null;
 	public static synchronized IntakeControl getInstance() {
@@ -98,13 +94,6 @@ public class IntakeControl {
 		posState = IntakePosition.Retracted; 
 		spdState = IntakeSpeed.Stop;
 
-		posStateSig = new Signal("Intake Position State", "state");
-		spdStateSig = new Signal("Intake Speed State", "state");
-		motorCurrentSig = new Signal("Intake Motor Current", "A");
-		intkSpdCmdSig = new Signal("Intake Speed Command", "cmd");
-		intkSolCmdSig = new Signal("Intake Solenoid Command", "bool");
-		intkSpeedSig = new Signal("Intake Motor Speed", "RPM");
-		intkFaultSig = new Signal("Intake Fault", "bits");
 	}
 
 	public void update(){
@@ -141,17 +130,8 @@ public class IntakeControl {
 		intakeSolenoid.set(intake_solenoid_cmd);
 		if(Robot.isReal()){
 			intakeMotor.set(intkCommand);
-			motorCurrentSig.addSample(sampleTimeMs, intakeMotor.getOutputCurrent());
-			intkSpeedSig.addSample(sampleTimeMs, intakeMotor.getEncoder().getVelocity());
-			intkFaultSig.addSample(sampleTimeMs, intakeMotor.getFaults());
 		}
 		
-		posStateSig.addSample(sampleTimeMs, posState.value);
-		spdStateSig.addSample(sampleTimeMs, spdState.value);
-		intkSpdCmdSig.addSample(sampleTimeMs, intkCommand);
-		intkSolCmdSig.addSample(sampleTimeMs, intake_solenoid_cmd);
-
-
 	}
 
 	public void setPosMode(IntakePosition des_pos){

@@ -1,8 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import frc.lib.DataServer.Annotations.Signal;
 
-public class TwoWireParitySwitch {
+public class TwoWireParitySwitch{
 
     public enum SwitchState {
         Pressed(1),
@@ -24,6 +25,7 @@ public class TwoWireParitySwitch {
 
     SwitchState stateRaw = SwitchState.NotPressed;
     SwitchState stateRawPrev = SwitchState.NotPressed;
+    @Signal
     SwitchState stateDbnc = SwitchState.NotPressed;
 
     TwoWireParitySwitch(int no_channel, int nc_channel){

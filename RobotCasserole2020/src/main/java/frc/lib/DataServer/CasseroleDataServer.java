@@ -158,17 +158,17 @@ public class CasseroleDataServer {
     }
 
     Set<AutoDiscoveredSignal> autoSig;
+    Set<Object> checkedObjects;
 
     public void findAllAnnotatedSignals(Object root, String prefix){
         Class rootClass = root.getClass();
+        Package rootPkg = rootClass.getPackage();
 
-        if(rootClass.getPackage().toString().contains("frc.robot")){
+        if(rootPkg != null && rootPkg.toString().contains("frc.robot")){
             for(Field field : rootClass.getDeclaredFields()){
                 String newName = prefix + (prefix.length() > 0 ? "." : "") + field.getName();
-                if(field.getType().isPrimitive()){
-                    if(field.isAnnotationPresent(frc.lib.DataServer.Annotations.Signal.class)){
-                        autoSig.add(new AutoDiscoveredSignal(field, root, newName, "None"));
-                    }
+                if(field.isAnnotationPresent(frc.lib.DataServer.Annotations.Signal.class)){
+                    autoSig.add(new AutoDiscoveredSignal(field, root, newName, "None"));
                 } else {
                     Object childObj = null;
                     try{
@@ -178,7 +178,8 @@ public class CasseroleDataServer {
                         System.out.println("WARNING: skipping " + field.getName());
                         System.out.println(e);
                     }
-                    if(childObj != null){
+                    if(childObj != null && !checkedObjects.contains(childObj)){
+                        checkedObjects.add(childObj);
                         findAllAnnotatedSignals(childObj, newName);
                     }
                 }
@@ -191,7 +192,9 @@ public class CasseroleDataServer {
     // Special thanks to oblarg and his oblog for help on impelmenting this.
     public void registerSignals(Object rootContainer) {
         autoSig = new HashSet<>();
+        checkedObjects = new HashSet<>();
         findAllAnnotatedSignals(rootContainer, "");
+        CrashTracker.logAndPrint("[Data Server]: Registered " + Integer.toString(autoSig.size()) + " signals from annotations");
     }
 
     public void sampleAllSignals(){

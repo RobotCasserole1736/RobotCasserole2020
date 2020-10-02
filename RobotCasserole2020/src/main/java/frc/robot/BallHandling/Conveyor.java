@@ -7,7 +7,7 @@ import frc.robot.CasserolePDP;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Signal;
+import frc.lib.DataServer.Annotations.Signal;
 import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
 
 
@@ -21,6 +21,7 @@ public class Conveyor{
     PDPDataJNI pdp;
     Encoder conveyorEncoder;
     
+    @Signal
     double conveyorPosition;
 
     //One revolution is equal to 8192 counts on the encoder.
@@ -34,20 +35,18 @@ public class Conveyor{
 
 
     //State Data
+    @Signal
     ConveyorOpMode opMode = ConveyorOpMode.Stop;
     ConveyorOpMode prevOpMode = ConveyorOpMode.Stop;
     boolean shooterEndSensorTriggeredRaw = false;
+    @Signal
     boolean shooterEndSensorTriggeredDbnc = false;
     int shooterEndSensorTriggeredDbncCounter = 0;
     final int SHOOTER_END_SENSOR_DBNC_LOOPS = 3;
+    @Signal
     boolean intakeEndSensorTriggered = false;
+    @Signal
     double motorCurrent;
-    
-    Signal convMotorSpeedCmdSig; 
-    Signal motorCurrentSig;
-    Signal shooterEndSensorSig;
-    Signal intakeEndSensorSig;
-    Signal conveyorPositionSig;
     
     
     /* Singleton infratructure*/
@@ -89,12 +88,6 @@ public class Conveyor{
         conveyorPrepToShootCal = new Calibration("Conveyor Speed Operator Says Stop Loading and Shoot", 0.5, 0.0, 1.0);
         conveyorFullSendCal = new Calibration("Conveyor Speed for Full Send", 0.8, 0.0, 1.0);
         conveyorReverseCal = new Calibration("Conveyor Speed for EmptyTheRobot", 0.6, 0.0, 1.0);
-
-        convMotorSpeedCmdSig = new Signal("Conveyor Motor Speed Command", "pct");
-        motorCurrentSig = new Signal("Conveyor Motor Current", "A");
-        shooterEndSensorSig = new Signal("Conveyor Shooter End Ball Present", "bool");
-        intakeEndSensorSig = new Signal("Conveyor Intake End Ball Present", "bool");
-        conveyorPositionSig = new Signal("Conveyor Position", "feet");
     }
 
     public void sampleSensors() {
@@ -156,12 +149,6 @@ public class Conveyor{
         //and the ratio of the belt from the motor to the driving shaft of the roller. The multiplication of 12 is to make it in feet.
         conveyorPosition = conveyorEncoder.get()*encoderCountsInOneRevolution*Math.PI*RobotConstants.CONVEYOR_BELT_RATIO*12;
         
-        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec()*1000;
-        convMotorSpeedCmdSig.addSample(sampleTimeMS, conveyorMotor.getSpeed()); 
-        motorCurrentSig.addSample(sampleTimeMS, motorCurrent);
-        shooterEndSensorSig.addSample(sampleTimeMS, shooterEndSensorTriggeredDbnc);
-        intakeEndSensorSig.addSample(sampleTimeMS, intakeEndSensorTriggered);
-        conveyorPositionSig.addSample(sampleTimeMS, conveyorPosition);
     
     }
     public void setOpMode(ConveyorOpMode opMode_in) {

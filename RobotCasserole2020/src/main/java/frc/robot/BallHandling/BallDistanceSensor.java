@@ -2,7 +2,7 @@ package frc.robot.BallHandling;
 
 import com.playingwithfusion.TimeOfFlight;
 
-import frc.lib.DataServer.Signal;
+import frc.lib.DataServer.Annotations.Signal;
 import frc.lib.SignalMath.AveragingFilter;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
@@ -21,13 +21,12 @@ public class BallDistanceSensor{
     
     TimeOfFlight tofSensor;
 
+    @Signal
     double detectedDistance_in;
+    @Signal
     boolean distAvailable;
+    @Signal
     double sensorDistance_in;
-
-    Signal sensorVoltageSig;
-    Signal detectedDistancesSig;
-    Signal distAvailSig;
 
     AveragingFilter voltFilter;
 
@@ -40,9 +39,6 @@ public class BallDistanceSensor{
             tofSensor.setRangeOfInterest(6, 6, 10, 10);
         }
         
-        sensorVoltageSig = new Signal("Ball Distance Sensor Raw Voltage", "V");
-        detectedDistancesSig = new Signal("Ball Distance Sensor Distance", "in");
-        distAvailSig = new Signal("Ball Distance Sensor Available", "bool");
         voltFilter = new AveragingFilter(2, 0);
     }
 
@@ -62,9 +58,6 @@ public class BallDistanceSensor{
             distAvailable = false;
         }
 
-        double sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
-        detectedDistancesSig.addSample(sampleTimeMS, detectedDistance_in);
-        distAvailSig.addSample(sampleTimeMS, distAvailable);
     }
 
     public double getDistance_in(){

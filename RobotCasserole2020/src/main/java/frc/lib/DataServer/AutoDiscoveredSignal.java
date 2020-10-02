@@ -2,6 +2,8 @@ package frc.lib.DataServer;
 
 import java.lang.reflect.Field;
 
+import frc.robot.NumberedEnum;
+
 /*
  *******************************************************************************************
  * Copyright (C) 2018 FRC Team 1736 Robot Casserole - www.robotcasserole.org
@@ -47,6 +49,15 @@ class AutoDiscoveredSignal {
                 sig.addSample(time, sourceField.getDouble(sourceFieldParentObj));
             } else if(type==float.class){
                     sig.addSample(time, sourceField.getFloat(sourceFieldParentObj));
+            } else if(type.isEnum()){
+                Object enumObj = sourceField.get(sourceFieldParentObj);
+                try{
+                    Field valField = enumObj.getClass().getDeclaredField("value");//most casserole enums define a value
+                    sig.addSample(time, valField.getInt(enumObj));
+                } catch(NoSuchFieldException e) {
+                    //Silently ignore for now... find fallbacks or print errors int he future?
+                }
+
             } else {
                 System.out.println("WARNING: Signal " + sig.getDisplayName() + " cannot be populated from underlying type " + type.getName());
             }
