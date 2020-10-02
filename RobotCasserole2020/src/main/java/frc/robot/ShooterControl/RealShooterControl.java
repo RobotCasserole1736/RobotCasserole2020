@@ -1,9 +1,22 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2020 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
+/*
+ *******************************************************************************************
+ * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ *******************************************************************************************
+ *
+ * This software is released under the MIT Licence - see the license.txt
+ *  file in the root of this repo.
+ *
+ * Non-legally-binding statement from Team 1736:
+ *  Thank you for taking the time to read through our software! We hope you
+ *   find it educational and informative! 
+ *  Please feel free to snag our software for your own use in whatever project
+ *   you have going on right now! We'd love to be able to help out! Shoot us 
+ *   any questions you may have, all our contact info should be on our website
+ *   (listed above).
+ *  If you happen to end up using our software to make money, that is wonderful!
+ *   Robot Casserole is always looking for more sponsors, so we'd be very appreciative
+ *   if you would consider donating to our club to help further STEM education.
+ */
 
 package frc.robot.ShooterControl;
 
@@ -87,8 +100,11 @@ public class RealShooterControl extends ShooterControl {
         //Increase can bus tx/rx rates
         shooterMotor1.setControlFramePeriodMs(10);
         shooterMotor1.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 3);
+        shooterMotor1.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
 
         shooterMotor1.getEncoder().setVelocityConversionFactor(RobotConstants.SHOOTER_GEAR_RATIO);
+        shooterMotor1.getEncoder().setMeasurementPeriod(5000);
+        shooterMotor1.getEncoder().setAverageDepth(0);
 
         //Motors should be inverted to spin outward
         shooterMotor1.setInverted(true);
@@ -98,15 +114,15 @@ public class RealShooterControl extends ShooterControl {
         shooterPIDCtrl = shooterMotor1.getPIDController();
 
         //Spool-up to hold transition conditions
-        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 15, 0, 500);
-        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 30, 0, 5000);
+        shooterSpoolUpSteadyStateDbnc = new Calibration("Shooter Steady State Debounce Loops", 17, 0, 500);
+        shooterMaxHoldErrorRPM = new Calibration("Shooter Max Hold Error RPM", 20, 0, 5000);
 
-        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3400, 0, 5000);
+        shooterRPMSetpointFar  = new Calibration("Shooter Far Shot Setpoint RPM", 3200, 0, 5000);
         shooterSendEmVoltage   = new Calibration("Shooter Close Shot Setpoint V", 11.0, 0.0, 14.0);
-        shooterShootVoltage   = new Calibration("Shooter Far Shot Shoot Setpoint V", 10.5, 0.0, 14.0);
+        shooterShootVoltage   = new Calibration("Shooter Far Shot Shoot Setpoint V", 8.75, 0.0, 14.0);
 
-        holdToShootErrThreshRPM = new Calibration("Shooter Hold To Shoot Error Thresh RPM", 50);
-        accelerateToStabilizeThreshRPM = new Calibration("Shooter Accelerate to Stabilize Error Thresh RPM", 200, 0, 5000);
+        holdToShootErrThreshRPM = new Calibration("Shooter Hold To Shoot Error Thresh RPM", 30);
+        accelerateToStabilizeThreshRPM = new Calibration("Shooter Accelerate to Stabilize Error Thresh RPM", 150, 0, 5000);
         EjectSpeed = new Calibration("Shooter Eject RPM", 1000, 0, 5000);
 
         shooterMotorP_spoolup = new Calibration("Shooter Motor SpoolUp P", 0.0007);
@@ -147,7 +163,7 @@ public class RealShooterControl extends ShooterControl {
             public void run() {
                 try {
                     while(!Thread.currentThread().isInterrupted()){
-                        update();
+                        timeTracker.run(RealShooterControl.getInstance(), RealShooterControl.class.getMethod("update"));
                         Thread.sleep(10);
                     }
                 } catch (Exception e) {
@@ -159,7 +175,7 @@ public class RealShooterControl extends ShooterControl {
 
         //Set up thread properties and start it off
         monitorThread.setName("CasseroleRealShooterControl");
-        monitorThread.setPriority(Thread.MAX_PRIORITY - 2);
+        monitorThread.setPriority(Thread.MAX_PRIORITY - 1);
         monitorThread.start();
 
     }
@@ -193,9 +209,7 @@ public class RealShooterControl extends ShooterControl {
         ShooterRunCommand runCommandLocal = runCommand;
         
         //Calc desired shooter speed
-        if(shotAdjustmentChanged){
-            adjustedSetpointRPM = shooterRPMSetpointFar.get() + shotAdjustmentRPM;
-        }
+        adjustedSetpointRPM = shooterRPMSetpointFar.get() + shotAdjustmentRPM;
         
         if (runCommandLocal == ShooterRunCommand.Eject){
             shooterSetpointRPM = EjectSpeed.get();

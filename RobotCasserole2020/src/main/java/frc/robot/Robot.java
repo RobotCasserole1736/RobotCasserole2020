@@ -149,6 +149,10 @@ public class Robot extends TimedRobot {
     drivetrain.setMotorMode(IdleMode.kCoast);
     auto.reset();
 
+    telemetry.timeTracker.logAndReset();
+    thbbtbbtbbtbbt.timeTracker.logAndReset();
+    shooterCtrl.timeTracker.logAndReset();
+
   }
 
   @Override

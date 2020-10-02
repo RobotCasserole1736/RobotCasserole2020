@@ -21,6 +21,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
 import frc.lib.DataServer.Signal;
+import frc.lib.Util.ExecutionTimeTracker;
 import edu.wpi.first.wpilibj.AnalogInput;
 import frc.robot.HumanInterface.DriverController;
 
@@ -39,6 +40,8 @@ public class PneumaticsControl {
 
     double curPressurePSI;
 
+    ExecutionTimeTracker timeTracker;
+
     /* Singelton Stuff */
     private static PneumaticsControl pneumatics = null;
 
@@ -54,6 +57,9 @@ public class PneumaticsControl {
         pressSig = new Signal("Pneumatics Main System Pressure", "psi");
         pressSwVallSig = new Signal("Pneumatics Cutoff Switch State", "bool");
         compCurrent = new Signal("Pneumatics Compressor Current", "A");
+
+        timeTracker = new ExecutionTimeTracker("PneumaticsControl", 0.03);
+
         // Kick off monitor in brand new thread.
         // Thanks to Team 254 for an example of how to do this!
         Thread monitorThread = new Thread(new Runnable() {
@@ -61,7 +67,7 @@ public class PneumaticsControl {
             public void run() {
                 try {
                     while (!Thread.currentThread().isInterrupted()) {
-                        update();
+                        timeTracker.run(pneumatics, PneumaticsControl.class.getMethod("update"));
                         Thread.sleep(150);
                     }
                 } catch (Exception e) {

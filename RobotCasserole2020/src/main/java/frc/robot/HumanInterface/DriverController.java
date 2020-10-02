@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import frc.lib.DataServer.Signal;
+import frc.lib.SignalMath.DerivativeCalculator;
 import frc.robot.LoopTiming;
 import frc.robot.Drivetrain.Utils;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -37,7 +38,11 @@ public class DriverController {
     double fwdRevCmd = 0;
     double rotCmd = 0;
     boolean autoAlignCmd = false;
+    boolean loadingToTrenchCmd = false;
+    boolean trenchToLoadingCmd = false;
     boolean autoAlignAndShootCmd = false;
+    boolean turn180DegCmd = false;
+    
     boolean autoAlignAndShootCloseCmd = false;
     boolean snailModeCmd = true;
     boolean reverseModeCmd = false;
@@ -47,8 +52,11 @@ public class DriverController {
     Signal autoAlignAndShootCmdSig;
     Signal autoAlignAndShootCloseCmdSig;
     Signal autoAlignCmdSig;
+    Signal loadingToTrenchCmdSig;
+    Signal trenchToLoadingCmdSig;
     Signal snailModeCmdSig;
     Signal reverseModeSig;
+    Signal turn180DegCmdSig;
 
     
     public static synchronized DriverController getInstance() {
@@ -66,6 +74,9 @@ public class DriverController {
         autoAlignAndShootCmdSig = new Signal("Driver Auto Align and Shoot Command", "bool");
         autoAlignAndShootCloseCmdSig =  new Signal("Driver Auto Align Close and Shoot Command", "bool");
         autoAlignCmdSig = new Signal("Driver Auto Align Only Command", "bool");
+        loadingToTrenchCmdSig = new Signal("Driver Loading To Trench Command", "bool");
+        trenchToLoadingCmdSig = new Signal("Driver Trench To Loading Align Only Command", "bool");
+        turn180DegCmdSig = new Signal("Driver Turn 180 Deg Command", "bool");
         snailModeCmdSig = new Signal("Driver Snail Mode Command", "bool");
         reverseModeSig  = new Signal("Driver Flip Front/Back Command", "bool");
     }
@@ -92,6 +103,9 @@ public class DriverController {
         }
         
         autoAlignCmd = driverController.getXButton();
+        loadingToTrenchCmd = driverController.getAButton();
+        trenchToLoadingCmd = driverController.getBButton();
+        turn180DegCmd = driverController.getYButton();
         autoAlignAndShootCmd = (driverController.getTriggerAxis(Hand.kRight) > 0.2);
         autoAlignAndShootCloseCmd = (driverController.getTriggerAxis(Hand.kLeft) > 0.2);
         snailModeCmd = !driverController.getBumper(Hand.kRight);
@@ -102,6 +116,9 @@ public class DriverController {
         autoAlignCmdSig.addSample(time_in_ms, autoAlignCmd);
         autoAlignAndShootCmdSig.addSample(time_in_ms, autoAlignAndShootCmd);
         autoAlignAndShootCloseCmdSig.addSample(time_in_ms, autoAlignAndShootCloseCmd);
+        loadingToTrenchCmdSig.addSample(time_in_ms, loadingToTrenchCmd);
+        trenchToLoadingCmdSig.addSample(time_in_ms, trenchToLoadingCmd);
+        turn180DegCmdSig.addSample(time_in_ms, turn180DegCmd);
         snailModeCmdSig.addSample(time_in_ms, snailModeCmd);
         reverseModeSig.addSample(time_in_ms, reverseModeCmd);
     }
@@ -139,6 +156,18 @@ public class DriverController {
 
     public boolean getAutoAlignCmd(){
         return autoAlignCmd; 
+    }
+
+    public boolean getLoadingToTrenchCmd(){
+        return loadingToTrenchCmd;
+    }
+
+    public boolean getTrenchToLoadingCmd(){
+        return trenchToLoadingCmd;
+    }
+
+    public boolean getTurn180DegCmd(){
+        return turn180DegCmd;
     }
     
 

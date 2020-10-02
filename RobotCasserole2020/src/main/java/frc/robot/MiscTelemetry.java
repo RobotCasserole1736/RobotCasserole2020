@@ -19,12 +19,12 @@ package frc.robot;
  *   if you would consider donating to our club to help further STEM education.
  */
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.DataServer.Signal;
-import frc.robot.BallHandling.Conveyor;
-import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
+import frc.lib.Util.ExecutionTimeTracker;
 
 public class MiscTelemetry {
 
@@ -37,6 +37,7 @@ public class MiscTelemetry {
     Climber climber;
 
     //Top level telemetry signals
+    Signal matchTimeSig;
     Signal rioDSSampLoadSig;
     Signal rioDSLogQueueLenSig;
     Signal rioBattCurrDrawSig;
@@ -50,6 +51,8 @@ public class MiscTelemetry {
     Signal pdpUpperBoardAuxCurrentSig;
     Signal pdpCoolingFansCurrentSig;
 
+    ExecutionTimeTracker timeTracker;
+
     public static synchronized MiscTelemetry getInstance() {
         if (inst == null)
             inst = new MiscTelemetry();
@@ -60,6 +63,7 @@ public class MiscTelemetry {
         climber = Climber.getInstance();
 
         /* Init local telemetry signals */
+        matchTimeSig = new Signal("Match Time", "s"); 
         rioDSSampLoadSig = new Signal("Dataserver Stored Samples", "count"); 
         rioBattCurrDrawSig = new Signal("Robot Battery Current Draw", "A");
         rioBattVoltSig = new Signal("Robot Battery Voltage", "V");
@@ -73,6 +77,8 @@ public class MiscTelemetry {
         pdpUpperBoardAuxCurrentSig = new Signal("PDP Upper Board Current", "A");
         pdpCoolingFansCurrentSig = new Signal("PDP Cooling Fans Current", "A");
 
+        timeTracker = new ExecutionTimeTracker("Misc Telemetry", 0.03);
+
         
         // Kick off monitor in brand new thread.
         // Thanks to Team 254 for an example of how to do this!
@@ -81,7 +87,7 @@ public class MiscTelemetry {
             public void run() {
                 try {
                     while (!Thread.currentThread().isInterrupted()) {
-                        telemetryUpdate();
+                        timeTracker.run(inst, MiscTelemetry.class.getMethod("telemetryUpdate"));
                         Thread.sleep(150);
                     }
                 } catch (Exception e) {
@@ -97,9 +103,10 @@ public class MiscTelemetry {
         monitorThread.start();
     }
 
-    private void telemetryUpdate(){
+    public void telemetryUpdate(){
         double sampleTimeMs = Timer.getFPGATimestamp()*1000.0;
 
+        matchTimeSig.addSample(sampleTimeMs, DriverStation.getInstance().getMatchTime());
         rioDSSampLoadSig.addSample(sampleTimeMs, CasseroleDataServer.getInstance().getTotalStoredSamples());
         rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
         rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
