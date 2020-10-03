@@ -29,6 +29,14 @@ class AutoDiscoveredSignal {
     Signal sig;
     Class type;
 
+    /**
+     * Class to wrapper the usual Signal object with the java Reflection Field/Object information 
+     * required to reference and read the value at runtime.
+     * @param sourceField_in Java Reflection Field object found during recursive searching for @Signal annotated objects
+     * @param sourceFieldParentObj_in Object that should get its value read at runtime to populate the signal's value
+     * @param name Signal name
+     * @param units Signal units string
+     */
     AutoDiscoveredSignal(Field sourceField_in, Object sourceFieldParentObj_in, String name, String units){
         sourceField = sourceField_in;
         sourceFieldParentObj = sourceFieldParentObj_in;
@@ -37,7 +45,12 @@ class AutoDiscoveredSignal {
         sig = new Signal(name, units);
     }
 
+    /**
+     * Sample the value out of the referenced object for the ADS, and add it as a new sample into the signal.
+     * @param time Time at which the sample was inititated.
+     */
     void addSample(double time){
+        // Switch behavior based on the type of field that was annotated
         try{
             if(type==int.class){
                 sig.addSample(time, sourceField.getInt(sourceFieldParentObj));
@@ -57,9 +70,10 @@ class AutoDiscoveredSignal {
                 }
 
             } else {
-                System.out.println("WARNING: Signal " + sig.getDisplayName() + " cannot be populated from underlying type " + type.getName());
+                System.out.println("WARNING: Signal " + sig.getDisplayName() + " cannot be populated from underlying type " + type.getName() + ". It is not yet supported, but you could add support!");
             }
         } catch(IllegalAccessException e) {
+            System.out.println("WARNING: Signal " + sig.getDisplayName() + " threw an exception while we were attempting to read it.");
             System.out.println(e);
         }
     }
