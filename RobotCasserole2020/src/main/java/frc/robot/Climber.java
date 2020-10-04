@@ -22,9 +22,9 @@ public class Climber{
     TwoWireParitySwitch upperLimitSwitch;
     TwoWireParitySwitch lowerLimitSwitch;
     Solenoid climbLocker; 
-    @Signal
+    @Signal(units="bool")
     boolean climbEnabled;
-    @Signal
+    @Signal(units="cmd")
     double climbCMD=0;
     Calibration climberSpeed;
     Calibration climberSpeedOffset;

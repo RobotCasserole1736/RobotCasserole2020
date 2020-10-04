@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
-import frc.robot.RobotConstants;
 
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.ColorMatch;
