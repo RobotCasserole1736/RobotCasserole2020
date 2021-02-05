@@ -8,7 +8,6 @@ import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Annotations.Signal;
-import edu.wpi.first.hal.sim.mockdata.PDPDataJNI;
 
 
 
@@ -18,7 +17,6 @@ public class Conveyor{
     Spark conveyorMotor;
     DigitalInput shooterEndSensor;
     BallCounter intakeEndSensor;
-    PDPDataJNI pdp;
     Encoder conveyorEncoder;
     
     @Signal
