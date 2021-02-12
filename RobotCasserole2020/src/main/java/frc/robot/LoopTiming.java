@@ -55,12 +55,12 @@ public class LoopTiming{
         prevLoopStartTime = loopStartTime;
         loopStartTime = Timer.getFPGATimestamp();
         loopPeriodSec = loopStartTime - prevLoopStartTime;
-        loopPeriodSec = loopEndTime - loopStartTime;
     }
 
     public void markLoopEnd(){
         prevLoopEndTime = loopEndTime;
         loopEndTime = Timer.getFPGATimestamp();
+        loopDurationSec = loopEndTime - loopStartTime;
     }
 
     public double getLoopStartTimeSec(){
