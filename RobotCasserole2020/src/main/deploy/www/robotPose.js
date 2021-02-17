@@ -7,7 +7,7 @@ var hostname = window.location.hostname + ":" + port;
 var ROBOT_W_FT = 2;
 var ROBOT_L_FT = 2.5;
 var FIELDPOLY_FT =
-    [[0, 0],[13.5, 0],[13.5, 54],[-13.5, 54],[-13.5, 0],[0, 0]];  
+    [[0, 0],[7.5, 0],[7.5, 30],[-7.5, 30],[-7.5, 0],[0, 0]]; 
 
 
 //Render Constants
