@@ -4,8 +4,8 @@ var port = "5806";
 var hostname = window.location.hostname + ":" + port;
 
 //Config - adjust this year to year
-var ROBOT_W_FT = 2;
-var ROBOT_L_FT = 2.5;
+var ROBOT_W_FT = 30.0/12.0;
+var ROBOT_L_FT = 40.0/12.0;
 var FIELDPOLY_FT =
     [[0, 0],[7.5, 0],[7.5, 30],[-7.5, 30],[-7.5, 0],[0, 0]]; 
 
