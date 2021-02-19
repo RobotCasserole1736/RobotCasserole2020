@@ -20,7 +20,6 @@ import frc.robot.Autonomous.Events.AutoEventStopRobot;
 import frc.robot.Autonomous.Events.AutoEventTrenchToLoading;
 import frc.robot.Autonomous.Events.AutoEventBallThiefA;
 import frc.robot.Autonomous.Events.AutoEventBallThiefB;
-import frc.robot.Autonomous.Events.AutoEventGalacticRedA;
 import frc.robot.Autonomous.Events.AutoEventPathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventReversePathPlanTest;
 import frc.robot.Autonomous.Events.AutoEventShootClose;
@@ -74,8 +73,7 @@ public class Autonomous {
         LoadingToTrench(11),
         TrenchToLoading(12),
         TurnAround180(13),
-        GalacticSearchLayoutRedA(14),
-        SWTest(15),
+        SWTest(14),
         Inactive(-1); 
 
         public final int value;
@@ -114,7 +112,6 @@ public class Autonomous {
                                                               "No Steal Steak",
                                                               "Loading To Trench",
                                                               "Trench To Loading",
-                                                              "Galactic Search Layout Path A Red",
                                                               "SW TEAM TEST ONLY"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
@@ -172,9 +169,7 @@ public class Autonomous {
             modeCmd = AutoMode.LoadingToTrench;
         } else if (actionStr.compareTo(ACTION_MODES[11]) == 0) { 
             modeCmd = AutoMode.TrenchToLoading;
-        } else if(actionStr.compareTo(ACTION_MODES[12]) == 0){
-            modeCmd = AutoMode.GalacticSearchLayoutRedA;
-        } else if (actionStr.compareTo(ACTION_MODES[13]) == 0) { 
+        } else if (actionStr.compareTo(ACTION_MODES[12]) == 0) { 
             modeCmd = AutoMode.SWTest;
         } else {
             modeCmd = AutoMode.Inactive;
@@ -338,8 +333,6 @@ public class Autonomous {
                     case TrenchToLoading:
                         Drivetrain.getInstance().setInitialPose(11, 18.5, -83);
                     break;
-                    case GalacticSearchLayoutRedA:
-                        Drivetrain.getInstance().setInitialPose(-2.5, 2.5, 90);
                 }
             }
 
@@ -478,9 +471,6 @@ public class Autonomous {
                 break;
                 case TurnAround180:
                     seq.addEvent(new AutoEventTurn(180));
-                break;
-                case GalacticSearchLayoutRedA:
-                    seq.addEvent(new AutoEventGalacticRedA(4.0));
                 break;
             }
             modeCmdPrev = modeCmd;
