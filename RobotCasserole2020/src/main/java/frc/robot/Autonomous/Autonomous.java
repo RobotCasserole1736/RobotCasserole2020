@@ -9,6 +9,7 @@ import frc.robot.Autonomous.Events.AutoEventSideSteakB;
 import frc.robot.Autonomous.Events.AutoEventSideSteakC;
 import frc.robot.Autonomous.Events.AutoEventCitrusSteakA;
 import frc.robot.Autonomous.Events.AutoEventCitrusSteakB;
+import frc.robot.Autonomous.Events.AutoEventDriveBarrelRun;
 import frc.robot.Autonomous.Events.AutoEventSteakA;
 import frc.robot.Autonomous.Events.AutoEventSteakB;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
@@ -73,7 +74,8 @@ public class Autonomous {
         LoadingToTrench(11),
         TrenchToLoading(12),
         TurnAround180(13),
-        SWTest(14),
+        BarrelRun(14),
+        SWTest(15),
         Inactive(-1); 
 
         public final int value;
@@ -100,7 +102,7 @@ public class Autonomous {
     AutoMode actualMode;
     String autoModeName = "";
 
-    public static final String[] ACTION_MODES =  new String[]{"Do Nothing", 
+    public static final String[] ACTION_MODES =  new String[]{"Do Nothing",  //Keep this in sync with the AutoMode Enum.
                                                               "Drive Forward", 
                                                               "Shoot Only", 
                                                               "Vision Align Shoot", 
@@ -111,7 +113,10 @@ public class Autonomous {
                                                               "Citrus Steak",
                                                               "No Steal Steak",
                                                               "Loading To Trench",
+                                                              "Vision Align Only",
                                                               "Trench To Loading",
+                                                              "Turn Around 180",
+                                                              "Barrel Run",
                                                               "SW TEAM TEST ONLY"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
@@ -168,8 +173,14 @@ public class Autonomous {
         } else if (actionStr.compareTo(ACTION_MODES[10]) == 0) { 
             modeCmd = AutoMode.LoadingToTrench;
         } else if (actionStr.compareTo(ACTION_MODES[11]) == 0) { 
-            modeCmd = AutoMode.TrenchToLoading;
+            modeCmd = AutoMode.VisionAlignOnly;
         } else if (actionStr.compareTo(ACTION_MODES[12]) == 0) { 
+            modeCmd = AutoMode.TrenchToLoading;
+        } else if (actionStr.compareTo(ACTION_MODES[13]) == 0) { 
+            modeCmd = AutoMode.TurnAround180;
+        } else if (actionStr.compareTo(ACTION_MODES[14]) == 0) { 
+            modeCmd = AutoMode.BarrelRun;
+        } else if (actionStr.compareTo(ACTION_MODES[15]) == 0) { 
             modeCmd = AutoMode.SWTest;
         } else {
             modeCmd = AutoMode.Inactive;
@@ -333,6 +344,9 @@ public class Autonomous {
                     case TrenchToLoading:
                         Drivetrain.getInstance().setInitialPose(11, 18.5, -83);
                     break;
+                    case BarrelRun:
+                        Drivetrain.getInstance().setInitialPose(-9/12.0, 40/12.0, 90); //Front-left bumper corner near to B2 marker
+                    break;
                 }
             }
 
@@ -471,6 +485,9 @@ public class Autonomous {
                 break;
                 case TurnAround180:
                     seq.addEvent(new AutoEventTurn(180));
+                break;
+                case BarrelRun:
+                    seq.addEvent(new AutoEventDriveBarrelRun());
                 break;
             }
             modeCmdPrev = modeCmd;
