@@ -160,7 +160,7 @@ public class RobotPose {
         }
         
         updatePoseFromWheelSpeeds();
-        handleFieldColission();
+        //handleFieldColission(); No walls in 2021!
 
         double sample_time_ms = LoopTiming.getInstance().getLoopStartTimeSec()*1000.0;
         DesX.addSample(sample_time_ms,desPoseX);

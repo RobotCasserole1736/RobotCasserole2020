@@ -110,6 +110,8 @@ public class PathPlannerAutoEvent extends AutoEvent {
      */
     double startTime = 0;
     double startPoseAngle = 0;
+    double poseCommandPrev_deg = startPoseAngle;
+    double poseCmdRevOffset = 0;
     public void userUpdate() {
 
         if(trj_center == null){
@@ -140,12 +142,17 @@ public class PathPlannerAutoEvent extends AutoEvent {
         double desX = trj_center.get(timestep).y; //Hurray for subtle and undocumented reference frame conversions.
         double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
         
-        //UMMMM I guess pathplanner freaks out every now and then?
-        if(poseCommand_deg > 180.0){
-            poseCommand_deg -= 360.0;
-        } else if (poseCommand_deg < -180.0 ) {
-            poseCommand_deg += 360.0;
+        //Sanitize the pathplanner headding command to be continous
+        // When the loop-to-loop pose command jumps more than 170 degrees, add (or subtract) 360 to help offset that.
+        double delta =  (poseCommand_deg+ poseCmdRevOffset) - poseCommandPrev_deg;
+        if(delta > 170){
+            poseCmdRevOffset -= 360;
+        } else if (delta < -170){
+            poseCmdRevOffset += 360;
         }
+        poseCommand_deg += poseCmdRevOffset;
+        poseCommandPrev_deg = poseCommand_deg;
+
 
         if(reversed){
             leftCommand_RPM  *= -1;
@@ -221,6 +228,7 @@ public class PathPlannerAutoEvent extends AutoEvent {
         desStartX      = Drivetrain.getInstance().dtPose.poseX;
         desStartY      = Drivetrain.getInstance().dtPose.poseY;
         desStartT      = Drivetrain.getInstance().dtPose.poseT;
+        poseCommandPrev_deg = startPoseAngle;
         done = false;
     }
     
