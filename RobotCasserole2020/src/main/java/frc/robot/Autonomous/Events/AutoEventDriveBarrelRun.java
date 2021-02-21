@@ -2,8 +2,7 @@ package frc.robot.Autonomous.Events;
 
 import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.PathPlanner.PathPlannerAutoEvent;
-import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.Waypoint;
+import frc.lib.PathPlanner.PathWeaverToWaypoints;
 
 /**
  * drive straight and stuff. Step response check (with typical smoothing)
@@ -20,22 +19,8 @@ public class AutoEventDriveBarrelRun extends AutoEvent {
     //Positive Y to the right, negative to the left.
 
     public AutoEventDriveBarrelRun() {
-        final Waypoint[] waypoints_ft = new Waypoint[] { 
-                new Waypoint(0,  0, Pathfinder.d2r(0)),
-                new Waypoint(12, 3, Pathfinder.d2r(45)),
-                new Waypoint(12, 6, Pathfinder.d2r(135)),
-                new Waypoint(7,  6, Pathfinder.d2r(225)),
-                new Waypoint(7,  3, Pathfinder.d2r(315)),
-                new Waypoint(12, 1, Pathfinder.d2r(360)),
-                new Waypoint(20, 1, Pathfinder.d2r(360)),
-                new Waypoint(24, -2, Pathfinder.d2r(315)),
-                new Waypoint(20, -5, Pathfinder.d2r(225)),
-                new Waypoint(16, -5, Pathfinder.d2r(135)),
-                new Waypoint(20, -2, Pathfinder.d2r(45)),
-                new Waypoint(22, -1, Pathfinder.d2r(0)),
-            };
-
-            pathPlanAutoEvent = new PathPlannerAutoEvent(waypoints_ft, false, 6, 6);
+        PathWeaverToWaypoints pwPath = new PathWeaverToWaypoints("barrel_run_main.wpilib.json", 10);
+        pathPlanAutoEvent = new PathPlannerAutoEvent(pwPath.getWaypoints(), false, 6, 6);
 
     }
 

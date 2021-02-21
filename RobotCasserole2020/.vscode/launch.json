@@ -6,6 +6,20 @@
   "configurations": [
     {
       "type": "java",
+      "name": "CodeLens (Launch) - PathWeaverToWaypoints",
+      "request": "launch",
+      "mainClass": "frc.lib.PathPlanner.PathWeaverToWaypoints",
+      "projectName": "RobotCasserole2020"
+    },
+    {
+      "type": "java",
+      "name": "CodeLens (Launch) - AutoEventDriveBarrelRun",
+      "request": "launch",
+      "mainClass": "frc.robot.Autonomous.Events.AutoEventDriveBarrelRun",
+      "projectName": "RobotCasserole2020"
+    },
+    {
+      "type": "java",
       "name": "CodeLens (Launch) - AutoEventCollectSteak",
       "request": "launch",
       "mainClass": "frc.robot.Autonomous.Events.AutoEventCollectSteak",
