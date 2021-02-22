@@ -136,9 +136,11 @@ public class PathPlannerAutoEvent extends AutoEvent {
             timestep = 1; //Again, for some weird reason, step 0 is bogus?
         }
 
+
+        double trajPoseCmd = trj_center.get(timestep).heading;
         double leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(trj_left.get(timestep).velocity);
         double rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(trj_right.get(timestep).velocity); 
-        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(1).heading - trj_center.get(timestep).heading));
+        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(1).heading - trajPoseCmd));
         double desX = trj_center.get(timestep).y; //Hurray for subtle and undocumented reference frame conversions.
         double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
         

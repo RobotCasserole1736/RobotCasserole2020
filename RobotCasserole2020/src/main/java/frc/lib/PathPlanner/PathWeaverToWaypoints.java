@@ -53,6 +53,7 @@ public class PathWeaverToWaypoints {
 
     public void parse(Path fpath, int decFactor) {
 
+        System.out.println("Starting path import from " + fpath.toString());
         int pointCounter = 0;
         JSONParser parser = new JSONParser();
         Reader reader;
@@ -64,9 +65,21 @@ public class PathWeaverToWaypoints {
             Iterator<JSONObject> it = pointsArr.iterator();
             while (it.hasNext()) {
                 JSONObject thisStep = it.next();
-                if(pointCounter % decFactor == 0){
+                double curvature = Math.abs((Double) thisStep.get("curvature"));
+
+                //Adaptive sampling - on segments with high curvature,
+                // decrease the decimation factor to get more points
+                double adaptiveDecFactor = decFactor;
+                if(curvature > 0.2){
+                    adaptiveDecFactor = Math.round(decFactor/3);
+                } else if(curvature > 0.05){
+                    adaptiveDecFactor = Math.round(decFactor/1.5);
+                }
+                adaptiveDecFactor = Math.max(1, adaptiveDecFactor);
+
+                if(pointCounter % adaptiveDecFactor == 0){
                     JSONObject pose = (JSONObject) thisStep.get("pose");
-                    System.out.println("point = " + pose.toString());   
+                    //System.out.println("point = " + pose.toString());   
                     
                     JSONObject rotation = (JSONObject) pose.get("rotation");
                     JSONObject translation = (JSONObject) pose.get("translation");
@@ -87,6 +100,8 @@ public class PathWeaverToWaypoints {
                     double outputTransX = inputTransX - initialTransX;
                     double outputTransY = inputTransY - initialTransY;
 
+                    //System.out.println(curvature);
+
                     Waypoint newPoint = new Waypoint(outputTransX, outputTransY, outputRotDeg);
 
                     outputWaypoints.add(newPoint);
@@ -101,7 +116,8 @@ public class PathWeaverToWaypoints {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
+        System.out.println("Import complete!");        
 
     }
 
@@ -118,7 +134,7 @@ public class PathWeaverToWaypoints {
      * @param args
      */
     public static void main(String[] args) {
-        PathWeaverToWaypoints objUnderTest = new PathWeaverToWaypoints("barrel_run_main.wpilib.json", 50);
+        PathWeaverToWaypoints objUnderTest = new PathWeaverToWaypoints("barrel_run_main.wpilib.json", 40);
         System.out.println(objUnderTest.getWaypoints());
     }
 

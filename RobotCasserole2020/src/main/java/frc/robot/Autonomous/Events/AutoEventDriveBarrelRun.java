@@ -19,8 +19,8 @@ public class AutoEventDriveBarrelRun extends AutoEvent {
     //Positive Y to the right, negative to the left.
 
     public AutoEventDriveBarrelRun() {
-        PathWeaverToWaypoints pwPath = new PathWeaverToWaypoints("barrel_run_main.wpilib.json", 10);
-        pathPlanAutoEvent = new PathPlannerAutoEvent(pwPath.getWaypoints(), false, 6, 6);
+        PathWeaverToWaypoints pwPath = new PathWeaverToWaypoints("barrel_run_main.wpilib.json", 70);
+        pathPlanAutoEvent = new PathPlannerAutoEvent(pwPath.getWaypoints(), false, 12, 6);
 
     }
 
