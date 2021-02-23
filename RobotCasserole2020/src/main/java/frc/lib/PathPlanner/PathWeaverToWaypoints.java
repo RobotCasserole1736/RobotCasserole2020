@@ -35,7 +35,7 @@ public class PathWeaverToWaypoints {
      * the path (since pathplanner does its own interpolation)
      */
 
-    public PathWeaverToWaypoints(String sourceFile, int decimationFactor) {
+    public PathWeaverToWaypoints(String sourceFile) {
 
         // Check if the path for resources expected on the roboRIO exists.
         if (Files.exists(Paths.get(resourceBaseRIO))) {
@@ -47,11 +47,11 @@ public class PathWeaverToWaypoints {
             resourceBase = resourceBaseLocal;
         }
 
-        parse(Path.of(resourceBase, sourceFile), decimationFactor);
+        parse(Path.of(resourceBase, sourceFile));
 
     }
 
-    public void parse(Path fpath, int decFactor) {
+    public void parse(Path fpath) {
 
         System.out.println("Starting path import from " + fpath.toString());
         int pointCounter = 0;
@@ -62,52 +62,30 @@ public class PathWeaverToWaypoints {
 
             JSONArray pointsArr = (JSONArray) parser.parse(reader);
 
+            JSONObject thisStep = null;
+            boolean skipped = false;
             Iterator<JSONObject> it = pointsArr.iterator();
             while (it.hasNext()) {
-                JSONObject thisStep = it.next();
+                thisStep = it.next();
                 double curvature = Math.abs((Double) thisStep.get("curvature"));
 
-                //Adaptive sampling - on segments with high curvature,
-                // decrease the decimation factor to get more points
-                double adaptiveDecFactor = decFactor;
-                if(curvature > 0.2){
-                    adaptiveDecFactor = Math.round(decFactor/3);
-                } else if(curvature > 0.05){
-                    adaptiveDecFactor = Math.round(decFactor/1.5);
-                }
-                adaptiveDecFactor = Math.max(1, adaptiveDecFactor);
+
+                int adaptiveDecFactor = calcDecimationFactor(curvature);
+
 
                 if(pointCounter % adaptiveDecFactor == 0){
-                    JSONObject pose = (JSONObject) thisStep.get("pose");
-                    //System.out.println("point = " + pose.toString());   
-                    
-                    JSONObject rotation = (JSONObject) pose.get("rotation");
-                    JSONObject translation = (JSONObject) pose.get("translation");
+                    outputWaypoints.add(jsonDataToWaypoint(thisStep, (pointCounter==0)));  
+                    skipped = false; 
+                } else {
+                    skipped = true; 
+                } 
 
-                    //Transform to our robot's assumed reference frame
-                    double inputRotRad = -1.0* ((Double) rotation.get("radians"));
-                    double inputTransX = ((Double) translation.get("x"));
-                    double inputTransY = -1.0* ((Double) translation.get("y"));
-
-                    if(pointCounter == 0){
-                        initialRotRad  = inputRotRad;
-                        initialTransX  = inputTransX;
-                        initialTransY  = inputTransY;
-                    }
-
-                    //Transform to be relative to robot strating position
-                    double outputRotDeg = inputRotRad - initialRotRad;
-                    double outputTransX = inputTransX - initialTransX;
-                    double outputTransY = inputTransY - initialTransY;
-
-                    //System.out.println(curvature);
-
-                    Waypoint newPoint = new Waypoint(outputTransX, outputTransY, outputRotDeg);
-
-                    outputWaypoints.add(newPoint);
-                    
-                } //otherwise skip the point
                 pointCounter++;
+            }
+
+            //Ensure the very last point is always added.
+            if(skipped){
+                outputWaypoints.add(jsonDataToWaypoint(thisStep, false));  
             }
 
             reader.close();
@@ -119,6 +97,54 @@ public class PathWeaverToWaypoints {
 
         System.out.println("Import complete!");        
 
+    }
+
+    Waypoint jsonDataToWaypoint(JSONObject thisStep, boolean isInit){
+
+        JSONObject pose = (JSONObject) thisStep.get("pose");
+        //System.out.println("point = " + pose.toString());   
+        
+        JSONObject rotation = (JSONObject) pose.get("rotation");
+        JSONObject translation = (JSONObject) pose.get("translation");
+
+        //Transform to our robot's assumed reference frame
+        double inputRotRad = -1.0* ((Double) rotation.get("radians"));
+        double inputTransX = ((Double) translation.get("x"));
+        double inputTransY = -1.0* ((Double) translation.get("y"));
+
+        if(isInit){
+            initialRotRad  = inputRotRad;
+            initialTransX  = inputTransX;
+            initialTransY  = inputTransY;
+        }
+
+        //Transform to be relative to robot strating position
+        double outputRotDeg = inputRotRad - initialRotRad;
+        double outputTransX = inputTransX - initialTransX;
+        double outputTransY = inputTransY - initialTransY;
+
+        //System.out.println(curvature);
+        return new Waypoint(outputTransX, outputTransY, outputRotDeg);
+    }
+
+    /**
+     * Calculates the number of points to skip based on the provided curvature
+     * Tight curves mean we need lots of points.
+     * @param curvature
+     * @return
+     */
+    int calcDecimationFactor(double curvature){
+        int adaptiveDecFactor = 0;
+        if(curvature > 0.2){
+            adaptiveDecFactor = 10;
+        } else if(curvature > 0.05){
+            adaptiveDecFactor = 40;
+        } else if(curvature < 0.01){
+            adaptiveDecFactor = 99990; //effectively skip all points
+        } else {
+            adaptiveDecFactor = 80; //default
+        }
+        return Math.max(1, adaptiveDecFactor);
     }
 
     public Waypoint[] getWaypoints(){
@@ -134,7 +160,7 @@ public class PathWeaverToWaypoints {
      * @param args
      */
     public static void main(String[] args) {
-        PathWeaverToWaypoints objUnderTest = new PathWeaverToWaypoints("barrel_run_main.wpilib.json", 40);
+        PathWeaverToWaypoints objUnderTest = new PathWeaverToWaypoints("barrel_run_main.wpilib.json");
         System.out.println(objUnderTest.getWaypoints());
     }
 
