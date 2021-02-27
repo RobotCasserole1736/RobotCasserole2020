@@ -13,6 +13,7 @@ import frc.robot.Autonomous.Events.AutoEventDriveBarrelRun;
 import frc.robot.Autonomous.Events.AutoEventSteakA;
 import frc.robot.Autonomous.Events.AutoEventSteakB;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
+import frc.robot.Autonomous.Events.AutoEventDriveSlalom;
 import frc.robot.Autonomous.Events.AutoEventDriveStraight;
 import frc.robot.Autonomous.Events.AutoEventLoadingToTrench;
 import frc.robot.Autonomous.Events.AutoEventNoStealSteakA;
@@ -75,8 +76,9 @@ public class Autonomous {
         TrenchToLoading(12),
         TurnAround180(13),
         BarrelRun(14),
-        SWTest(15),
-        Inactive(-1); 
+        Slalom(15),
+        SWTest(16),
+        Inactive(-1), ;
 
         public final int value;
 
@@ -117,6 +119,7 @@ public class Autonomous {
                                                               "Trench To Loading",
                                                               "Turn Around 180",
                                                               "Barrel Run",
+                                                              "Slalom",
                                                               "SW TEAM TEST ONLY"};
 
     public static final String[] DELAY_OPTIONS = new String[]{"0s", 
@@ -181,6 +184,8 @@ public class Autonomous {
         } else if (actionStr.compareTo(ACTION_MODES[14]) == 0) { 
             modeCmd = AutoMode.BarrelRun;
         } else if (actionStr.compareTo(ACTION_MODES[15]) == 0) { 
+            modeCmd = AutoMode.Slalom;
+        } else if (actionStr.compareTo(ACTION_MODES[16]) == 0) { 
             modeCmd = AutoMode.SWTest;
         } else {
             modeCmd = AutoMode.Inactive;
@@ -347,6 +352,9 @@ public class Autonomous {
                     case BarrelRun:
                         Drivetrain.getInstance().setInitialPose(-9/12.0, 40/12.0, 90); //Front-left bumper corner near to B2 marker
                     break;
+                    case Slalom:
+                        Drivetrain.getInstance().setInitialPose(-9/12.0+5, 40/12.0, 90); //Front-left bumper corner near toD2 marker
+                    break;
                 }
             }
 
@@ -488,6 +496,9 @@ public class Autonomous {
                 break;
                 case BarrelRun:
                     seq.addEvent(new AutoEventDriveBarrelRun());
+                break;
+                case Slalom:
+                    seq.addEvent(new AutoEventDriveSlalom());
                 break;
             }
             modeCmdPrev = modeCmd;
