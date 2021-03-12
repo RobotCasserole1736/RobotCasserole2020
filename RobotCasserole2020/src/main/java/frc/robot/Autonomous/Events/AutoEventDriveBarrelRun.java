@@ -20,7 +20,7 @@ public class AutoEventDriveBarrelRun extends AutoEvent {
 
     public AutoEventDriveBarrelRun() {
         PathWeaverToWaypoints pwPath = new PathWeaverToWaypoints("barrel_run_main.wpilib.json");
-        pathPlanAutoEvent = new PathPlannerAutoEvent(pwPath.getWaypoints(), false, 12, 6);
+        pathPlanAutoEvent = new PathPlannerAutoEvent(pwPath.getWaypoints(), false, 6, 4, 2.0);
 
     }
 

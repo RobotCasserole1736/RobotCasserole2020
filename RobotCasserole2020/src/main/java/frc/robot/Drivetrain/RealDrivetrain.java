@@ -157,6 +157,9 @@ public class RealDrivetrain extends Drivetrain {
         dtLeftMaster.setOpenLoopRampRate(0.45);
         dtRightMaster.setOpenLoopRampRate(0.45);
 
+        dtLeftMaster.setClosedLoopRampRate(0.25);
+        dtRightMaster.setClosedLoopRampRate(0.25);
+
         dtGyro = new CasseroleGyro();
         dtGyro.calibrate();
         

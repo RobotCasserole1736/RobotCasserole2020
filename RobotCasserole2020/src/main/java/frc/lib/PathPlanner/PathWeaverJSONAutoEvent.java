@@ -24,90 +24,86 @@ import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.Util.CrashTracker;
 import frc.robot.RobotConstants;
 import frc.robot.Drivetrain.Drivetrain;
-import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Waypoint;
-import jaci.pathfinder.modifiers.TankModifier;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
+import edu.wpi.first.wpilibj.util.Units;
 
 /**
  * Interface into the Casserole autonomous sequencer for a path-planned traversal. Simply wraps
  * path-planner functionality into the AutoEvent abstract class.
  */
 
-public class PathPlannerAutoEvent extends AutoEvent {
+public class PathWeaverJSONAutoEvent extends AutoEvent {
 
     /* Path planner wrapped by this auto event */
-    private Waypoint[] waypoints;
     boolean pathCalculated = false;
-    boolean reversed = false;
 
     boolean done = false;
 
-    Trajectory trj_center;
-    Trajectory trj_left;
-    Trajectory trj_right;
 
     private int timestep;
     private double taskRate = RobotConstants.MAIN_LOOP_Ts;
-    private final double DT_TRACK_WIDTH_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT; //Width in Feet
-    
-    //Special mode for supporting two-cube auto
-    // Will lock-in a given heading at the start of the path execution,
-    boolean useFixedHeadingMode = false;
-    double userManualHeadingDesired = 0;
+    private final double DT_TRACK_WIDTH_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT; // Width in Feet
 
     double desStartX = 0;
     double desStartY = 0;
     double desStartT = 0;
 
-    public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in) {
-        commonConstructor(waypoints_in, reversed_in, 8.0, 6.0, 1.0); //Default for max speed (ft/sec), and max accesl ()
-    }
+    Trajectory trajectory;
 
-    public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel){
-        commonConstructor(waypoints_in, reversed_in, maxVel, maxAccel, 1.0);
-    }
 
-    public PathPlannerAutoEvent(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel, double trackWidthFactor){
-        commonConstructor(waypoints_in, reversed_in, maxVel, maxAccel, trackWidthFactor);
-    }
-
-    private void commonConstructor(Waypoint[] waypoints_in, boolean reversed_in, double maxVel, double maxAccel, double trackWidthFactor) {
-        waypoints = waypoints_in;
-        reversed = reversed_in;
-        
-        Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, 
-                                                         Trajectory.Config.SAMPLES_FAST, 
-                                                         taskRate, 
-                                                         maxVel, //Max Vel (ft/sec)
-                                                         maxAccel, //Max Accel (ft/sec2)
-                                                         180.0); //Max Jerk (ft/sec3)
-
-        if(reversed_in){
-            for(Waypoint wpt: waypoints){
-                wpt.x *= -1;
-                wpt.y *= -1;
-            }
-        }
-
-        try{
-            trj_center = Pathfinder.generate(waypoints, config);
-
-            //Transform robot center trajectory to left/right wheel velocities.
-            TankModifier modifier = new TankModifier(trj_center);
-            modifier.modify(DT_TRACK_WIDTH_FT*trackWidthFactor);
-            trj_left  = modifier.getRightTrajectory();     // Get the Left Side  (Yes, pathplanner is inverted compared to what we want)
-            trj_right = modifier.getLeftTrajectory();      // Get the Right Side (Yes, pathplanner is inverted compared to what we want)
-        } catch(Exception e) {
-            CrashTracker.logGenericMessage("[Auto Path Planner]: Could not create auto path");
-            CrashTracker.logGenericMessage(e.toString());
-            trj_center = null;
-            trj_left = null;
-            trj_right = null;
-        }
+    public PathWeaverJSONAutoEvent(String jsonFileName, double maxVel, double maxAccel, double trackWidthFactor) {
+        final String resourceBaseLocal = "./src/main/deploy/pathData";
+        final String resourceBaseRIO = "/home/lvuser/deploy/pathData";
+        String resourceBase = resourceBaseRIO; // default to roboRIO
     
+        // Check if the path for resources expected on the roboRIO exists.
+        if (Files.exists(Paths.get(resourceBaseRIO))) {
+            // If RIO path takes priority (aka we're running on a roborio) this path takes
+            // priority
+            resourceBase = resourceBaseRIO;
+        } else {
+            // Otherwise use a local path, like we're running on a local machine.
+            resourceBase = resourceBaseLocal;
+        }
+
+        Trajectory basePointsTraj = new Trajectory();
+        try{
+            basePointsTraj = TrajectoryUtil.fromPathweaverJson(Path.of(resourceBase, jsonFileName));
+        } catch (IOException ex) {
+            DriverStation.reportError("Unable to open trajectory: " + jsonFileName, ex.getStackTrace());
+        }
+
+        TrajectoryConfig cfg = new TrajectoryConfig(Units.feetToMeters(maxVel), Units.feetToMeters(maxAccel));
+        DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Units.feetToMeters(trackWidthFactor*DT_TRACK_WIDTH_FT));
+        cfg.setKinematics(kinematics);
+
+        //Strip out poses from the input trajectory
+        ArrayList <Pose2d> poseList = new ArrayList<Pose2d>();
+        for(State state : basePointsTraj.getStates() ){
+            poseList.add(state.poseMeters);
+        }
+        
+        //Generate a new trajectory with the correct robot drivetrain parameters config
+        trajectory = TrajectoryGenerator.generateTrajectory(poseList, cfg);
+
+
     }
+
     /**
      * On the first loop, calculates velocities needed to take the path specified. Later loops will
      * assign these velocities to the drivetrain at the proper time.
@@ -123,6 +119,8 @@ public class PathPlannerAutoEvent extends AutoEvent {
             Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
             return; //no path, nothing to do.
         }
+
+        
 
         //For _when_ loop timing isn't exact 20ms, and we need to skip setpoints,
         // calculate the proper timestep based on FPGA timestamp.
