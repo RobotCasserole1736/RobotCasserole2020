@@ -6,6 +6,9 @@ import java.util.LinkedList;
 
 import org.json.simple.JSONObject;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.lib.Util.CrashTracker;
 
 public class Signal {
@@ -16,6 +19,9 @@ public class Signal {
 
     LinkedList<DataSample> samples;
     HashSet<AcqSpec> acqSpecs;
+
+    /** NetworkTables Support */
+    NetworkTableEntry entry;
 
     /**
      * Class which describes one line on a plot
@@ -32,6 +38,11 @@ public class Signal {
         acqSpecs = new HashSet<AcqSpec>();
 
         CasseroleDataServer.getInstance().registerSignal(this);
+
+        NetworkTableInstance inst = NetworkTableInstance.getDefault();
+        NetworkTable  table = inst.getTable("signals");
+        entry = table.getEntry(display_name);
+        entry.setDouble(-1);
     }
 
     /**
@@ -61,8 +72,8 @@ public class Signal {
                 samples.add(newSample);
             }
         }
-
         CasseroleDataServer.getInstance().logger.addSample(newSample);
+        entry.setDouble(value_in);
     }
 
     /**
