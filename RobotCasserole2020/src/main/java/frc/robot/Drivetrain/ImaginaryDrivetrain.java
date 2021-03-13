@@ -68,7 +68,7 @@ public class ImaginaryDrivetrain extends Drivetrain{
         actPoseAngle = dtPose.getRobotPoseAngleDeg();
 
         if(useHeadingCommand){
-            angleErrCorrFactor = 10.0*(actPoseAngle - desPoseAngle); //Simple P control to correct for angle errors
+            angleErrCorrFactor = 1.0*(actPoseAngle - desPoseAngle); //Simple P control to correct for angle errors
         } else {
             angleErrCorrFactor = 0;
         }

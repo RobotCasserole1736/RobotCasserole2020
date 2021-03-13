@@ -21,7 +21,6 @@ package frc.lib.PathPlanner;
  */
 
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.lib.Util.CrashTracker;
 import frc.robot.RobotConstants;
 import frc.robot.Drivetrain.Drivetrain;
 
@@ -30,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -57,16 +57,25 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
 
     private int timestep;
     private double taskRate = RobotConstants.MAIN_LOOP_Ts;
-    private final double DT_TRACK_WIDTH_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT; // Width in Feet
+    private double DT_TRACK_WIDTH_FT;
 
     double desStartX = 0;
     double desStartY = 0;
     double desStartT = 0;
 
+    double trajStartX = 0;
+    double trajStartY = 0;
+    double trajStartT = 0;
+
     Trajectory trajectory;
+
+    List<State> trajectoryStateList;
 
 
     public PathWeaverJSONAutoEvent(String jsonFileName, double maxVel, double maxAccel, double trackWidthFactor) {
+
+        DT_TRACK_WIDTH_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT*trackWidthFactor; // Width in Feet
+
         final String resourceBaseLocal = "./src/main/deploy/pathData";
         final String resourceBaseRIO = "/home/lvuser/deploy/pathData";
         String resourceBase = resourceBaseRIO; // default to roboRIO
@@ -88,8 +97,8 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
             DriverStation.reportError("Unable to open trajectory: " + jsonFileName, ex.getStackTrace());
         }
 
-        TrajectoryConfig cfg = new TrajectoryConfig(Units.feetToMeters(maxVel), Units.feetToMeters(maxAccel));
-        DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Units.feetToMeters(trackWidthFactor*DT_TRACK_WIDTH_FT));
+        TrajectoryConfig cfg = new TrajectoryConfig(maxVel,maxAccel);
+        DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DT_TRACK_WIDTH_FT);
         cfg.setKinematics(kinematics);
 
         //Strip out poses from the input trajectory
@@ -101,7 +110,7 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
         //Generate a new trajectory with the correct robot drivetrain parameters config
         trajectory = TrajectoryGenerator.generateTrajectory(poseList, cfg);
 
-
+        trajectoryStateList = trajectory.getStates(); //Optimiztion - one-time save off states in a list.
     }
 
     /**
@@ -109,79 +118,77 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
      * assign these velocities to the drivetrain at the proper time.
      */
     double startTime = 0;
+    double endTime = 0;
     double startPoseAngle = 0;
-    double poseCommandPrev_deg = startPoseAngle;
-    double poseCmdRevOffset = 0;
+    int curStep = 0;
+    double poseCmdOffset_deg = 0;
+    double prevPoseCommand_deg;
+
     public void userUpdate() {
 
-        if(trj_center == null){
+
+        double curTime = (Timer.getFPGATimestamp()-startTime);
+
+        //Check for finish
+        if(curTime >= trajectory.getTotalTimeSeconds() || curStep >= trajectoryStateList.size() ) {
             done = true;
             Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
-            return; //no path, nothing to do.
+            return;
         }
 
-        
-
-        //For _when_ loop timing isn't exact 20ms, and we need to skip setpoints,
-        // calculate the proper timestep based on FPGA timestamp.
-        double tmp = (Timer.getFPGATimestamp()-startTime)/taskRate;
-        timestep = (int) Math.round(tmp);
-        
-        int maxTimestep = trj_center.length();
-
-        if(timestep >= maxTimestep) {
-            timestep = (maxTimestep - 1);
-            done = true;
+        //Advance to current timestep
+        while(trajectoryStateList.get(curStep).timeSeconds < curTime){
+            curStep++;
         }
 
-        if(timestep == 0){
-            timestep = 1; //Again, for some weird reason, step 0 is bogus?
-        }
-
-
-        double trajPoseCmd = trj_center.get(timestep).heading;
-        double leftCommand_RPM  = FT_PER_SEC_TO_WHEEL_RPM(trj_left.get(timestep).velocity);
-        double rightCommand_RPM = FT_PER_SEC_TO_WHEEL_RPM(trj_right.get(timestep).velocity); 
-        double poseCommand_deg  = (Pathfinder.r2d(trj_center.get(1).heading - trajPoseCmd));
-        double desX = trj_center.get(timestep).y; //Hurray for subtle and undocumented reference frame conversions.
-        double desY = trj_center.get(timestep).x; //Hurray for subtle and undocumented reference frame conversions.
-        
-        //Sanitize the pathplanner headding command to be continous
-        // When the loop-to-loop pose command jumps more than 170 degrees, add (or subtract) 360 to help offset that.
-        double delta =  (poseCommand_deg+ poseCmdRevOffset) - poseCommandPrev_deg;
-        if(delta > 170){
-            poseCmdRevOffset -= 360;
-        } else if (delta < -170){
-            poseCmdRevOffset += 360;
-        }
-        poseCommand_deg += poseCmdRevOffset;
-        poseCommandPrev_deg = poseCommand_deg;
-
-
-        if(reversed){
-            leftCommand_RPM  *= -1;
-            rightCommand_RPM *= -1;
-
-            double tmpSpdCmd = leftCommand_RPM;
-            leftCommand_RPM = rightCommand_RPM;
-            rightCommand_RPM = tmpSpdCmd;
-
-            desX *= -1;
-            desY *= -1;
-        }
-
-        //Rotate to the reference frame where we started the path plan event
-        poseCommand_deg += startPoseAngle;
-        if(!done){
-            if(useFixedHeadingMode) {
-                Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, userManualHeadingDesired);
-            } else {
-                Drivetrain.getInstance().setClosedLoopSpeedCmd(leftCommand_RPM, rightCommand_RPM, poseCommand_deg);
-            }
-        }else{
+        //Since we need to look at current and previous steps... just skip the first timestep.
+        // Hacky - we should really have a "default init" portion, but this is faster and doesn't
+        // matter much when there are 100's of points.
+        if(curStep == 0){
             Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
+            return;
         }
 
+        // Extract current and previous steps
+        State curState = trajectoryStateList.get(curStep);
+        State prevState = trajectoryStateList.get(curStep-1);
+
+        //get the translational and rotational velocities desired in feet/sec
+        double desTransVelFtPerSec = curState.velocityMetersPerSecond;
+
+        //Massage the pose command from the trajectory to be continuous
+        //Trajectory appears to output 0-360
+        double cur = curState.poseMeters.getRotation().getDegrees();
+        double prev =  prevState.poseMeters.getRotation().getDegrees();
+        if(cur > 90 && prev < -90){
+            poseCmdOffset_deg -= 360;
+        } else if (cur < -90 && prev > 90) {
+            poseCmdOffset_deg += 360;
+        }
+
+        if(Math.abs(cur - prev) > 90){
+            System.out.println(curStep);
+        }
+
+        //Calculate where drivetrain ought to be pointed (for closed-loop gyro feedback)
+        double poseCommand_deg = startPoseAngle + curState.poseMeters.getRotation().getDegrees() - trajStartX + poseCmdOffset_deg;
+
+        //Curvature doesn't seem to be calculated correctly out of the trajectory library, so we make our own.
+        double desRotVelFtPerSec = Units.degreesToRadians(poseCommand_deg - prevPoseCommand_deg) /0.02 * DT_TRACK_WIDTH_FT/2;
+
+        //Convert to drivetrain speeds
+        double leftCommand_mps  = desTransVelFtPerSec - desRotVelFtPerSec;
+        double rightCommand_mps = desTransVelFtPerSec + desRotVelFtPerSec;
+
+
+        Drivetrain.getInstance().setClosedLoopSpeedCmd(FT_PER_SEC_TO_WHEEL_RPM(leftCommand_mps), 
+                                                       FT_PER_SEC_TO_WHEEL_RPM(rightCommand_mps), 
+                                                        poseCommand_deg);
+
+
+        //Populate desired pose from path plan.
+        double desY = (curState.poseMeters.getTranslation().getX() - trajStartX);
+        double desX = -1.0 * (curState.poseMeters.getTranslation().getY() - trajStartY);
         double simBotPoseT = poseCommand_deg;
         double simBotPoseX = desStartX + (Math.sin(Math.toRadians(startPoseAngle))) * desX + (Math.cos(Math.toRadians(startPoseAngle)) * desY);
         double simBotPoseY = desStartY - (Math.cos(Math.toRadians(startPoseAngle))) * desX + (Math.sin(Math.toRadians(startPoseAngle)) * desY);
@@ -189,6 +196,8 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
         Drivetrain.getInstance().dtPose.setDesiredPose( simBotPoseX,
                                                         simBotPoseY, 
                                                         simBotPoseT);
+
+        prevPoseCommand_deg = poseCommand_deg;
     }
 
 
@@ -214,26 +223,25 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
     public boolean isDone() {
         return done;
     }
-    
-    /**
-     * Manually set what the heading should be - useful if you moved the robot
-     * without the pathplanner's knowledge.
-     */
-    public void setDesiredHeadingOverride(double heading) {
-        userManualHeadingDesired = heading;
-        useFixedHeadingMode = true;
-    }
 
 
     @Override
     public void userStart() {
-        startTime = Timer.getFPGATimestamp();
         startPoseAngle = Drivetrain.getInstance().getGyroAngle();
         desStartX      = Drivetrain.getInstance().dtPose.poseX;
         desStartY      = Drivetrain.getInstance().dtPose.poseY;
         desStartT      = Drivetrain.getInstance().dtPose.poseT;
-        poseCommandPrev_deg = startPoseAngle;
+
+        trajStartX = trajectory.getInitialPose().getTranslation().getX();
+        trajStartY = trajectory.getInitialPose().getTranslation().getY();
+        trajStartT = trajectory.getInitialPose().getRotation().getDegrees();
+
+        prevPoseCommand_deg = startPoseAngle;
+        poseCmdOffset_deg = 0;
+
         done = false;
+        startTime = Timer.getFPGATimestamp();
+        endTime = startTime + trajectory.getTotalTimeSeconds();
     }
     
     private double FT_PER_SEC_TO_WHEEL_RPM(double ftps_in) {
