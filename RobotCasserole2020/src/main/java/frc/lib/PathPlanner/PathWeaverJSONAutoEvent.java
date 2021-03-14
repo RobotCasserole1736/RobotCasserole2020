@@ -121,8 +121,10 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
     double endTime = 0;
     double startPoseAngle = 0;
     int curStep = 0;
-    double poseCmdOffset_deg = 0;
     double prevPoseCommand_deg;
+    boolean curStepAdvanced = false;
+    double prevDesHeadingRaw = 0;
+    double poseOffsetDeg = 0;
 
     public void userUpdate() {
 
@@ -137,41 +139,31 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
         }
 
         //Advance to current timestep
+        curStepAdvanced = false;
         while(trajectoryStateList.get(curStep).timeSeconds < curTime){
+            curStepAdvanced = true;
             curStep++;
-        }
-
-        //Since we need to look at current and previous steps... just skip the first timestep.
-        // Hacky - we should really have a "default init" portion, but this is faster and doesn't
-        // matter much when there are 100's of points.
-        if(curStep == 0){
-            Drivetrain.getInstance().setClosedLoopSpeedCmd(0, 0);
-            return;
         }
 
         // Extract current and previous steps
         State curState = trajectoryStateList.get(curStep);
-        State prevState = trajectoryStateList.get(curStep-1);
 
         //get the translational and rotational velocities desired in feet/sec
         double desTransVelFtPerSec = curState.velocityMetersPerSecond;
 
         //Massage the pose command from the trajectory to be continuous
-        //Trajectory appears to output 0-360
-        double cur = curState.poseMeters.getRotation().getDegrees();
-        double prev =  prevState.poseMeters.getRotation().getDegrees();
-        if(cur > 90 && prev < -90){
-            poseCmdOffset_deg -= 360;
-        } else if (cur < -90 && prev > 90) {
-            poseCmdOffset_deg += 360;
+        //Trajectory appears to output -180 to 180
+        double curDesHeadingRaw = startPoseAngle + curState.poseMeters.getRotation().getDegrees() - trajStartT;
+
+        while((curDesHeadingRaw - prevDesHeadingRaw) >= 180){
+            curDesHeadingRaw -= 360;
         }
 
-        if(Math.abs(cur - prev) > 90){
-            System.out.println(curStep);
+        while((curDesHeadingRaw - prevDesHeadingRaw) <= -180){
+            curDesHeadingRaw += 360;
         }
-
         //Calculate where drivetrain ought to be pointed (for closed-loop gyro feedback)
-        double poseCommand_deg = startPoseAngle + curState.poseMeters.getRotation().getDegrees() - trajStartX + poseCmdOffset_deg;
+        double poseCommand_deg = curDesHeadingRaw;
 
         //Curvature doesn't seem to be calculated correctly out of the trajectory library, so we make our own.
         double desRotVelFtPerSec = Units.degreesToRadians(poseCommand_deg - prevPoseCommand_deg) /0.02 * DT_TRACK_WIDTH_FT/2;
@@ -198,6 +190,7 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
                                                         simBotPoseT);
 
         prevPoseCommand_deg = poseCommand_deg;
+        prevDesHeadingRaw = curDesHeadingRaw;
     }
 
 
@@ -237,7 +230,8 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
         trajStartT = trajectory.getInitialPose().getRotation().getDegrees();
 
         prevPoseCommand_deg = startPoseAngle;
-        poseCmdOffset_deg = 0;
+        prevDesHeadingRaw = trajStartT;
+        poseOffsetDeg = 0;
 
         done = false;
         startTime = Timer.getFPGATimestamp();
