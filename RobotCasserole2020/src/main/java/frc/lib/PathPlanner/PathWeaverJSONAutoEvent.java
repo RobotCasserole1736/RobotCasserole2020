@@ -2,7 +2,7 @@ package frc.lib.PathPlanner;
 
 /*
  *******************************************************************************************
- * Copyright (C) 2017 FRC Team 1736 Robot Casserole - www.robotcasserole.org
+ * Copyright (C) 2020 FRC Team 1736 Robot Casserole - www.robotcasserole.org
  *******************************************************************************************
  *
  * This software is released under the MIT Licence - see the license.txt
@@ -21,6 +21,7 @@ package frc.lib.PathPlanner;
  */
 
 import frc.lib.AutoSequencer.AutoEvent;
+import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 import frc.robot.Drivetrain.Drivetrain;
 
@@ -28,16 +29,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.MedianFilter;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.util.Units;
@@ -55,8 +52,6 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
     boolean done = false;
 
 
-    private int timestep;
-    private double taskRate = RobotConstants.MAIN_LOOP_Ts;
     private double DT_TRACK_WIDTH_FT;
 
     double desStartX = 0;
@@ -66,6 +61,9 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
     double trajStartX = 0;
     double trajStartY = 0;
     double trajStartT = 0;
+
+    MedianFilter velFilter = new MedianFilter(3);
+    MedianFilter rotFilter = new MedianFilter(6);
 
     Trajectory trajectory;
 
@@ -90,26 +88,11 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
             resourceBase = resourceBaseLocal;
         }
 
-        Trajectory basePointsTraj = new Trajectory();
         try{
-            basePointsTraj = TrajectoryUtil.fromPathweaverJson(Path.of(resourceBase, jsonFileName));
+            trajectory = TrajectoryUtil.fromPathweaverJson(Path.of(resourceBase, jsonFileName));
         } catch (IOException ex) {
             DriverStation.reportError("Unable to open trajectory: " + jsonFileName, ex.getStackTrace());
         }
-
-        TrajectoryConfig cfg = new TrajectoryConfig(maxVel,maxAccel);
-        DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(DT_TRACK_WIDTH_FT);
-        cfg.setKinematics(kinematics);
-
-        //Strip out poses from the input trajectory
-        ArrayList <Pose2d> poseList = new ArrayList<Pose2d>();
-        for(State state : basePointsTraj.getStates() ){
-            poseList.add(state.poseMeters);
-        }
-        
-        //Generate a new trajectory with the correct robot drivetrain parameters config
-        trajectory = TrajectoryGenerator.generateTrajectory(poseList, cfg);
-
         trajectoryStateList = trajectory.getStates(); //Optimiztion - one-time save off states in a list.
     }
 
@@ -158,19 +141,27 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
         while((curDesHeadingRaw - prevDesHeadingRaw) >= 180){
             curDesHeadingRaw -= 360;
         }
-
         while((curDesHeadingRaw - prevDesHeadingRaw) <= -180){
             curDesHeadingRaw += 360;
         }
+
         //Calculate where drivetrain ought to be pointed (for closed-loop gyro feedback)
         double poseCommand_deg = curDesHeadingRaw;
 
         //Curvature doesn't seem to be calculated correctly out of the trajectory library, so we make our own.
-        double desRotVelFtPerSec = Units.degreesToRadians(poseCommand_deg - prevPoseCommand_deg) /0.02 * DT_TRACK_WIDTH_FT/2;
+        double desRotVelFtPerSec = Units.degreesToRadians(poseCommand_deg - prevPoseCommand_deg) /LoopTiming.getInstance().getPeriodSec() * DT_TRACK_WIDTH_FT/2;
+
+        // I really hate the idea of filtering our commands...but it seems like pathweaver and our
+        // hacky rotatinoal velocity algorithm are putting out lots of single-loop jumps in speed that 
+        // I'm almost certain are gonna hose up closed loop stuff... sim seems to indicate filtering won't be
+        // that detrimental to overall path-following, so we'll roll with it. Hopefully.
+        desTransVelFtPerSec = velFilter.calculate(desTransVelFtPerSec);
+        desRotVelFtPerSec = rotFilter.calculate(desRotVelFtPerSec);
 
         //Convert to drivetrain speeds
         double leftCommand_mps  = desTransVelFtPerSec - desRotVelFtPerSec;
         double rightCommand_mps = desTransVelFtPerSec + desRotVelFtPerSec;
+
 
 
         Drivetrain.getInstance().setClosedLoopSpeedCmd(FT_PER_SEC_TO_WHEEL_RPM(leftCommand_mps), 
@@ -236,6 +227,9 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
         done = false;
         startTime = Timer.getFPGATimestamp();
         endTime = startTime + trajectory.getTotalTimeSeconds();
+
+        velFilter.reset();
+        rotFilter.reset();
     }
     
     private double FT_PER_SEC_TO_WHEEL_RPM(double ftps_in) {

@@ -1,14 +1,13 @@
 package frc.robot.Autonomous.Events;
 
 import frc.lib.AutoSequencer.AutoEvent;
-import frc.lib.PathPlanner.PathPlannerAutoEvent;
-import frc.lib.PathPlanner.PathWeaverToWaypoints;
+import frc.lib.PathPlanner.PathWeaverJSONAutoEvent;
 
 /**
  * drive straight and stuff. Step response check (with typical smoothing)
  */
 public class AutoEventDriveSlalom extends AutoEvent {
-    PathPlannerAutoEvent pathPlanAutoEvent;
+    PathWeaverJSONAutoEvent pathPlanAutoEvent;
 
     // Waypoints always start at (0,0), and are referenced relative to the robot's
     // position and pose angle whenever the event starts running. Units must be
@@ -19,8 +18,9 @@ public class AutoEventDriveSlalom extends AutoEvent {
     // Positive Y to the right, negative to the left.
 
     public AutoEventDriveSlalom() {
-        PathWeaverToWaypoints pwPath = new PathWeaverToWaypoints("slalom_main.wpilib.json");
-        pathPlanAutoEvent = new PathPlannerAutoEvent(pwPath.getWaypoints(), false, 12, 6);
+
+        pathPlanAutoEvent = new PathWeaverJSONAutoEvent("slalom_main.wpilib.json", 6, 4, 1.0);
+
 
     }
 
