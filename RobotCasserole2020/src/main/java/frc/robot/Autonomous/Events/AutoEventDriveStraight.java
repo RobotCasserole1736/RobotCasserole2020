@@ -21,9 +21,9 @@ public class AutoEventDriveStraight extends AutoEvent {
             new Waypoint(inDis, 0,  Pathfinder.d2r(0))
         };
         if(inDis<0){
-            driveBackward = new PathPlannerAutoEvent(waypoints_ft, true,12,6);
+            driveBackward = new PathPlannerAutoEvent(waypoints_ft, true,6,6);
         }else{
-            driveBackward = new PathPlannerAutoEvent(waypoints_ft, false,12,6);
+            driveBackward = new PathPlannerAutoEvent(waypoints_ft, false,6,6);
         }
         
     }

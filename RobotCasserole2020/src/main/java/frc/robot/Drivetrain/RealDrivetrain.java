@@ -97,6 +97,8 @@ public class RealDrivetrain extends Drivetrain {
     Calibration currentLimit;
     boolean calsUpdated;
 
+    Calibration slackAdjustOffset;
+
     
 
     public RealDrivetrain(){
@@ -139,10 +141,10 @@ public class RealDrivetrain extends Drivetrain {
         currentR1Sig = new Signal("Right Master Moter Current", "A");
         currentR2Sig = new Signal("Right Intern Moter Current", "A");
 
-        kP = new Calibration("Drivetrain P Value", 0.006);
+        kP = new Calibration("Drivetrain P Value", 0.0155);
         kI = new Calibration("Drivetrain I Value", 0);
-        kD = new Calibration("Drivetrain D Value", 0.0096);
-        kFF = new Calibration("Drivetrain F Value", 0.00195);
+        kD = new Calibration("Drivetrain D Value", 0.00);
+        kFF = new Calibration("Drivetrain F Value", 0.00179);
         kPGyro = new Calibration("Drivetrain Gyro Comp P Value" , 2.0);
         currentLimit = new Calibration("Drivetrain Per-Motor Smart Current Limit" , 80, 0, 200);
         turnToAnglekP= new Calibration("Drivetrain Turn To Angle kP", 5.0);
@@ -150,6 +152,7 @@ public class RealDrivetrain extends Drivetrain {
         turnToAngleMaxRPM= new Calibration("Drivetrain Turn To Angle Max RPM", 250, 0, 500);
         turnToAngleMaxRPMPerSec= new Calibration("Drivetrain Turn To Angle Max RPM sec", 200, 0, 5000);
         AdenSensitivityCal = new Calibration("Aden Sensitivity",1.2);
+        slackAdjustOffset = new Calibration("Drivetrain slack backlash prevention offset", 2.0);
 
         dtLeftIntern.follow(dtLeftMaster);
         dtRightIntern.follow(dtRightMaster);
@@ -157,8 +160,8 @@ public class RealDrivetrain extends Drivetrain {
         dtLeftMaster.setOpenLoopRampRate(0.45);
         dtRightMaster.setOpenLoopRampRate(0.45);
 
-        dtLeftMaster.setClosedLoopRampRate(0.10);
-        dtRightMaster.setClosedLoopRampRate(0.10);
+        dtLeftMaster.setClosedLoopRampRate(0.25);
+        dtRightMaster.setClosedLoopRampRate(0.25);
 
         dtGyro = new CasseroleGyro();
         dtGyro.calibrate();
@@ -388,8 +391,8 @@ public class RealDrivetrain extends Drivetrain {
     @Override
     public void setClosedLoopSpeedCmd(double leftCmdRPM, double rightCmdRPM, double inHeadingCmdDeg) {
         opModeCmd = DrivetrainOpMode.kClosedLoopVelocity;
-        leftWheelSpeedDesiredRPM  = leftCmdRPM;
-        rightWheelSpeedDesiredRPM = rightCmdRPM;
+        leftWheelSpeedDesiredRPM  = leftCmdRPM + slackAdjustOffset.get();
+        rightWheelSpeedDesiredRPM = rightCmdRPM + slackAdjustOffset.get();
         headingCmdDeg = inHeadingCmdDeg;
         headingCmdAvailable = true;
 

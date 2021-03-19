@@ -365,7 +365,7 @@ public class Autonomous {
                 break;
 
                 case DriveFwd:
-                    seq.addEvent(new AutoEventDriveStraight(1));
+                    seq.addEvent(new AutoEventDriveStraight(20));
                 break;
 
                 case SWTest:
