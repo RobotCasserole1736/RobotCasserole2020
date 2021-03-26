@@ -135,6 +135,11 @@ public class ImaginaryDrivetrain extends Drivetrain{
 
 
     }
+
+    @Override
+    public void setClosedLoopRampRate(double rampRate){
+        //Todo - maybe
+    }
     
 
     @Override

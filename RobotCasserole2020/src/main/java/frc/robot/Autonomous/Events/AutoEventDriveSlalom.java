@@ -2,6 +2,7 @@ package frc.robot.Autonomous.Events;
 
 import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.PathPlanner.PathWeaverJSONAutoEvent;
+import frc.robot.Drivetrain.Drivetrain;
 
 /**
  * drive straight and stuff. Step response check (with typical smoothing)
@@ -19,7 +20,9 @@ public class AutoEventDriveSlalom extends AutoEvent {
 
     public AutoEventDriveSlalom() {
 
-        pathPlanAutoEvent = new PathWeaverJSONAutoEvent("slalom_main.wpilib.json", 6, 4, 1.0);
+        pathPlanAutoEvent = new PathWeaverJSONAutoEvent("slalom_main.wpilib.json", 1.0);
+        Drivetrain.getInstance().setClosedLoopRampRate(0.45);
+
 
 
     }

@@ -70,7 +70,7 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
     List<State> trajectoryStateList;
 
 
-    public PathWeaverJSONAutoEvent(String jsonFileName, double maxVel, double maxAccel, double trackWidthFactor) {
+    public PathWeaverJSONAutoEvent(String jsonFileName, double trackWidthFactor) {
 
         DT_TRACK_WIDTH_FT = RobotConstants.ROBOT_TRACK_WIDTH_FT*trackWidthFactor; // Width in Feet
 
@@ -94,6 +94,8 @@ public class PathWeaverJSONAutoEvent extends AutoEvent {
             DriverStation.reportError("Unable to open trajectory: " + jsonFileName, ex.getStackTrace());
         }
         trajectoryStateList = trajectory.getStates(); //Optimiztion - one-time save off states in a list.
+
+        Drivetrain.getInstance().setClosedLoopRampRate(0.0);
     }
 
     /**

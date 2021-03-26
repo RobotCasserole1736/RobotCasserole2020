@@ -2,6 +2,7 @@ package frc.robot.Autonomous.Events;
 
 import frc.lib.AutoSequencer.AutoEvent;
 import frc.lib.PathPlanner.PathWeaverJSONAutoEvent;
+import frc.robot.Drivetrain.Drivetrain;
 
 /**
  * drive straight and stuff. Step response check (with typical smoothing)
@@ -18,7 +19,8 @@ public class AutoEventDriveBarrelRun extends AutoEvent {
     //Positive Y to the right, negative to the left.
 
     public AutoEventDriveBarrelRun() {
-        pathPlanAutoEvent = new PathWeaverJSONAutoEvent("barrel_run_main.wpilib.json", 6, 4, 1.5);
+        pathPlanAutoEvent = new PathWeaverJSONAutoEvent("barrel_run_main.wpilib.json", 1.5);
+        Drivetrain.getInstance().setClosedLoopRampRate(0.25);
 
     }
 

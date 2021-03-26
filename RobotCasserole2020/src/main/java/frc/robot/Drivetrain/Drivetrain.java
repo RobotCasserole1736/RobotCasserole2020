@@ -30,6 +30,7 @@ public abstract class Drivetrain {
     public abstract void setOpenLoopCmd(double forwardReverseCmd, double rotaionCmd);
     public abstract void setGyroLockCmd(double forwardReverseCmd);
     public abstract boolean isGyroOnline();
+    public abstract void setClosedLoopRampRate(double rampRate);
     public abstract double getLeftWheelSpeedRPM();
     public abstract double getRightWheelSpeedRPM();
     public abstract void updateGains(boolean force);
