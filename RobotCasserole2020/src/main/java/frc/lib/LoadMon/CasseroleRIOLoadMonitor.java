@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.lib.Util.CrashTracker;
 import frc.robot.LoopTiming;
 import frc.robot.Robot;

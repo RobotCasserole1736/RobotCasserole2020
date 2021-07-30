@@ -1,7 +1,7 @@
 package frc.robot.Drivetrain;
 
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 

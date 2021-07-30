@@ -21,7 +21,7 @@ package frc.robot;
  */
 
 import edu.wpi.first.wpilibj.Timer;
-import frc.lib.DataServer.Annotations.Signal;
+import frc.lib.Signal.Annotations.Signal;
 
 public class LoopTiming{
 

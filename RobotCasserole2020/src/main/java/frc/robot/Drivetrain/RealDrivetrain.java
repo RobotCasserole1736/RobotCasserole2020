@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANEncoder;
 import frc.robot.RobotConstants;
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.robot.LoopTiming;
 import com.revrobotics.CANPIDController;
 import frc.lib.Calibration.Calibration;

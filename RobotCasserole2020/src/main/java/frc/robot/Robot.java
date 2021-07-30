@@ -15,11 +15,11 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.CasseroleDataServer;
 import frc.lib.LoadMon.CasseroleRIOLoadMonitor;
+import frc.lib.Signal.SignalWrangler;
 import frc.lib.Util.CrashTracker;
-import frc.lib.WebServer.CasseroleDriverView;
-import frc.lib.WebServer.CasseroleWebServer;
+import frc.lib.Webserver2.Webserver2;
+import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
 import frc.robot.BallHandling.Conveyor;
 import frc.robot.BallHandling.Hopper;
@@ -43,12 +43,11 @@ import frc.robot.VisionProc.CasseroleVision;
 public class Robot extends TimedRobot {
 
   // Website utilities
-  CasseroleWebServer webserver;
-  CalWrangler wrangler;
-  CasseroleDataServer dataServer;
+  Webserver2 webserver;
   LoopTiming loopTiming;
   PowerDistributionPanel pdp;
   CasseroleRIOLoadMonitor loadMon;
+  Dashboard db;
 
   // Autonomous Control Utilities
   Autonomous auto;
@@ -91,10 +90,11 @@ public class Robot extends TimedRobot {
 
     CrashTracker.logRobotInit();
 
+    NT4Server.getInstance(); // Ensure it starts
+
     /* Init website utilties */
-    webserver = new CasseroleWebServer();
-    wrangler = new CalWrangler();
-    dataServer = CasseroleDataServer.getInstance();
+    webserver = new Webserver2();
+    CalWrangler.getInstance();
     cam = CasseroleVision.getInstance();
     pdp = CasserolePDP.getInstance();
     loadMon = new CasseroleRIOLoadMonitor();
@@ -129,11 +129,10 @@ public class Robot extends TimedRobot {
 
     ledCont = LEDController.getInstance();
 
-    /* Website Setup */
-    initDriverView();
+    db = new Dashboard(webserver);
 
-    dataServer.registerSignals(this);
-    dataServer.startServer();
+    SignalWrangler.getInstance().registerSignals(this);
+
     webserver.startServer();
 
   }
@@ -146,7 +145,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     CrashTracker.logDisabledInit();
-    dataServer.logger.stopLogging();
+    SignalWrangler.getInstance().logger.stopLogging();
     drivetrain.setMotorMode(IdleMode.kCoast);
     auto.reset();
 
@@ -197,7 +196,7 @@ public class Robot extends TimedRobot {
     drivetrain.setOpenLoopCmd(0, 0);
     drivetrain.update();
 
-    updateDriverView();
+    db.updateDriverView();
     loopTiming.markLoopEnd();
 
   }
@@ -210,7 +209,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     CrashTracker.logAutoInit();
-    dataServer.logger.startLoggingAuto();
+    SignalWrangler.getInstance().logger.startLoggingAuto();
     drivetrain.setMotorMode(IdleMode.kCoast);
     auto.sampleDashboardSelector();
     auto.startSequencer(); // Actually trigger the start of whatever autonomous routine we're doing
@@ -236,7 +235,7 @@ public class Robot extends TimedRobot {
 
     climber.update();
 
-    updateDriverView();
+    db.updateDriverView();
 
     // put all auto periodic code before this
     loopTiming.markLoopEnd();
@@ -251,7 +250,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     CrashTracker.logTeleopInit();
-    dataServer.logger.startLoggingTeleop();
+    SignalWrangler.getInstance().logger.startLoggingTeleop();
     drivetrain.setMotorMode(IdleMode.kBrake);
     eyeOfVeganSauron.setLEDRingState(true);
     cam.setInnerGoalAsTarget(true); // try for 3's in teleop
@@ -309,100 +308,11 @@ public class Robot extends TimedRobot {
 
     climber.update();
 
-    updateDriverView();
+    db.updateDriverView();
 
     // put all teleop periodic code before this
     loopTiming.markLoopEnd();
 
-  }
-
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // ~~ UTILITIES
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  private void initDriverView() {
-    CasseroleDriverView.newDial("System Press (PSI)", 0, 150, 10, 90, 130);
-    CasseroleDriverView.newDial("Shooter Speed (RPM)", 0, 6000, 600, 4500, 5700);
-    CasseroleDriverView.newDial("Robot Speed (fps)", 0, 20, 2, 5, 15);
-    CasseroleDriverView.newDial("Vision Tgt Angle (deg)", -30, 30, 5, -2.5, 2.5);
-    CasseroleDriverView.newBoolean("Master Caution", "red");
-    CasseroleDriverView.newBoolean("Vision Camera Fault", "red");
-    CasseroleDriverView.newBoolean("Vision Target Visible", "green");
-    CasseroleDriverView.newBoolean("Climber Lower SW Fault", "red");
-    CasseroleDriverView.newBoolean("Climber Upper SW Fault", "red");
-    CasseroleDriverView.newBoolean("Climber Upper SW Pressed", "yellow");
-    CasseroleDriverView.newBoolean("Climber Lower SW Pressed", "yellow");
-    CasseroleDriverView.newBoolean("Conveyor Full", "green");
-    CasseroleDriverView.newBoolean("Pnuematic Pressure", "red");
-    CasseroleDriverView.newBoolean("Shooter Spoolup", "yellow");
-    CasseroleDriverView.newStringBox("Shots Taken");
-    CasseroleDriverView.newStringBox("Shooter Setpoint");
-    CasseroleDriverView.newSoundWidget("High Ground Acqd", "./highground.mp3");
-    CasseroleDriverView.newAutoSelector("Action", Autonomous.ACTION_MODES);
-    CasseroleDriverView.newAutoSelector("Delay", Autonomous.DELAY_OPTIONS);
-    CasseroleDriverView.newWebcam("cam1", "http://10.17.36.10:1181/stream.mjpg", 50, 75);
-    CasseroleDriverView.newWebcam("cam2", "http://10.17.36.10:1182/stream.mjpg", 50, 75);
-
-  }
-
-  int masterCautionBlinkCounter = 0;
-  final int MASTER_CAUTION_BLINK_LOOPS = 15;
-  boolean masterCautionIndicatorState = false;
-
-  public void updateDriverView() {
-    if (Conveyor.getInstance().getUpperSensorValue() == true && Conveyor.getInstance().getOpMode() == ConveyorOpMode.AdvanceFromHopper) {
-      conveyorFull = true;
-    } else {
-      conveyorFull = false;
-    }
-
-    if (PneumaticsControl.getInstance().getPressure() < 60) {
-      pneumaticPressureLow = true;
-    } else {
-      pneumaticPressureLow = false;
-    }
-
-    climberUpperLSPressed = (climber.upperLSVal == TwoWireParitySwitch.SwitchState.Pressed);
-    climberLowerLSPressed = (climber.lowerLSVal == TwoWireParitySwitch.SwitchState.Pressed);
-
-    CasseroleDriverView.setDialValue("System Press (PSI)", thbbtbbtbbtbbt.getPressure());
-    CasseroleDriverView.setDialValue("Shooter Speed (RPM)", shooterCtrl.getSpeedRPM());
-    CasseroleDriverView.setDialValue("Robot Speed (fps)", drivetrain.getRobotSpeedfps());
-    CasseroleDriverView.setDialValue("Vision Tgt Angle (deg)", cam.isTgtVisible() ? -1.0 * cam.getTgtGeneralAngle() : -50);
-    CasseroleDriverView.setBoolean("Vision Camera Fault", !cam.isVisionOnline());
-    CasseroleDriverView.setBoolean("Vision Target Visible", cam.isTgtVisible());
-    CasseroleDriverView.setBoolean("Climber Lower SW Fault", climber.isLowerLimitSwitchFaulted());
-    CasseroleDriverView.setBoolean("Climber Upper SW Fault", climber.isUpperLimitSwitchFaulted());
-    CasseroleDriverView.setBoolean("Climber Upper SW Pressed", climber.isUpperLimitSwitchPressed());
-    CasseroleDriverView.setBoolean("Climber Lower SW Pressed", climber.isLowerLimitSwitchPressed());
-    CasseroleDriverView.setBoolean("Pnuematic Pressure", pneumaticPressureLow);
-    CasseroleDriverView.setBoolean("Conveyor Full", conveyorFull);
-    CasseroleDriverView.setBoolean("Shooter Spoolup", (shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Accelerate || shooterCtrl.getShooterCtrlMode() == ShooterCtrlMode.Stabilize));
-    CasseroleDriverView.setStringBox("Shots Taken", Integer.toString(shooterCtrl.getShotCount()));
-    CasseroleDriverView.setStringBox("Shooter Setpoint", String.format("%.0fRPM", shooterCtrl.getAdjustedSetpointRPM()));
-
-    if (pneumaticPressureLow || climber.isUpperLimitSwitchFaulted() || climber.isLowerLimitSwitchFaulted()) {
-      masterCautionBlinkCounter++;
-      if (masterCautionBlinkCounter > MASTER_CAUTION_BLINK_LOOPS) {
-        masterCautionBlinkCounter = 0;
-        masterCautionIndicatorState = !masterCautionIndicatorState;
-      }
-    } else {
-      masterCautionBlinkCounter = 0;
-      masterCautionIndicatorState = false;
-    }
-
-    CasseroleDriverView.setBoolean("Master Caution", masterCautionIndicatorState);
-
-    if (DriverStation.getInstance().getMatchTime() <= 30 && Climber.getInstance().climbEnabled == true) {
-      CasseroleDriverView.setSoundWidget("High Ground Acqd", true);
-    } else {
-      CasseroleDriverView.setSoundWidget("High Ground Acqd", false);
-    }
-
-    dataServer.sampleAllSignals();
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

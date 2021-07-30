@@ -24,7 +24,7 @@ package frc.robot.ControlPanel;
 
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.util.Color;
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.robot.LoopTiming;
 
 import com.revrobotics.ColorSensorV3;

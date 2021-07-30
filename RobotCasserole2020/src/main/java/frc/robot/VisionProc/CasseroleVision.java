@@ -9,7 +9,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.robot.LoopTiming;
 
 public class CasseroleVision {

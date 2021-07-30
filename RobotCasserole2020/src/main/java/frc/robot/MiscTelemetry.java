@@ -22,8 +22,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
-import frc.lib.DataServer.CasseroleDataServer;
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.lib.Util.ExecutionTimeTracker;
 
 public class MiscTelemetry {
@@ -107,11 +106,9 @@ public class MiscTelemetry {
         double sampleTimeMs = Timer.getFPGATimestamp()*1000.0;
 
         matchTimeSig.addSample(sampleTimeMs, DriverStation.getInstance().getMatchTime());
-        rioDSSampLoadSig.addSample(sampleTimeMs, CasseroleDataServer.getInstance().getTotalStoredSamples());
         rioBattCurrDrawSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getTotalCurrent());
         rioBattVoltSig.addSample(sampleTimeMs,  CasserolePDP.getInstance().getVoltage());  
         rioSupplyVoltSig.addSample(sampleTimeMs,  RobotController.getInputVoltage());  
-        rioDSLogQueueLenSig.addSample(sampleTimeMs, CasseroleDataServer.getInstance().logger.getSampleQueueLength());
         rioIsBrownoutSig.addSample(sampleTimeMs, RobotController.isBrownedOut());
         rioCANBusUsagePctSig.addSample(sampleTimeMs, RobotController.getCANStatus().percentBusUtilization);
         pdpUpperBoardAuxCurrentSig.addSample(sampleTimeMs, CasserolePDP.getInstance().getCurrent(RobotConstants.UPPER_BOARD_AUX_PDP_CHANNEL));

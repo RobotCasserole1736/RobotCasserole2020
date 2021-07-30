@@ -28,7 +28,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Annotations.Signal;
+import frc.lib.Signal.Annotations.Signal;
 import frc.lib.SignalMath.AveragingFilter;
 import frc.robot.RobotConstants;
 

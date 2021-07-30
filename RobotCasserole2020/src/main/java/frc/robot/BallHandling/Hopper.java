@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Annotations.Signal;
+import frc.lib.Signal.Annotations.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.Robot;
 

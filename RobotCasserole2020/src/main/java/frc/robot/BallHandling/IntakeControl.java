@@ -4,7 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Annotations.Signal;
+import frc.lib.Signal.Annotations.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.Robot;
 import frc.robot.RobotConstants;

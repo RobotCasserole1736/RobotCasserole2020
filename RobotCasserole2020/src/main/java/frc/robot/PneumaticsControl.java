@@ -20,7 +20,7 @@ package frc.robot;
  */
 
 import edu.wpi.first.wpilibj.Compressor;
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.lib.Util.ExecutionTimeTracker;
 import edu.wpi.first.wpilibj.AnalogInput;
 import frc.robot.HumanInterface.DriverController;

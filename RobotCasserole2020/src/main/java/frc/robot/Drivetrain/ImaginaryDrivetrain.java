@@ -3,7 +3,7 @@ package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 

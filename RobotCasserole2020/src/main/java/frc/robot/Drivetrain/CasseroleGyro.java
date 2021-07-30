@@ -2,7 +2,7 @@ package frc.robot.Drivetrain;
 
 import com.analog.adis16448.frc.ADIS16448_IMU;
 
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.robot.LoopTiming;
 
 /*

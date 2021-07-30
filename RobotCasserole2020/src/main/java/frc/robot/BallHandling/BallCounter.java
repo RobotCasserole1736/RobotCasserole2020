@@ -8,7 +8,7 @@
 package frc.robot.BallHandling;
 
 import frc.lib.Calibration.Calibration;
-import frc.lib.DataServer.Annotations.Signal;
+import frc.lib.Signal.Annotations.Signal;
 import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
 
 public class BallCounter {

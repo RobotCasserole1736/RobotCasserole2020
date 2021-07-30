@@ -2,7 +2,7 @@ package frc.robot.BallHandling;
 
 import com.playingwithfusion.TimeOfFlight;
 
-import frc.lib.DataServer.Annotations.Signal;
+import frc.lib.Signal.Annotations.Signal;
 import frc.lib.SignalMath.AveragingFilter;
 import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;

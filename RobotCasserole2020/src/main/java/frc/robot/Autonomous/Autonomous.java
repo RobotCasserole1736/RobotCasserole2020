@@ -1,9 +1,16 @@
 package frc.robot.Autonomous;
 
+import java.util.Set;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.lib.AutoSequencer.AutoSequencer;
 import frc.lib.Util.CrashTracker;
-import frc.lib.WebServer.CasseroleDriverView;
+import frc.lib.miniNT4.LocalClient;
+import frc.lib.miniNT4.NT4Server;
+import frc.lib.miniNT4.NT4TypeStr;
+import frc.lib.miniNT4.samples.TimestampedInteger;
+import frc.lib.miniNT4.samples.TimestampedValue;
+import frc.lib.miniNT4.topics.Topic;
 import frc.robot.Autonomous.Events.AutoEventSideSteakA;
 import frc.robot.Autonomous.Events.AutoEventSideSteakB;
 import frc.robot.Autonomous.Events.AutoEventSideSteakC;
@@ -55,7 +62,18 @@ import frc.robot.ShooterControl.ShooterControl.ShooterRunCommand;
  */
 
 
-public class Autonomous {
+public class Autonomous extends LocalClient  {
+
+    final String curDelayModeTopicName = "/Autonomous/curDelayMode";
+    final String curMainModeTopicName = "/Autonomous/curMainMode";
+    final String desDelayModeTopicName = "/Autonomous/desDelayMode";
+    final String desMainModeTopicName = "/Autonomous/desMainMode";
+
+    Topic curDelayModeTopic = null;
+    Topic curMainModeTopic = null;
+
+    int curDelayMode = 0;
+    int curMainMode = 0;
 
     /* All possible autonomously performed routines */
     public enum AutoMode {
@@ -123,12 +141,21 @@ public class Autonomous {
 
     private Autonomous(){
         seq = new AutoSequencer("Autonomous");
+
+        // Create and subscribe to NT4 topics
+        curDelayModeTopic = NT4Server.getInstance().publishTopic(curDelayModeTopicName, NT4TypeStr.INT, this);
+        curMainModeTopic = NT4Server.getInstance().publishTopic(curMainModeTopicName, NT4TypeStr.INT, this);
+        curDelayModeTopic.submitNewValue(new TimestampedInteger(0, 0));
+        curMainModeTopic.submitNewValue(new TimestampedInteger(0, 0));
+
+        this.subscribe(Set.of(desDelayModeTopicName, desMainModeTopicName), 0).start();
+
     }
 
     /* This should be called periodically in Disabled, and once in auto init */
     public void sampleDashboardSelector(){
-		String actionStr    = CasseroleDriverView.getAutoSelectorVal("Action");
-		String delayTimeStr = CasseroleDriverView.getAutoSelectorVal("Delay");
+		String actionStr    = ACTION_MODES[curMainMode];
+		String delayTimeStr = DELAY_OPTIONS[curDelayMode];
 		autoModeName = actionStr + " delay by " + delayTimeStr;
 		
 		//Map delay times from selelctor to actual quantities
@@ -496,5 +523,19 @@ public class Autonomous {
 
     public boolean isActive(){
         return (seq.isRunning() && actualMode != AutoMode.Inactive);
+    }
+
+    @Override
+    public void onAnnounce(Topic newTopic) {}
+    @Override
+    public void onUnannounce(Topic deadTopic) {}
+
+    @Override
+    public void onValueUpdate(Topic topic, TimestampedValue newVal) {
+        if(topic.name.equals(desDelayModeTopicName)){
+            curDelayMode = (Integer) newVal.getVal();
+        } else if(topic.name.equals(desMainModeTopicName)){
+            curMainMode =(Integer) newVal.getVal();
+        }         
     }
 }

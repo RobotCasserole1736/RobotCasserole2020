@@ -4,7 +4,7 @@ import frc.robot.LoopTiming;
 import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.HumanInterface.OperatorController;
-import frc.lib.DataServer.Signal;
+import frc.lib.Signal.Signal;
 import frc.robot.ControlPanel.ControlPanelManipulator;
 
 public class ControlPanelStateMachine{

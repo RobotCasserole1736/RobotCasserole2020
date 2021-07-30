@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2021.2.1"
+    id "edu.wpi.first.GradleRIO" version "2021.2.2"
     id "org.ajoberstar.grgit" version "3.0.0"
 }
 
@@ -65,21 +65,23 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
 
-    //Casserole WebServer Deps
-    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    // Webserver2 requirements
     compile group: 'org.eclipse.jetty', name: 'jetty-http', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty', name: 'jetty-util', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty', name: 'jetty-security', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.3.9.v20160517'
-    compile group: 'org.eclipse.jetty.websocket', name: 'websocket-client', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty.websocket', name: 'websocket-servlet', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty.websocket', name: 'websocket-api', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty.websocket', name: 'websocket-common', version: '9.3.9.v20160517'
     compile group: 'org.eclipse.jetty', name: 'jetty-io', version: '9.3.9.v20160517'
     compile group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
-
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0-alpha1'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.0-alpha1'
+    implementation group: 'org.json', name: 'json', version: '20210307'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile 'org.msgpack:msgpack-core:0.9.0'
 
     simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}debug@zip"
     simulation "edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${wpi.platforms.desktop}@zip"
