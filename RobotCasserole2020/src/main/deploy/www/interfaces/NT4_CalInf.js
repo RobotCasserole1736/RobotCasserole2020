@@ -109,16 +109,16 @@ export class NT4_CalInf {
     }
 
     isCalTopic(topic, suffix){
-        if(!suffix){
-            suffix = "";
+        if(suffix === undefined){
+            suffix = ".*";
         }
-        var replace = "/Calibrations\/[a-zA-Z0-9\._]+\/"+suffix;
+        var replace = "\/Calibrations\/[a-zA-Z0-9\._]+\/"+suffix;
         var re = new RegExp(replace,"g");
         return re.test(topic.name);
     }
 
     topicToCalName(topic){
-        var replace = "/Calibrations\/([a-zA-Z0-9\._]+)\/";
+        var replace = "\/Calibrations\/([a-zA-Z0-9\._]+)\/";
         var re = new RegExp(replace,"g");
         var arr = re.exec(topic.name);
         return arr[1];
