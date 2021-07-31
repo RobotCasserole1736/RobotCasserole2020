@@ -117,7 +117,9 @@ function valueUpdateHandler( topic, timestamp_us, value ) {
 }
 
 function onConnect() {
-    console.log("Connected to Server");
+    table.innerHTML = "";
+
+    document.getElementById("status").innerHTML = "Connected to Server";
     var titleRow = table.insertRow(0);
 
     var newCell;
@@ -142,8 +144,7 @@ function onConnect() {
 }
 
 function onDisconnect() {
-    console.log("Disconnected from Server");
-    table.innerHTML = "";
+    document.getElementById("status").innerHTML = "Disconnected from Server";
     subscription = null;
 }
 
