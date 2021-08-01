@@ -33,9 +33,11 @@ function clearDisplayedLogs() {
     var new_tr = document.createElement("tr");
     var new_th = document.createElement("th");
     new_th.innerHTML = "File";
+    new_th.onclick = function() { sortTableAlphabetic(0); };
     new_tr.appendChild(new_th);
     var new_th = document.createElement("th");
-    new_th.innerHTML = "Size (B)";
+    new_th.innerHTML = "Size (kB)";
+    new_th.onclick = function() { sortTableNumeric(1); };
     new_tr.appendChild(new_th);
     mainTable.appendChild(new_tr);
 }
@@ -106,4 +108,38 @@ function deleteAll(){
 window.downloadAll=downloadAll;
 function downloadAll(){
     sendCmd({cmd:"downloadAll"});
+}
+
+
+// from https://stackoverflow.com/questions/7558182/sort-a-table-fast-by-its-first-column-with-javascript-or-jquery
+function sortTableNumeric(n){
+    var store = [];
+    for(var i=1, len=mainTable.rows.length; i<len; i++){
+        var row = mainTable.rows[i];
+        var sortnr = parseFloat(row.cells[n].textContent || row.cells[n].innerText);
+        if(!isNaN(sortnr)) store.push([sortnr, row]);
+    }
+    store.sort(function(x,y){
+        return x[0] - y[0];
+    });
+    for(var i=0, len=store.length; i<len; i++){
+        mainTable.appendChild(store[i][1]);
+    }
+    store = null;
+}
+
+function sortTableAlphabetic(n){
+    var store = [];
+    for(var i=1, len=mainTable.rows.length; i<len; i++){
+        var row = mainTable.rows[i];
+        var sortnr = (row.cells[n].textContent || row.cells[n].innerText);
+        if(sortnr) store.push([sortnr, row]);
+    }
+    store.sort(function(x,y){
+        return x[0].localeCompare(y[0]);
+    });
+    for(var i=0, len=store.length; i<len; i++){
+        mainTable.appendChild(store[i][1]);
+    }
+    store = null;
 }
