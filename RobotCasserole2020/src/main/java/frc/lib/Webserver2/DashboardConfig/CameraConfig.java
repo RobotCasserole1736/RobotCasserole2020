@@ -1,17 +1,13 @@
 package frc.lib.Webserver2.DashboardConfig;
 
-public class CameraConfig extends WidgetConfig {
+public class CameraConfig extends VisibleWidgetConfig {
     
     String streamURL = "";
 
-    final double nominalWidth  = 40;
-    final double nominalHeight = 30;
-
-    @Override
-    public String getHTML(){
-        double width = nominalWidth * sizeScaleFactor;
-        double height = nominalHeight * sizeScaleFactor;
-        return genHtmlDeclaration(height, width);
+    public CameraConfig(){
+        super();
+        this.nominalHeight = 30;
+        this.nominalWidth = 40;
     }
 
     @Override

@@ -9,7 +9,6 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -21,16 +20,13 @@ import frc.lib.Util.CrashTracker;
 import frc.lib.Webserver2.Webserver2;
 import frc.lib.miniNT4.NT4Server;
 import frc.robot.Autonomous.Autonomous;
-import frc.robot.BallHandling.Conveyor;
 import frc.robot.BallHandling.Hopper;
 import frc.robot.BallHandling.IntakeControl;
-import frc.robot.BallHandling.Conveyor.ConveyorOpMode;
 import frc.robot.ControlPanel.ControlPanelStateMachine;
 import frc.robot.Drivetrain.Drivetrain;
 import frc.robot.HumanInterface.DriverController;
 import frc.robot.HumanInterface.OperatorController;
 import frc.robot.ShooterControl.ShooterControl;
-import frc.robot.ShooterControl.ShooterControl.ShooterCtrlMode;
 import frc.robot.VisionProc.CasseroleVision;
 
 /**
@@ -197,6 +193,7 @@ public class Robot extends TimedRobot {
     drivetrain.update();
 
     db.updateDriverView();
+    SignalWrangler.getInstance().sampleAllSignals();
     loopTiming.markLoopEnd();
 
   }
@@ -236,6 +233,8 @@ public class Robot extends TimedRobot {
     climber.update();
 
     db.updateDriverView();
+
+    SignalWrangler.getInstance().sampleAllSignals();
 
     // put all auto periodic code before this
     loopTiming.markLoopEnd();
@@ -309,6 +308,8 @@ public class Robot extends TimedRobot {
     climber.update();
 
     db.updateDriverView();
+
+    SignalWrangler.getInstance().sampleAllSignals();
 
     // put all teleop periodic code before this
     loopTiming.markLoopEnd();

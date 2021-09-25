@@ -5,6 +5,7 @@ public class SoundConfig extends WidgetConfig {
     String filePath = "";
     boolean looping = false;
 
+
     @Override
     public String getJSDeclaration(){
         String retStr = String.format("var widget%d = new Sound('%s', '%s', %s);\n", idx, name, filePath, looping?"true":"false");

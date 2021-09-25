@@ -12,7 +12,7 @@ import { NT4_Client } from "../interfaces/nt4.js";
 // Logic to run on page load
 //////////////////////////////////////////////////
 
-var nt4Client = new NT4_Client("localhost", 
+var nt4Client = new NT4_Client(window.location.hostname, 
                     doNothing,
                     doNothing,
                     handleNewData,

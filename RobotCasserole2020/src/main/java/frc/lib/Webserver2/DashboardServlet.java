@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import frc.lib.Webserver2.DashboardConfig.DashboardConfig;
+import frc.lib.Webserver2.DashboardConfig.VisibleWidgetConfig;
 import frc.lib.Webserver2.DashboardConfig.WidgetConfig;
 import frc.robot.Robot;
 

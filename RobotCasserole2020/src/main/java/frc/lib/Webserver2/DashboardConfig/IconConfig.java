@@ -1,6 +1,6 @@
 package frc.lib.Webserver2.DashboardConfig;
 
-public class IconConfig extends WidgetConfig {
+public class IconConfig extends VisibleWidgetConfig {
     
     String colorOn = "";
     String symbolPath = "";
@@ -10,15 +10,11 @@ public class IconConfig extends WidgetConfig {
     final static int kON = 1;
     final static int kBLINK_FAST = 2;
     final static int kBLINK_SLOW = 3;
-
-    final double nominalWidth  = 5;
-    final double nominalHeight = 5;
-
-    @Override
-    public String getHTML(){
-        double width = nominalWidth * sizeScaleFactor;
-        double height = nominalHeight * sizeScaleFactor;
-        return genHtmlDeclaration(height, width);
+    
+    public IconConfig(){
+        super();
+        this.nominalHeight = 5;
+        this.nominalWidth = 5;
     }
 
     @Override

@@ -1,20 +1,16 @@
 package frc.lib.Webserver2.DashboardConfig;
 
-public class CircularGaugeConfig extends WidgetConfig {
+public class CircularGaugeConfig extends VisibleWidgetConfig {
     
     double minRange;
     double maxRange;
     double minAcceptable;
     double maxAcceptable;
 
-    final double nominalWidth  = 20;
-    final double nominalHeight = 20;
-
-    @Override
-    public String getHTML(){
-        double width = nominalWidth * sizeScaleFactor;
-        double height = nominalHeight * sizeScaleFactor;
-        return genHtmlDeclaration(height, width);
+    public CircularGaugeConfig(){
+        super();
+        this.nominalHeight = 20;
+        this.nominalWidth = 20;
     }
 
     @Override

@@ -1,20 +1,19 @@
 package frc.lib.Webserver2.DashboardConfig;
 
-public class SwerveStateConfig extends WidgetConfig {
+public class SwerveStateConfig extends VisibleWidgetConfig {
     
-    final double nominalWidth  = 30;
-    final double nominalHeight = 30;
+    double nominalWidth  = 30;
+    double nominalHeight = 30;
 
     SwerveStateTopicSet FLTopics;
     SwerveStateTopicSet FRTopics;
     SwerveStateTopicSet BLTopics;
     SwerveStateTopicSet BRTopics;
 
-    @Override
-    public String getHTML(){
-        double width = nominalWidth * sizeScaleFactor;
-        double height = nominalHeight * sizeScaleFactor;
-        return genHtmlDeclaration(height, width);
+    public SwerveStateConfig(){
+        super();
+        this.nominalHeight = 30;
+        this.nominalWidth = 30;
     }
 
     @Override

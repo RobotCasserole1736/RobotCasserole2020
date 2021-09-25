@@ -29,7 +29,7 @@ export class SignalDAQNT4 {
 
         this.rxCount = 0;
 
-        this.nt4Client = new NT4_Client("localhost", 
+        this.nt4Client = new NT4_Client(window.location.hostname, 
                                         this.topicAnnounceHandler.bind(this), 
                                         this.topicUnannounceHandler.bind(this),
                                         this.valueUpdateHandler.bind(this),

@@ -75,14 +75,14 @@ public class Socket extends WebSocketAdapter {
 
         } else if (topicID == -1){
             try {
-                long timestamp_us = unpacker.unpackLong(); //ignored, should be zero
-                int typeIdx = unpacker.unpackInt();
+                long timestamp_us = unpacker.unpackLong(); //ignored, should be zero, but still needs to be unpacked.
+                int typeIdx = unpacker.unpackInt(); //Ignored, but still needs to be unpacked.
                 long userTimestamp = unpacker.unpackLong();
 
                 // Immedeately reply with the current timestamp
                 this.sendValueUpdate(NT4Server.getInstance().getTopic(-1), new TimestampedInteger(userTimestamp, NT4Server.getInstance().getCurServerTime()));
 
-                System.out.println("Syncing client to time " + NT4Server.getInstance().getCurServerTime()/1000000.0);
+                //System.out.println("Syncing client to time " + NT4Server.getInstance().getCurServerTime()/1000000.0);
             } catch (IOException e) {
                 DriverStation.reportWarning("Could not handle time synchronization message: \n" + e.getMessage(),
                         e.getStackTrace());

@@ -1,7 +1,6 @@
 import { NT4_Client } from "../interfaces/nt4.js";
 
-
-var nt4Client = new NT4_Client("localhost", 
+var nt4Client = new NT4_Client(window.location.hostname, 
                                topicAnnounceHandler,
                                topicUnannounceHandler,
                                valueUpdateHandler,

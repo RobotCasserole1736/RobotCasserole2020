@@ -9,7 +9,6 @@ package frc.robot.ShooterControl;
 
 import frc.lib.Calibration.Calibration;
 import frc.lib.Signal.Annotations.Signal;
-import frc.robot.LoopTiming;
 import frc.robot.RobotConstants;
 
 /**

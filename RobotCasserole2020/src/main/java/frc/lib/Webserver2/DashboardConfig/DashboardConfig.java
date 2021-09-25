@@ -24,10 +24,10 @@ public class DashboardConfig {
     }
 
     // TODO - add alternate form for NT-referenced address (CameraServer)
-    public void addCamera(String nt4Topic_in, String name, String streamURL, double xPos, double yPos, double sizeScaleFactor) {
+    public void addCamera(String name, String streamURL, double xPos, double yPos, double sizeScaleFactor) {
 
         var w = new CameraConfig();
-        w.nt4TopicCurVal = nt4Topic_in;
+        w.nt4TopicCurVal = "";
         w.idx = widgetList.size();
         w.xPos = xPos;
         w.yPos = yPos;

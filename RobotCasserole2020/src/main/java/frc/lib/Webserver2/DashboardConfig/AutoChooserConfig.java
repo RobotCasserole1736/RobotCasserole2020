@@ -2,20 +2,16 @@ package frc.lib.Webserver2.DashboardConfig;
 
 import java.util.List;
 
-public class AutoChooserConfig extends WidgetConfig {
+public class AutoChooserConfig extends VisibleWidgetConfig {
 
     List<String> modeNameList;
 
     String nt4TopicDesVal = "";
 
-    final double nominalWidth = 40;
-    final double nominalHeight = 5;
-
-    @Override
-    public String getHTML() {
-        double width = nominalWidth * sizeScaleFactor;
-        double height = nominalHeight * sizeScaleFactor;
-        return genHtmlDeclaration(height, width);
+    public AutoChooserConfig(){
+        super();
+        this.nominalHeight = 40;
+        this.nominalWidth = 5;
     }
 
     private String getJsModeNameListString() {
