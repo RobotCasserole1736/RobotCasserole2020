@@ -9,7 +9,6 @@ public class AutoModeList {
     private ArrayList<String> orderedModeNameList = new ArrayList<String>(); //Helps keep track of the order the modes were added in, to ensure they end up ordered that same way in the web UI.
 
     public String name;
-    //private Topic modeTopic = new Topic();
 
     public AutoModeList(String name){
         this.name = name;

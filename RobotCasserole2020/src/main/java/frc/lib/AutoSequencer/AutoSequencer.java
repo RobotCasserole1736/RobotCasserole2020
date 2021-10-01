@@ -173,11 +173,10 @@ public class AutoSequencer {
             
 	        if(globalUpdateCount % 50 == 0){
 	        	System.out.println("["+name+"] Running. timestep = " + Double.toString(globalUpdateCount*0.02) + "s | ActualTime = " + Double.toString(Timer.getFPGATimestamp()));
-	        }
-
+            }
+            
+            globalUpdateCount++;
         }
-        globalUpdateCount++;
-        
 
     }
     

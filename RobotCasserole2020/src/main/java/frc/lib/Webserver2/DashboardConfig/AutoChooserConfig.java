@@ -10,8 +10,8 @@ public class AutoChooserConfig extends VisibleWidgetConfig {
 
     public AutoChooserConfig(){
         super();
-        this.nominalHeight = 40;
-        this.nominalWidth = 5;
+        this.nominalHeight = 5;
+        this.nominalWidth = 40;
     }
 
     private String getJsModeNameListString() {

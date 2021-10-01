@@ -66,13 +66,6 @@ public class Robot extends TimedRobot {
   Supperstructure supperstructure; // A misspelling you say? Ha! Wrong you are! Imagery is even baked into our
                                    // source code.
 
-  // Misc.
-  Calibration snailModeLimitRPM;
-  boolean climberUpperLSPressed;
-  boolean climberLowerLSPressed;
-  boolean conveyorFull;
-  boolean pneumaticPressureLow;
-
   int slowLoopCounter = 0;
   final int SLOW_LOOP_RATE = 10; // 200ms loop
 
@@ -120,8 +113,6 @@ public class Robot extends TimedRobot {
     ControlPanelStateMachine.getInstance();
 
     telemetry = MiscTelemetry.getInstance();
-
-    snailModeLimitRPM = new Calibration("Snail Mode Max Wheel Speed (RPM)", 200, 0, 1000);
 
     ledCont = LEDController.getInstance();
 
