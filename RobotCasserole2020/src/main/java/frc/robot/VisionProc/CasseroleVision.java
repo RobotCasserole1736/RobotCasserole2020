@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -31,7 +33,7 @@ public class CasseroleVision {
     boolean targetVisible;
     boolean targetPosStable;
     boolean visionOnline;
-    long visionUpdatedTime;
+    double visionUpdatedTime;
 
 
     Signal targetAngleSignal;
@@ -45,7 +47,6 @@ public class CasseroleVision {
 
     private CasseroleVision(){
         NetworkTableInstance.getDefault().setUpdateRate(0.01); //SPEEEEEEEEEEED
-        NetworkTable table = NetworkTableInstance.getDefault().getTable("VisionData");
 
         targetAngleSignal= new Signal("Vision Raspberry Pi Angle","deg");
         targetVisibleSignal= new Signal("Vision Raspberry Pi Visible Target","bool");
@@ -90,14 +91,6 @@ public class CasseroleVision {
         cameraDurationSignal.addSample(sampleTimeMs, proc_duration_sec);
         visionOnlineSignal.addSample(sampleTimeMs, visionOnline);
 
-    }
-
-    private boolean convertDoubletoBoolean(double inDouble){
-        if(inDouble==0){
-            return false;
-        }else{
-            return true;
-        }
     }
 
     public double getTgtAngle() {
