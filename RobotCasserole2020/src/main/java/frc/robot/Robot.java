@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import frc.lib.Calibration.CalWrangler;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.CasseroleDataServer;
@@ -135,6 +136,8 @@ public class Robot extends TimedRobot {
     dataServer.registerSignals(this);
     dataServer.startServer();
     webserver.startServer();
+
+    LiveWindow.disableAllTelemetry();
 
   }
 
@@ -306,6 +309,8 @@ public class Robot extends TimedRobot {
     supperstructure.update();
 
     climber.update();
+
+    ControlPanelStateMachine.getInstance().update();
 
     updateDriverView();
 

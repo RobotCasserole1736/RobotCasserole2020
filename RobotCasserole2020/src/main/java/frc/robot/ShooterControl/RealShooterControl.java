@@ -96,13 +96,13 @@ public class RealShooterControl extends ShooterControl {
         shooterMotor2.setIdleMode(IdleMode.kCoast);
         
         //Increase can bus tx/rx rates
-        shooterMotor1.setControlFramePeriodMs(10);
-        shooterMotor1.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 3);
-        shooterMotor1.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 10);
+        shooterMotor1.setControlFramePeriodMs(20);
+        shooterMotor1.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 5);
+        shooterMotor1.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20);
+        shooterMotor1.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+        shooterMotor2.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
 
         shooterMotor1.getEncoder().setVelocityConversionFactor(RobotConstants.SHOOTER_GEAR_RATIO);
-        shooterMotor1.getEncoder().setMeasurementPeriod(5000);
-        shooterMotor1.getEncoder().setAverageDepth(0);
 
         //Motors should be inverted to spin outward
         shooterMotor1.setInverted(true);

@@ -2,6 +2,7 @@ package frc.robot.Drivetrain;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 import com.revrobotics.CANEncoder;
 import frc.robot.RobotConstants;
 import frc.lib.DataServer.Signal;
@@ -163,10 +164,20 @@ public class RealDrivetrain extends Drivetrain {
         updateGains(true);
 
         
-        dtLeftMaster.setCANTimeout(RobotConstants.CAN_TIMEOUT);
-        dtLeftIntern.setCANTimeout(RobotConstants.CAN_TIMEOUT);
-        dtRightIntern.setCANTimeout(RobotConstants.CAN_TIMEOUT);
-        dtRightMaster.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+        dtLeftMaster.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+        dtLeftIntern.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+        dtRightIntern.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+        dtRightMaster.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+
+        dtLeftMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
+        dtLeftIntern.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+        dtRightMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10);
+        dtRightIntern.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+
+        dtLeftMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+        dtLeftIntern.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+        dtRightMaster.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+        dtRightIntern.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
 
         dtLeftMaster.burnFlash();
         dtLeftIntern.burnFlash();

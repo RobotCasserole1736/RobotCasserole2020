@@ -1,11 +1,13 @@
 package frc.robot.BallHandling;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+
 import frc.robot.RobotConstants;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Annotations.Signal;
-import frc.robot.LoopTiming;
 import frc.robot.Robot;
 
 public class Hopper{
@@ -57,8 +59,12 @@ public class Hopper{
             hopperSparkLeft.setSmartCurrentLimit(25);
             hopperSparkRight.setSmartCurrentLimit(25);
             hopperSparkRight.setInverted(true);
-            hopperSparkLeft.setCANTimeout(RobotConstants.CAN_TIMEOUT);
-            hopperSparkRight.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+            hopperSparkLeft.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+            hopperSparkRight.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+            hopperSparkLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+            hopperSparkLeft.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
+            hopperSparkRight.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+            hopperSparkRight.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
             hopperSparkLeft.burnFlash();
             hopperSparkRight.burnFlash();
         }

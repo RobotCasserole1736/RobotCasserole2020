@@ -1,11 +1,9 @@
 package frc.robot.ControlPanel;
 
 import frc.robot.LoopTiming;
-import frc.robot.ControlPanel.CasseroleColorSensor;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.HumanInterface.OperatorController;
 import frc.lib.DataServer.Signal;
-import frc.robot.ControlPanel.ControlPanelManipulator;
 
 public class ControlPanelStateMachine{
 
@@ -18,8 +16,6 @@ public class ControlPanelStateMachine{
         return instance;
     }
         
-    CasseroleColorSensor colorSensor;
-
     ControlPanelColor colorOnWheel = ControlPanelColor.kUNKNOWN;
     ControlPanelColor gameDataColor = ControlPanelColor.kUNKNOWN;
 
@@ -37,7 +33,6 @@ public class ControlPanelStateMachine{
 
 
     private ControlPanelStateMachine(){
-        colorSensor = CasseroleColorSensor.getInstance();
         degreesToRotateStaticSig = new Signal("Control Panel State Machine 3.25 spin","degrees");
         degreesToColorSig = new Signal("Control Panel State Machine Rotate to Color","degrees");
         colorNeededSig = new Signal("Control Panel State Machine Game Data Color Command","color");
@@ -50,10 +45,7 @@ public class ControlPanelStateMachine{
 
         sampleTimeMS = LoopTiming.getInstance().getLoopStartTimeSec() * 1000.0;
 
-        colorSensor.update();
         parseGameData(DriverStation.getInstance().getGameSpecificMessage());
-
-        colorOnWheel = CasseroleColorSensor.getInstance().getControlPanelColor();
 
         rotate3to5Activated = OperatorController.getInstance().getControlPanelThreeRotationsDesired();
         rotateToSpecificColorActivated = OperatorController.getInstance().getControlPanelSeekToColorDesired();

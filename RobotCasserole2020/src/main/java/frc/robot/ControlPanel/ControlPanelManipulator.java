@@ -4,6 +4,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
@@ -59,7 +60,8 @@ public class ControlPanelManipulator {
             ControlPanelMotor.getEncoder().setPositionConversionFactor(RobotConstants.CONTROL_PANEL_MANIPULATOR_RATIO);
             updateGains(true);
             ControlPanelMotor.setClosedLoopRampRate(0);
-            ControlPanelMotor.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+            ControlPanelMotor.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+            ControlPanelMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
             ControlPanelMotor.burnFlash();
             desiredRotation_deg = ControlPanelMotor.getEncoder().getPosition();
         }

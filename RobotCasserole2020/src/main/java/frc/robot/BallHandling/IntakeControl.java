@@ -2,6 +2,8 @@ package frc.robot.BallHandling;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Annotations.Signal;
@@ -78,7 +80,9 @@ public class IntakeControl {
 			intakeMotor.setInverted(true);
 			intakeMotor.setSmartCurrentLimit(65); //Prevent the magic smoke
 			intakeMotor.setIdleMode(IdleMode.kCoast);
-			intakeMotor.setCANTimeout(RobotConstants.CAN_TIMEOUT);
+			intakeMotor.setCANTimeout(RobotConstants.CAN_TIMEOUT_ms);
+			intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500);
+			intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500);
 			intakeMotor.burnFlash();
         
 		}

@@ -13,6 +13,7 @@ import frc.robot.Autonomous.Events.AutoEventSteakA;
 import frc.robot.Autonomous.Events.AutoEventSteakB;
 import frc.robot.Autonomous.Events.AutoEventDriveForTime;
 import frc.robot.Autonomous.Events.AutoEventDriveStraight;
+import frc.robot.Autonomous.Events.AutoEventDrivetrainTakeOutSlack;
 import frc.robot.Autonomous.Events.AutoEventLoadingToTrench;
 import frc.robot.Autonomous.Events.AutoEventNoStealSteakA;
 import frc.robot.Autonomous.Events.AutoEventNoStealSteakB;
@@ -391,6 +392,7 @@ public class Autonomous {
 
                 case BallThief:
                     Drivetrain.getInstance().setInitialPose(10, 11.5, 90);
+                    seq.addEvent(new AutoEventDrivetrainTakeOutSlack(false));
                     seq.addEvent(new AutoEventBallThiefA(4.0)); //Time is for intk, which is included
                     seq.addEvent(new AutoEventBallThiefB(4.0)); //Time is for shoot prep, which is included
                     seq.addEvent(new AutoEventTurn(6));
