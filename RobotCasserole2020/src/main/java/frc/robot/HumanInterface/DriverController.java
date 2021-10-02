@@ -3,11 +3,12 @@ package frc.robot.HumanInterface;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.filters.Filter;
 import frc.lib.DataServer.Signal;
-import frc.lib.SignalMath.DerivativeCalculator;
 import frc.robot.LoopTiming;
 import frc.robot.Drivetrain.Utils;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.LinearFilter;
 
 /*
  *******************************************************************************************
@@ -58,6 +59,10 @@ public class DriverController {
     Signal reverseModeSig;
     Signal turn180DegCmdSig;
 
+    private final boolean USE_PULSE_FILTER = true;
+    LinearFilter fwdRevPulseFilter = LinearFilter.singlePoleIIR(0.3, 0.02);
+    LinearFilter rotPulseFilter = LinearFilter.singlePoleIIR(0.2, 0.02);
+
     
     public static synchronized DriverController getInstance() {
 		if(instance == null)
@@ -94,13 +99,31 @@ public class DriverController {
         }
 
         reverseModeCmd = driverController.getBumper(Hand.kLeft);
-        fwdRevCmd =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.10);
-        rotCmd =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 2.5, 0.10);
+        
+        var fwdRevCmdPrefilt =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.10);
+        var rotCmdPrefilt =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 1.5, 0.01) * 0.85;
 
         //Flips which side is the front and back in regards to driving
         if(reverseModeCmd){
-            fwdRevCmd *= -1.0;
+            fwdRevCmdPrefilt *= -1.0;
         }
+
+        if(USE_PULSE_FILTER){
+            if(Math.abs(fwdRevCmd - fwdRevCmdPrefilt) > 1.2){
+                fwdRevPulseFilter.reset();
+            }
+
+            if(Math.abs(rotCmd - rotCmdPrefilt) > 1.2){
+                rotPulseFilter.reset();
+            }
+
+            fwdRevCmd = fwdRevPulseFilter.calculate(fwdRevCmdPrefilt);
+            rotCmd = rotPulseFilter.calculate(rotCmdPrefilt);
+        } else {
+            fwdRevCmd = fwdRevCmdPrefilt;
+            rotCmd = rotCmdPrefilt;
+        }
+
         
         autoAlignCmd = driverController.getXButton();
         loadingToTrenchCmd = driverController.getAButton();
