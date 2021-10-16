@@ -3,7 +3,7 @@ package frc.robot.HumanInterface;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.filters.Filter;
+import frc.lib.Calibration.Calibration;
 import frc.lib.DataServer.Signal;
 import frc.robot.LoopTiming;
 import frc.robot.Drivetrain.Utils;
@@ -59,11 +59,17 @@ public class DriverController {
     Signal reverseModeSig;
     Signal turn180DegCmdSig;
 
-    private final boolean USE_PULSE_FILTER = true;
-    LinearFilter fwdRevPulseFilter = LinearFilter.singlePoleIIR(0.3, 0.02);
-    LinearFilter rotPulseFilter = LinearFilter.singlePoleIIR(0.2, 0.02);
+    LinearFilter fwdRevPulseFilter;
+    LinearFilter rotPulseFilter;
 
-    
+    Calibration fwdRevPfFFCal;
+    Calibration rotPfFFCal;
+    Calibration fwdRevPfSkewCal;
+    Calibration rotPfSkewCal;
+    Calibration maxRotSpdCal;
+    Calibration useCurvatureDriveCal;
+    Calibration usePulseFilter;
+
     public static synchronized DriverController getInstance() {
 		if(instance == null)
 		    instance = new DriverController();
@@ -84,6 +90,17 @@ public class DriverController {
         turn180DegCmdSig = new Signal("Driver Turn 180 Deg Command", "bool");
         snailModeCmdSig = new Signal("Driver Snail Mode Command", "bool");
         reverseModeSig  = new Signal("Driver Flip Front/Back Command", "bool");
+
+        fwdRevPfFFCal   = new Calibration("Driver FwdRev Joy Filter Factor", 0.3);
+        rotPfFFCal      = new Calibration("Driver Rot Joy Filter Factor", 0.2);
+        fwdRevPfSkewCal = new Calibration("Driver FwdRev Joy Map Skew", 4.0);
+        rotPfSkewCal    = new Calibration("Driver Rot Joy Map Skew", 1.5);
+        maxRotSpdCal    = new Calibration("Driver Max Rot Speed", 0.85);
+        useCurvatureDriveCal = new Calibration("Driver Use Curvature Drive", 0.0);
+        usePulseFilter = new Calibration("Driver Use Joy Filters", 1.0);
+        
+        fwdRevPulseFilter = LinearFilter.singlePoleIIR(fwdRevPfFFCal.get(), 0.02);
+        rotPulseFilter    = LinearFilter.singlePoleIIR(rotPfFFCal.get(), 0.02);
     }
 
     public void update(){
@@ -99,20 +116,35 @@ public class DriverController {
         }
 
         reverseModeCmd = driverController.getBumper(Hand.kLeft);
+
+        //Raw driver commands come right from the joystick
+        var fwdRevCmdRaw = -1.0*driverController.getY(GenericHID.Hand.kLeft);
+        var rotCmdRaw = -1.0*driverController.getX(GenericHID.Hand.kRight);
         
-        var fwdRevCmdPrefilt =  Utils.ctrlAxisScale(-1.0*driverController.getY(GenericHID.Hand.kLeft), 4.0, 0.10);
-        var rotCmdPrefilt =  Utils.ctrlAxisScale(-1.0*driverController.getX(GenericHID.Hand.kRight), 1.5, 0.01) * 0.85;
+        // Prefilt commands come from deadzones, scaling, and skewing operations
+        var fwdRevCmdPrefilt =  Utils.ctrlAxisScale(fwdRevCmdRaw, fwdRevPfSkewCal.get(), 0.10);
+        var rotCmdPrefilt =  Utils.ctrlAxisScale(rotCmdRaw, rotPfSkewCal.get(), 0.01) * maxRotSpdCal.get();
 
         //Flips which side is the front and back in regards to driving
         if(reverseModeCmd){
             fwdRevCmdPrefilt *= -1.0;
         }
 
-        if(USE_PULSE_FILTER){
+        if(usePulseFilter.get() > 0.5){
+            //Re-init filters on calibration change
+            if(fwdRevPfFFCal.isChanged()){
+                fwdRevPulseFilter = LinearFilter.singlePoleIIR(fwdRevPfFFCal.get(), 0.02);
+                fwdRevPfFFCal.acknowledgeValUpdate();
+            }
+            if(rotPfFFCal.isChanged()){
+                rotPulseFilter    = LinearFilter.singlePoleIIR(rotPfFFCal.get(), 0.02);
+                rotPfFFCal.acknowledgeValUpdate();
+            }
+
+            // Apply Filter
             if(Math.abs(fwdRevCmd - fwdRevCmdPrefilt) > 1.2){
                 fwdRevPulseFilter.reset();
             }
-
             if(Math.abs(rotCmd - rotCmdPrefilt) > 1.2){
                 rotPulseFilter.reset();
             }
@@ -120,11 +152,18 @@ public class DriverController {
             fwdRevCmd = fwdRevPulseFilter.calculate(fwdRevCmdPrefilt);
             rotCmd = rotPulseFilter.calculate(rotCmdPrefilt);
         } else {
+            //No filtering, just pass through
             fwdRevCmd = fwdRevCmdPrefilt;
             rotCmd = rotCmdPrefilt;
         }
 
-        
+        if(useCurvatureDriveCal.get() > 0.5){
+            //Cheesy Drive - Use Fwd/Rev command to scale rotCmd (effectively making rotation control curvature)
+            if(Math.abs(fwdRevCmd) > 0.1){
+                rotCmd = Math.abs(fwdRevCmd) * rotCmd * 1.0; //Modifiy scalar for sensitivity
+            }
+        }
+
         autoAlignCmd = driverController.getXButton();
         loadingToTrenchCmd = driverController.getAButton();
         trenchToLoadingCmd = driverController.getBButton();
