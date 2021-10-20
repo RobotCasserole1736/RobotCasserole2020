@@ -95,9 +95,9 @@ public class DriverController {
         rotPfFFCal      = new Calibration("Driver Rot Joy Filter Factor", 0.2);
         fwdRevPfSkewCal = new Calibration("Driver FwdRev Joy Map Skew", 4.0);
         rotPfSkewCal    = new Calibration("Driver Rot Joy Map Skew", 1.5);
-        maxRotSpdCal    = new Calibration("Driver Max Rot Speed", 0.85);
-        useCurvatureDriveCal = new Calibration("Driver Use Curvature Drive", 0.0);
-        usePulseFilter = new Calibration("Driver Use Joy Filters", 1.0);
+        maxRotSpdCal    = new Calibration("Driver Max Rot Speed", 1.0);
+        useCurvatureDriveCal = new Calibration("Driver Use Curvature Drive", 1.0);
+        usePulseFilter = new Calibration("Driver Use Joy Filters", 0.0);
         
         fwdRevPulseFilter = LinearFilter.singlePoleIIR(fwdRevPfFFCal.get(), 0.02);
         rotPulseFilter    = LinearFilter.singlePoleIIR(rotPfFFCal.get(), 0.02);
@@ -123,7 +123,7 @@ public class DriverController {
         
         // Prefilt commands come from deadzones, scaling, and skewing operations
         var fwdRevCmdPrefilt =  Utils.ctrlAxisScale(fwdRevCmdRaw, fwdRevPfSkewCal.get(), 0.10);
-        var rotCmdPrefilt =  Utils.ctrlAxisScale(rotCmdRaw, rotPfSkewCal.get(), 0.01) * maxRotSpdCal.get();
+        var rotCmdPrefilt =  Utils.ctrlAxisScale(rotCmdRaw, rotPfSkewCal.get(), 0.01);
 
         //Flips which side is the front and back in regards to driving
         if(reverseModeCmd){
@@ -160,9 +160,12 @@ public class DriverController {
         if(useCurvatureDriveCal.get() > 0.5){
             //Cheesy Drive - Use Fwd/Rev command to scale rotCmd (effectively making rotation control curvature)
             if(Math.abs(fwdRevCmd) > 0.1){
-                rotCmd = Math.abs(fwdRevCmd) * rotCmd * 1.0; //Modifiy scalar for sensitivity
+                rotCmd = Math.abs(fwdRevCmd) * rotCmd * 1.0 * maxRotSpdCal.get(); //Modifiy scalar for sensitivity
+            } else {
+                rotCmd = rotCmdPrefilt;
             }
-        }
+        }     
+        rotCmd *= maxRotSpdCal.get();
 
         autoAlignCmd = driverController.getXButton();
         loadingToTrenchCmd = driverController.getAButton();

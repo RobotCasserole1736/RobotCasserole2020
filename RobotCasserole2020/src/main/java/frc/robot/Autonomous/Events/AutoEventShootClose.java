@@ -26,6 +26,7 @@ public class AutoEventShootClose extends AutoEvent {
 		startBall=ShooterControl.getInstance().getShotCount();
 		Supperstructure.getInstance().setShootCloseDesired(true);
 		Supperstructure.getInstance().setPrepToShootDesired(false); //because PrepToShoot overrides Shoot
+		Supperstructure.getInstance().setIntakeDesired(true);
 	}
 	
 	@Override

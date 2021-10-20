@@ -242,6 +242,8 @@ public class RealDrivetrain extends Drivetrain {
 
             dtLPID.setReference(dtLeftSpeedCmd*13, ControlType.kVoltage);
             dtRPID.setReference(dtRightSpeedCmd*13, ControlType.kVoltage);
+            //dtLPID.setReference(dtLeftSpeedCmd*8*60, ControlType.kVelocity);
+            //dtRPID.setReference(dtRightSpeedCmd*8*60, ControlType.kVelocity);
            
         }        
         else if(opMode == DrivetrainOpMode.kClosedLoopVelocity) {
