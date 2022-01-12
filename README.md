@@ -24,4 +24,4 @@ The log file snagger is a python script used to  communticate with the roborio a
 Java does not allow emojies as variable names. In other words, Java is against fun.😞
 
 ## Spot the Paper Chicken! 🐔
-![Crane Army](ReadMeResources/CraneArmy.jpg)
+![Crane Army](ReadMeResources/CraneArmy.jpg) 
